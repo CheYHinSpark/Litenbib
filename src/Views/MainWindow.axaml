@@ -12,13 +12,11 @@
 		<Style Selector="Window">
 			<Setter Property="TransparencyLevelHint" Value="AcrylicBlur"/>
 			<Setter Property="Background" Value="Transparent"/>
+			<Setter Property="SystemDecorations" Value="Full"/>
 			<Setter Property="ExtendClientAreaToDecorationsHint" Value="True"/>
 			<Setter Property="ExtendClientAreaChromeHints" Value="NoChrome"/>
 			<Setter Property="ExtendClientAreaTitleBarHeightHint" Value="-1"/>
 			<Setter Property="FontSize" Value="14"/>
-		</Style>
-		<Style Selector="Window[WindowState=Maximized]">
-			<!--<Setter Property="ExtendClientAreaToDecorationsHint" Value="False"/>-->
 		</Style>
 		<Style Selector="Button">
 			<Setter Property="HorizontalContentAlignment" Value="Center"/>
@@ -36,7 +34,7 @@
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-	<Grid RowDefinitions="Auto, *"
+	<Grid Name="RootGrid" RowDefinitions="Auto, *"
 		  Margin="{Binding $parent[Window].OffScreenMargin}">
 		<!--header-->
 		<Grid Height="{Binding HeaderHeight}" 
@@ -50,8 +48,9 @@
 			</StackPanel>
 		</Grid>
 		<!--content-->
-		<Border Grid.Row="1" BorderBrush="Gray" BorderThickness="4">
-
-		</Border>
+		<Grid Grid.Row="1">
+			<TextBox Name="testblock" TextWrapping="Wrap"></TextBox>
+			<Button Click="Button_Click"/>
+		</Grid>
 	</Grid>
 </Window>

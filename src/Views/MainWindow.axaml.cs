@@ -3,8 +3,10 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Platform;
+using Litenbib.Models;
 using System;
 using System.Globalization;
+using System.Threading.Tasks;
 
 namespace Litenbib.Views
 {
@@ -18,7 +20,16 @@ namespace Litenbib.Views
 
         private void OnPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
         {
-        
+            if (e.Property == WindowStateProperty)
+            {
+                switch (e.NewValue)
+                {
+                    case null:
+                        return;
+                    case WindowState.Maximized:
+                        break;
+                }
+            }
         }
 
         private void TitleButton_Click(object? sender, RoutedEventArgs e)
@@ -45,9 +56,24 @@ namespace Litenbib.Views
             }
         }
 
-        private void TitleBar_PointerPressed(object? sender, Avalonia.Input.PointerPressedEventArgs e)
+        private void TitleBar_PointerPressed(object? sender, PointerPressedEventArgs e)
         {
             this.BeginMoveDrag(e);
         }
+
+        private void Button_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+
+            _ = Search();
+        }
+
+        private async Task Search()
+        {
+            var doi = "10.48550/arXiv.2406.13931";
+            var result = await DoiResolver.ResolveDoiOfficialAsync(doi);
+            testblock.Text = result;
+           //{ testblock.Text = "1231245"; }
+        }
+
     }
 }
