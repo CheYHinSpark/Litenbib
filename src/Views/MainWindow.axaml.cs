@@ -15,21 +15,7 @@ namespace Litenbib.Views
         public MainWindow()
         {
             InitializeComponent();
-            this.PropertyChanged += OnPropertyChanged;
-        }
-
-        private void OnPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
-        {
-            if (e.Property == WindowStateProperty)
-            {
-                switch (e.NewValue)
-                {
-                    case null:
-                        return;
-                    case WindowState.Maximized:
-                        break;
-                }
-            }
+            //TitleText.Text = AppContext.BaseDirectory;
         }
 
         private void TitleButton_Click(object? sender, RoutedEventArgs e)
@@ -61,38 +47,38 @@ namespace Litenbib.Views
             this.BeginMoveDrag(e);
         }
 
-        private void Button_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-        {
+        //private void Button_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        //{
 
-            //_ = Search();
-            Parse();
-        }
+        //    //_ = Search();
+        //    Parse();
+        //}
 
-        private async Task Search()
-        {
-            var doi = "10.48550/arXiv.2406.13931";
-            var result = await DoiResolver.ResolveDoiOfficialAsync(doi);
-            testblock.Text = result;
-           //{ testblock.Text = "1231245"; }
-        }
+        //private async Task Search()
+        //{
+        //    var doi = "10.48550/arXiv.2406.13931";
+        //    var result = await DoiResolver.ResolveDoiOfficialAsync(doi);
+        //    testblock.Text = result;
+        //   //{ testblock.Text = "1231245"; }
+        //}
 
-        private async Task Parse()
-        {
-            var bibtex = "@Article{Bhatnagar_1954,\r\n" +
-                "  author    = {Bhatnagar, P. L. and Gross, E. P. and Krook, M.},\r\n" +
-                "  journal   = {Physical Review},\r\n" +
-                "  title     = {A Model for Collision Processes in Gases. \\rm{I}. Small Amplitude Processes in Charged and Neutral One-Component Systems},\r\n" +
-                "  year      = {1954},\r\n" +
-                "  issn      = {0031-899X},\r\n" +
-                "  month     = may,\r\n" +
-                "  number    = {3},\r\n" +
-                "  pages     = {511--525},\r\n" +
-                "  volume    = {94},\r\n" +
-                "  doi       = {10.1103/physrev.94.511},\r\n" +
-                "  publisher = {American Physical Society (APS)},\r\n" +
-                "}";
-            var list = BibtexParser.Parse(bibtex);
-            testblock.Text = list[0].ToBibtex();
-        }
+        //private async Task Parse()
+        //{
+        //    var bibtex = "@Article{Bhatnagar_1954,\r\n" +
+        //        "  author    = {Bhatnagar, P. L. and Gross, E. P. and Krook, M.},\r\n" +
+        //        "  journal   = {Physical Review},\r\n" +
+        //        "  title     = {A Model for Collision Processes in Gases. \\rm{I}. Small Amplitude Processes in Charged and Neutral One-Component Systems},\r\n" +
+        //        "  year      = {1954},\r\n" +
+        //        "  issn      = {0031-899X},\r\n" +
+        //        "  month     = may,\r\n" +
+        //        "  number    = {3},\r\n" +
+        //        "  pages     = {511--525},\r\n" +
+        //        "  volume    = {94},\r\n" +
+        //        "  doi       = {10.1103/physrev.94.511},\r\n" +
+        //        "  publisher = {American Physical Society (APS)},\r\n" +
+        //        "}";
+        //    var list = BibtexParser.Parse(bibtex);
+        //    testblock.Text = list[0].ToBibtex();
+        //}
     }
 }

@@ -1,5 +1,6 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:v="using:Litenbib.Views"
         xmlns:vm="using:Litenbib.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -37,7 +38,7 @@
 	<Grid Name="RootGrid" RowDefinitions="Auto, *"
 		  Margin="{Binding $parent[Window].OffScreenMargin}">
 		<!--header-->
-		<Grid Height="{Binding HeaderHeight}" 
+		<Grid Height="{Binding HeaderHeight}"
 			  PointerPressed="TitleBar_PointerPressed">
 			<TextBlock Name="TitleText" Text="Litenbib"
 					   HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -49,8 +50,9 @@
 		</Grid>
 		<!--content-->
 		<Grid Grid.Row="1">
-			<TextBox Name="testblock" FontFamily="Consolas" TextWrapping="Wrap"></TextBox>
-			<Button Click="Button_Click"/>
+			<ScrollViewer Margin="4">
+				<v:BibtexEntryTable/>
+			</ScrollViewer>
 		</Grid>
 	</Grid>
 </Window>

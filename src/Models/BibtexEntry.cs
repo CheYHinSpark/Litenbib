@@ -11,9 +11,22 @@ namespace Litenbib.Models
 {
     internal class BibtexEntry(string type, string citationKey)
     {
-        public string Type = type;
+        public string type = type;
         public string CitationKey = citationKey;
         public Dictionary<string, string> Fields = new(StringComparer.OrdinalIgnoreCase);
+
+        public bool Selected { get; set; }
+        public string Type { get => type; }
+        public string Author_Editor 
+        { 
+            get {
+                if (!Fields.TryGetValue("author", out string? author) || author == "")
+                { return Fields.TryGetValue("editor", out string? editor) ? editor : ""; }
+                return author; 
+            }
+        }
+        public string Title { get => Fields.TryGetValue("title", out string? value) ? value : ""; }
+        public string Year { get => Fields.TryGetValue("year", out string? value) ? value : ""; }
 
         public static BibtexEntry FromDOI(string doi)
         {
@@ -28,7 +41,7 @@ namespace Litenbib.Models
             int maxFieldLength = 0;
             foreach (var k in Fields.Keys)
             { maxFieldLength = Math.Max(maxFieldLength, k.Length); }
-            string s = $"@{Type}{{{CitationKey},\r\n";
+            string s = $"@{type}{{{CitationKey},\r\n";
             foreach (KeyValuePair<string, string> kvp in Fields)
             {
                 s += $"    {kvp.Key}";
