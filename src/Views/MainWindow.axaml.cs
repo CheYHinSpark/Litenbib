@@ -64,7 +64,8 @@ namespace Litenbib.Views
         private void Button_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
 
-            _ = Search();
+            //_ = Search();
+            Parse();
         }
 
         private async Task Search()
@@ -75,5 +76,23 @@ namespace Litenbib.Views
            //{ testblock.Text = "1231245"; }
         }
 
+        private async Task Parse()
+        {
+            var bibtex = "@Article{Bhatnagar_1954,\r\n" +
+                "  author    = {Bhatnagar, P. L. and Gross, E. P. and Krook, M.},\r\n" +
+                "  journal   = {Physical Review},\r\n" +
+                "  title     = {A Model for Collision Processes in Gases. \\rm{I}. Small Amplitude Processes in Charged and Neutral One-Component Systems},\r\n" +
+                "  year      = {1954},\r\n" +
+                "  issn      = {0031-899X},\r\n" +
+                "  month     = may,\r\n" +
+                "  number    = {3},\r\n" +
+                "  pages     = {511--525},\r\n" +
+                "  volume    = {94},\r\n" +
+                "  doi       = {10.1103/physrev.94.511},\r\n" +
+                "  publisher = {American Physical Society (APS)},\r\n" +
+                "}";
+            var list = BibtexParser.Parse(bibtex);
+            testblock.Text = list[0].ToBibtex();
+        }
     }
 }

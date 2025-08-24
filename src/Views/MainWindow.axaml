@@ -49,7 +49,7 @@
 		</Grid>
 		<!--content-->
 		<Grid Grid.Row="1">
-			<TextBox Name="testblock" TextWrapping="Wrap"></TextBox>
+			<TextBox Name="testblock" FontFamily="Consolas" TextWrapping="Wrap"></TextBox>
 			<Button Click="Button_Click"/>
 		</Grid>
 	</Grid>

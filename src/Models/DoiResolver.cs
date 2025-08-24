@@ -4,23 +4,10 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.Json;
 
 namespace Litenbib.Models
 {
-    internal class BibItem(string label)
-    {
-        public string Label = label;
-        public Dictionary<string, string> Tags = [];
-
-        public static BibItem FromDOI(string doi)
-        {
-            BibItem item = new(doi);
-            item.Tags["doi"] = doi;
-            // TODO: 解析DOI
-            return item;
-        }
-    }
-
     public class DoiResolver
     {
         private static readonly HttpClient client = new();

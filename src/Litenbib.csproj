@@ -13,6 +13,7 @@
     <PackageProjectUrl>https://github.com/CheYHinSpark/Litenbib</PackageProjectUrl>
     <RepositoryUrl>https://github.com/CheYHinSpark/Litenbib</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+    <PublishAot>True</PublishAot>
   </PropertyGroup>
 
   <ItemGroup>
@@ -30,5 +31,7 @@
       <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
     </PackageReference>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.Text.Json" Version="9.0.8" />
   </ItemGroup>
 </Project>
