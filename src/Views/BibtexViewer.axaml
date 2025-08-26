@@ -1,149 +1,219 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-			 xmlns:vm="using:Litenbib.ViewModels"
-			 xmlns:m="using:Litenbib.Models"
+             xmlns:vm="using:Litenbib.ViewModels"
+             xmlns:m="using:Litenbib.Models"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="720"
-			 x:DataType="vm:BibtexViewerViewModel"
+             x:DataType="vm:BibtexViewerViewModel"
              x:Class="Litenbib.Views.BibtexViewer">
-	<UserControl.Styles>
-		<Style Selector="TextBlock">
-			<Setter Property="VerticalAlignment" Value="Center"/>
-		</Style>
-		<Style Selector="TextBlock.right">
-			<Setter Property="HorizontalAlignment" Value="Right"/>
-			<Setter Property="Margin" Value="4"/>
-		</Style>
-		<Style Selector="ComboBox">
-			<Setter Property="Margin" Value="2"/>
-		</Style>
-		<Style Selector="TextBox">
-			<Setter Property="AcceptsReturn" Value="True"/>
-			<Setter Property="AcceptsTab" Value="True"/>
-			<Setter Property="TextWrapping" Value="Wrap"/>
-			<Setter Property="Margin" Value="2"/>
-			<Setter Property="VerticalAlignment" Value="Stretch"/>
-		</Style>
-		<!--<Style Selector="DataGridRow">
-			--><!--<Setter Property="BorderThickness" Value="0 0 0 1"/>--><!--
-			--><!--<Setter Property="BorderBrush" Value="Gray"/>--><!--
-		</Style>
-		<Style Selector="DataGridRow:pointerover">
-			<Setter Property="Background" Value="Red"/>
-		</Style>
-		<Style Selector="DataGridRow:selected">
-			<Setter Property="Background" Value="black"/>
-		</Style>
-		<Style Selector="DataGridRow:focus:selected /template/ Border#RowBorder">
-			<Setter Property="Background" Value="orange" />
-		</Style>-->
-		
-		<Style Selector="DataGridColumnHeader">
-			<Setter Property="Foreground" Value="White"/>
-			<Setter Property="Background" Value="#40404040"/>
-			<Setter Property="FontSize" Value="{Binding $parent[Window].FontSize}"/>
-			<!--<Setter Property="Template">
-				<ControlTemplate>
-					<Border Background="{TemplateBinding Background}"
-							BorderThickness="1 0">
-						<ContentPresenter Foreground="{TemplateBinding Foreground}"
-										  HorizontalAlignment="Center"
-										  VerticalAlignment="Center"
-										  Content="{TemplateBinding Content}"/>
-					</Border>
-				</ControlTemplate>
-			</Setter>-->
-		</Style>
-		<Style Selector="DataGridCell">
-			<Setter Property="FontSize" Value="{Binding $parent[Window].FontSize}"/>
-		</Style>
-	</UserControl.Styles>
+	<UserControl.Resources>
+		<m:TextToBackgroundConverter x:Key="TextToBackgroundConverter"/>
+	</UserControl.Resources>
+    <UserControl.Styles>
 
-	<Design.DataContext>
-		<vm:BibtexViewerViewModel/>
-	</Design.DataContext>
+        <Style Selector="DataGridColumnHeader">
+			<Setter Property="Padding" Value="0"/>
+            <Setter Property="FontSize" Value="{Binding $parent[Window].FontSize}"/>
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Grid Name="PART_ColumnHeaderRoot" ColumnDefinitions="*,Auto"
+                          Background="{TemplateBinding Background}">
+                        <ContentPresenter Margin="{TemplateBinding Padding}"
+								          Content="{TemplateBinding Content}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"/>
+                        <Path Name="SortIcon" Margin="4" Fill="{TemplateBinding Foreground}"
+                              HorizontalAlignment="Right" VerticalAlignment="Center"
+                              Stretch="Uniform" Height="12"/>
+                        <Rectangle Name="VerticalSeparator" Grid.Column="1" Width="1"
+                                   VerticalAlignment="Stretch" Fill="{TemplateBinding SeparatorBrush}"
+                                   IsVisible="{TemplateBinding AreSeparatorsVisible}"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter>
+        </Style>
+        
+        <Style Selector="DataGridCell">
+			<Setter Property="Padding" Value="0"/>
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <ContentPresenter Margin="{TemplateBinding Padding}"
+                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                      Content="{TemplateBinding Content}"
+                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                      Foreground="{TemplateBinding Foreground}" />
+                </ControlTemplate>
+            </Setter>
+        </Style>
+        
+        <Style Selector="DataGridRow">
+			<Setter Property="BorderThickness" Value="0 0 0 1"/>
+            <Setter Property="BorderBrush" Value="#80808080"/>
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Border x:Name="RowBorder"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}">
+                        <DataGridFrozenGrid Name="PART_Root"
+                                            ColumnDefinitions="Auto,*"
+                                            RowDefinitions="*,Auto">
+                            <DataGridRowHeader Name="PART_RowHeader"
+                                               Grid.RowSpan="2"
+                                               DataGridFrozenGrid.IsFrozen="True" />
+                            <DataGridCellsPresenter Name="PART_CellsPresenter"
+                                                    Grid.Column="1"
+                                                    DataGridFrozenGrid.IsFrozen="True" />
+                            <DataGridDetailsPresenter Name="PART_DetailsPresenter"
+                                                      Grid.Row="1"
+                                                      Grid.Column="1"
+                                                      Background="{DynamicResource DataGridDetailsPresenterBackgroundBrush}" />
+                        </DataGridFrozenGrid>
+                    </Border>
+                </ControlTemplate>
+            </Setter>
+        </Style>
+		
+        <Style Selector="DataGridRow:pointerover">
+            <Setter Property="Background" Value="#123456"/>
+        </Style>
+        <Style Selector="DataGridRow:selected">
+            <Setter Property="Background" Value="#234567"/>
+        </Style>
+        
+            
+        <Style Selector="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+		    <Setter Property="Margin" Value="8 0"/>
+        </Style>
+        <Style Selector="TextBlock.right">
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="Margin" Value="4"/>
+        </Style>
+        <Style Selector="TextBox">
+            <Setter Property="AcceptsReturn" Value="True"/>
+            <Setter Property="AcceptsTab" Value="True"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="VerticalAlignment" Value="Stretch"/>
+        </Style>
 	
-	<Grid ColumnDefinitions="*,Auto,Auto">
-		<!--bib数据列表-->
-		<DataGrid Margin="4" ItemsSource="{Binding BibtexEntries}"
-			  CanUserReorderColumns="True"
-			  CanUserResizeColumns="True"
-			  CanUserSortColumns="True"
-			  SelectionChanged="DataGrid_SelectionChanged">
-			<DataGrid.Columns>
-				<DataGridCheckBoxColumn Binding="{Binding Selected}" Width="40"/>
-				<DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="Auto"/>
-				<DataGridTextColumn Header="Author/Editor" Binding="{Binding Author_Editor}" Width="1*"/>
-				<DataGridTextColumn Header="Title" Binding="{Binding Title}" Width="3*"/>
-				<DataGridTextColumn Header="Journal/Booktitle" Binding="{Binding Journal_Booktitle}" Width="1*"/>
-				<DataGridTextColumn Header="Year" Binding="{Binding Year}" Width="Auto"/>
-			</DataGrid.Columns>
-		</DataGrid>
-		
-		<GridSplitter Grid.Column="1" Width="2"/>
-		
-		<!--entry详细数据-->
-		<StackPanel Margin="4" Grid.Column="2" Grid.IsSharedSizeScope="True">
-			<Grid>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto" SharedSizeGroup="Key"/>
-					<ColumnDefinition Width="*"/>
-				</Grid.ColumnDefinitions>
-				<TextBlock Text="Type" Classes="right"/>
-				<ComboBox Grid.Column="1" HorizontalAlignment="Stretch"
-						  ItemsSource="{Binding TypeList}"
-						  SelectedItem="{Binding ShowingEntry.Type}"/>
-			</Grid>
-			<ScrollViewer>
-				<Grid>
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="Auto" SharedSizeGroup="Key"/>
-						<ColumnDefinition Width="*"/>
-					</Grid.ColumnDefinitions>
-					<Grid.RowDefinitions>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-					</Grid.RowDefinitions>
+	    <Style Selector="Border.Article">
+			<Setter Property="Background" Value="Green"/>
+		</Style>
+    </UserControl.Styles>
 
-					<TextBlock Text="CitationKey" Classes="right"/>
-					<TextBox Text="{Binding ShowingEntry.CitationKey}" Grid.Column="1"/>
-					<TextBlock Text="Author" Classes="right" Grid.Row="1"/>
-					<TextBox Text="{Binding ShowingEntry.Author}" Grid.Row="1" Grid.Column="1"/>
-					<TextBlock Text="Title" Classes="right" Grid.Row="2"/>
-					<TextBox Text="{Binding ShowingEntry.Title}" Grid.Row="2" Grid.Column="1"/>
-					<TextBlock Text="Year" Classes="right" Grid.Row="3"/>
-					<Grid Grid.Row="3" Grid.Column="1" ColumnDefinitions="*,Auto,*">
-						<TextBox Text="{Binding ShowingEntry.Year}"/>
-						<TextBlock Text="Month" Classes="right" Grid.Column="1"/>
-						<TextBox Text="{Binding ShowingEntry.Month}" Grid.Column="2"/>
-					</Grid>
-					<TextBlock Text="Journal" Classes="right" Grid.Row="4"/>
-					<TextBox Text="{Binding ShowingEntry.Journal}" Grid.Row="4" Grid.Column="1"/>
-					<TextBlock Text="Volume" Classes="right" Grid.Row="5"/>
-					<Grid Grid.Row="5" Grid.Column="1" ColumnDefinitions="*,Auto,*,Auto,*">
-						<TextBox Text="{Binding ShowingEntry.Volume}"/>
-						<TextBlock Text="Number" Classes="right" Grid.Column="1"/>
-						<TextBox Text="{Binding ShowingEntry.Number}" Grid.Column="2"/>
-						<TextBlock Text="Pages" Classes="right" Grid.Column="3"/>
-						<TextBox Text="{Binding ShowingEntry.Pages}" Grid.Column="4"/>
-					</Grid>
-					<TextBlock Text="Publisher" Classes="right" Grid.Row="6"/>
-					<TextBox Text="{Binding ShowingEntry.Publisher}" Grid.Row="6" Grid.Column="1"/>
-					<TextBlock Text="DOI" Classes="right" Grid.Row="7"/>
-					<TextBox Text="{Binding ShowingEntry.DOI}" Grid.Row="7" Grid.Column="1"/>
-					<TextBlock Text="File" Classes="right" Grid.Row="8"/>
-					<TextBox Text="{Binding ShowingEntry.File}" Grid.Row="8" Grid.Column="1"/>
-				</Grid>
-			</ScrollViewer>
-		</StackPanel>
-	</Grid>
-	
+    <Design.DataContext>
+        <vm:BibtexViewerViewModel/>
+    </Design.DataContext>
+    
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto" MaxWidth="600"/>
+        </Grid.ColumnDefinitions>
+        <!--bib数据列表-->
+        <DataGrid Margin="4" ItemsSource="{Binding BibtexEntries}"
+                  CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True"
+                  SelectionChanged="DataGrid_SelectionChanged">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Width="40" CanUserResize="False">
+                    <DataGridTemplateColumn.Header>
+                        <CheckBox HorizontalAlignment="Center" IsChecked="{Binding AllSelected}"/>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <CheckBox HorizontalAlignment="Center" IsChecked="{Binding Selected}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+				<DataGridTemplateColumn Width="Auto" CanUserResize="False">
+                    <DataGridTemplateColumn.Header>Type</DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+							<Border Margin="0 4" HorizontalAlignment="Stretch"
+									CornerRadius="12" Background="{Binding #TypeText.Text, Converter={StaticResource TextToBackgroundConverter}}">
+								<TextBlock Name="TypeText" Text="{Binding Type_Show}"
+										   HorizontalAlignment="Center"/>
+							</Border>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Author/Editor" Binding="{Binding Author_Editor}" Width="1*"/>
+                <DataGridTextColumn Header="Title" Binding="{Binding Title_Show}" Width="3*"/>
+                <DataGridTextColumn Header="Journal/Booktitle" Binding="{Binding Journal_Booktitle}" Width="1*"/>
+                <DataGridTextColumn Header="Year" Binding="{Binding Year_Show}" Width="Auto"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        
+        
+        <GridSplitter Grid.Column="1" Width="2"/>
+        
+        <!--entry详细数据-->
+        
+        <StackPanel Margin="4" Grid.Column="2" Grid.IsSharedSizeScope="True">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="Key"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Type" Classes="right"/>
+                <ComboBox Grid.Column="1" HorizontalAlignment="Stretch"
+                          ItemsSource="{Binding TypeList}"
+                          SelectedItem="{Binding ShowingEntry.Type}"/>
+            </Grid>
+            <ScrollViewer>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="Key"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="CitationKey" Classes="right"/>
+                    <TextBox Text="{Binding ShowingEntry.CitationKey}" Grid.Column="1"/>
+                    <TextBlock Text="Author" Classes="right" Grid.Row="1"/>
+                    <TextBox Text="{Binding ShowingEntry.Author}" Grid.Row="1" Grid.Column="1"/>
+                    <TextBlock Text="Title" Classes="right" Grid.Row="2"/>
+                    <TextBox Text="{Binding ShowingEntry.Title}" Grid.Row="2" Grid.Column="1"/>
+                    <TextBlock Text="Year" Classes="right" Grid.Row="3"/>
+                    <Grid Grid.Row="3" Grid.Column="1" ColumnDefinitions="*,Auto,*">
+                        <TextBox Text="{Binding ShowingEntry.Year}"/>
+                        <TextBlock Text="Month" Classes="right" Grid.Column="1"/>
+                        <TextBox Text="{Binding ShowingEntry.Month}" Grid.Column="2"/>
+                    </Grid>
+                    <TextBlock Text="Journal" Classes="right" Grid.Row="4"/>
+                    <TextBox Text="{Binding ShowingEntry.Journal}" Grid.Row="4" Grid.Column="1"/>
+                    <TextBlock Text="Volume" Classes="right" Grid.Row="5"/>
+                    <Grid Grid.Row="5" Grid.Column="1" ColumnDefinitions="*,Auto,*,Auto,*">
+                        <TextBox Text="{Binding ShowingEntry.Volume}"/>
+                        <TextBlock Text="Number" Classes="right" Grid.Column="1"/>
+                        <TextBox Text="{Binding ShowingEntry.Number}" Grid.Column="2"/>
+                        <TextBlock Text="Pages" Classes="right" Grid.Column="3"/>
+                        <TextBox Text="{Binding ShowingEntry.Pages}" Grid.Column="4"/>
+                    </Grid>
+                    <TextBlock Text="Publisher" Classes="right" Grid.Row="6"/>
+                    <TextBox Text="{Binding ShowingEntry.Publisher}" Grid.Row="6" Grid.Column="1"/>
+                    <TextBlock Text="DOI" Classes="right" Grid.Row="7"/>
+                    <TextBox Text="{Binding ShowingEntry.DOI}" Grid.Row="7" Grid.Column="1"/>
+                    <TextBlock Text="File" Classes="right" Grid.Row="8"/>
+                    <TextBox Text="{Binding ShowingEntry.File}" Grid.Row="8" Grid.Column="1"/>
+                </Grid>
+            </ScrollViewer>
+        </StackPanel>
+    </Grid>
+    
 </UserControl>

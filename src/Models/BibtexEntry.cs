@@ -24,24 +24,25 @@ namespace Litenbib.Models
 
         // showing fields
         public bool Selected { get; set; }
+        public string Type_Show { get => type; }
         public string Author_Editor
         {
             get
             {
-                if (!Fields.TryGetValue("author", out string? author) || author == "")
-                { return Fields.TryGetValue("editor", out string? editor) ? editor : ""; }
-                return author;
+                string author = GetValue(nameof(Author));
+                return author == "" ? GetValue(nameof(Editor)) : author;
             }
         }
+        public string Title_Show { get => GetValue("title"); }
         public string Journal_Booktitle
         {
             get
             {
-                if (!Fields.TryGetValue("journal", out string? journal) || journal == "")
-                { return Fields.TryGetValue("booktitle", out string? booktitle) ? booktitle : ""; }
-                return journal;
+                string journal = GetValue(nameof(Journal));
+                return journal == "" ? GetValue(nameof(Booktitle)) : journal;
             }
         }
+        public string Year_Show { get => GetValue("year"); }
 
         // editable fields
         public string Type
@@ -51,6 +52,7 @@ namespace Litenbib.Models
             {
                 type = value;
                 OnPropertyChanged(nameof(Type));
+                OnPropertyChanged(nameof(Type_Show));
             }
         }
         public string CitationKey
@@ -70,19 +72,24 @@ namespace Litenbib.Models
         public string Title
         {
             get => GetValue("title");
-            set => SetValue("title", value, [nameof(Title)]);
+            set => SetValue("title", value, [nameof(Title), nameof(Title_Show)]);
         }
         public string Year
         {
             get => GetValue("year");
-            set => SetValue("year", value, [nameof(Year)]);
+            set => SetValue("year", value, [nameof(Year), nameof(Year_Show)]);
         }
         public string Month
         {
             get => GetValue("month");
             set => SetValue("month", value, [nameof(Month)]);
         }
-
+        
+        public string Editor
+        {
+            get => GetValue("editor");
+            set => SetValue("editor", value, [nameof(Editor), nameof(Author_Editor)]);
+        }
         public string Journal
         {
             get => GetValue("journal");
@@ -191,6 +198,11 @@ namespace Litenbib.Models
                 { OnPropertyChanged(notification); }
             }
         }
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            Debug.WriteLine("Changing" + propertyName);
+        }
 
         public static BibtexEntry FromDOI(string doi)
         {
@@ -213,11 +225,6 @@ namespace Litenbib.Models
                 s += $" = {{{kvp.Value}}},\r\n";
             }
             return s + "}\r\n";
-        }
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

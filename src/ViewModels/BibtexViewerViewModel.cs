@@ -1,4 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Avalonia.Controls;
+using Avalonia.Controls.Selection;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Litenbib.Models;
 using System;
 using System.Collections.Generic;
@@ -12,6 +14,7 @@ namespace Litenbib.ViewModels
 {
     public partial class BibtexViewerViewModel: ViewModelBase
     {
+        public bool AllSelected {  get; set; }
         public ObservableCollection<BibtexEntry> BibtexEntries { get; set; }
 
         [ObservableProperty]
@@ -20,7 +23,7 @@ namespace Litenbib.ViewModels
         [ObservableProperty]
         private int _selectedIndex;
 
-        public ObservableCollection<string> TypeList
+        public static ObservableCollection<string> TypeList
         {
             get => ["Article", "Book", "Booklet", "Conference",
                 "InBook", "InCollection", "InProceedings", "Manual",
@@ -34,7 +37,7 @@ namespace Litenbib.ViewModels
             _showingEntry = new("", "");
         }
 
-        internal void ChangeShowing(int i)
+        public void ChangeShowing(int i)
         {
             if (i < 0 || i >= BibtexEntries.Count) { return; }
             ShowingEntry = BibtexEntries[i];

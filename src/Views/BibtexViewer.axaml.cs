@@ -10,16 +10,18 @@ namespace Litenbib.Views;
 
 public partial class BibtexViewer : UserControl
 {
+    private readonly BibtexViewerViewModel viewModel;
     public BibtexViewer()
     {
         InitializeComponent();
-        DataContext = new BibtexViewerViewModel();
+        viewModel = new BibtexViewerViewModel();
+        DataContext = viewModel;
     }
 
     // 选中事件
     private void DataGrid_SelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
         if (sender == null || DataContext == null) { return; }
-        ((BibtexViewerViewModel)DataContext).ChangeShowing(((DataGrid)sender).SelectedIndex);
+        viewModel.ChangeShowing(((DataGrid)sender).SelectedIndex);
     }
 }
