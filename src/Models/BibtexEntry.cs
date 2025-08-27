@@ -201,7 +201,7 @@ namespace Litenbib.Models
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            Debug.WriteLine("Changing" + propertyName);
+            Debug.WriteLine("Changing " + propertyName);
         }
 
         public static BibtexEntry FromDOI(string doi)

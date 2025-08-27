@@ -20,8 +20,6 @@ namespace Litenbib.ViewModels
         [ObservableProperty]
         private BibtexEntry _showingEntry;
 
-        [ObservableProperty]
-        private int _selectedIndex;
 
         public static ObservableCollection<string> TypeList
         {
@@ -37,11 +35,10 @@ namespace Litenbib.ViewModels
             _showingEntry = new("", "");
         }
 
-        public void ChangeShowing(int i)
+        public void ChangeShowing(object i)
         {
-            if (i < 0 || i >= BibtexEntries.Count) { return; }
-            ShowingEntry = BibtexEntries[i];
-            SelectedIndex = i;
+            if (i is not BibtexEntry entry) { return; }
+            ShowingEntry = entry;
         }
     }
 }
