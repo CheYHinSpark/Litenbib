@@ -38,14 +38,14 @@
     
     <Grid Name="RootGrid">
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="2*"/>
+			<ColumnDefinition Width="*"/>
 			<ColumnDefinition Width="Auto"/>
-			<ColumnDefinition Width="0" MaxWidth="800" MinWidth="0"/>
+			<ColumnDefinition Width="0" MaxWidth="0" MinWidth="0"/>
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
-			<RowDefinition Height="2*"/>
+			<RowDefinition Height="*"/>
 			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="0" MaxHeight="500" MinHeight="0"/>
+			<RowDefinition Height="0" MaxHeight="0" MinHeight="0"/>
 		</Grid.RowDefinitions>
 
 		<!--bib数据列表-->
@@ -79,7 +79,7 @@
                 <DataGridTextColumn Header="Author/Editor" Binding="{CompiledBinding Author_Editor}" Width="1*"/>
                 <DataGridTextColumn Header="Title" Binding="{CompiledBinding Title_Show}" Width="3*"/>
                 <DataGridTextColumn Header="Journal/Booktitle" Binding="{CompiledBinding Journal_Booktitle}" Width="1*"/>
-                <DataGridTextColumn Header="Year" Binding="{CompiledBinding Year_Show}" Width="Auto"/>
+                <DataGridTextColumn Header="Year" Binding="{CompiledBinding Year_Show}" Width="Auto" CanUserResize="False"/>
             </DataGrid.Columns>
         </DataGrid>
         

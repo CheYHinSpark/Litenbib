@@ -19,6 +19,7 @@ public partial class BibtexViewer : UserControl
     public BibtexViewer()
     {
         InitializeComponent();
+
         viewModel = new BibtexViewerViewModel();
         DataContext = viewModel;
     }
@@ -28,19 +29,18 @@ public partial class BibtexViewer : UserControl
     {
         if (sender == null || DataContext == null) { return; }
         viewModel.ChangeShowing(((DataGrid)sender).SelectedItem);
-        ChangeLayout();
-        isDetailShowing = true;
+        ShowDetail();
     }
 
 
-    private void ChangeLayout()
+    private void ShowDetail()
     {
         if (isColumns)
         {
-            RootGrid.RowDefinitions[2].Height = GridLength.Auto;
             RootGrid.RowDefinitions[2].MinHeight = 0;
-            RootGrid.ColumnDefinitions[2].Width = GridLength.Star;
+            RootGrid.RowDefinitions[2].MaxHeight = 0;
             RootGrid.ColumnDefinitions[2].MinWidth = 400;
+            RootGrid.ColumnDefinitions[2].MaxWidth = 800;
             Grid.SetRow(Splitter, 0);
             Grid.SetRow(DetailPanel, 0);
             Grid.SetColumn(Splitter, 1);
@@ -48,37 +48,52 @@ public partial class BibtexViewer : UserControl
         }
         else
         {
-            RootGrid.RowDefinitions[2].Height = GridLength.Star;
             RootGrid.RowDefinitions[2].MinHeight = 250;
-            RootGrid.ColumnDefinitions[2].Width = GridLength.Auto;
+            RootGrid.RowDefinitions[2].MaxHeight = 500;
             RootGrid.ColumnDefinitions[2].MinWidth = 0;
+            RootGrid.ColumnDefinitions[2].MaxWidth = 0;
             Grid.SetRow(Splitter, 1);
             Grid.SetRow(DetailPanel, 2);
             Grid.SetColumn(Splitter, 0);
             Grid.SetColumn(DetailPanel, 0);
         }
+        isDetailShowing = true;
+    }
+
+    private void CloseDetail()
+    {
+        RootGrid.RowDefinitions[2].MinHeight = 0;
+        RootGrid.RowDefinitions[2].MaxHeight = 0;
+        RootGrid.ColumnDefinitions[2].MinWidth = 0;
+        RootGrid.ColumnDefinitions[2].MaxWidth = 0;
+        isDetailShowing = false;
     }
 
     private void ChangeButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         isColumns = !isColumns;
-        ChangeLayout();
+        ShowDetail();
     }
     private void CloseButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        RootGrid.RowDefinitions[2].MinHeight = 0;
-        RootGrid.RowDefinitions[2].Height = GridLength.Parse("0");
-        RootGrid.ColumnDefinitions[2].MinWidth = 0;
-        RootGrid.ColumnDefinitions[2].Width = GridLength.Parse("0");
-        isDetailShowing = false;
+        CloseDetail();
     }
 
     private void GridSplitter_DragDelta(object? sender, Avalonia.Input.VectorEventArgs e)
     {
-        if (isDetailShowing == false)
+        if (isColumns)
         {
-            isDetailShowing = true;
-            ChangeLayout();
+            if (isDetailShowing)
+            { if (e.Vector.X > 400 * 0.6) { CloseDetail(); } }
+            else
+            { if (e.Vector.X < - 400 * 0.6) { ShowDetail(); } }
+        }
+        else
+        {
+            if (isDetailShowing)
+            { if (e.Vector.Y > 250 * 0.6) { CloseDetail(); } }
+            else
+            { if (e.Vector.Y < -250 * 0.6) { ShowDetail(); } }
         }
     }
 }
