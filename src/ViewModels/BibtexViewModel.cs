@@ -12,8 +12,10 @@ using System.Threading.Tasks;
 
 namespace Litenbib.ViewModels
 {
-    public partial class BibtexViewerViewModel: ViewModelBase
+    public partial class BibtexViewModel: ViewModelBase
     {
+        public string Header { get; set; }
+
         public bool AllSelected {  get; set; }
         public ObservableCollection<BibtexEntry> BibtexEntries { get; set; }
 
@@ -29,8 +31,10 @@ namespace Litenbib.ViewModels
                 "TechReport", "Unpublished"];
         }
         
-        public BibtexViewerViewModel()
+        public BibtexViewModel()
         {
+            Debug.WriteLine(123);
+            Header = "refs.bib";
             BibtexEntries = new ObservableCollection<BibtexEntry>(BibtexParser.Parse(BibFile.Read("refs.bib")));
             _showingEntry = new("", "");
         }

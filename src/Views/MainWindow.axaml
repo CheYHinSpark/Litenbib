@@ -5,48 +5,89 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="720"
-        x:Class="Litenbib.Views.MainWindow"
+        Name="LitbibMainWindow"
+		x:Class="Litenbib.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
         Title="Litenbib">
-	<Window.Styles>
-		<Style Selector="Window">
-			<Setter Property="TransparencyLevelHint" Value="AcrylicBlur"/>
-			<Setter Property="Background" Value="#80000000"/>
-			<Setter Property="SystemDecorations" Value="Full"/>
-			<Setter Property="ExtendClientAreaToDecorationsHint" Value="True"/>
-			<Setter Property="ExtendClientAreaChromeHints" Value="NoChrome"/>
-			<Setter Property="ExtendClientAreaTitleBarHeightHint" Value="-1"/>
-			<Setter Property="FontSize" Value="12"/>
-		</Style>
-		<Style Selector="Button">
-			<Setter Property="HorizontalContentAlignment" Value="Center"/>
-			<Setter Property="VerticalContentAlignment" Value="Center"/>
-			<Setter Property="BorderThickness" Value="0"/>
-			<Setter Property="CornerRadius" Value="0"/>
-			<Setter Property="Height" Value="{Binding HeaderHeight}"/>
-			<Setter Property="Width" Value="{Binding HeaderHeight}"/>
-		</Style>
-	</Window.Styles>
+    <Window.Styles>
+        <Style Selector="Window">
+            <Setter Property="TransparencyLevelHint" Value="AcrylicBlur"/>
+            <Setter Property="Background" Value="#80000000"/>
+            <Setter Property="SystemDecorations" Value="Full"/>
+            <Setter Property="ExtendClientAreaToDecorationsHint" Value="True"/>
+            <Setter Property="ExtendClientAreaChromeHints" Value="NoChrome"/>
+            <Setter Property="ExtendClientAreaTitleBarHeightHint" Value="-1"/>
+            <Setter Property="FontSize" Value="12"/>
+        </Style>
+        <Style Selector="Button">
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="CornerRadius" Value="0"/>
+            <Setter Property="Height" Value="{Binding HeaderHeight}"/>
+            <Setter Property="Width" Value="{Binding HeaderHeight}"/>
+        </Style>
+    </Window.Styles>
 
     <Design.DataContext>
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-	<Grid Name="RootGrid" RowDefinitions="Auto, *"
-		  Margin="{Binding $parent[Window].OffScreenMargin}">
-		<!--header-->
-		<Grid Height="{Binding HeaderHeight}"
-			  PointerPressed="TitleBar_PointerPressed">
-			<TextBlock Name="TitleText" Text="Litenbib"
-					   HorizontalAlignment="Center" VerticalAlignment="Center"/>
-			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-				<Button Name="MinButton" Click="TitleButton_Click">-</Button>
-				<Button Name="MaxButton" Click="TitleButton_Click">o</Button>
-				<Button Name="CloseButton" Click="TitleButton_Click">x</Button>
-			</StackPanel>
-		</Grid>
-		<!--content-->
-		<v:BibtexViewer Margin="4" Grid.Row="1"/>
-	</Grid>
+    <Grid Name="RootGrid" RowDefinitions="Auto, *"
+          Margin="{Binding $parent[Window].OffScreenMargin}">
+        <!--header-->
+        <Grid Height="{Binding HeaderHeight}"
+              PointerPressed="TitleBar_PointerPressed">
+            <StackPanel Orientation="Horizontal">
+                <Menu>
+                    <MenuItem Header="文件">
+						<MenuItem Header="新建"/>
+						<MenuItem Header="打开..."
+								  CommandParameter="{Binding $parent[Window]}"
+								  Command="{Binding OpenFileCommand}"/>
+						<MenuItem Header="保存"/>
+                    </MenuItem>
+                </Menu>
+				<Button Command="{Binding OpenFileCommand}"
+						CommandParameter="{Binding $parent[Window]}">
+					ajcis
+				</Button>
+            </StackPanel>
+            <TextBlock Name="TitleText" Text="Litenbib"
+                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                <Button Name="MinButton" Click="TitleButton_Click">-</Button>
+                <Button Name="MaxButton" Click="TitleButton_Click">o</Button>
+                <Button Name="CloseButton" Click="TitleButton_Click">x</Button>
+            </StackPanel>
+        </Grid>
+        <!--content-->
+		<TabControl Grid.Row="1" ItemsSource="{Binding BibtexViewers}">
+			<!-- Tab Header -->
+			<TabControl.ItemTemplate>
+				<DataTemplate>
+					<StackPanel Orientation="Horizontal">
+						<TextBlock Text="{Binding Header}" Margin="0,0,5,0"
+								   VerticalAlignment="Center"
+								   FontSize="{Binding $parent[Window].FontSize}"/>
+						<Button Content="×"
+								Command="{Binding #LitbibMainWindow.DataContext.CloseTabCommand}"
+                                CommandParameter="{Binding}"/>
+					</StackPanel>
+				</DataTemplate>
+			</TabControl.ItemTemplate>
+
+			<!-- Tab 内容 -->
+			<TabControl.ContentTemplate>
+				<DataTemplate>
+					<TransitioningContentControl Content="{Binding}">
+						<TransitioningContentControl.PageTransition>
+							<CrossFade Duration="0:0:0.3"/>
+						</TransitioningContentControl.PageTransition>
+					</TransitioningContentControl>
+				</DataTemplate>
+			</TabControl.ContentTemplate>
+		</TabControl>
+    </Grid>
 </Window>

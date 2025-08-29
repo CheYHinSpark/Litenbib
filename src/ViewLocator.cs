@@ -10,8 +10,7 @@ namespace Litenbib
 
         public Control? Build(object? param)
         {
-            if (param is null)
-                return null;
+            if (param is null) { return null; }
 
             var name = param.GetType().FullName!.Replace("ViewModel", "View", StringComparison.Ordinal);
             var type = Type.GetType(name);
@@ -25,8 +24,6 @@ namespace Litenbib
         }
 
         public bool Match(object? data)
-        {
-            return data is ViewModelBase;
-        }
+        { return data is ViewModelBase; }
     }
 }

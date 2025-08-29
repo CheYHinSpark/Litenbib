@@ -5,8 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="720"
-             x:DataType="vm:BibtexViewerViewModel"
-             x:Class="Litenbib.Views.BibtexViewer">
+             x:DataType="vm:BibtexViewModel"
+             x:Class="Litenbib.Views.BibtexView">
 	<UserControl.Resources>
 		<m:TextToBackgroundConverter x:Key="TextToBackgroundConverter"/>
 	</UserControl.Resources>

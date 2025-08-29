@@ -8,27 +8,22 @@ using System.Diagnostics;
 
 namespace Litenbib.Views;
 
-public partial class BibtexViewer : UserControl
+public partial class BibtexView : UserControl
 {
-    private readonly BibtexViewerViewModel viewModel;
-
     private bool isColumns = true;
 
     private bool isDetailShowing = false;
 
-    public BibtexViewer()
+    public BibtexView()
     {
         InitializeComponent();
-
-        viewModel = new BibtexViewerViewModel();
-        DataContext = viewModel;
     }
 
     // 选中事件
     private void DataGrid_SelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
         if (sender == null || DataContext == null) { return; }
-        viewModel.ChangeShowing(((DataGrid)sender).SelectedItem);
+        ((BibtexViewModel)DataContext).ChangeShowing(((DataGrid)sender).SelectedItem);
         ShowDetail();
     }
 
