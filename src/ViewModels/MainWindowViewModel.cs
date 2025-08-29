@@ -2,6 +2,7 @@
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.Input;
 using Litenbib.Models;
+using Litenbib.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -16,27 +17,27 @@ namespace Litenbib.ViewModels
     {
         public int HeaderHeight { get; } = 40;
 
-        public ObservableCollection<BibtexViewModel>? BibtexViewers { get; }
+        public ObservableCollection<BibtexViewModel> BibtexViewers { get; set; }
 
         public MainWindowViewModel()
         {
-            BibtexViewers = [new BibtexViewModel()];
+            BibtexViewers = [];
         }
 
         [RelayCommand]
-        private static async Task OpenFile(Window? window)
+        private async Task OpenFile(Window? window)
         {
             if (window == null) { return; }
             //// 启动异步操作以打开对话框。
             var files = await window.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
             {
-                Title = "Open Text File",
+                Title = "Open BibTeX File",
                 AllowMultiple = false,
                 FileTypeFilter =
                 [
                     new FilePickerFileType("BibTeX Files")
                     {
-                        Patterns = ["*.bib"],
+                        Patterns = ["*.bib"]
                     },
                     FilePickerFileTypes.All
                 ]
@@ -44,11 +45,13 @@ namespace Litenbib.ViewModels
 
             foreach (var file in files)
             {
+                //BibtexViewers.Add(new BibtexViewModel(file.Path.AbsolutePath));
                 // 打开第一个文件的读取流。
                 await using var stream = await file.OpenReadAsync();
                 using var streamReader = new StreamReader(stream);
-                // 将文件的所有内容作为文本读取。
+                //// 将文件的所有内容作为文本读取。
                 var fileContent = await streamReader.ReadToEndAsync();
+                BibtexViewers.Add(new BibtexViewModel(file.Name, fileContent));
             }
 
             //// 从当前控件获取 TopLevel。或者，您也可以使用 Window 引用。
@@ -76,6 +79,23 @@ namespace Litenbib.ViewModels
             if (BibtexViewers == null) { return; }
             if (tab != null && BibtexViewers.Contains(tab))
             { BibtexViewers.Remove(tab); }
+        }
+
+        [RelayCommand]
+        private async Task AddBibtexEntry(Window window)
+        {
+            // 创建对话框实例，并传入参数
+            var dialog = new AddEntryWindow();
+
+            // 5. 显示对话框并等待结果 (ShowDialog 需要传入父窗口引用)
+            var result = await dialog.ShowDialog<bool>(window); // 等待对话框关闭并获取 DialogResult
+
+            if (result == true) // 如果用户点击了 OK
+            {
+                // 通过对话框的公共属性获取返回值
+                //string modifiedName = dialog.EditedUserName;
+                // 使用 modifiedName 做后续处理...
+            }
         }
     }
 }

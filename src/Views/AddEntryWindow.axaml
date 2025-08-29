@@ -1,0 +1,37 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:vm="using:Litenbib.ViewModels"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="600"
+		Width="600" Height="600" CanResize="False"
+		WindowStartupLocation="CenterScreen"
+        x:Class="Litenbib.Views.AddEntryWindow"
+        x:DataType="vm:AddEntryViewModel"
+        Title="Add Entry">
+	<Window.Styles>
+		<Style Selector="Button.window">
+			<Setter Property="HorizontalContentAlignment" Value="Center"/>
+			<Setter Property="VerticalContentAlignment" Value="Center"/>
+			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="CornerRadius" Value="0"/>
+			<Setter Property="Height" Value="{Binding HeaderHeight}"/>
+			<Setter Property="Width" Value="{Binding HeaderHeight}"/>
+		</Style>
+	</Window.Styles>
+	
+	<Design.DataContext>
+		<vm:AddEntryViewModel/>
+	</Design.DataContext>
+
+	<Grid RowDefinitions="Auto, *">
+		<StackPanel Orientation="Horizontal"
+					HorizontalAlignment="Right">
+			<Button Name="MinButton" Click="TitleButton_Click" Classes="window">-</Button>
+			<Button Name="CloseButton" Click="TitleButton_Click" Classes="window">x</Button>
+		</StackPanel>
+		<Grid Grid.Row="1">
+			
+		</Grid>
+	</Grid>
+</Window>

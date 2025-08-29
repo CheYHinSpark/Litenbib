@@ -78,25 +78,25 @@
 
     <Style Selector="TextBox">
         <Setter Property="Padding" Value="6"/>
-		<Setter Property="MinHeight" Value="20"/>
+        <Setter Property="MinHeight" Value="20"/>
         <Setter Property="Template">
             <ControlTemplate>
                 <DataValidationErrors>
                     <Panel>
-						<Border Name="PART_BorderElement"
+                        <Border Name="PART_BorderElement"
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 CornerRadius="{TemplateBinding CornerRadius}"
                                 MinWidth="{TemplateBinding MinWidth}"
                                 MinHeight="{TemplateBinding MinHeight}"/>
-						<ScrollViewer Name="PART_ScrollViewer" Margin="{TemplateBinding Padding}"
+                        <ScrollViewer Name="PART_ScrollViewer" Margin="{TemplateBinding Padding}"
                                       HorizontalScrollBarVisibility="{TemplateBinding (ScrollViewer.HorizontalScrollBarVisibility)}"
                                       VerticalScrollBarVisibility="{TemplateBinding (ScrollViewer.VerticalScrollBarVisibility)}"
                                       IsScrollChainingEnabled="{TemplateBinding (ScrollViewer.IsScrollChainingEnabled)}"
                                       AllowAutoHide="{TemplateBinding (ScrollViewer.AllowAutoHide)}"
                                       BringIntoViewOnFocusChange="{TemplateBinding (ScrollViewer.BringIntoViewOnFocusChange)}">
-							<TextPresenter Name="PART_TextPresenter"
+                            <TextPresenter Name="PART_TextPresenter"
                                            Text="{TemplateBinding Text, Mode=TwoWay}"
                                            CaretBlinkInterval="{TemplateBinding CaretBlinkInterval}"
                                            CaretIndex="{TemplateBinding CaretIndex}"
@@ -113,12 +113,12 @@
                                            CaretBrush="{TemplateBinding CaretBrush}"
                                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
-							<ScrollViewer.Styles>
-								<Style Selector="ScrollContentPresenter#PART_ContentPresenter">
-									<Setter Property="Cursor" Value="IBeam" />
-								</Style>
-							</ScrollViewer.Styles>
-						</ScrollViewer>
+                            <ScrollViewer.Styles>
+                                <Style Selector="ScrollContentPresenter#PART_ContentPresenter">
+                                    <Setter Property="Cursor" Value="IBeam" />
+                                </Style>
+                            </ScrollViewer.Styles>
+                        </ScrollViewer>
                     </Panel>
                 </DataValidationErrors>
             </ControlTemplate>
@@ -126,71 +126,71 @@
     </Style>
     
     <Style Selector="ComboBox">
-		<Setter Property="MinHeight" Value="28"/>
-		<Setter Property="Padding" Value="4"/>
-		<Setter Property="VerticalContentAlignment" Value="Center"/>
-		<Setter Property="Template">
-			<ControlTemplate>
-				<DataValidationErrors>
-					<Grid ColumnDefinitions="*,24">
-						<Border x:Name="Background"
-								Grid.ColumnSpan="2"
-								Background="{TemplateBinding Background}"
-								BorderBrush="{TemplateBinding BorderBrush}"
-								BorderThickness="{TemplateBinding BorderThickness}"
-								CornerRadius="{TemplateBinding CornerRadius}"
-								MinWidth="{DynamicResource ComboBoxThemeMinWidth}" />
-						<ContentControl x:Name="ContentPresenter"
-										Content="{TemplateBinding SelectionBoxItem}"
-										Grid.Column="0"
-										Margin="{TemplateBinding Padding}"
-										HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-										ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
-										VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
-						<PathIcon x:Name="DropDownGlyph"
-								  Grid.Column="1"
-								  UseLayoutRounding="False"
-								  IsHitTestVisible="False"
-								  Height="12"
-								  Width="12"
-								  Margin="0,0,10,0"
-								  HorizontalAlignment="Right"
-								  VerticalAlignment="Center"
-								  Foreground="{DynamicResource ComboBoxDropDownGlyphForeground}"
-								  Data="M1939 486L2029 576L1024 1581L19 576L109 486L1024 1401L1939 486Z"/>
-						<Popup x:Name="PART_Popup"
-							   WindowManagerAddShadowHint="False"
-							   IsOpen="{TemplateBinding IsDropDownOpen, Mode=TwoWay}"
-							   MinWidth="{Binding Bounds.Width, RelativeSource={RelativeSource TemplatedParent}}"
-							   MaxHeight="{TemplateBinding MaxDropDownHeight}"
-							   PlacementTarget="Background"
-							   IsLightDismissEnabled="True"
-							   InheritsTransform="True">
-							<Border x:Name="PopupBorder"
-									Background="{DynamicResource ComboBoxDropDownBackground}"
-									BorderBrush="{DynamicResource ComboBoxDropDownBorderBrush}"
-									BorderThickness="{DynamicResource ComboBoxDropdownBorderThickness}"
-									Padding="{DynamicResource ComboBoxDropdownBorderPadding}"
-									HorizontalAlignment="Stretch"
-									CornerRadius="{DynamicResource OverlayCornerRadius}">
-								<ScrollViewer HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
-											  VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
-											  IsDeferredScrollingEnabled="{TemplateBinding (ScrollViewer.IsDeferredScrollingEnabled)}">
-									<ItemsPresenter Name="PART_ItemsPresenter"
-													Margin="{DynamicResource ComboBoxDropdownContentMargin}"
-													ItemsPanel="{TemplateBinding ItemsPanel}" />
-								</ScrollViewer>
-							</Border>
-						</Popup>
-					</Grid>
-				</DataValidationErrors>
-			</ControlTemplate>
-		</Setter>
+        <Setter Property="MinHeight" Value="28"/>
+        <Setter Property="Padding" Value="4"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <DataValidationErrors>
+                    <Grid ColumnDefinitions="*,24">
+                        <Border x:Name="Background"
+                                Grid.ColumnSpan="2"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="{TemplateBinding CornerRadius}"
+                                MinWidth="{DynamicResource ComboBoxThemeMinWidth}" />
+                        <ContentControl x:Name="ContentPresenter"
+                                        Content="{TemplateBinding SelectionBoxItem}"
+                                        Grid.Column="0"
+                                        Margin="{TemplateBinding Padding}"
+                                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                        ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        <PathIcon x:Name="DropDownGlyph"
+                                  Grid.Column="1"
+                                  UseLayoutRounding="False"
+                                  IsHitTestVisible="False"
+                                  Height="12"
+                                  Width="12"
+                                  Margin="0,0,10,0"
+                                  HorizontalAlignment="Right"
+                                  VerticalAlignment="Center"
+                                  Foreground="{DynamicResource ComboBoxDropDownGlyphForeground}"
+                                  Data="M1939 486L2029 576L1024 1581L19 576L109 486L1024 1401L1939 486Z"/>
+                        <Popup x:Name="PART_Popup"
+                               WindowManagerAddShadowHint="False"
+                               IsOpen="{TemplateBinding IsDropDownOpen, Mode=TwoWay}"
+                               MinWidth="{Binding Bounds.Width, RelativeSource={RelativeSource TemplatedParent}}"
+                               MaxHeight="{TemplateBinding MaxDropDownHeight}"
+                               PlacementTarget="Background"
+                               IsLightDismissEnabled="True"
+                               InheritsTransform="True">
+                            <Border x:Name="PopupBorder"
+                                    Background="{DynamicResource ComboBoxDropDownBackground}"
+                                    BorderBrush="{DynamicResource ComboBoxDropDownBorderBrush}"
+                                    BorderThickness="{DynamicResource ComboBoxDropdownBorderThickness}"
+                                    Padding="{DynamicResource ComboBoxDropdownBorderPadding}"
+                                    HorizontalAlignment="Stretch"
+                                    CornerRadius="{DynamicResource OverlayCornerRadius}">
+                                <ScrollViewer HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                                              VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
+                                              IsDeferredScrollingEnabled="{TemplateBinding (ScrollViewer.IsDeferredScrollingEnabled)}">
+                                    <ItemsPresenter Name="PART_ItemsPresenter"
+                                                    Margin="{DynamicResource ComboBoxDropdownContentMargin}"
+                                                    ItemsPanel="{TemplateBinding ItemsPanel}" />
+                                </ScrollViewer>
+                            </Border>
+                        </Popup>
+                    </Grid>
+                </DataValidationErrors>
+            </ControlTemplate>
+        </Setter>
     </Style>
-	<Style Selector="ComboBoxItem">
-		<Setter Property="Padding" Value="4"/>
-		<Setter Property="VerticalContentAlignment" Value="Center"/>
-	</Style>
+    <Style Selector="ComboBoxItem">
+        <Setter Property="Padding" Value="4"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
     
     <Style Selector="CheckBox">
         <Setter Property="Height" Value="20"/>
@@ -227,4 +227,44 @@
             </ControlTemplate>
         </Setter>
     </Style>
+
+    <Style Selector="TabItem">
+        <Setter Property="Height" Value="24"/>
+        <Setter Property="Padding" Value="0"/>
+		<Setter Property="HorizontalContentAlignment" Value="Center"/>
+		<Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Name="PART_LayoutRoot"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        Padding="{TemplateBinding Padding}">
+                    <!--<Panel>-->
+                        <ContentPresenter Name="PART_ContentPresenter"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          Content="{TemplateBinding Header}"
+                                          ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                          RecognizesAccessKey="True"/>
+                        <!--<Border Name="PART_SelectedPipe"
+                                Background="{DynamicResource TabItemHeaderSelectedPipeFill}"
+                                CornerRadius="{DynamicResource ControlCornerRadius}"
+                                IsVisible="False"/>-->
+                    <!--</Panel>-->
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+
+	<Style Selector="Window">
+		<Setter Property="TransparencyLevelHint" Value="AcrylicBlur"/>
+		<Setter Property="Background" Value="#80000000"/>
+		<Setter Property="SystemDecorations" Value="Full"/>
+		<Setter Property="ExtendClientAreaToDecorationsHint" Value="True"/>
+		<Setter Property="ExtendClientAreaChromeHints" Value="NoChrome"/>
+		<Setter Property="ExtendClientAreaTitleBarHeightHint" Value="-1"/>
+		<Setter Property="FontSize" Value="12"/>
+	</Style>
 </Styles>

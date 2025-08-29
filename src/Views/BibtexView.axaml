@@ -33,7 +33,7 @@
 	</UserControl.Styles>
 
     <Design.DataContext>
-        <vm:BibtexViewerViewModel/>
+        <vm:BibtexViewModel/>
     </Design.DataContext>
     
     <Grid Name="RootGrid">

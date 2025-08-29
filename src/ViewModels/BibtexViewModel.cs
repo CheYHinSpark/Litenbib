@@ -1,11 +1,14 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Controls.Selection;
+using Avalonia.Controls.Shapes;
+using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Litenbib.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,14 +33,28 @@ namespace Litenbib.ViewModels
                 "MastersThesis", "Misc", "PhdThesis", "Proceedings",
                 "TechReport", "Unpublished"];
         }
-        
+
         public BibtexViewModel()
         {
-            Debug.WriteLine(123);
             Header = "refs.bib";
             BibtexEntries = new ObservableCollection<BibtexEntry>(BibtexParser.Parse(BibFile.Read("refs.bib")));
             _showingEntry = new("", "");
         }
+        public BibtexViewModel(string path)
+        {
+            var list = path.Split('\\');
+            if (list.Length == 1) { list = path.Split('/'); }
+            Header = list[^1];
+            BibtexEntries = new ObservableCollection<BibtexEntry>(BibtexParser.Parse(BibFile.Read(path)));
+            _showingEntry = new("", "");
+        }
+        public BibtexViewModel(string header, string filecontent)
+        {
+            Header = header;
+            BibtexEntries = new ObservableCollection<BibtexEntry>(BibtexParser.Parse(filecontent));
+            _showingEntry = new("", "");
+        }
+
 
         public void ChangeShowing(object i)
         {

@@ -11,23 +11,14 @@
         Icon="/Assets/avalonia-logo.ico"
         Title="Litenbib">
     <Window.Styles>
-        <Style Selector="Window">
-            <Setter Property="TransparencyLevelHint" Value="AcrylicBlur"/>
-            <Setter Property="Background" Value="#80000000"/>
-            <Setter Property="SystemDecorations" Value="Full"/>
-            <Setter Property="ExtendClientAreaToDecorationsHint" Value="True"/>
-            <Setter Property="ExtendClientAreaChromeHints" Value="NoChrome"/>
-            <Setter Property="ExtendClientAreaTitleBarHeightHint" Value="-1"/>
-            <Setter Property="FontSize" Value="12"/>
-        </Style>
-        <Style Selector="Button">
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="CornerRadius" Value="0"/>
-            <Setter Property="Height" Value="{Binding HeaderHeight}"/>
-            <Setter Property="Width" Value="{Binding HeaderHeight}"/>
-        </Style>
+		<Style Selector="Button.window">
+			<Setter Property="HorizontalContentAlignment" Value="Center"/>
+			<Setter Property="VerticalContentAlignment" Value="Center"/>
+			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="CornerRadius" Value="0"/>
+			<Setter Property="Height" Value="{Binding HeaderHeight}"/>
+			<Setter Property="Width" Value="{Binding HeaderHeight}"/>
+		</Style>
     </Window.Styles>
 
     <Design.DataContext>
@@ -44,34 +35,44 @@
                     <MenuItem Header="文件">
 						<MenuItem Header="新建"/>
 						<MenuItem Header="打开..."
-								  CommandParameter="{Binding $parent[Window]}"
-								  Command="{Binding OpenFileCommand}"/>
+								  Command="{Binding OpenFileCommand}"
+								  CommandParameter="{Binding $parent[Window]}"/>
 						<MenuItem Header="保存"/>
                     </MenuItem>
+					<MenuItem Header="添加"
+							  Command="{Binding AddBibtexEntryCommand}"
+							  CommandParameter="{Binding $parent[Window]}"/>
                 </Menu>
-				<Button Command="{Binding OpenFileCommand}"
-						CommandParameter="{Binding $parent[Window]}">
-					ajcis
-				</Button>
             </StackPanel>
             <TextBlock Name="TitleText" Text="Litenbib"
                        HorizontalAlignment="Center" VerticalAlignment="Center"/>
             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-                <Button Name="MinButton" Click="TitleButton_Click">-</Button>
-                <Button Name="MaxButton" Click="TitleButton_Click">o</Button>
-                <Button Name="CloseButton" Click="TitleButton_Click">x</Button>
+                <Button Name="MinButton" Click="TitleButton_Click" Classes="window">-</Button>
+                <Button Name="MaxButton" Click="TitleButton_Click" Classes="window">o</Button>
+                <Button Name="CloseButton" Click="TitleButton_Click" Classes="window">x</Button>
             </StackPanel>
         </Grid>
+		<!--welcome-->
+		<!--<TextBlock Grid.Row="1" Text="Welcome to LitenBib"
+				   HorizontalAlignment="Center"
+				   VerticalAlignment="Center"
+				   FontSize="24"/>-->
         <!--content-->
 		<TabControl Grid.Row="1" ItemsSource="{Binding BibtexViewers}">
 			<!-- Tab Header -->
 			<TabControl.ItemTemplate>
 				<DataTemplate>
 					<StackPanel Orientation="Horizontal">
-						<TextBlock Text="{Binding Header}" Margin="0,0,5,0"
+						<TextBlock Text="{Binding Header}" Margin="4 0"
 								   VerticalAlignment="Center"
 								   FontSize="{Binding $parent[Window].FontSize}"/>
-						<Button Content="×"
+						<Button Content="x" Height="20"
+								FontSize="{Binding $parent[Window].FontSize}"
+								CornerRadius="10"
+								Width="20"
+								VerticalContentAlignment="Center"
+								Padding="0"
+								HorizontalContentAlignment="Center"
 								Command="{Binding #LitbibMainWindow.DataContext.CloseTabCommand}"
                                 CommandParameter="{Binding}"/>
 					</StackPanel>
