@@ -9,6 +9,7 @@
              x:Class="Litenbib.Views.BibtexView">
 	<UserControl.Resources>
 		<m:TextToBackgroundConverter x:Key="TextToBackgroundConverter"/>
+		<m:BibTypeConverter x:Key="BibTypeConverter"/>
 	</UserControl.Resources>
 
 	<UserControl.Styles>
@@ -19,10 +20,6 @@
 			<Setter Property="VerticalAlignment" Value="Center"/>
 			<Setter Property="FontSize" Value="{Binding $parent[Window].FontSize}"/>
 			<Setter Property="Margin" Value="8 0"/>
-		</Style>
-		<Style Selector="TextBlock.right">
-			<Setter Property="HorizontalAlignment" Value="Right"/>
-			<Setter Property="Margin" Value="4"/>
 		</Style>
 		<Style Selector="TextBox">
 			<Setter Property="AcceptsReturn" Value="True"/>
@@ -68,10 +65,10 @@
                     <DataGridTemplateColumn.Header>Type</DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-							<Border Margin="0 4" HorizontalAlignment="Stretch"
-									CornerRadius="12" Background="{CompiledBinding #TypeText.Text, Converter={StaticResource TextToBackgroundConverter}}">
-								<TextBlock Name="TypeText" Text="{CompiledBinding Type_Show}"
-										   HorizontalAlignment="Center"/>
+							<Border Margin="0 4" HorizontalAlignment="Stretch" CornerRadius="12"
+									Background="{CompiledBinding #TypeText.Text, Converter={StaticResource TextToBackgroundConverter}}">
+								<TextBlock Name="TypeText" HorizontalAlignment="Center"
+										   Text="{CompiledBinding Type_Show, Converter={StaticResource BibTypeConverter}}"/>
 							</Border>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -106,8 +103,8 @@
 					<ColumnDefinition Width="Auto"/>
 				</Grid.ColumnDefinitions>
 				<ComboBox HorizontalAlignment="Stretch"
-                        ItemsSource="{CompiledBinding TypeList}"
-                        SelectedItem="{CompiledBinding ShowingEntry.Type}"/>
+                          ItemsSource="{CompiledBinding TypeList}"
+                          SelectedItem="{CompiledBinding ShowingEntry.Type, Converter={StaticResource BibTypeConverter}}"/>
 				<Button Grid.Column="1" Click="ChangeButton_Click">c</Button>
 				<Button Grid.Column="2" Click="CloseButton_Click">x</Button>
 			</Grid>

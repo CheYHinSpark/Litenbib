@@ -1,5 +1,6 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Platform.Storage;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Litenbib.Models;
 using Litenbib.Views;
@@ -18,6 +19,9 @@ namespace Litenbib.ViewModels
         public int HeaderHeight { get; } = 40;
 
         public ObservableCollection<BibtexViewModel> BibtexViewers { get; set; }
+
+        [ObservableProperty]
+        private BibtexViewModel? _selectecdBibtex;
 
         public MainWindowViewModel()
         {
@@ -84,18 +88,13 @@ namespace Litenbib.ViewModels
         [RelayCommand]
         private async Task AddBibtexEntry(Window window)
         {
-            // 创建对话框实例，并传入参数
-            var dialog = new AddEntryWindow();
-
-            // 5. 显示对话框并等待结果 (ShowDialog 需要传入父窗口引用)
-            var result = await dialog.ShowDialog<bool>(window); // 等待对话框关闭并获取 DialogResult
-
-            if (result == true) // 如果用户点击了 OK
+            if (SelectecdBibtex == null)
             {
-                // 通过对话框的公共属性获取返回值
-                //string modifiedName = dialog.EditedUserName;
-                // 使用 modifiedName 做后续处理...
+                Debug.WriteLine("No opened bib file");
+                return;
             }
+            // 创建对话框实例，并传入参数
+            await SelectecdBibtex.AddBibtexEntry(window);
         }
     }
 }

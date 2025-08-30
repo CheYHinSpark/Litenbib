@@ -4,34 +4,61 @@
         xmlns:vm="using:Litenbib.ViewModels"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="600"
-		Width="600" Height="600" CanResize="False"
-		WindowStartupLocation="CenterScreen"
+        Width="600" Height="600" CanResize="False"
+        WindowStartupLocation="CenterScreen"
         x:Class="Litenbib.Views.AddEntryWindow"
         x:DataType="vm:AddEntryViewModel"
         Title="Add Entry">
-	<Window.Styles>
-		<Style Selector="Button.window">
-			<Setter Property="HorizontalContentAlignment" Value="Center"/>
-			<Setter Property="VerticalContentAlignment" Value="Center"/>
-			<Setter Property="BorderThickness" Value="0"/>
-			<Setter Property="CornerRadius" Value="0"/>
-			<Setter Property="Height" Value="{Binding HeaderHeight}"/>
-			<Setter Property="Width" Value="{Binding HeaderHeight}"/>
+    <Window.Styles>
+        <Style Selector="Button.window">
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="CornerRadius" Value="0"/>
+            <Setter Property="Height" Value="{Binding HeaderHeight}"/>
+            <Setter Property="Width" Value="{Binding HeaderHeight}"/>
+        </Style>
+		<Style Selector="TextBox">
+			<Setter Property="AcceptsReturn" Value="True"/>
+			<Setter Property="AcceptsTab" Value="True"/>
+			<Setter Property="TextWrapping" Value="Wrap"/>
+			<Setter Property="FontFamily" Value="Consolas"/>
 		</Style>
-	</Window.Styles>
-	
-	<Design.DataContext>
-		<vm:AddEntryViewModel/>
-	</Design.DataContext>
+    </Window.Styles>
+    
+    <Design.DataContext>
+        <vm:AddEntryViewModel/>
+    </Design.DataContext>
 
-	<Grid RowDefinitions="Auto, *">
-		<StackPanel Orientation="Horizontal"
-					HorizontalAlignment="Right">
-			<Button Name="MinButton" Click="TitleButton_Click" Classes="window">-</Button>
-			<Button Name="CloseButton" Click="TitleButton_Click" Classes="window">x</Button>
-		</StackPanel>
-		<Grid Grid.Row="1">
-			
-		</Grid>
-	</Grid>
+    <Grid RowDefinitions="Auto, *">
+		<TextBlock HorizontalAlignment="Center"
+				   VerticalAlignment="Center">Add New BibTeX Entry</TextBlock>
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Right">
+            <Button Name="MinButton" Click="TitleButton_Click" Classes="window">-</Button>
+            <Button Name="CloseButton" Click="TitleButton_Click" Classes="window">x</Button>
+        </StackPanel>
+        <Grid Grid.Row="1"
+              RowDefinitions="Auto, *, Auto">
+            <Grid Margin="4" ColumnDefinitions="Auto,*,Auto">
+                <TextBlock Text="Add from DOI" Classes="right"/>
+                <TextBox Text="{Binding DoiText}"
+						 Grid.Column="1" MaxHeight="100" Margin="4 0"/>
+				<Button Grid.Column="2" Content="Parse"
+						Command="{Binding ParseDoiCommand}"/>
+            </Grid>
+            <TextBox Grid.Row="1" Margin="4"
+					 Text="{Binding BibtexText}"/>
+			<TextBlock Grid.Row="2" Margin="8 0"
+					   HorizontalAlignment="Left"
+					   VerticalAlignment="Center"
+					   Text="{Binding HintText}"/>
+            <StackPanel Grid.Row="2" Orientation="Horizontal"
+						Margin="4"
+                        HorizontalAlignment="Right">
+				<Button Content="Cancel" Click="CancelButton_Click"/>
+				<Button Content="Add" Click="AddButton_Click"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
 </Window>

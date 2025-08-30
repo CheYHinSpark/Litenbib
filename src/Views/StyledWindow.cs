@@ -29,7 +29,7 @@ namespace Litenbib.Views
                     }
                     break;
                 case "CloseButton":
-                    { Close(); }
+                    { this.Close(false); }
                     break;
             }
         }

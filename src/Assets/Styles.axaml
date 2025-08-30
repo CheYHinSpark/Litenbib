@@ -258,6 +258,14 @@
         </Setter>
     </Style>
 
+	<Style Selector="TextBlock">
+		<Setter Property="VerticalAlignment" Value="Center"/>
+	</Style>
+	<Style Selector="TextBlock.right">
+		<Setter Property="HorizontalAlignment" Value="Right"/>
+		<Setter Property="Margin" Value="4"/>
+	</Style>
+
 	<Style Selector="Window">
 		<Setter Property="TransparencyLevelHint" Value="AcrylicBlur"/>
 		<Setter Property="Background" Value="#80000000"/>
@@ -265,6 +273,6 @@
 		<Setter Property="ExtendClientAreaToDecorationsHint" Value="True"/>
 		<Setter Property="ExtendClientAreaChromeHints" Value="NoChrome"/>
 		<Setter Property="ExtendClientAreaTitleBarHeightHint" Value="-1"/>
-		<Setter Property="FontSize" Value="12"/>
+		<Setter Property="FontSize" Value="14"/>
 	</Style>
 </Styles>

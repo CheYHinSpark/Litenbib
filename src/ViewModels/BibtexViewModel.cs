@@ -4,6 +4,7 @@ using Avalonia.Controls.Shapes;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Litenbib.Models;
+using Litenbib.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -55,11 +56,27 @@ namespace Litenbib.ViewModels
             _showingEntry = new("", "");
         }
 
-
         public void ChangeShowing(object i)
         {
             if (i is not BibtexEntry entry) { return; }
             ShowingEntry = entry;
+        }
+
+        public async Task AddBibtexEntry(Window window)
+        {
+            AddEntryWindow dialog = new();
+
+            // 5. 显示对话框并等待结果 (ShowDialog 需要传入父窗口引用)
+            var result = await dialog.ShowDialog<bool>(window); // 等待对话框关闭并获取 DialogResult
+
+            if (result == true) // 如果用户点击了 OK
+            {
+                if (dialog.DataContext == null) { return; }
+                // 通过对话框的公共属性获取返回值
+                string bibtex = ((AddEntryViewModel)dialog.DataContext).BibtexText;
+                foreach (BibtexEntry entry in BibtexParser.Parse(bibtex))
+                { BibtexEntries.Add(entry); }
+            }
         }
     }
 }

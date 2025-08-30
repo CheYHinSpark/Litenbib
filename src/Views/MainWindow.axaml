@@ -58,7 +58,8 @@
 				   VerticalAlignment="Center"
 				   FontSize="24"/>-->
         <!--content-->
-		<TabControl Grid.Row="1" ItemsSource="{Binding BibtexViewers}">
+		<TabControl Grid.Row="1" ItemsSource="{Binding BibtexViewers}"
+					SelectedValue="{Binding SelectecdBibtex}">
 			<!-- Tab Header -->
 			<TabControl.ItemTemplate>
 				<DataTemplate>

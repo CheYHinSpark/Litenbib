@@ -32,9 +32,22 @@ namespace Litenbib.Models
         public static async Task<string> ResolveDoiOfficialAsync(string doi)
         {
             var url = $"https://doi.org/{doi}";
-            // also application/x-bibtex
             client.DefaultRequestHeaders.Add("Accept", "application/vnd.citationstyles.csl+json");
             return await client.GetStringAsync(url);
+        }
+
+        public static async Task<string?> Doi2BibTeXAsync(string doi)
+        {
+            try
+            {
+                var url = $"https://doi.org/{doi}";
+                client.DefaultRequestHeaders.Add("Accept", "application/x-bibtex");
+                return await client.GetStringAsync(url);
+            }
+            catch (HttpRequestException)
+            {
+                return null;
+            }
         }
 
         /// <summary> TODO：使用DataCite路径 https://support.datacite.org/docs/api </summary>
