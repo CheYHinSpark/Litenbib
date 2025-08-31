@@ -29,8 +29,11 @@ namespace Litenbib.ViewModels
                 filterText = value;
                 if (SelectecdBibtex != null)
                 { SelectecdBibtex.FilterText = filterText; }
+                OnPropertyChanged(nameof(IsSearchHintVisible));
             }
         }
+
+        public bool IsSearchHintVisible { get => filterText == string.Empty; }
 
         [ObservableProperty]
         private BibtexViewModel? _selectecdBibtex;

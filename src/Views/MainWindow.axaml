@@ -29,8 +29,16 @@
 					   VerticalAlignment="Stretch"
 					   Fill="{DynamicResource MainBackground}"
 					   PointerPressed="TitleBar_PointerPressed"/>
-			<TextBox Grid.Column="1" Text="{CompiledBinding FilterText}"
-					 VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+			<Panel Grid.Column="1">
+				<TextBox Text="{CompiledBinding FilterText}"
+						 VerticalAlignment="Center"/>
+				<TextBlock Text="Search or add..."
+						   Foreground="{DynamicResource DisabledForeground}"
+						   HorizontalAlignment="Center"
+						   IsHitTestVisible="False"
+						   IsVisible="{Binding IsSearchHintVisible}"/>
+			</Panel>
+
 
 			<StackPanel Orientation="Horizontal">
                 <Menu>

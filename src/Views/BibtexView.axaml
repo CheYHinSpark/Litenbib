@@ -28,10 +28,6 @@
             <Setter Property="Margin" Value="2"/>
         </Style>
     </UserControl.Styles>
-
-    <Design.DataContext>
-        <vm:BibtexViewModel/>
-    </Design.DataContext>
     
     <Grid Name="RootGrid">
         <Grid.ColumnDefinitions>
@@ -128,7 +124,8 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 

@@ -24,15 +24,16 @@ namespace Litenbib.ViewModels
         public string FullPath { get; set; }
 
         public bool AllSelected {  get; set; }
-        public ObservableCollection<BibtexEntry> BibtexEntries { get; set; }
 
-        private DataGridCollectionView _bibtexView;
-        public DataGridCollectionView BibtexView => _bibtexView;
+        public ObservableCollection<BibtexEntry> BibtexEntries { get; set; }
+        public DataGridCollectionView BibtexView { get; }
 
         [ObservableProperty]
         private BibtexEntry _showingEntry;
 
         private string filterText = string.Empty;
+        private string[] filters = [];
+
         public string FilterText
         {
             get => filterText;
@@ -40,6 +41,7 @@ namespace Litenbib.ViewModels
             {
                 if (filterText == value) { return; }
                 filterText = value;
+                filters = value.Split(' ');
                 BibtexView.Refresh();
             }
         }
@@ -58,7 +60,7 @@ namespace Litenbib.ViewModels
             Header = header;
             FullPath = fullPath;
             BibtexEntries = new ObservableCollection<BibtexEntry>(BibtexParser.Parse(filecontent));
-            _bibtexView = new(BibtexEntries)
+            BibtexView = new(BibtexEntries)
             {
                 Filter = entry => FilterBibtex(entry as BibtexEntry)
             };
@@ -90,8 +92,13 @@ namespace Litenbib.ViewModels
 
         private bool FilterBibtex(BibtexEntry? entry)
         {
-            if (FilterText.Length == 0) { return true; }
+            if (filterText.Length == 0) { return true; }
             if (entry == null) { return false; }
+            foreach (string s in filters)
+            {
+                if (!string.IsNullOrEmpty(s) && entry.BibTeX.Contains(s, StringComparison.OrdinalIgnoreCase))
+                { return true; }
+            }
             return false;
         }
     }
