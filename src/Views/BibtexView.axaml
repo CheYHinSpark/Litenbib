@@ -4,110 +4,116 @@
              xmlns:m="using:Litenbib.Models"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-			 mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="720"
+             mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="720"
              x:DataType="vm:BibtexViewModel"
              x:Class="Litenbib.Views.BibtexView">
-	<UserControl.Resources>
-		<m:TextToBackgroundConverter x:Key="TextToBackgroundConverter"/>
-		<m:BibTypeConverter x:Key="BibTypeConverter"/>
-	</UserControl.Resources>
+    <UserControl.Resources>
+        <m:TextToBackgroundConverter x:Key="TextToBackgroundConverter"/>
+        <m:BibTypeConverter x:Key="BibTypeConverter"/>
+    </UserControl.Resources>
 
-	<UserControl.Styles>
-		<Style Selector="ComboBox">
-			<Setter Property="Margin" Value="2"/>
-		</Style>
-		<Style Selector="TextBlock">
-			<Setter Property="VerticalAlignment" Value="Center"/>
-			<Setter Property="FontSize" Value="{Binding $parent[Window].FontSize}"/>
-			<Setter Property="Margin" Value="8 0"/>
-		</Style>
-		<Style Selector="TextBox">
-			<Setter Property="AcceptsReturn" Value="True"/>
-			<Setter Property="AcceptsTab" Value="True"/>
-			<Setter Property="TextWrapping" Value="Wrap"/>
-			<Setter Property="Margin" Value="2"/>
-		</Style>
-	</UserControl.Styles>
+    <UserControl.Styles>
+        <Style Selector="ComboBox">
+            <Setter Property="Margin" Value="2"/>
+        </Style>
+        <Style Selector="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="{Binding $parent[Window].FontSize}"/>
+            <Setter Property="Margin" Value="8 0"/>
+        </Style>
+        <Style Selector="TextBox">
+            <Setter Property="AcceptsReturn" Value="True"/>
+            <Setter Property="AcceptsTab" Value="True"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="Margin" Value="2"/>
+        </Style>
+    </UserControl.Styles>
 
     <Design.DataContext>
         <vm:BibtexViewModel/>
     </Design.DataContext>
     
     <Grid Name="RootGrid">
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="*"/>
-			<ColumnDefinition Width="Auto"/>
-			<ColumnDefinition Width="0" MaxWidth="0" MinWidth="0"/>
-		</Grid.ColumnDefinitions>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="*"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="0" MaxHeight="0" MinHeight="0"/>
-		</Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="0" MaxWidth="0" MinWidth="0"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="0" MaxHeight="0" MinHeight="0"/>
+        </Grid.RowDefinitions>
 
-		<!--bib数据列表-->
-        <DataGrid Margin="4" ItemsSource="{CompiledBinding BibtexEntries}"
+        <!--bib数据列表-->
+        <DataGrid Name="DataGridView" Margin="4" ItemsSource="{CompiledBinding BibtexView}"
                   CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True"
+                  IsReadOnly="True"
                   SelectionChanged="DataGrid_SelectionChanged"
-				  DragDrop.AllowDrop="True">
+                  DragDrop.AllowDrop="True">
             <DataGrid.Columns>
-                <DataGridTemplateColumn Width="40" CanUserResize="False">
+                <DataGridTemplateColumn Width="40" CanUserResize="False" IsReadOnly="False">
                     <DataGridTemplateColumn.Header>
-                        <CheckBox HorizontalAlignment="Center" IsChecked="{CompiledBinding AllSelected}"/>
+                        <CheckBox HorizontalAlignment="Center" IsChecked="{Binding AllSelected}"/>
                     </DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <CheckBox HorizontalAlignment="Center" IsChecked="{CompiledBinding Selected}" />
+                        <DataTemplate x:DataType="m:BibtexEntry">
+                            <CheckBox HorizontalAlignment="Center" IsChecked="{Binding Selected}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-				<DataGridTemplateColumn Width="Auto" CanUserResize="False">
+                <DataGridTemplateColumn Width="Auto" CanUserResize="False">
                     <DataGridTemplateColumn.Header>Type</DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-							<Border Margin="0 4" HorizontalAlignment="Stretch" CornerRadius="12"
-									Background="{CompiledBinding #TypeText.Text, Converter={StaticResource TextToBackgroundConverter}}">
-								<TextBlock Name="TypeText" HorizontalAlignment="Center"
-										   Text="{CompiledBinding Type_Show, Converter={StaticResource BibTypeConverter}}"/>
-							</Border>
+                        <DataTemplate x:DataType="m:BibtexEntry">
+                            <Border Margin="0 4" HorizontalAlignment="Stretch" CornerRadius="12"
+                                    Background="{CompiledBinding #TypeText.Text, Converter={StaticResource TextToBackgroundConverter}}">
+                                <TextBlock Name="TypeText" HorizontalAlignment="Center"
+                                           Text="{CompiledBinding Type, Converter={StaticResource BibTypeConverter}}"/>
+                            </Border>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn Header="Author/Editor" Binding="{CompiledBinding Author_Editor}" Width="1*"/>
-                <DataGridTextColumn Header="Title" Binding="{CompiledBinding Title_Show}" Width="3*"/>
-                <DataGridTextColumn Header="Journal/Booktitle" Binding="{CompiledBinding Journal_Booktitle}" Width="1*"/>
-                <DataGridTextColumn Header="Year" Binding="{CompiledBinding Year_Show}" Width="Auto" CanUserResize="False"/>
+                <DataGridTextColumn Header="Author/Editor" Binding="{CompiledBinding Author_Editor}"
+                                    x:DataType="m:BibtexEntry" Width="1*"/>
+                <DataGridTextColumn Header="Title" Binding="{CompiledBinding Title}"
+                                    x:DataType="m:BibtexEntry" Width="3*"/>
+                <DataGridTextColumn Header="Journal/Booktitle" Binding="{CompiledBinding Journal_Booktitle}"
+                                    x:DataType="m:BibtexEntry" Width="1*"/>
+                <DataGridTextColumn Header="Year" Binding="{CompiledBinding Year}"
+                                    x:DataType="m:BibtexEntry" Width="Auto"
+                                    CanUserResize="False"/>
             </DataGrid.Columns>
         </DataGrid>
         
         <GridSplitter Name="Splitter" Grid.Column="1"
-					  MinHeight="8" MinWidth="8" DragDelta="GridSplitter_DragDelta"/>
+                      MinHeight="8" MinWidth="8" DragDelta="GridSplitter_DragDelta"/>
         
         <!--entry详细数据-->
         
         <Grid Name="DetailPanel" Margin="4"
-			  Grid.Column="2" Grid.IsSharedSizeScope="True">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto" SharedSizeGroup="Key"/>
-				<ColumnDefinition Width="*"/>
-			</Grid.ColumnDefinitions>
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="*"/>
-			</Grid.RowDefinitions>
+              Grid.Column="2" Grid.IsSharedSizeScope="True">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" SharedSizeGroup="Key"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
             <TextBlock Text="Type" Classes="right"/>
-			<Grid Grid.Column="1">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="*"/>
-					<ColumnDefinition Width="Auto"/>
-					<ColumnDefinition Width="Auto"/>
-				</Grid.ColumnDefinitions>
-				<ComboBox HorizontalAlignment="Stretch"
+            <Grid Grid.Column="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <ComboBox HorizontalAlignment="Stretch"
                           ItemsSource="{CompiledBinding TypeList}"
                           SelectedItem="{CompiledBinding ShowingEntry.Type, Converter={StaticResource BibTypeConverter}}"/>
-				<Button Grid.Column="1" Click="ChangeButton_Click">c</Button>
-				<Button Grid.Column="2" Click="CloseButton_Click">x</Button>
-			</Grid>
+                <Button Grid.Column="1" Click="ChangeButton_Click">c</Button>
+                <Button Grid.Column="2" Click="CloseButton_Click">x</Button>
+            </Grid>
             <ScrollViewer Grid.Row="1" Grid.ColumnSpan="2">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -151,9 +157,15 @@
                     <TextBlock Text="Publisher" Classes="right" Grid.Row="6"/>
                     <TextBox Text="{CompiledBinding ShowingEntry.Publisher}" Grid.Row="6" Grid.Column="1"/>
                     <TextBlock Text="DOI" Classes="right" Grid.Row="7"/>
-                    <TextBox Text="{CompiledBinding ShowingEntry.DOI}" Grid.Row="7" Grid.Column="1"/>
+                    <Grid Grid.Row="7" Grid.Column="1" ColumnDefinitions="*, Auto">
+                        <TextBox Text="{CompiledBinding ShowingEntry.DOI}"/>
+                        <Button Content="v" Grid.Column="1"/>
+                    </Grid>
                     <TextBlock Text="File" Classes="right" Grid.Row="8"/>
                     <TextBox Text="{CompiledBinding ShowingEntry.File}" Grid.Row="8" Grid.Column="1"/>
+                    <TextBlock Text="BibTeX" Classes="right" Grid.Row="9"/>
+                    <TextBox Text="{CompiledBinding ShowingEntry.BibTeX}" Grid.Row="9" Grid.Column="1"
+                             FontFamily="Consolas"/>
                 </Grid>
             </ScrollViewer>
         </Grid>

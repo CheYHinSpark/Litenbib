@@ -20,8 +20,31 @@ namespace Litenbib.ViewModels
 
         public ObservableCollection<BibtexViewModel> BibtexViewers { get; set; }
 
+        private string filterText = string.Empty;
+        public string FilterText
+        {
+            get => filterText;
+            set
+            {
+                filterText = value;
+                if (SelectecdBibtex != null)
+                { SelectecdBibtex.FilterText = filterText; }
+            }
+        }
+
         [ObservableProperty]
         private BibtexViewModel? _selectecdBibtex;
+
+        partial void OnSelectecdBibtexChanged(BibtexViewModel? value)
+        {
+            // inform Commands to update
+            AddBibtexEntryCommand.NotifyCanExecuteChanged();
+            SaveFileCommand.NotifyCanExecuteChanged();
+
+            if (value != null)
+            { value.FilterText = filterText; }
+        }
+
 
         public MainWindowViewModel()
         {
@@ -55,7 +78,7 @@ namespace Litenbib.ViewModels
                 using var streamReader = new StreamReader(stream);
                 //// 将文件的所有内容作为文本读取。
                 var fileContent = await streamReader.ReadToEndAsync();
-                BibtexViewers.Add(new BibtexViewModel(file.Name, fileContent));
+                BibtexViewers.Add(new BibtexViewModel(file.Name, file.Path.AbsolutePath, fileContent));
             }
 
             //// 从当前控件获取 TopLevel。或者，您也可以使用 Window 引用。
@@ -85,7 +108,7 @@ namespace Litenbib.ViewModels
             { BibtexViewers.Remove(tab); }
         }
 
-        [RelayCommand]
+        [RelayCommand(CanExecute = nameof(CanAddBibtexEntry))]
         private async Task AddBibtexEntry(Window window)
         {
             if (SelectecdBibtex == null)
@@ -96,5 +119,14 @@ namespace Litenbib.ViewModels
             // 创建对话框实例，并传入参数
             await SelectecdBibtex.AddBibtexEntry(window);
         }
+
+        private bool CanAddBibtexEntry() => SelectecdBibtex != null;
+
+        [RelayCommand(CanExecute = nameof(CanSaveFile))]
+        private async Task SaveFile()
+        {
+
+        }
+        private bool CanSaveFile() => SelectecdBibtex != null;
     }
 }

@@ -11,10 +11,6 @@
         Title="Add Entry">
     <Window.Styles>
         <Style Selector="Button.window">
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="CornerRadius" Value="0"/>
             <Setter Property="Height" Value="{Binding HeaderHeight}"/>
             <Setter Property="Width" Value="{Binding HeaderHeight}"/>
         </Style>
@@ -36,7 +32,7 @@
         <StackPanel Orientation="Horizontal"
                     HorizontalAlignment="Right">
             <Button Name="MinButton" Click="TitleButton_Click" Classes="window">-</Button>
-            <Button Name="CloseButton" Click="TitleButton_Click" Classes="window">x</Button>
+            <Button Name="CloseButton" Click="TitleButton_Click" Classes="warning window">x</Button>
         </StackPanel>
         <Grid Grid.Row="1"
               RowDefinitions="Auto, *, Auto">

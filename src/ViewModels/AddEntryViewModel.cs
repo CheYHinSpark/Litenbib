@@ -35,17 +35,5 @@ namespace Litenbib.ViewModels
             BibtexText = x ?? "";
             HintText = x == null ? "Resolve failed." : "Resolve successed.";
         }
-
-        [RelayCommand]
-        private void Cancel()
-        {
-
-        }
-
-        [RelayCommand]
-        private void AddEntry()
-        {
-
-        }
     }
 }

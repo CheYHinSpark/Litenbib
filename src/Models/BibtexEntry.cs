@@ -24,7 +24,6 @@ namespace Litenbib.Models
 
         // showing fields
         public bool Selected { get; set; }
-        public string Type_Show { get => type; }
         public string Author_Editor
         {
             get
@@ -33,7 +32,6 @@ namespace Litenbib.Models
                 return author == "" ? GetValue(nameof(Editor)) : author;
             }
         }
-        public string Title_Show { get => GetValue("title"); }
         public string Journal_Booktitle
         {
             get
@@ -42,7 +40,6 @@ namespace Litenbib.Models
                 return journal == "" ? GetValue(nameof(Booktitle)) : journal;
             }
         }
-        public string Year_Show { get => GetValue("year"); }
 
         // editable fields
         public string Type
@@ -52,7 +49,6 @@ namespace Litenbib.Models
             {
                 type = value;
                 OnPropertyChanged(nameof(Type));
-                OnPropertyChanged(nameof(Type_Show));
             }
         }
         public string CitationKey
@@ -72,12 +68,12 @@ namespace Litenbib.Models
         public string Title
         {
             get => GetValue("title");
-            set => SetValue("title", value, [nameof(Title), nameof(Title_Show)]);
+            set => SetValue("title", value, [nameof(Title)]);
         }
         public string Year
         {
             get => GetValue("year");
-            set => SetValue("year", value, [nameof(Year), nameof(Year_Show)]);
+            set => SetValue("year", value, [nameof(Year)]);
         }
         public string Month
         {
@@ -184,6 +180,25 @@ namespace Litenbib.Models
         }
 
 
+        public string BibTeX
+        {
+            get
+            {
+                int maxFieldLength = 0;
+                foreach (var k in Fields.Keys)
+                { maxFieldLength = Math.Max(maxFieldLength, k.Length); }
+                string s = $"@{type}{{{citationKey},\r\n";
+                foreach (KeyValuePair<string, string> kvp in Fields)
+                {
+                    s += $"    {kvp.Key}";
+                    s += new string(' ', maxFieldLength - kvp.Key.Length);
+                    s += $" = {{{kvp.Value}}},\r\n";
+                }
+                return s + "}\r\n";
+            }
+        }
+
+
         public event PropertyChangedEventHandler? PropertyChanged;
 
         private string GetValue(string k)
@@ -201,6 +216,7 @@ namespace Litenbib.Models
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BibTeX)));
             Debug.WriteLine("Changing " + propertyName);
         }
 
@@ -210,21 +226,6 @@ namespace Litenbib.Models
             entry.Fields["doi"] = doi;
             // TODO: 解析DOI
             return entry;
-        }
-
-        public string ToBibtex()
-        {
-            int maxFieldLength = 0;
-            foreach (var k in Fields.Keys)
-            { maxFieldLength = Math.Max(maxFieldLength, k.Length); }
-            string s = $"@{type}{{{citationKey},\r\n";
-            foreach (KeyValuePair<string, string> kvp in Fields)
-            {
-                s += $"    {kvp.Key}";
-                s += new string(' ', maxFieldLength - kvp.Key.Length);
-                s += $" = {{{kvp.Value}}},\r\n";
-            }
-            return s + "}\r\n";
         }
     }
 }

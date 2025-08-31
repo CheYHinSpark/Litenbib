@@ -12,10 +12,6 @@
         Title="Litenbib">
     <Window.Styles>
 		<Style Selector="Button.window">
-			<Setter Property="HorizontalContentAlignment" Value="Center"/>
-			<Setter Property="VerticalContentAlignment" Value="Center"/>
-			<Setter Property="BorderThickness" Value="0"/>
-			<Setter Property="CornerRadius" Value="0"/>
 			<Setter Property="Height" Value="{Binding HeaderHeight}"/>
 			<Setter Property="Width" Value="{Binding HeaderHeight}"/>
 		</Style>
@@ -25,31 +21,36 @@
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-    <Grid Name="RootGrid" RowDefinitions="Auto, *"
-          Margin="{Binding $parent[Window].OffScreenMargin}">
+    <Grid Name="RootGrid" RowDefinitions="Auto, *">
         <!--header-->
-        <Grid Height="{Binding HeaderHeight}"
-              PointerPressed="TitleBar_PointerPressed">
-            <StackPanel Orientation="Horizontal">
+        <Grid Height="{Binding HeaderHeight}" ColumnDefinitions="*,*,*">
+			<Rectangle Grid.ColumnSpan="3"
+					   HorizontalAlignment="Stretch"
+					   VerticalAlignment="Stretch"
+					   Fill="{DynamicResource MainBackground}"
+					   PointerPressed="TitleBar_PointerPressed"/>
+			<TextBox Grid.Column="1" Text="{CompiledBinding FilterText}"
+					 VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+
+			<StackPanel Orientation="Horizontal">
                 <Menu>
-                    <MenuItem Header="文件">
-						<MenuItem Header="新建"/>
-						<MenuItem Header="打开..."
-								  Command="{Binding OpenFileCommand}"
-								  CommandParameter="{Binding $parent[Window]}"/>
-						<MenuItem Header="保存"/>
+                    <MenuItem Header="_File">
+						<MenuItem Header="_New"/>
+						<MenuItem Header="_Open..."
+								  Command="{CompiledBinding OpenFileCommand}"
+								  CommandParameter="{CompiledBinding $parent[Window]}"/>
+						<MenuItem Header="_Save"
+								  Command="{CompiledBinding SaveFileCommand}"/>
                     </MenuItem>
-					<MenuItem Header="添加"
-							  Command="{Binding AddBibtexEntryCommand}"
-							  CommandParameter="{Binding $parent[Window]}"/>
+					<MenuItem Header="_Add"
+							  Command="{CompiledBinding AddBibtexEntryCommand}"
+							  CommandParameter="{CompiledBinding $parent[Window]}"/>
                 </Menu>
             </StackPanel>
-            <TextBlock Name="TitleText" Text="Litenbib"
-                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Grid.Column="2">
                 <Button Name="MinButton" Click="TitleButton_Click" Classes="window">-</Button>
                 <Button Name="MaxButton" Click="TitleButton_Click" Classes="window">o</Button>
-                <Button Name="CloseButton" Click="TitleButton_Click" Classes="window">x</Button>
+                <Button Name="CloseButton" Click="TitleButton_Click" Classes="warning window">x</Button>
             </StackPanel>
         </Grid>
 		<!--welcome-->
@@ -58,24 +59,24 @@
 				   VerticalAlignment="Center"
 				   FontSize="24"/>-->
         <!--content-->
-		<TabControl Grid.Row="1" ItemsSource="{Binding BibtexViewers}"
-					SelectedValue="{Binding SelectecdBibtex}">
+		<TabControl Grid.Row="1" ItemsSource="{CompiledBinding BibtexViewers}"
+					SelectedValue="{CompiledBinding SelectecdBibtex}">
 			<!-- Tab Header -->
 			<TabControl.ItemTemplate>
 				<DataTemplate>
 					<StackPanel Orientation="Horizontal">
-						<TextBlock Text="{Binding Header}" Margin="4 0"
+						<TextBlock Text="{CompiledBinding Header}" Margin="4 0"
 								   VerticalAlignment="Center"
-								   FontSize="{Binding $parent[Window].FontSize}"/>
+								   FontSize="{CompiledBinding $parent[Window].FontSize}"/>
 						<Button Content="x" Height="20"
-								FontSize="{Binding $parent[Window].FontSize}"
+								FontSize="{CompiledBinding $parent[Window].FontSize}"
 								CornerRadius="10"
 								Width="20"
 								VerticalContentAlignment="Center"
 								Padding="0"
 								HorizontalContentAlignment="Center"
-								Command="{Binding #LitbibMainWindow.DataContext.CloseTabCommand}"
-                                CommandParameter="{Binding}"/>
+								Command="{CompiledBinding #LitbibMainWindow.DataContext.CloseTabCommand}"
+                                CommandParameter="{CompiledBinding}"/>
 					</StackPanel>
 				</DataTemplate>
 			</TabControl.ItemTemplate>
@@ -83,7 +84,7 @@
 			<!-- Tab 内容 -->
 			<TabControl.ContentTemplate>
 				<DataTemplate>
-					<TransitioningContentControl Content="{Binding}">
+					<TransitioningContentControl Content="{CompiledBinding}">
 						<TransitioningContentControl.PageTransition>
 							<CrossFade Duration="0:0:0.3"/>
 						</TransitioningContentControl.PageTransition>

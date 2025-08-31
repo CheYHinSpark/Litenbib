@@ -1,4 +1,5 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia.Collections;
+using Avalonia.Controls;
 using Avalonia.Controls.Selection;
 using Avalonia.Controls.Shapes;
 using Avalonia.Platform.Storage;
@@ -20,11 +21,28 @@ namespace Litenbib.ViewModels
     {
         public string Header { get; set; }
 
+        public string FullPath { get; set; }
+
         public bool AllSelected {  get; set; }
         public ObservableCollection<BibtexEntry> BibtexEntries { get; set; }
 
+        private DataGridCollectionView _bibtexView;
+        public DataGridCollectionView BibtexView => _bibtexView;
+
         [ObservableProperty]
         private BibtexEntry _showingEntry;
+
+        private string filterText = string.Empty;
+        public string FilterText
+        {
+            get => filterText;
+            set
+            {
+                if (filterText == value) { return; }
+                filterText = value;
+                BibtexView.Refresh();
+            }
+        }
 
 
         public static ObservableCollection<string> TypeList
@@ -35,24 +53,15 @@ namespace Litenbib.ViewModels
                 "TechReport", "Unpublished"];
         }
 
-        public BibtexViewModel()
-        {
-            Header = "refs.bib";
-            BibtexEntries = new ObservableCollection<BibtexEntry>(BibtexParser.Parse(BibFile.Read("refs.bib")));
-            _showingEntry = new("", "");
-        }
-        public BibtexViewModel(string path)
-        {
-            var list = path.Split('\\');
-            if (list.Length == 1) { list = path.Split('/'); }
-            Header = list[^1];
-            BibtexEntries = new ObservableCollection<BibtexEntry>(BibtexParser.Parse(BibFile.Read(path)));
-            _showingEntry = new("", "");
-        }
-        public BibtexViewModel(string header, string filecontent)
+        public BibtexViewModel(string header, string fullPath, string filecontent)
         {
             Header = header;
+            FullPath = fullPath;
             BibtexEntries = new ObservableCollection<BibtexEntry>(BibtexParser.Parse(filecontent));
+            _bibtexView = new(BibtexEntries)
+            {
+                Filter = entry => FilterBibtex(entry as BibtexEntry)
+            };
             _showingEntry = new("", "");
         }
 
@@ -77,6 +86,13 @@ namespace Litenbib.ViewModels
                 foreach (BibtexEntry entry in BibtexParser.Parse(bibtex))
                 { BibtexEntries.Add(entry); }
             }
+        }
+
+        private bool FilterBibtex(BibtexEntry? entry)
+        {
+            if (FilterText.Length == 0) { return true; }
+            if (entry == null) { return false; }
+            return false;
         }
     }
 }
