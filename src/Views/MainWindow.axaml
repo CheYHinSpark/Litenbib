@@ -6,15 +6,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="720"
         Name="LitbibMainWindow"
-		x:Class="Litenbib.Views.MainWindow"
+        x:Class="Litenbib.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
         Title="Litenbib">
     <Window.Styles>
-		<Style Selector="Button.window">
-			<Setter Property="Height" Value="{Binding HeaderHeight}"/>
-			<Setter Property="Width" Value="{Binding HeaderHeight}"/>
-		</Style>
+        <Style Selector="Button.window">
+            <Setter Property="Height" Value="{Binding HeaderHeight}"/>
+            <Setter Property="Width" Value="{Binding HeaderHeight}"/>
+        </Style>
     </Window.Styles>
 
     <Design.DataContext>
@@ -24,35 +24,29 @@
     <Grid Name="RootGrid" RowDefinitions="Auto, *">
         <!--header-->
         <Grid Height="{Binding HeaderHeight}" ColumnDefinitions="*,*,*">
-			<Rectangle Grid.ColumnSpan="3"
-					   HorizontalAlignment="Stretch"
-					   VerticalAlignment="Stretch"
-					   Fill="{DynamicResource MainBackground}"
-					   PointerPressed="TitleBar_PointerPressed"/>
-			<Panel Grid.Column="1">
-				<TextBox Text="{CompiledBinding FilterText}"
-						 VerticalAlignment="Center"/>
-				<TextBlock Text="Search or add..."
-						   Foreground="{DynamicResource DisabledForeground}"
-						   HorizontalAlignment="Center"
-						   IsHitTestVisible="False"
-						   IsVisible="{Binding IsSearchHintVisible}"/>
-			</Panel>
-
-
-			<StackPanel Orientation="Horizontal">
+            <Rectangle Grid.ColumnSpan="3"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch"
+                       Fill="{DynamicResource MainBackground}"
+                       PointerPressed="TitleBar_PointerPressed"/>
+            <TextBox Grid.Column="1"
+                     Text="{CompiledBinding FilterText}"
+                     Watermark="Search or add..."
+                     VerticalAlignment="Center"/>
+			
+            <StackPanel Orientation="Horizontal">
                 <Menu>
                     <MenuItem Header="_File">
-						<MenuItem Header="_New"/>
-						<MenuItem Header="_Open..."
-								  Command="{CompiledBinding OpenFileCommand}"
-								  CommandParameter="{CompiledBinding $parent[Window]}"/>
-						<MenuItem Header="_Save"
-								  Command="{CompiledBinding SaveFileCommand}"/>
+                        <MenuItem Header="_New"/>
+                        <MenuItem Header="_Open..."
+                                  Command="{CompiledBinding OpenFileCommand}"
+                                  CommandParameter="{CompiledBinding $parent[Window]}"/>
+                        <MenuItem Header="_Save"
+                                  Command="{CompiledBinding SaveFileCommand}"/>
                     </MenuItem>
-					<MenuItem Header="_Add"
-							  Command="{CompiledBinding AddBibtexEntryCommand}"
-							  CommandParameter="{CompiledBinding $parent[Window]}"/>
+                    <MenuItem Header="_Add"
+                              Command="{CompiledBinding AddBibtexEntryCommand}"
+                              CommandParameter="{CompiledBinding $parent[Window]}"/>
                 </Menu>
             </StackPanel>
             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Grid.Column="2">
@@ -61,44 +55,44 @@
                 <Button Name="CloseButton" Click="TitleButton_Click" Classes="warning window">x</Button>
             </StackPanel>
         </Grid>
-		<!--welcome-->
-		<!--<TextBlock Grid.Row="1" Text="Welcome to LitenBib"
-				   HorizontalAlignment="Center"
-				   VerticalAlignment="Center"
-				   FontSize="24"/>-->
+        <!--welcome-->
+        <!--<TextBlock Grid.Row="1" Text="Welcome to LitenBib"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   FontSize="24"/>-->
         <!--content-->
-		<TabControl Grid.Row="1" ItemsSource="{CompiledBinding BibtexViewers}"
-					SelectedValue="{CompiledBinding SelectecdBibtex}">
-			<!-- Tab Header -->
-			<TabControl.ItemTemplate>
-				<DataTemplate>
-					<StackPanel Orientation="Horizontal">
-						<TextBlock Text="{CompiledBinding Header}" Margin="4 0"
-								   VerticalAlignment="Center"
-								   FontSize="{CompiledBinding $parent[Window].FontSize}"/>
-						<Button Content="x" Height="20"
-								FontSize="{CompiledBinding $parent[Window].FontSize}"
-								CornerRadius="10"
-								Width="20"
-								VerticalContentAlignment="Center"
-								Padding="0"
-								HorizontalContentAlignment="Center"
-								Command="{CompiledBinding #LitbibMainWindow.DataContext.CloseTabCommand}"
+        <TabControl Grid.Row="1" ItemsSource="{CompiledBinding BibtexViewers}"
+                    SelectedValue="{CompiledBinding SelectecdBibtex}">
+            <!-- Tab Header -->
+            <TabControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{CompiledBinding Header}" Margin="4 0"
+                                   VerticalAlignment="Center"
+                                   FontSize="{CompiledBinding $parent[Window].FontSize}"/>
+                        <Button Content="x" Height="20"
+                                FontSize="{CompiledBinding $parent[Window].FontSize}"
+                                CornerRadius="10"
+                                Width="20"
+                                VerticalContentAlignment="Center"
+                                Padding="0"
+                                HorizontalContentAlignment="Center"
+                                Command="{CompiledBinding #LitbibMainWindow.DataContext.CloseTabCommand}"
                                 CommandParameter="{CompiledBinding}"/>
-					</StackPanel>
-				</DataTemplate>
-			</TabControl.ItemTemplate>
+                    </StackPanel>
+                </DataTemplate>
+            </TabControl.ItemTemplate>
 
-			<!-- Tab 内容 -->
-			<TabControl.ContentTemplate>
-				<DataTemplate>
-					<TransitioningContentControl Content="{CompiledBinding}">
-						<TransitioningContentControl.PageTransition>
-							<CrossFade Duration="0:0:0.3"/>
-						</TransitioningContentControl.PageTransition>
-					</TransitioningContentControl>
-				</DataTemplate>
-			</TabControl.ContentTemplate>
-		</TabControl>
+            <!-- Tab 内容 -->
+            <TabControl.ContentTemplate>
+                <DataTemplate>
+                    <TransitioningContentControl Content="{CompiledBinding}">
+                        <TransitioningContentControl.PageTransition>
+                            <CrossFade Duration="0:0:0.3"/>
+                        </TransitioningContentControl.PageTransition>
+                    </TransitioningContentControl>
+                </DataTemplate>
+            </TabControl.ContentTemplate>
+        </TabControl>
     </Grid>
 </Window>

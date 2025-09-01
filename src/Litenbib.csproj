@@ -22,8 +22,21 @@
   </ItemGroup>
 
   <ItemGroup>
-    <AvaloniaXaml Remove="Assets\DarkTheme.axaml" />
+    <AvaloniaXaml Remove="Assets\DarkColor.axaml" />
+    <AvaloniaXaml Remove="Assets\GrexTheme.axaml" />
     <AvaloniaXaml Remove="Assets\Styles.axaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Include="Themes\DarkColor.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaResource>
+    <AvaloniaResource Include="Themes\GRexTheme.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaResource>
+    <AvaloniaResource Include="Themes\Styles.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaResource>
   </ItemGroup>
 
   <ItemGroup>
@@ -40,15 +53,6 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.Text.Json" Version="9.0.8" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <AvaloniaResource Update="Assets\DarkTheme.axaml">
-      <SubType>Designer</SubType>
-    </AvaloniaResource>
-    <AvaloniaResource Update="Assets\Styles.axaml">
-      <SubType>Designer</SubType>
-    </AvaloniaResource>
   </ItemGroup>
 
   <ItemGroup>

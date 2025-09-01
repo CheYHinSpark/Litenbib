@@ -12,7 +12,7 @@
 	<Application.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
-				<ResourceInclude Source="/Assets/DarkTheme.axaml"/>
+				<ResourceInclude Source="/Themes/DarkColor.axaml"/>
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</Application.Resources>
@@ -20,7 +20,7 @@
     <Application.Styles>
         <FluentTheme />
 		<StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
-		<StyleInclude Source="avares://Litenbib/Assets/Styles.axaml"/>
+		<StyleInclude Source="avares://Litenbib/Themes/Styles.axaml"/>
 	</Application.Styles>
 	
 </Application>

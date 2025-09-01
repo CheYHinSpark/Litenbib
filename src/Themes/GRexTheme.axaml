@@ -1,0 +1,217 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Design.PreviewWith>
+    </Design.PreviewWith>
+    
+    <SolidColorBrush x:Key="DisabledForeground" Color="{DynamicResource DisabledForegroundColor}"/>
+    <SolidColorBrush x:Key="HighlightBackground" Color="{DynamicResource HighlightBackgroundColor}"/>
+    <SolidColorBrush x:Key="HighlightForeground" Color="{DynamicResource HighlightForegroundColor}"/>
+    <SolidColorBrush x:Key="InputBackground" Color="{DynamicResource InputBackgroundColor}"/>
+    <SolidColorBrush x:Key="MainBackground" Color="{DynamicResource MainBackgroundColor}"/>
+    <SolidColorBrush x:Key="MainForeground" Color="{DynamicResource MainForegroundColor}"/>
+	<SolidColorBrush x:Key="ThemeBackground" Color="{DynamicResource ThemeBackgroundColor}"/>
+	<SolidColorBrush x:Key="ThemeBorder" Color="{DynamicResource ThemeBorderColor}"/>
+    <SolidColorBrush x:Key="ThemeHighlight" Color="{DynamicResource ThemeHighlightColor}"/>
+    <SolidColorBrush x:Key="WarningBackground" Color="{DynamicResource WarningBackgroundColor}"/>
+
+    <SolidColorBrush x:Key="MenuFlyoutItemForeground" Color="{DynamicResource MainForegroundColor}"/>
+    <SolidColorBrush x:Key="MenuFlyoutItemForegroundDisabled" Color="{DynamicResource DisabledForegroundColor}"/>
+    <SolidColorBrush x:Key="MenuFlyoutItemBackgroundPointerOver" Color="{DynamicResource ThemeBackgroundColor}"/>
+    <SolidColorBrush x:Key="MenuFlyoutItemForegroundPointerOver" Color="{DynamicResource HighlightForegroundColor}"/>
+    <SolidColorBrush x:Key="MenuFlyoutItemBackgroundPressed" Color="{DynamicResource ThemeBackgroundColor}"/>
+    <SolidColorBrush x:Key="MenuFlyoutItemForegroundPressed" Color="{DynamicResource HighlightForegroundColor}"/>
+    <SolidColorBrush x:Key="MenuFlyoutPresenterBackground" Color="{DynamicResource InputBackgroundColor}"/>
+    <SolidColorBrush x:Key="MenuFlyoutPresenterBorderBrush" Color="{DynamicResource DisabledForegroundColor}"/>
+
+    
+
+    <Thickness x:Key="MenuFlyoutItemThemePaddingNarrow">6</Thickness>
+    <Thickness x:Key="MenuFlyoutPresenterThemePadding">6</Thickness>
+    
+    <CornerRadius x:Key="OverlayCornerRadius">8</CornerRadius>
+
+    <ControlTheme x:Key="{x:Type Button}" TargetType="Button">
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{DynamicResource MainForeground}"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}">
+                    <ContentPresenter Content="{TemplateBinding Content}"
+                                      Foreground="{TemplateBinding Foreground}"
+                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^:pointerover">
+            <Setter Property="Background" Value="{DynamicResource HighlightBackground}"/>
+            <Setter Property="Foreground" Value="{DynamicResource HighlightForeground}"/>
+        </Style>
+        <Style Selector="^.warning:pointerover">
+            <Setter Property="Background" Value="{DynamicResource WarningBackground}"/>
+        </Style>
+    </ControlTheme>
+
+    <ControlTheme x:Key="{x:Type CheckBox}" TargetType="CheckBox">
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="MinHeight" Value="20" />
+        <Setter Property="MinWidth" Value="20" />
+        <Setter Property="MaxHeight" Value="20" />
+        <Setter Property="MaxWidth" Value="20" />
+        <Setter Property="Background" Value="{DynamicResource InputBackground}" />
+        <Setter Property="Foreground" Value="{DynamicResource MainForeground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource MainForeground}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border x:Name="PART_Border"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}">
+                    <Viewbox UseLayoutRounding="False"
+                             Width="12" Height="12">
+                            <Path x:Name="CheckGlyph"
+                                  Opacity="0"
+                                  Fill="{DynamicResource CheckBoxCheckGlyphForegroundUnchecked}"
+                                  Stretch="Uniform"
+                                  VerticalAlignment="Center"
+                                  FlowDirection="LeftToRight" />
+                    </Viewbox>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+        
+        <!-- Unchecked PointerOver State -->
+        <Style Selector="^:pointerover">
+            <Setter Property="Foreground" Value="{DynamicResource HighlightForeground}"/>
+            <Setter Property="Background" Value="{DynamicResource HighlightBackground}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource HighlightForeground}"/>
+        </Style>
+
+        <!-- Unchecked Disabled state -->
+        <Style Selector="^:disabled">
+            <Setter Property="Foreground" Value="{DynamicResource DisabledForeground}"/>
+        </Style>
+
+        <Style Selector="^:checked">
+            <!-- Checked Normal State -->
+            <Setter Property="Background" Value="{DynamicResource ThemeBackground}" />
+            <Setter Property="BorderThickness" Value="2"/>
+			<Style Selector="^ /template/ Path#CheckGlyph">
+                <Setter Property="Data" Value="{StaticResource CheckMarkPathData}" />
+                <Setter Property="Opacity" Value="1" />
+            </Style>
+
+            <!-- Checked PointerOver State -->
+            <Style Selector="^:pointerover">
+                <Setter Property="Background" Value="{DynamicResource ThemeHighlight}" />
+            </Style>
+        </Style>
+
+        <Style Selector="^:indeterminate">
+            <!-- Indeterminate Normal State -->
+            <Setter Property="Background" Value="{DynamicResource ThemeBackground}" />
+			<Setter Property="BorderThickness" Value="2"/>
+			<Style Selector="^ /template/ Path#CheckGlyph">
+                <Setter Property="Data" Value="M1536 1536v-1024h-1024v1024h1024z" />
+                <Setter Property="Opacity" Value="1" />
+            </Style>
+
+            <!-- Indeterminate PointerOver State -->
+            <Style Selector="^:pointerover">
+                <Setter Property="Background" Value="{DynamicResource ThemeHighlight}" />
+            </Style>
+        </Style>
+    </ControlTheme>
+
+    <ControlTheme x:Key="{x:Type TextBox}" TargetType="TextBox">
+        <Setter Property="Foreground" Value="{DynamicResource MainForeground}" />
+        <Setter Property="Background" Value="{DynamicResource InputBackground}" />
+        <Setter Property="CaretBrush" Value="{DynamicResource MainForeground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource DisabledForeground}" />
+        <Setter Property="SelectionBrush" Value="{DynamicResource TextControlSelectionHighlightColor}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="8" />
+		<Setter Property="Padding" Value="8 6" />
+        <Setter Property="FocusAdorner" Value="{x:Null}" />
+        <Setter Property="ScrollViewer.IsScrollChainingEnabled" Value="True" />
+        <Setter Property="ContextFlyout" Value="{OnFormFactor Desktop={StaticResource DefaultTextBoxContextFlyout}, Mobile={StaticResource HorizontalTextBoxContextFlyout}}"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <DataValidationErrors>
+                    <Panel>
+                        <Border Name="PART_BorderElement"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="{TemplateBinding CornerRadius}"
+                                MinWidth="{TemplateBinding MinWidth}"
+                                MinHeight="{TemplateBinding MinHeight}"/>
+                        <ScrollViewer Name="PART_ScrollViewer"
+									  Margin="{TemplateBinding Padding}"
+                                      HorizontalScrollBarVisibility="{TemplateBinding (ScrollViewer.HorizontalScrollBarVisibility)}"
+                                      VerticalScrollBarVisibility="{TemplateBinding (ScrollViewer.VerticalScrollBarVisibility)}"
+                                      IsScrollChainingEnabled="{TemplateBinding (ScrollViewer.IsScrollChainingEnabled)}"
+                                      AllowAutoHide="{TemplateBinding (ScrollViewer.AllowAutoHide)}"
+                                      BringIntoViewOnFocusChange="{TemplateBinding (ScrollViewer.BringIntoViewOnFocusChange)}">
+                            <TextPresenter Name="PART_TextPresenter"
+                                           Text="{TemplateBinding Text, Mode=TwoWay}"
+                                           CaretBlinkInterval="{TemplateBinding CaretBlinkInterval}"
+                                           CaretIndex="{TemplateBinding CaretIndex}"
+                                           SelectionStart="{TemplateBinding SelectionStart}"
+                                           SelectionEnd="{TemplateBinding SelectionEnd}"
+                                           TextAlignment="{TemplateBinding TextAlignment}"
+                                           TextWrapping="{TemplateBinding TextWrapping}"
+                                           LineHeight="{TemplateBinding LineHeight}"
+                                           LetterSpacing="{TemplateBinding LetterSpacing}"
+                                           PasswordChar="{TemplateBinding PasswordChar}"
+                                           RevealPassword="{TemplateBinding RevealPassword}"
+                                           SelectionBrush="{TemplateBinding SelectionBrush}"
+                                           SelectionForegroundBrush="{TemplateBinding SelectionForegroundBrush}"
+                                           CaretBrush="{TemplateBinding CaretBrush}"
+                                           HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            <ScrollViewer.Styles>
+                                <Style Selector="ScrollContentPresenter#PART_ContentPresenter">
+                                    <Setter Property="Cursor" Value="IBeam" />
+                                </Style>
+                            </ScrollViewer.Styles>
+                        </ScrollViewer>
+						<TextBlock Name="PART_Watermark"
+								   Margin="{TemplateBinding Padding}"
+                                   Opacity="0.5"
+                                   Text="{TemplateBinding Watermark}"
+                                   TextAlignment="{TemplateBinding TextAlignment}"
+                                   TextWrapping="{TemplateBinding TextWrapping}"
+                                   HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                   VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+								   IsHitTestVisible="False"
+								   IsVisible="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Text, Converter={x:Static StringConverters.IsNullOrEmpty}}">
+						</TextBlock>
+                    </Panel>
+                </DataValidationErrors>
+            </ControlTemplate>
+        </Setter>
+
+		<Style Selector="^:pointerover">
+			<Setter Property="BorderBrush" Value="{DynamicResource MainForeground}"/>
+		</Style>
+
+		<Style Selector="^:focus">
+			<Setter Property="BorderBrush" Value="{DynamicResource ThemeBorder}"/>
+			<Setter Property="BorderThickness" Value="2"/>
+		</Style>
+    </ControlTheme>
+</ResourceDictionary>

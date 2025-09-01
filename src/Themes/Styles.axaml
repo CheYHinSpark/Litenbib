@@ -1,71 +1,12 @@
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-	<Style Selector="Button">
-		<Setter Property="HorizontalContentAlignment" Value="Center"/>
-		<Setter Property="VerticalContentAlignment" Value="Center"/>
-		<Setter Property="BorderThickness" Value="0"/>
-		<Setter Property="CornerRadius" Value="0"/>
-		<Setter Property="Background" Value="Transparent"/>
-		<Setter Property="Foreground" Value="{DynamicResource MainForeground}"/>
-		<Setter Property="Template">
-			<ControlTemplate>
-				<Border Background="{TemplateBinding Background}"
-						BorderBrush="{TemplateBinding BorderBrush}"
-						BorderThickness="{TemplateBinding BorderThickness}"
-						CornerRadius="{TemplateBinding CornerRadius}">
-					<ContentPresenter Content="{TemplateBinding Content}"
-									  Foreground="{TemplateBinding Foreground}"
-									  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-									  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
-				</Border>
-			</ControlTemplate>
-		</Setter>
-	</Style>
-	<Style Selector="Button:pointerover">
-		<Setter Property="Background" Value="{DynamicResource HighlightBackground}"/>
-		<Setter Property="Foreground" Value="{DynamicResource HighlightForeground}"/>
-	</Style>
-	<Style Selector="Button.warning:pointerover">
-		<Setter Property="Background" Value="{DynamicResource WarningBackground}"/>
-		<Setter Property="Foreground" Value="{DynamicResource HighlightForeground}"/>
-	</Style>
-
-	<Style Selector="CheckBox">
-		<Setter Property="Height" Value="20"/>
-		<Setter Property="Template">
-			<ControlTemplate>
-				<Grid x:Name="RootGrid">
-					<Border x:Name="PART_Border"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{TemplateBinding CornerRadius}" />
-					<Border x:Name="NormalRectangle"
-                            BorderBrush="{DynamicResource CheckBoxCheckBackgroundStrokeUnchecked}"
-                            Background="{DynamicResource InputBackground}"
-                            BorderThickness="{DynamicResource CheckBoxBorderThemeThickness}"
-                            CornerRadius="{TemplateBinding CornerRadius}"
-                            UseLayoutRounding="False"
-                            Height="16"
-                            Width="16" />
-					<Viewbox UseLayoutRounding="False"
-                             Height="{TemplateBinding Height}" Width="{TemplateBinding Width}">
-						<Panel>
-							<Panel Height="16" Width="16"/>
-							<Path x:Name="CheckGlyph"
-                                  Opacity="0"
-                                  Fill="{DynamicResource MainForeground}"
-                                  Stretch="Uniform"
-                                  VerticalAlignment="Center"
-                                  HorizontalAlignment="Center"
-                                  FlowDirection="LeftToRight" />
-						</Panel>
-					</Viewbox>
-				</Grid>
-			</ControlTemplate>
-		</Setter>
-	</Style>
-
+	<Styles.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceInclude Source="/Themes/GRexTheme.axaml"/>
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</Styles.Resources>
 
 	<Style Selector="ComboBox">
 		<Setter Property="MinHeight" Value="28"/>
@@ -210,55 +151,12 @@
         <Setter Property="Background" Value="#234567"/>
     </Style>
 
-    <Style Selector="TextBox">
-        <Setter Property="Padding" Value="6"/>
-        <Setter Property="MinHeight" Value="20"/>
-        <Setter Property="Template">
-            <ControlTemplate>
-                <DataValidationErrors>
-                    <Panel>
-                        <Border Name="PART_BorderElement"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="{TemplateBinding CornerRadius}"
-                                MinWidth="{TemplateBinding MinWidth}"
-                                MinHeight="{TemplateBinding MinHeight}"/>
-                        <ScrollViewer Name="PART_ScrollViewer" Margin="{TemplateBinding Padding}"
-                                      HorizontalScrollBarVisibility="{TemplateBinding (ScrollViewer.HorizontalScrollBarVisibility)}"
-                                      VerticalScrollBarVisibility="{TemplateBinding (ScrollViewer.VerticalScrollBarVisibility)}"
-                                      IsScrollChainingEnabled="{TemplateBinding (ScrollViewer.IsScrollChainingEnabled)}"
-                                      AllowAutoHide="{TemplateBinding (ScrollViewer.AllowAutoHide)}"
-                                      BringIntoViewOnFocusChange="{TemplateBinding (ScrollViewer.BringIntoViewOnFocusChange)}">
-                            <TextPresenter Name="PART_TextPresenter"
-                                           Text="{TemplateBinding Text, Mode=TwoWay}"
-                                           CaretBlinkInterval="{TemplateBinding CaretBlinkInterval}"
-                                           CaretIndex="{TemplateBinding CaretIndex}"
-                                           SelectionStart="{TemplateBinding SelectionStart}"
-                                           SelectionEnd="{TemplateBinding SelectionEnd}"
-                                           TextAlignment="{TemplateBinding TextAlignment}"
-                                           TextWrapping="{TemplateBinding TextWrapping}"
-                                           LineHeight="{TemplateBinding LineHeight}"
-                                           LetterSpacing="{TemplateBinding LetterSpacing}"
-                                           PasswordChar="{TemplateBinding PasswordChar}"
-                                           RevealPassword="{TemplateBinding RevealPassword}"
-                                           SelectionBrush="{TemplateBinding SelectionBrush}"
-                                           SelectionForegroundBrush="{TemplateBinding SelectionForegroundBrush}"
-                                           CaretBrush="{TemplateBinding CaretBrush}"
-                                           HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                            <ScrollViewer.Styles>
-                                <Style Selector="ScrollContentPresenter#PART_ContentPresenter">
-                                    <Setter Property="Cursor" Value="IBeam" />
-                                </Style>
-                            </ScrollViewer.Styles>
-                        </ScrollViewer>
-                    </Panel>
-                </DataValidationErrors>
-            </ControlTemplate>
-        </Setter>
-    </Style>
-    
+
+	<Style Selector="MenuItem">
+		<Setter Property="CornerRadius" Value="6"/>
+	</Style>
+	
+
     
 
     <Style Selector="TabItem">
