@@ -2,6 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:v="using:Litenbib.Views"
         xmlns:vm="using:Litenbib.ViewModels"
+        xmlns:m="using:Litenbib.Models"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="720"
@@ -10,12 +11,9 @@
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
         Title="Litenbib">
-    <Window.Styles>
-        <Style Selector="Button.window">
-            <Setter Property="Height" Value="{Binding HeaderHeight}"/>
-            <Setter Property="Width" Value="{Binding HeaderHeight}"/>
-        </Style>
-    </Window.Styles>
+	<Window.Resources>
+		<m:WindowStateToPathConverter x:Key="WindowStateToPathConverter"/>
+	</Window.Resources>
 
     <Design.DataContext>
         <vm:MainWindowViewModel/>
@@ -23,7 +21,7 @@
 
     <Grid Name="RootGrid" RowDefinitions="Auto, *">
         <!--header-->
-        <Grid Height="{Binding HeaderHeight}" ColumnDefinitions="*,*,*">
+        <Grid ColumnDefinitions="*,*,*">
             <Rectangle Grid.ColumnSpan="3"
                        HorizontalAlignment="Stretch"
                        VerticalAlignment="Stretch"
@@ -33,7 +31,7 @@
                      Text="{CompiledBinding FilterText}"
                      Watermark="Search or add..."
                      VerticalAlignment="Center"/>
-			
+            
             <StackPanel Orientation="Horizontal">
                 <Menu>
                     <MenuItem Header="_File">
@@ -50,9 +48,18 @@
                 </Menu>
             </StackPanel>
             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Grid.Column="2">
-                <Button Name="MinButton" Click="TitleButton_Click" Classes="window">-</Button>
-                <Button Name="MaxButton" Click="TitleButton_Click" Classes="window">o</Button>
-                <Button Name="CloseButton" Click="TitleButton_Click" Classes="warning window">x</Button>
+				<Button Name="MinButton" Click="TitleButton_Click" Classes="window">
+					<Path Data="{StaticResource -Path}" StrokeThickness="1"
+						  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+				</Button>
+                <Button Name="MaxButton" Click="TitleButton_Click" Classes="window">
+					<Path Data="{Binding $parent[Window].WindowState, Converter={StaticResource WindowStateToPathConverter}}"
+						  StrokeThickness="1" Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+				</Button>
+				<Button Name="CloseButton" Click="TitleButton_Click" Classes="warning window">
+					<Path Data="{StaticResource xPath}" StrokeThickness="1"
+						  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+				</Button>
             </StackPanel>
         </Grid>
         <!--welcome-->
@@ -62,23 +69,25 @@
                    FontSize="24"/>-->
         <!--content-->
         <TabControl Grid.Row="1" ItemsSource="{CompiledBinding BibtexViewers}"
-                    SelectedValue="{CompiledBinding SelectecdBibtex}">
+                    SelectedValue="{CompiledBinding SelectecdBibtex}"
+					Padding="0">
             <!-- Tab Header -->
             <TabControl.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
                         <TextBlock Text="{CompiledBinding Header}" Margin="4 0"
                                    VerticalAlignment="Center"
                                    FontSize="{CompiledBinding $parent[Window].FontSize}"/>
-                        <Button Content="x" Height="20"
+						<Button Classes="warning"
                                 FontSize="{CompiledBinding $parent[Window].FontSize}"
-                                CornerRadius="10"
-                                Width="20"
+                                CornerRadius="10" Width="20" Height="20"
                                 VerticalContentAlignment="Center"
-                                Padding="0"
                                 HorizontalContentAlignment="Center"
                                 Command="{CompiledBinding #LitbibMainWindow.DataContext.CloseTabCommand}"
-                                CommandParameter="{CompiledBinding}"/>
+                                CommandParameter="{CompiledBinding}">
+							<Path Data="{StaticResource xPath}" StrokeThickness="1"
+						          Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+						</Button>
                     </StackPanel>
                 </DataTemplate>
             </TabControl.ItemTemplate>
@@ -88,7 +97,7 @@
                 <DataTemplate>
                     <TransitioningContentControl Content="{CompiledBinding}">
                         <TransitioningContentControl.PageTransition>
-                            <CrossFade Duration="0:0:0.3"/>
+                            <CrossFade Duration="0:0:0.4"/>
                         </TransitioningContentControl.PageTransition>
                     </TransitioningContentControl>
                 </DataTemplate>

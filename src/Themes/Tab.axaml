@@ -1,0 +1,65 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ControlTheme x:Key="{x:Type TabItem}" TargetType="TabItem">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{DynamicResource MainForeground}" />
+        <Setter Property="Padding" Value="6" />
+        <Setter Property="Margin" Value="-12 0"/>
+        <Setter Property="CornerRadius" Value="12" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Grid ColumnDefinitions="12,*,12">
+                    <Path Data="M 0,12 A 12,12 0 0 0 12,0 L 12,12 Z"
+                          VerticalAlignment="Bottom"
+                          Fill="{DynamicResource InputBackground}"
+                          IsVisible="False"/>
+                    <Border Name="PART_LayoutRoot" Grid.Column="1"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter Name="PART_ContentPresenter"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          Content="{TemplateBinding Header}"
+                                          ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                          RecognizesAccessKey="True" />
+                    </Border>
+                    <Path Data="M 12,12 A 12,12 0 0 1 0,0 L 0,12 Z"
+                          Grid.Column="2"
+                          VerticalAlignment="Bottom"
+                          Fill="{DynamicResource InputBackground}"
+                          IsVisible="False"/>
+                </Grid>
+
+            </ControlTemplate>
+        </Setter>
+        
+        <!--Selected state  
+        We don't use selector to PART_LayoutRoot, so developer can override selected item background with TabStripItem.Background-->  
+        <Style Selector="^:selected">
+			<Setter Property="Background" Value="{DynamicResource TabBackground}" />
+			<Setter Property="CornerRadius" Value="12 12 0 0" />
+            <Style Selector="^ /template/ Path">
+                <Setter Property="IsVisible" Value="True"/>
+            </Style>
+        </Style>
+
+        <!--PointerOver state-->  
+        <Style Selector="^:pointerover">
+            <Setter Property="Background" Value="{DynamicResource HighlightBackground}" />
+            <Setter Property="TextElement.Foreground" Value="{DynamicResource HighlightForeground}" />
+        </Style>
+
+		<!--  Selected PointerOver state  -->
+		<Style Selector="^:selected:pointerover">
+			<Setter Property="Background" Value="{DynamicResource TabBackground}" />
+			<Setter Property="CornerRadius" Value="8 8 0 0" />
+			<Style Selector="^ /template/ Path">
+				<Setter Property="IsVisible" Value="True"/>
+			</Style>
+		</Style>
+    </ControlTheme>
+</ResourceDictionary>

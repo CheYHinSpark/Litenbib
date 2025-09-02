@@ -12,8 +12,6 @@ namespace Litenbib.ViewModels
 {
     public partial class AddEntryViewModel: ViewModelBase
     {
-        public int HeaderHeight { get; } = 40;
-
         [ObservableProperty]
         private string _doiText;
         [ObservableProperty]

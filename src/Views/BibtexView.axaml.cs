@@ -40,6 +40,10 @@ public partial class BibtexView : UserControl
             Grid.SetRow(DetailPanel, 0);
             Grid.SetColumn(Splitter, 1);
             Grid.SetColumn(DetailPanel, 2);
+            Splitter.Margin = Thickness.Parse("0 24");
+            DetailPanel.CornerRadius = CornerRadius.Parse("24 0 0 24");
+            DetailPanel.Margin = Thickness.Parse("8 8 0 0");
+            DetailPanel.Padding = Thickness.Parse("8 8 4 8");
         }
         else
         {
@@ -51,6 +55,10 @@ public partial class BibtexView : UserControl
             Grid.SetRow(DetailPanel, 2);
             Grid.SetColumn(Splitter, 0);
             Grid.SetColumn(DetailPanel, 0);
+            Splitter.Margin = Thickness.Parse("24 0");
+            DetailPanel.CornerRadius = CornerRadius.Parse("24 24 0 0");
+            DetailPanel.Margin = Thickness.Parse("0 8 0 0");
+            DetailPanel.Padding = Thickness.Parse("8 8 8 4");
         }
         isDetailShowing = true;
     }

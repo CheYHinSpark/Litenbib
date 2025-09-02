@@ -4,190 +4,21 @@
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceInclude Source="/Themes/GRexTheme.axaml"/>
+				<ResourceInclude Source="/Themes/Tab.axaml"/>
+				<ResourceInclude Source="/Themes/DataGrid.axaml"/>
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</Styles.Resources>
 
-	<Style Selector="ComboBox">
-		<Setter Property="MinHeight" Value="28"/>
-		<Setter Property="Padding" Value="4"/>
-		<Setter Property="VerticalContentAlignment" Value="Center"/>
-		<Setter Property="Template">
-			<ControlTemplate>
-				<DataValidationErrors>
-					<Grid ColumnDefinitions="*,24">
-						<Border x:Name="Background"
-                                Grid.ColumnSpan="2"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="{TemplateBinding CornerRadius}"
-                                MinWidth="{DynamicResource ComboBoxThemeMinWidth}" />
-						<ContentControl x:Name="ContentPresenter"
-                                        Content="{TemplateBinding SelectionBoxItem}"
-                                        Grid.Column="0"
-                                        Margin="{TemplateBinding Padding}"
-                                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                        ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
-                                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
-						<PathIcon x:Name="DropDownGlyph"
-                                  Grid.Column="1"
-                                  UseLayoutRounding="False"
-                                  IsHitTestVisible="False"
-                                  Height="12"
-                                  Width="12"
-                                  Margin="0,0,10,0"
-                                  HorizontalAlignment="Right"
-                                  VerticalAlignment="Center"
-                                  Foreground="{DynamicResource MainForeground}"
-                                  Data="M1939 486L2029 576L1024 1581L19 576L109 486L1024 1401L1939 486Z"/>
-						<Popup x:Name="PART_Popup"
-                               WindowManagerAddShadowHint="False"
-                               IsOpen="{TemplateBinding IsDropDownOpen, Mode=TwoWay}"
-                               MinWidth="{Binding Bounds.Width, RelativeSource={RelativeSource TemplatedParent}}"
-                               MaxHeight="{TemplateBinding MaxDropDownHeight}"
-                               PlacementTarget="Background"
-                               IsLightDismissEnabled="True"
-                               InheritsTransform="True">
-							<Border x:Name="PopupBorder"
-                                    Background="{DynamicResource ComboBoxDropDownBackground}"
-                                    BorderBrush="{DynamicResource ComboBoxDropDownBorderBrush}"
-                                    BorderThickness="{DynamicResource ComboBoxDropdownBorderThickness}"
-                                    Padding="{DynamicResource ComboBoxDropdownBorderPadding}"
-                                    HorizontalAlignment="Stretch"
-                                    CornerRadius="{DynamicResource OverlayCornerRadius}">
-								<ScrollViewer HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
-                                              VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
-                                              IsDeferredScrollingEnabled="{TemplateBinding (ScrollViewer.IsDeferredScrollingEnabled)}">
-									<ItemsPresenter Name="PART_ItemsPresenter"
-                                                    Margin="{DynamicResource ComboBoxDropdownContentMargin}"
-                                                    ItemsPanel="{TemplateBinding ItemsPanel}" />
-								</ScrollViewer>
-							</Border>
-						</Popup>
-					</Grid>
-				</DataValidationErrors>
-			</ControlTemplate>
-		</Setter>
-	</Style>
 	<Style Selector="ComboBoxItem">
-		<Setter Property="Padding" Value="4"/>
+		<Setter Property="Padding" Value="8 6"/>
 		<Setter Property="VerticalContentAlignment" Value="Center"/>
+		<Setter Property="CornerRadius" Value="8"/>
 	</Style>
 	
-    <Style Selector="DataGridColumnHeader">
-        <Setter Property="Padding" Value="0"/>
-        <Setter Property="Template">
-            <ControlTemplate>
-                <Grid Name="PART_ColumnHeaderRoot" ColumnDefinitions="*,Auto"
-                      Background="{TemplateBinding Background}">
-                    <ContentPresenter Grid.ColumnSpan="2"
-                                      Margin="{TemplateBinding Padding}"
-                                      Content="{TemplateBinding Content}"
-                                      ContentTemplate="{TemplateBinding ContentTemplate}"/>
-                    <Path Name="SortIcon" Margin="4" Fill="{TemplateBinding Foreground}"
-                          HorizontalAlignment="Right" VerticalAlignment="Center"
-                          Stretch="Uniform" Height="12"/>
-                    <Rectangle Name="VerticalSeparator" Grid.Column="1" Width="1"
-                               VerticalAlignment="Stretch" Fill="{TemplateBinding SeparatorBrush}"
-                               IsVisible="{TemplateBinding AreSeparatorsVisible}"/>
-                </Grid>
-            </ControlTemplate>
-        </Setter>
-    </Style>
-
-    <Style Selector="DataGridCell">
-        <Setter Property="Padding" Value="0"/>
-        <Setter Property="Template">
-            <ControlTemplate>
-                <Border x:Name="CellBorder"
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{TemplateBinding CornerRadius}">
-                    <ContentPresenter Margin="{TemplateBinding Padding}"
-                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                  Content="{TemplateBinding Content}"
-                                  ContentTemplate="{TemplateBinding ContentTemplate}"
-                                  Foreground="{TemplateBinding Foreground}" />
-                </Border>
-            </ControlTemplate>
-        </Setter>
-    </Style>
-
-    <Style Selector="DataGridRow">
-        <Setter Property="BorderThickness" Value="0 0 0 1"/>
-        <Setter Property="BorderBrush" Value="#80808080"/>
-        <Setter Property="Template">
-            <ControlTemplate>
-                <Border x:Name="RowBorder"
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{TemplateBinding CornerRadius}">
-                    <DataGridFrozenGrid Name="PART_Root"
-                                        ColumnDefinitions="Auto,*"
-                                        RowDefinitions="*,Auto">
-                        <DataGridRowHeader Name="PART_RowHeader"
-                                           Grid.RowSpan="2"
-                                           DataGridFrozenGrid.IsFrozen="True" />
-                        <DataGridCellsPresenter Name="PART_CellsPresenter"
-                                                Grid.Column="1"
-                                                DataGridFrozenGrid.IsFrozen="True" />
-                        <DataGridDetailsPresenter Name="PART_DetailsPresenter"
-                                                  Grid.Row="1"
-                                                  Grid.Column="1"
-                                                  Background="{DynamicResource DataGridDetailsPresenterBackgroundBrush}" />
-                    </DataGridFrozenGrid>
-                </Border>
-            </ControlTemplate>
-        </Setter>
-    </Style>
-    <Style Selector="DataGridRow:pointerover">
-        <Setter Property="Background" Value="#123456"/>
-    </Style>
-    <Style Selector="DataGridRow:selected">
-        <Setter Property="Background" Value="#234567"/>
-    </Style>
-
-
 	<Style Selector="MenuItem">
 		<Setter Property="CornerRadius" Value="6"/>
 	</Style>
-	
-
-    
-
-    <Style Selector="TabItem">
-        <Setter Property="Height" Value="24"/>
-        <Setter Property="Padding" Value="0"/>
-		<Setter Property="HorizontalContentAlignment" Value="Center"/>
-		<Setter Property="VerticalContentAlignment" Value="Center"/>
-        <Setter Property="Template">
-            <ControlTemplate>
-                <Border Name="PART_LayoutRoot"
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{TemplateBinding CornerRadius}"
-                        Padding="{TemplateBinding Padding}">
-                    <!--<Panel>-->
-                        <ContentPresenter Name="PART_ContentPresenter"
-                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                          Content="{TemplateBinding Header}"
-                                          ContentTemplate="{TemplateBinding HeaderTemplate}"
-                                          RecognizesAccessKey="True"/>
-                        <!--<Border Name="PART_SelectedPipe"
-                                Background="{DynamicResource TabItemHeaderSelectedPipeFill}"
-                                CornerRadius="{DynamicResource ControlCornerRadius}"
-                                IsVisible="False"/>-->
-                    <!--</Panel>-->
-                </Border>
-            </ControlTemplate>
-        </Setter>
-    </Style>
 
 	<Style Selector="TextBlock">
 		<Setter Property="VerticalAlignment" Value="Center"/>

@@ -1,0 +1,116 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <SolidColorBrush x:Key="DataGridGridLinesBrush" Color="Transparent"/>
+	
+    <ControlTheme x:Key="{x:Type DataGridColumnHeader}" TargetType="DataGridColumnHeader">
+		<Setter Property="Background" Value="{DynamicResource ThemeBorder}"/>
+		<Setter Property="Foreground" Value="{DynamicResource MainForeground}"/>
+        <Setter Property="Padding" Value="0 6"/>
+		<Setter Property="AreSeparatorsVisible" Value="True"/>
+		<Setter Property="SeparatorBrush" Value="{DynamicResource MainBorder}"/>
+		<Setter Property="Template">
+            <ControlTemplate>
+                <Grid Name="PART_ColumnHeaderRoot" ColumnDefinitions="*,Auto">
+					<Border Name="PART_Border"
+							Grid.ColumnSpan="2"
+							Background="{TemplateBinding Background}"
+							Opacity="0.5"
+							BorderBrush="{TemplateBinding BorderBrush}"
+							BorderThickness="{TemplateBinding BorderThickness}"
+							CornerRadius="{TemplateBinding CornerRadius}"/>
+                    <ContentPresenter Grid.ColumnSpan="2"
+                                      Margin="{TemplateBinding Padding}"
+                                      Content="{TemplateBinding Content}"
+                                      ContentTemplate="{TemplateBinding ContentTemplate}"/>
+                    <Path Name="SortIcon" Margin="4" Fill="{TemplateBinding Foreground}"
+                          HorizontalAlignment="Right" VerticalAlignment="Center"
+                          Stretch="Uniform" Height="12"/>
+                    <Rectangle Name="VerticalSeparator" Grid.Column="1" Width="1"
+                               VerticalAlignment="Stretch" Fill="{TemplateBinding SeparatorBrush}"
+                               IsVisible="{TemplateBinding AreSeparatorsVisible}"/>
+                </Grid>
+            </ControlTemplate>
+        </Setter>
+
+		<Style Selector="^:nth-child(1)">
+			<Setter Property="CornerRadius" Value="12,0,0,12"/>
+		</Style>
+
+		<Style Selector="^:nth-last-child(1)">
+			<Setter Property="CornerRadius" Value="0,12,12,0"/>
+		</Style>
+
+		<Style Selector="^:sortascending /template/ Path#SortIcon">
+			<Setter Property="IsVisible" Value="True" />
+			<Setter Property="Data" Value="{StaticResource DataGridSortIconAscendingPath}" />
+		</Style>
+
+		<Style Selector="^:sortdescending /template/ Path#SortIcon">
+			<Setter Property="IsVisible" Value="True" />
+			<Setter Property="Data" Value="{StaticResource DataGridSortIconDescendingPath}" />
+		</Style>
+    </ControlTheme>
+
+    <ControlTheme x:Key="{x:Type DataGridCell}" TargetType="DataGridCell">
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+				<Grid>
+					<Border x:Name="CellBorder"
+                            Background="{DynamicResource TabBackground}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}"
+							Opacity="0.5">
+					</Border>
+					<ContentPresenter Margin="{TemplateBinding Padding}"
+										  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+										  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+										  Content="{TemplateBinding Content}"
+										  ContentTemplate="{TemplateBinding ContentTemplate}"
+										  Foreground="{TemplateBinding Foreground}" />
+				</Grid>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+
+    <ControlTheme x:Key="{x:Type DataGridRow}" TargetType="DataGridRow">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <DataGridFrozenGrid Name="PART_Root"
+                                    ColumnDefinitions="Auto,*"
+									Background="{TemplateBinding Background}"
+                                    RowDefinitions="*,Auto">
+                    <Rectangle Name="BackgroundRectangle"
+							   MinHeight="32"
+                               Grid.RowSpan="2"
+                               Grid.ColumnSpan="2" />
+                    <DataGridRowHeader Name="PART_RowHeader"
+                                       Grid.RowSpan="2"
+                                       DataGridFrozenGrid.IsFrozen="True" />
+                    <DataGridCellsPresenter Name="PART_CellsPresenter"
+                                            Grid.Column="1"
+                                            DataGridFrozenGrid.IsFrozen="True" />
+                    <DataGridDetailsPresenter Name="PART_DetailsPresenter"
+                                              Grid.Row="1"
+                                              Grid.Column="1"
+                                              Background="{DynamicResource DataGridDetailsPresenterBackgroundBrush}" />
+                </DataGridFrozenGrid>
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^:pointerover /template/ Rectangle#BackgroundRectangle">
+			<Setter Property="Fill" Value="{DynamicResource ThemeHighlight}" />
+        </Style>
+
+        <Style Selector="^:selected">
+            <Style Selector="^ /template/ Rectangle#BackgroundRectangle">
+				<Setter Property="Fill" Value="{DynamicResource ThemeBackground}" />
+            </Style>
+            <Style Selector="^:pointerover /template/ Rectangle#BackgroundRectangle">
+				<Setter Property="Fill" Value="{DynamicResource ThemeBackground}" />
+            </Style>
+        </Style>
+    </ControlTheme>
+</ResourceDictionary>

@@ -16,8 +16,6 @@ namespace Litenbib.ViewModels
 {
     public partial class MainWindowViewModel : ViewModelBase
     {
-        public int HeaderHeight { get; } = 40;
-
         public ObservableCollection<BibtexViewModel> BibtexViewers { get; set; }
 
         private string filterText = string.Empty;

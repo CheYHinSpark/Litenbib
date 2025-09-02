@@ -29,7 +29,7 @@
         </Style>
     </UserControl.Styles>
     
-    <Grid Name="RootGrid">
+    <Grid Name="RootGrid" Background="{DynamicResource TabBackground}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
@@ -42,7 +42,7 @@
         </Grid.RowDefinitions>
 
         <!--bib数据列表-->
-        <DataGrid Name="DataGridView" Margin="4" ItemsSource="{CompiledBinding BibtexView}"
+        <DataGrid Name="DataGridView" Margin="8" ItemsSource="{CompiledBinding BibtexView}"
                   CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True"
                   IsReadOnly="True"
                   SelectionChanged="DataGrid_SelectionChanged"
@@ -83,89 +83,97 @@
         </DataGrid>
         
         <GridSplitter Name="Splitter" Grid.Column="1"
-                      MinHeight="8" MinWidth="8" DragDelta="GridSplitter_DragDelta"/>
+                      DragDelta="GridSplitter_DragDelta"/>
         
         <!--entry详细数据-->
-        
-        <Grid Name="DetailPanel" Margin="4"
-              Grid.Column="2" Grid.IsSharedSizeScope="True">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" SharedSizeGroup="Key"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <TextBlock Text="Type" Classes="right"/>
-            <Grid Grid.Column="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <ComboBox HorizontalAlignment="Stretch"
-                          ItemsSource="{CompiledBinding TypeList}"
-                          SelectedItem="{CompiledBinding ShowingEntry.Type, Converter={StaticResource BibTypeConverter}}"/>
-                <Button Grid.Column="1" Click="ChangeButton_Click">c</Button>
-                <Button Grid.Column="2" Click="CloseButton_Click">x</Button>
-            </Grid>
-            <ScrollViewer Grid.Row="1" Grid.ColumnSpan="2">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" SharedSizeGroup="Key"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
+		<Border Name="DetailPanel" Background="{DynamicResource MainBackground}" Grid.Column="2">
+			<Grid Grid.IsSharedSizeScope="True">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" SharedSizeGroup="Key"/>
+					<ColumnDefinition Width="*"/>
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="*"/>
+				</Grid.RowDefinitions>
+				<TextBlock Text="Type" Classes="right"/>
+				<Grid Grid.Column="1">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*"/>
+						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition Width="Auto"/>
+					</Grid.ColumnDefinitions>
+					<ComboBox HorizontalAlignment="Stretch"
+							  ItemsSource="{CompiledBinding TypeList}"
+							  SelectedItem="{CompiledBinding ShowingEntry.Type, Converter={StaticResource BibTypeConverter}}"/>
+					<Button Grid.Column="1" Click="ChangeButton_Click"
+							Width="28" Height="28">
+						<Path Data="{StaticResource brPath}" StrokeThickness="1"
+							  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+					</Button>
+					<Button Grid.Column="2" Click="CloseButton_Click"
+							Width="28" Height="28">
+						<Path Data="{StaticResource xPath}" StrokeThickness="1"
+							  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+					</Button>
+				</Grid>
+				<ScrollViewer Grid.Row="1" Grid.ColumnSpan="2">
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto" SharedSizeGroup="Key"/>
+							<ColumnDefinition Width="*"/>
+						</Grid.ColumnDefinitions>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
+						</Grid.RowDefinitions>
 
-                    <TextBlock Text="CitationKey" Classes="right"/>
-                    <TextBox Text="{CompiledBinding ShowingEntry.CitationKey}" Grid.Column="1"/>
-                    <TextBlock Text="Author" Classes="right" Grid.Row="1"/>
-                    <TextBox Text="{CompiledBinding ShowingEntry.Author}" Grid.Row="1" Grid.Column="1"/>
-                    <TextBlock Text="Title" Classes="right" Grid.Row="2"/>
-                    <TextBox Text="{CompiledBinding ShowingEntry.Title}" Grid.Row="2" Grid.Column="1"/>
-                    <TextBlock Text="Year" Classes="right" Grid.Row="3"/>
-                    <Grid Grid.Row="3" Grid.Column="1" ColumnDefinitions="*,Auto,*">
-                        <TextBox Text="{CompiledBinding ShowingEntry.Year}"/>
-                        <TextBlock Text="Month" Classes="right" Grid.Column="1"/>
-                        <TextBox Text="{CompiledBinding ShowingEntry.Month}" Grid.Column="2"/>
-                    </Grid>
-                    <TextBlock Text="Journal" Classes="right" Grid.Row="4"/>
-                    <TextBox Text="{CompiledBinding ShowingEntry.Journal}" Grid.Row="4" Grid.Column="1"/>
-                    <TextBlock Text="Volume" Classes="right" Grid.Row="5"/>
-                    <Grid Grid.Row="5" Grid.Column="1" ColumnDefinitions="*,Auto,*,Auto,*">
-                        <TextBox Text="{CompiledBinding ShowingEntry.Volume}"/>
-                        <TextBlock Text="Number" Classes="right" Grid.Column="1"/>
-                        <TextBox Text="{CompiledBinding ShowingEntry.Number}" Grid.Column="2"/>
-                        <TextBlock Text="Pages" Classes="right" Grid.Column="3"/>
-                        <TextBox Text="{CompiledBinding ShowingEntry.Pages}" Grid.Column="4"/>
-                    </Grid>
-                    <TextBlock Text="Publisher" Classes="right" Grid.Row="6"/>
-                    <TextBox Text="{CompiledBinding ShowingEntry.Publisher}" Grid.Row="6" Grid.Column="1"/>
-                    <TextBlock Text="DOI" Classes="right" Grid.Row="7"/>
-                    <Grid Grid.Row="7" Grid.Column="1" ColumnDefinitions="*, Auto">
-                        <TextBox Text="{CompiledBinding ShowingEntry.DOI}"/>
-                        <Button Content="v" Grid.Column="1"/>
-                    </Grid>
-                    <TextBlock Text="File" Classes="right" Grid.Row="8"/>
-                    <TextBox Text="{CompiledBinding ShowingEntry.File}" Grid.Row="8" Grid.Column="1"/>
-                    <TextBlock Text="BibTeX" Classes="right" Grid.Row="9"/>
-                    <TextBox Text="{CompiledBinding ShowingEntry.BibTeX}" Grid.Row="9" Grid.Column="1"
-                             FontFamily="Consolas"/>
-                </Grid>
-            </ScrollViewer>
-        </Grid>
+						<TextBlock Text="CitationKey" Classes="right"/>
+						<TextBox Text="{CompiledBinding ShowingEntry.CitationKey}" Grid.Column="1"/>
+						<TextBlock Text="Author" Classes="right" Grid.Row="1"/>
+						<TextBox Text="{CompiledBinding ShowingEntry.Author}" Grid.Row="1" Grid.Column="1"/>
+						<TextBlock Text="Title" Classes="right" Grid.Row="2"/>
+						<TextBox Text="{CompiledBinding ShowingEntry.Title}" Grid.Row="2" Grid.Column="1"/>
+						<TextBlock Text="Year" Classes="right" Grid.Row="3"/>
+						<Grid Grid.Row="3" Grid.Column="1" ColumnDefinitions="*,Auto,*">
+							<TextBox Text="{CompiledBinding ShowingEntry.Year}"/>
+							<TextBlock Text="Month" Classes="right" Grid.Column="1"/>
+							<TextBox Text="{CompiledBinding ShowingEntry.Month}" Grid.Column="2"/>
+						</Grid>
+						<TextBlock Text="Journal" Classes="right" Grid.Row="4"/>
+						<TextBox Text="{CompiledBinding ShowingEntry.Journal}" Grid.Row="4" Grid.Column="1"/>
+						<TextBlock Text="Volume" Classes="right" Grid.Row="5"/>
+						<Grid Grid.Row="5" Grid.Column="1" ColumnDefinitions="*,Auto,*,Auto,*">
+							<TextBox Text="{CompiledBinding ShowingEntry.Volume}"/>
+							<TextBlock Text="Number" Classes="right" Grid.Column="1"/>
+							<TextBox Text="{CompiledBinding ShowingEntry.Number}" Grid.Column="2"/>
+							<TextBlock Text="Pages" Classes="right" Grid.Column="3"/>
+							<TextBox Text="{CompiledBinding ShowingEntry.Pages}" Grid.Column="4"/>
+						</Grid>
+						<TextBlock Text="Publisher" Classes="right" Grid.Row="6"/>
+						<TextBox Text="{CompiledBinding ShowingEntry.Publisher}" Grid.Row="6" Grid.Column="1"/>
+						<TextBlock Text="DOI" Classes="right" Grid.Row="7"/>
+						<Grid Grid.Row="7" Grid.Column="1" ColumnDefinitions="*, Auto">
+							<TextBox Text="{CompiledBinding ShowingEntry.DOI}"/>
+							<Button Content="v" Grid.Column="1"/>
+						</Grid>
+						<TextBlock Text="File" Classes="right" Grid.Row="8"/>
+						<TextBox Text="{CompiledBinding ShowingEntry.File}" Grid.Row="8" Grid.Column="1"/>
+						<TextBlock Text="BibTeX" Classes="right" Grid.Row="9"/>
+						<TextBox Text="{CompiledBinding ShowingEntry.BibTeX}" Grid.Row="9" Grid.Column="1"
+								 FontFamily="Consolas"/>
+					</Grid>
+				</ScrollViewer>
+			</Grid>
+		</Border>
     </Grid>
     
 </UserControl>

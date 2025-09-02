@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Data.Converters;
 using Avalonia.Media;
 using System;
@@ -31,21 +32,6 @@ namespace Litenbib.Models
                     "techreport" => SolidColorBrush.Parse("#525252"),
                     "unpublished" => SolidColorBrush.Parse("#3d3d3d"),
                     _ => Brushes.Transparent, // 默认背景
-                    //"Article" => SolidColorBrush.Parse("#3d6666"),
-                    //"Book" => SolidColorBrush.Parse("#3d5266"),
-                    //"Booklet" => SolidColorBrush.Parse("#3d3d66"),
-                    //"Conference" => SolidColorBrush.Parse("#523d66"),
-                    //"InBook" => SolidColorBrush.Parse("#663d66"),
-                    //"InCollection" => SolidColorBrush.Parse("#663d52"),
-                    //"InProceedings" => SolidColorBrush.Parse("#663d3d"),
-                    //"Manual" => SolidColorBrush.Parse("#66523d"),
-                    //"MastersThesis" => SolidColorBrush.Parse("#66663d"),
-                    //"Misc" => SolidColorBrush.Parse("#52663d"),
-                    //"PhdThesis" => SolidColorBrush.Parse("#3d663d"),
-                    //"Proceedings" => SolidColorBrush.Parse("#3d6652"),
-                    //"TechReport" => SolidColorBrush.Parse("#525252"),
-                    //"Unpublished" => SolidColorBrush.Parse("#3d3d3d"),
-                    //_ => Brushes.Transparent, // 默认背景
                 };
             }
             // 如果value不是字符串，返回默认颜色
@@ -93,6 +79,31 @@ namespace Litenbib.Models
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             return value;
+        }
+    }
+
+
+    public class WindowStateToPathConverter : IValueConverter
+    {
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            // 检查value是否为string类型
+            if (value is WindowState)
+            {
+                // 这里根据你的逻辑返回不同的颜色
+                return value switch
+                {
+                    WindowState.Maximized => PathGeometry.Parse("M 0,0 L 6,0 L 6,6 L 0,6 Z M 2,-2 L 8,-2 L 8,4"),
+                    _ => PathGeometry.Parse("M 0,0 L 8,0 L 8,7 L 0,7 Z"), // 默认背景
+                };
+            }
+            // 如果value不是字符串，返回默认颜色
+            return Brushes.Transparent;
+        }
+
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            throw new NotSupportedException();
         }
     }
 }
