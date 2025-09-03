@@ -1,57 +1,85 @@
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-	<Styles.Resources>
-		<ResourceDictionary>
-			<ResourceDictionary.MergedDictionaries>
-				<ResourceInclude Source="/Themes/GRexTheme.axaml"/>
-				<ResourceInclude Source="/Themes/Tab.axaml"/>
-				<ResourceInclude Source="/Themes/DataGrid.axaml"/>
-			</ResourceDictionary.MergedDictionaries>
-		</ResourceDictionary>
-	</Styles.Resources>
+    <Styles.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="/Themes/GRexTheme.axaml"/>
+                <ResourceInclude Source="/Themes/Tab.axaml"/>
+                <ResourceInclude Source="/Themes/DataGrid.axaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Styles.Resources>
 
-	<Style Selector="ComboBoxItem">
-		<Setter Property="Padding" Value="8 6"/>
-		<Setter Property="VerticalContentAlignment" Value="Center"/>
-		<Setter Property="CornerRadius" Value="8"/>
-	</Style>
-	
-	<Style Selector="MenuItem">
-		<Setter Property="CornerRadius" Value="6"/>
-	</Style>
+    <Style Selector="Button">
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="Background" Duration="0:0:0.2"/>
+                <CornerRadiusTransition Property="CornerRadius" Duration="0:0:0.2"/>
+            </Transitions>
+        </Setter>
+    </Style>
 
-	<Style Selector="TextBlock">
-		<Setter Property="VerticalAlignment" Value="Center"/>
-	</Style>
-	<Style Selector="TextBlock.right">
-		<Setter Property="HorizontalAlignment" Value="Right"/>
-		<Setter Property="Margin" Value="4"/>
-	</Style>
+    <Style Selector="Button.tab_button">
+        <Setter Property="Height" Value="20"/>
+        <Setter Property="Width" Value="20"/>
+        <Setter Property="CornerRadius" Value="10"/>
+		<Setter Property="Transitions"></Setter>
+        <Setter Property="Background" Value="Transparent"/>
+        <Style Selector="^:pointerover">
+            <Setter Property="Background" Value="{DynamicResource WarningBackground}"/>
+        </Style>
+    </Style>
 
-	<Style Selector="Window">
-		<Setter Property="Background" Value="{DynamicResource MainBackground}"/>
-		<Setter Property="Foreground" Value="{DynamicResource MainForeground}"/>
-		<Setter Property="ExtendClientAreaToDecorationsHint" Value="True"/>
-		<Setter Property="ExtendClientAreaChromeHints" Value="NoChrome"/>
-		<Setter Property="ExtendClientAreaTitleBarHeightHint" Value="-1"/>
-		<Setter Property="FontSize" Value="14"/>
-		<Setter Property="Template">
-			<ControlTemplate>
-				<Border Margin="{Binding $parent[Window].OffScreenMargin}"
-						Background="{TemplateBinding Background}"
-						BorderBrush="{TemplateBinding BorderBrush}"
-						BorderThickness="{TemplateBinding BorderThickness}"
-						CornerRadius="{TemplateBinding CornerRadius}">
-					<VisualLayerManager Margin="{TemplateBinding BorderThickness}">
-						<ContentPresenter Name="PART_ContentPresenter"
-										  ContentTemplate="{TemplateBinding ContentTemplate}"
-										  Content="{TemplateBinding Content}"
-										  Margin="{TemplateBinding Padding}"
-										  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-										  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
-					</VisualLayerManager>
-				</Border>
-			</ControlTemplate>
+    <Style Selector="ComboBoxItem">
+        <Setter Property="Padding" Value="8 6"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="CornerRadius" Value="8"/>
+    </Style>
+    
+    <Style Selector="MenuItem">
+        <Setter Property="CornerRadius" Value="6"/>
+    </Style>
+
+    <Style Selector="TextBlock">
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+    <Style Selector="TextBlock.right">
+        <Setter Property="HorizontalAlignment" Value="Right"/>
+        <Setter Property="Margin" Value="4"/>
+    </Style>
+
+	<Style Selector="TextBox">
+		<Setter Property="Transitions">
+			<Transitions>
+				<ThicknessTransition Property="BorderThickness" Duration="0:0:0.2"/>
+			</Transitions>
 		</Setter>
 	</Style>
+
+    <Style Selector="Window">
+        <Setter Property="Background" Value="{DynamicResource MainBackground}"/>
+        <Setter Property="Foreground" Value="{DynamicResource MainForeground}"/>
+        <Setter Property="ExtendClientAreaToDecorationsHint" Value="True"/>
+        <Setter Property="ExtendClientAreaChromeHints" Value="NoChrome"/>
+        <Setter Property="ExtendClientAreaTitleBarHeightHint" Value="-1"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Margin="{Binding $parent[Window].OffScreenMargin}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}">
+                    <VisualLayerManager Margin="{TemplateBinding BorderThickness}">
+                        <ContentPresenter Name="PART_ContentPresenter"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          Content="{TemplateBinding Content}"
+                                          Margin="{TemplateBinding Padding}"
+                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                    </VisualLayerManager>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </Style>
 </Styles>

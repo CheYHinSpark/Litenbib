@@ -4,12 +4,15 @@ using Avalonia.Controls.Selection;
 using Avalonia.Controls.Shapes;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Litenbib.Models;
 using Litenbib.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -24,6 +27,8 @@ namespace Litenbib.ViewModels
         public string FullPath { get; set; }
 
         public bool AllSelected {  get; set; }
+
+        public UndoRedoManager UndoRedoManager { get; set; }
 
         public ObservableCollection<BibtexEntry> BibtexEntries { get; set; }
         public DataGridCollectionView BibtexView { get; }
@@ -41,11 +46,11 @@ namespace Litenbib.ViewModels
             {
                 if (filterText == value) { return; }
                 filterText = value;
-                filters = value.Split(' ');
+                if (!string.IsNullOrEmpty(value))
+                { filters = value.Split(' '); }
                 BibtexView.Refresh();
             }
         }
-
 
         public static ObservableCollection<string> TypeList
         {
@@ -60,11 +65,14 @@ namespace Litenbib.ViewModels
             Header = header;
             FullPath = fullPath;
             BibtexEntries = new ObservableCollection<BibtexEntry>(BibtexParser.Parse(filecontent));
+            foreach (var entry in BibtexEntries)
+            { entry.UndoRedoPropertyChanged += OnEntryPropertyChanged; }
             BibtexView = new(BibtexEntries)
             {
                 Filter = entry => FilterBibtex(entry as BibtexEntry)
             };
             _showingEntry = new("", "");
+            UndoRedoManager = new();
         }
 
         public void ChangeShowing(object i)
@@ -92,7 +100,7 @@ namespace Litenbib.ViewModels
 
         private bool FilterBibtex(BibtexEntry? entry)
         {
-            if (filterText.Length == 0) { return true; }
+            if (string.IsNullOrEmpty(filterText)) { return true; }
             if (entry == null) { return false; }
             foreach (string s in filters)
             {
@@ -101,5 +109,28 @@ namespace Litenbib.ViewModels
             }
             return false;
         }
+
+        private void OnEntryPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            var item = sender as BibtexEntry;
+            if (item == null || e.PropertyName == null) { return; }
+            if (e is PropertyChangedEventArgsEx extendedArgs)
+            {
+                // 创建并添加操作到管理器
+                var action = new EntryChangeAction(item, e.PropertyName, (string?)extendedArgs.OldValue, (string?)extendedArgs.NewValue);
+                UndoRedoManager.AddAction(action);
+            }
+        }
+
+        //[RelayCommand]
+        //public void UndoEdit()
+        //{
+        //    UndoRedoManager.Undo();
+        //}
+        //[RelayCommand]
+        //public void RedoEdit()
+        //{
+        //    UndoRedoManager.Redo();
+        //}
     }
 }

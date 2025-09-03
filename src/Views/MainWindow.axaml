@@ -19,20 +19,20 @@
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-    <Grid Name="RootGrid" RowDefinitions="Auto, *">
-        <!--header-->
+    <Grid Name="RootGrid" RowDefinitions="Auto, Auto, *">
+        <!--title-->
         <Grid ColumnDefinitions="*,*,*">
             <Rectangle Grid.ColumnSpan="3"
                        HorizontalAlignment="Stretch"
                        VerticalAlignment="Stretch"
                        Fill="{DynamicResource MainBackground}"
                        PointerPressed="TitleBar_PointerPressed"/>
-            <TextBox Grid.Column="1"
+            <TextBox Grid.Column="1" UndoLimit="200"
                      Text="{CompiledBinding FilterText}"
                      Watermark="Search or add..."
-                     VerticalAlignment="Center"/>
+                     VerticalAlignment="Bottom"/>
             
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
                 <Menu>
                     <MenuItem Header="_File">
                         <MenuItem Header="_New"/>
@@ -62,15 +62,34 @@
 				</Button>
             </StackPanel>
         </Grid>
+		
+		<!--tool-->
+		<Grid Grid.Row="1" Height="{StaticResource ToolBarHeight}"
+			  Opacity="{Binding ShowToolBar}">
+			<StackPanel Orientation="Horizontal" Margin="4 0"
+						VerticalAlignment="Top">
+				<Button Width="28" Height="28"
+						Command="{CompiledBinding UndoBibtexCommand}">
+					<Path Data="{StaticResource UndoPath}" StrokeThickness="1"
+						  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+				</Button>
+				<Button Width="28" Height="28"
+						Command="{CompiledBinding RedoBibtexCommand}">
+					<Path Data="{StaticResource RedoPath}" StrokeThickness="1"
+						  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+				</Button>
+			</StackPanel>
+		</Grid>
+		
         <!--welcome-->
         <!--<TextBlock Grid.Row="1" Text="Welcome to LitenBib"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Center"
                    FontSize="24"/>-->
         <!--content-->
-        <TabControl Grid.Row="1" ItemsSource="{CompiledBinding BibtexViewers}"
-                    SelectedValue="{CompiledBinding SelectecdBibtex}"
-					Padding="0">
+        <TabControl Grid.Row="2" Padding="0"
+					ItemsSource="{CompiledBinding BibtexViewers}"
+                    SelectedValue="{CompiledBinding SelectecdBibtex}">
             <!-- Tab Header -->
             <TabControl.ItemTemplate>
                 <DataTemplate>
@@ -78,11 +97,8 @@
                         <TextBlock Text="{CompiledBinding Header}" Margin="4 0"
                                    VerticalAlignment="Center"
                                    FontSize="{CompiledBinding $parent[Window].FontSize}"/>
-						<Button Classes="warning"
+						<Button Classes="tab_button warning"
                                 FontSize="{CompiledBinding $parent[Window].FontSize}"
-                                CornerRadius="10" Width="20" Height="20"
-                                VerticalContentAlignment="Center"
-                                HorizontalContentAlignment="Center"
                                 Command="{CompiledBinding #LitbibMainWindow.DataContext.CloseTabCommand}"
                                 CommandParameter="{CompiledBinding}">
 							<Path Data="{StaticResource xPath}" StrokeThickness="1"

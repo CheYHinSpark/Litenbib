@@ -1,10 +1,13 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-	<x:Double x:Key="TitleBarHeight">40</x:Double>
+	<x:Double x:Key="TitleBarHeight">36</x:Double>
+	<x:Double x:Key="ToolBarHeight">32</x:Double>
 	
 	<PathGeometry x:Key="-Path" Figures="M 0,0 L 10,0"/>
 	<PathGeometry x:Key="xPath" Figures="M 0,0 L 8,8 M 0,8 L 8,0"/>
 	<PathGeometry x:Key="brPath" Figures="M 0,8 L 8,8 L 8,0 M 10,2 L 8,0 L 6,2 M 2,6 L 0,8 L 2,10"/>
+	<PathGeometry x:Key="UndoPath" Figures="M 8,11 L 8,7 A 4,4 0 0 0 4,3 L 0,3 M 3,0 L 0,3 L 3,6"/>
+	<PathGeometry x:Key="RedoPath" Figures="M 0,11 L 0,7 A 4,4 0 0 1 4,3 L 8,3 M 5,0 L 8,3 L 5,6"/>
     
     <SolidColorBrush x:Key="DisabledForeground" Color="{DynamicResource DisabledForegroundColor}"/>
     <SolidColorBrush x:Key="HighlightBackground" Color="{DynamicResource HighlightBackgroundColor}"/>
@@ -51,10 +54,10 @@
     <ControlTheme x:Key="{x:Type Button}" TargetType="Button">
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
-        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Background" Value="{DynamicResource MainBackground}"/>
 		<Setter Property="Foreground" Value="{DynamicResource MainForeground}"/>
 		<Setter Property="Padding" Value="4"/>
-		<Setter Property="CornerRadius" Value="8"/>
+		<Setter Property="CornerRadius" Value="0"/>
         <Setter Property="Template">
             <ControlTemplate>
                 <Border Background="{TemplateBinding Background}"
@@ -73,15 +76,21 @@
         <Style Selector="^:pointerover">
             <Setter Property="Background" Value="{DynamicResource HighlightBackground}"/>
             <Setter Property="Foreground" Value="{DynamicResource HighlightForeground}"/>
-        </Style>
+			<Setter Property="CornerRadius" Value="8"/>
+		</Style>
+		
 		<Style Selector="^.warning:pointerover">
 			<Setter Property="Background" Value="{DynamicResource WarningBackground}"/>
 		</Style>
+		
 		<Style Selector="^.window">
-			<Setter Property="CornerRadius" Value="0"/>
 			<Setter Property="Width" Value="{DynamicResource TitleBarHeight}"/>
 			<Setter Property="Height" Value="{DynamicResource TitleBarHeight}"/>
+			<Style Selector="^:pointerover">
+				<Setter Property="CornerRadius" Value="0"/>
+			</Style>
 		</Style>
+
     </ControlTheme>
 
     <ControlTheme x:Key="{x:Type CheckBox}" TargetType="CheckBox">

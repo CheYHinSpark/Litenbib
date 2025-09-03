@@ -8,8 +8,9 @@
              x:DataType="vm:BibtexViewModel"
              x:Class="Litenbib.Views.BibtexView">
     <UserControl.Resources>
-        <m:TextToBackgroundConverter x:Key="TextToBackgroundConverter"/>
-        <m:BibTypeConverter x:Key="BibTypeConverter"/>
+		<m:BibTypeConverter x:Key="BibTypeConverter"/>
+		<m:TextToBackgroundConverter x:Key="TextToBackgroundConverter"/>
+		<m:StringSelectorConverter x:Key="StringSelectorConverter"/>
     </UserControl.Resources>
 
     <UserControl.Styles>
@@ -26,6 +27,7 @@
             <Setter Property="AcceptsTab" Value="True"/>
             <Setter Property="TextWrapping" Value="Wrap"/>
             <Setter Property="Margin" Value="2"/>
+			<Setter Property="UndoLimit" Value="0"/>
         </Style>
     </UserControl.Styles>
     
@@ -70,11 +72,13 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn Header="Author/Editor" Binding="{CompiledBinding Author_Editor}"
+                <DataGridTextColumn Header="Author/Editor"
+									Binding="{Binding Author, Converter={StaticResource StringSelectorConverter}, ConverterParameter={Binding Editor}, Mode=OneWay}"
                                     x:DataType="m:BibtexEntry" Width="1*"/>
                 <DataGridTextColumn Header="Title" Binding="{CompiledBinding Title}"
                                     x:DataType="m:BibtexEntry" Width="3*"/>
-                <DataGridTextColumn Header="Journal/Booktitle" Binding="{CompiledBinding Journal_Booktitle}"
+                <DataGridTextColumn Header="Journal/Booktitle"
+									Binding="{Binding Journal, Converter={StaticResource StringSelectorConverter}, ConverterParameter={Binding Booktitle}, Mode=OneWay}"
                                     x:DataType="m:BibtexEntry" Width="1*"/>
                 <DataGridTextColumn Header="Year" Binding="{CompiledBinding Year}"
                                     x:DataType="m:BibtexEntry" Width="Auto"
@@ -101,21 +105,22 @@
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="*"/>
 						<ColumnDefinition Width="Auto"/>
-						<ColumnDefinition Width="Auto"/>
 					</Grid.ColumnDefinitions>
 					<ComboBox HorizontalAlignment="Stretch"
 							  ItemsSource="{CompiledBinding TypeList}"
 							  SelectedItem="{CompiledBinding ShowingEntry.Type, Converter={StaticResource BibTypeConverter}}"/>
-					<Button Grid.Column="1" Click="ChangeButton_Click"
-							Width="28" Height="28">
-						<Path Data="{StaticResource brPath}" StrokeThickness="1"
-							  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
-					</Button>
-					<Button Grid.Column="2" Click="CloseButton_Click"
-							Width="28" Height="28">
-						<Path Data="{StaticResource xPath}" StrokeThickness="1"
-							  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
-					</Button>
+					<StackPanel Grid.Column="1" Orientation="Horizontal">
+						<Button Click="ChangeButton_Click"
+								Width="28" Height="28">
+							<Path Data="{StaticResource brPath}" StrokeThickness="1"
+								  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+						</Button>
+						<Button Click="CloseButton_Click"
+								Width="28" Height="28">
+							<Path Data="{StaticResource xPath}" StrokeThickness="1"
+								  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+						</Button>
+					</StackPanel>
 				</Grid>
 				<ScrollViewer Grid.Row="1" Grid.ColumnSpan="2">
 					<Grid>
@@ -168,8 +173,8 @@
 						<TextBlock Text="File" Classes="right" Grid.Row="8"/>
 						<TextBox Text="{CompiledBinding ShowingEntry.File}" Grid.Row="8" Grid.Column="1"/>
 						<TextBlock Text="BibTeX" Classes="right" Grid.Row="9"/>
-						<TextBox Text="{CompiledBinding ShowingEntry.BibTeX}" Grid.Row="9" Grid.Column="1"
-								 FontFamily="Consolas"/>
+						<TextBox FontFamily="Consolas" IsReadOnly="True"
+								 Text="{CompiledBinding ShowingEntry.BibTeX}" Grid.Row="9" Grid.Column="1"/>
 					</Grid>
 				</ScrollViewer>
 			</Grid>

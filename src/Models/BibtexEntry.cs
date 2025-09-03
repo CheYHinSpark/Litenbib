@@ -24,22 +24,6 @@ namespace Litenbib.Models
 
         // showing fields
         public bool Selected { get; set; }
-        public string Author_Editor
-        {
-            get
-            {
-                string author = GetValue(nameof(Author));
-                return author == "" ? GetValue(nameof(Editor)) : author;
-            }
-        }
-        public string Journal_Booktitle
-        {
-            get
-            {
-                string journal = GetValue(nameof(Journal));
-                return journal == "" ? GetValue(nameof(Booktitle)) : journal;
-            }
-        }
 
         // editable fields
         public string Type
@@ -47,8 +31,9 @@ namespace Litenbib.Models
             get => type;
             set
             {
+                string t = type;
                 type = value;
-                OnPropertyChanged(nameof(Type));
+                OnPropertyChanged(nameof(Type), t, value);
             }
         }
         public string CitationKey
@@ -56,129 +41,129 @@ namespace Litenbib.Models
             get => citationKey;
             set
             {
+                string t = citationKey;
                 citationKey = value;
-                OnPropertyChanged(nameof(CitationKey));
+                OnPropertyChanged(nameof(CitationKey), t, value);
             }
         }
         public string Author
         {
             get => GetValue("author");
-            set => SetValue("author", value, [nameof(Author), nameof(Author_Editor)]);
+            set => SetValue("author", value, nameof(Author));
         }
         public string Title
         {
             get => GetValue("title");
-            set => SetValue("title", value, [nameof(Title)]);
+            set => SetValue("title", value, nameof(Title));
         }
         public string Year
         {
             get => GetValue("year");
-            set => SetValue("year", value, [nameof(Year)]);
+            set => SetValue("year", value, nameof(Year));
         }
         public string Month
         {
             get => GetValue("month");
-            set => SetValue("month", value, [nameof(Month)]);
+            set => SetValue("month", value, nameof(Month));
         }
         
         public string Editor
         {
             get => GetValue("editor");
-            set => SetValue("editor", value, [nameof(Editor), nameof(Author_Editor)]);
+            set => SetValue("editor", value, nameof(Editor));
         }
         public string Journal
         {
             get => GetValue("journal");
-            set => SetValue("journal", value, [nameof(Journal), nameof(Journal_Booktitle)]);
+            set => SetValue("journal", value, nameof(Journal));
         }
         public string Volume
         {
             get => GetValue("volume");
-            set => SetValue("volume", value, [nameof(Volume)]);
+            set => SetValue("volume", value, nameof(Volume));
         }
         public string Number
         {
             get => GetValue("number");
-            set => SetValue("number", value, [nameof(Number)]);
+            set => SetValue("number", value, nameof(Number));
         }
         public string Pages
         {
             get => GetValue("pages");
-            set => SetValue("pages", value, [nameof(Pages)]);
+            set => SetValue("pages", value, nameof(Pages));
         }
         public string Publisher
         {
             get => GetValue("publisher");
-            set => SetValue("publisher", value, [nameof(Publisher)]);
+            set => SetValue("publisher", value, nameof(Publisher));
         }
         public string Booktitle
         {
             get => GetValue("booktitle");
-            set => SetValue("booktitle", value, [nameof(Booktitle), nameof(Journal_Booktitle)]);
+            set => SetValue("booktitle", value, nameof(Booktitle));
         }
         public string Address
         {
             get => GetValue("address");
-            set => SetValue("address", value, [nameof(Address)]);
+            set => SetValue("address", value, nameof(Address));
         }
         public string School
         {
             get => GetValue("school");
-            set => SetValue("school", value, [nameof(School)]);
+            set => SetValue("school", value, nameof(School));
         }
         public string Edition
         {
             get => GetValue("edition");
-            set => SetValue("edition", value, [nameof(Edition)]);
+            set => SetValue("edition", value, nameof(Edition));
         }
         public string Chapter
         {
             get => GetValue("chapter");
-            set => SetValue("chapter", value, [nameof(Chapter)]);
+            set => SetValue("chapter", value, nameof(Chapter));
         }
         public string Note
         {
             get => GetValue("note");
-            set => SetValue("note", value, [nameof(Note)]);
+            set => SetValue("note", value, nameof(Note));
         }
 
         public string DOI
         {
             get => GetValue("doi");
-            set => SetValue("doi", value, [nameof(DOI)]);
+            set => SetValue("doi", value, nameof(DOI));
         }
         public string Url
         {
             get => GetValue("url");
-            set => SetValue("url", value, [nameof(Url)]);
+            set => SetValue("url", value, nameof(Url));
         }
         public string ISSN
         {
             get => GetValue("issn");
-            set => SetValue("issn", value, [nameof(ISSN)]);
+            set => SetValue("issn", value, nameof(ISSN));
         }
         public string File
         {
             get => GetValue("file");
-            set => SetValue("file", value, [nameof(File)]);
+            set => SetValue("file", value, nameof(File));
         }
 
         public string Abstract
         {
             get => GetValue("abstract");
-            set => SetValue("abstract", value, [nameof(Abstract)]);
+            set => SetValue("abstract", value, nameof(Abstract));
         }
         public string Keywords
         {
             get => GetValue("keywords");
-            set => SetValue("keywords", value, [nameof(Keywords)]);
+            set => SetValue("keywords", value, nameof(Keywords));
         }
         public string Comment
         {
             get => GetValue("comment");
-            set => SetValue("comment", value, [nameof(Comment)]);
+            set => SetValue("comment", value, nameof(Comment));
         }
-
 
         public string BibTeX
         {
@@ -198,24 +183,49 @@ namespace Litenbib.Models
             }
         }
 
-
+        // 通用的属性变化事件，用于通知其他控件的显示
         public event PropertyChangedEventHandler? PropertyChanged;
+        // 用于UndoRedo功能
+        public event PropertyChangedEventHandler? UndoRedoPropertyChanged;
 
         private string GetValue(string k)
         { return Fields.TryGetValue(k, out string? value) ? value : ""; }
 
-        private void SetValue(string k, string v, string[]? additionalNotifications = null)
+        private void SetValue(string k, string v, string notification)
         {
+            string? t = Fields.TryGetValue(k, out string? value) ? value : null;
             Fields[k] = v;
-            if (additionalNotifications != null)
-            {
-                foreach (var notification in additionalNotifications)
-                { OnPropertyChanged(notification); }
-            }
+            OnPropertyChanged(notification, t, v);
         }
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+
+        public void SetValueSilent(string propertyName, string? v)
+        {
+            switch (propertyName)
+            {
+                case "":
+                    return;
+                case "Type":
+                    type = v ?? "";
+                    break;
+                case "CitationKey":
+                    citationKey = v ?? "";
+                    break;
+                default:
+                    {
+                        if (string.IsNullOrEmpty(v))
+                        { Fields.Remove(propertyName.ToLower()); }
+                        else{ Fields[propertyName.ToLower()] = v; }
+                    }
+                    break;
+            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BibTeX)));
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null, string? oldValue = null, string? newValue = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            UndoRedoPropertyChanged?.Invoke(this, new PropertyChangedEventArgsEx(propertyName, oldValue, newValue));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BibTeX)));
             Debug.WriteLine("Changing " + propertyName);
         }

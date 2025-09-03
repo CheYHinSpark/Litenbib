@@ -77,11 +77,24 @@ namespace Litenbib.Models
         }
 
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
-        {
-            return value;
-        }
+        { return value; }
     }
 
+    public class StringSelectorConverter : IValueConverter
+    {
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            // value 是绑定的第一个字符串，也就是 a
+            var primaryString = value as string;
+            // parameter 是绑定的第二个字符串，也就是 b
+            var fallbackString = parameter as string;
+            // 如果 a 非空且不为空白，则返回 a，否则返回 b
+            return string.IsNullOrWhiteSpace(primaryString) ? fallbackString : primaryString;
+        }
+
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        { throw new NotSupportedException(); }
+    }
 
     public class WindowStateToPathConverter : IValueConverter
     {
@@ -93,7 +106,7 @@ namespace Litenbib.Models
                 // 这里根据你的逻辑返回不同的颜色
                 return value switch
                 {
-                    WindowState.Maximized => PathGeometry.Parse("M 0,0 L 6,0 L 6,6 L 0,6 Z M 2,-2 L 8,-2 L 8,4"),
+                    WindowState.Maximized => PathGeometry.Parse("M 0,2 L 6,2 L 6,8 L 0,8 Z M 2,0 L 8,0 L 8,6"),
                     _ => PathGeometry.Parse("M 0,0 L 8,0 L 8,7 L 0,7 Z"), // 默认背景
                 };
             }
@@ -102,8 +115,6 @@ namespace Litenbib.Models
         }
 
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
-        {
-            throw new NotSupportedException();
-        }
+        { throw new NotSupportedException(); }
     }
 }

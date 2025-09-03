@@ -33,6 +33,11 @@ namespace Litenbib.ViewModels
         [ObservableProperty]
         private BibtexViewModel? _selectecdBibtex;
 
+        partial void OnSelectecdBibtexChanged(BibtexViewModel? oldValue, BibtexViewModel? newValue)
+        { OnPropertyChanged(nameof(ShowToolBar)); }
+
+        public bool ShowToolBar { get => SelectecdBibtex != null; }
+
         partial void OnSelectecdBibtexChanged(BibtexViewModel? value)
         {
             // inform Commands to update
@@ -126,5 +131,18 @@ namespace Litenbib.ViewModels
 
         }
         private bool CanSaveFile() => SelectecdBibtex != null;
+
+        [RelayCommand]
+        private void UndoBibtex()
+        {
+            if (SelectecdBibtex == null) { return; }
+            SelectecdBibtex.UndoRedoManager.Undo();
+        }
+        [RelayCommand]
+        private void RedoBibtex()
+        {
+            if (SelectecdBibtex == null) { return; }
+            SelectecdBibtex.UndoRedoManager.Redo();
+        }
     }
 }
