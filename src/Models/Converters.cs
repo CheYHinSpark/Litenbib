@@ -95,6 +95,19 @@ namespace Litenbib.Models
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         { throw new NotSupportedException(); }
     }
+    public class UrlToBoolConverter : IValueConverter
+    {
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            var aString = value as string;
+            var bString = parameter as string;
+            // 如果 a b 有一个非空返回true
+            return !string.IsNullOrWhiteSpace(aString) || !string.IsNullOrWhiteSpace(bString);
+        }
+
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        { throw new NotSupportedException(); }
+    }
 
     public class WindowStateToPathConverter : IValueConverter
     {

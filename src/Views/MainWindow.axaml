@@ -56,7 +56,7 @@
 						  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
 				</Button>
                 <Button Name="MaxButton" Click="TitleButton_Click" Classes="window">
-					<Path Data="{Binding $parent[Window].WindowState, Converter={StaticResource WindowStateToPathConverter}}"
+					<Path Data="{CompiledBinding $parent[Window].WindowState, Converter={StaticResource WindowStateToPathConverter}}"
 						  StrokeThickness="1" Stroke="{CompiledBinding $parent[Button].Foreground}"/>
 				</Button>
 				<Button Name="CloseButton" Click="TitleButton_Click" Classes="warning window">

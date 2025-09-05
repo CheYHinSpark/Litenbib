@@ -21,10 +21,6 @@ namespace Litenbib.Models
         private string citationKey = citationKey;
         public Dictionary<string, string> Fields = new(StringComparer.OrdinalIgnoreCase);
 
-
-        // showing fields
-        public bool Selected { get; set; }
-
         // editable fields
         public string Type
         {
@@ -238,6 +234,6 @@ namespace Litenbib.Models
             return entry;
         }
 
-        public static BibtexEntry Null => new BibtexEntry("", "");
+        public static BibtexEntry Null => new("", "");
     }
 }

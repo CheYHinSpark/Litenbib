@@ -12,10 +12,12 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -26,8 +28,6 @@ namespace Litenbib.ViewModels
         public string Header { get; set; }
 
         public string FullPath { get; set; }
-
-        public bool AllSelected {  get; set; }
 
         public UndoRedoManager UndoRedoManager { get; set; }
 
@@ -230,5 +230,40 @@ namespace Litenbib.ViewModels
             NotifyCanUndoRedo();
         }
         private bool CanDelete() => ShowingEntry != null && UndoRedoManager.NewEditedBox == null;
+
+
+        [RelayCommand]
+        private void ToLink(object o)
+        {
+            if (o is BibtexEntry entry)
+            {
+                string url = entry.DOI == "" ? entry.Url : "https://doi.org/" + entry.DOI;
+                try
+                {
+                    Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+                }
+                catch
+                {
+                    // 跨平台兼容处理
+                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    {
+                        url = url.Replace("&", "^&");
+                        Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
+                    }
+                    else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                    {
+                        Process.Start("xdg-open", url);
+                    }
+                    else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                    {
+                        Process.Start("open", url);
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+        }
     }
 }
