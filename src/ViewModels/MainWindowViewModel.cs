@@ -127,22 +127,7 @@ namespace Litenbib.ViewModels
 
         [RelayCommand(CanExecute = nameof(CanSaveFile))]
         private async Task SaveFile()
-        {
-
-        }
+        { }
         private bool CanSaveFile() => SelectecdBibtex != null;
-
-        [RelayCommand]
-        private void UndoBibtex()
-        {
-            if (SelectecdBibtex == null) { return; }
-            SelectecdBibtex.UndoRedoManager.Undo();
-        }
-        [RelayCommand]
-        private void RedoBibtex()
-        {
-            if (SelectecdBibtex == null) { return; }
-            SelectecdBibtex.UndoRedoManager.Redo();
-        }
     }
 }

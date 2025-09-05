@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Selection;
 using Avalonia.Controls.Shapes;
+using Avalonia.Data;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -35,6 +36,17 @@ namespace Litenbib.ViewModels
 
         [ObservableProperty]
         private BibtexEntry _showingEntry;
+        partial void OnShowingEntryChanged(BibtexEntry value)
+        { DeleteBibtexCommand.NotifyCanExecuteChanged(); }
+
+        public List<(int, BibtexEntry)>? SelectedIndexItems { get; set; }
+
+        public void SetSelectedItems(IEnumerable<BibtexEntry> entries)
+        {
+            SelectedIndexItems = [];
+            foreach (var entry in entries)
+            { SelectedIndexItems.Add((BibtexEntries.IndexOf(entry), entry)); }
+        }
 
         private string filterText = string.Empty;
         private string[] filters = [];
@@ -51,6 +63,34 @@ namespace Litenbib.ViewModels
                 BibtexView.Refresh();
             }
         }
+
+        private int oldSelectionStart = -1;
+        private int selectionStart = -1;
+        public int SelectionStart
+        {
+            set
+            {
+                oldSelectionStart = selectionStart;
+                selectionStart = value;
+                SetIsTailSelected();
+            }
+        }
+
+        private int oldSelectionEnd = -1;
+        private int selectionEnd = -1;
+        public int SelectionEnd
+        {
+            set
+            {
+                oldSelectionEnd = selectionEnd;
+                selectionEnd = value;
+                SetIsTailSelected();
+            }
+        }
+
+        private bool isTailSelected = false;
+
+        public TextBox? CurrentTextBox { set { UndoRedoManager.NewEditedBox = value; } }
 
         public static ObservableCollection<string> TypeList
         {
@@ -71,13 +111,13 @@ namespace Litenbib.ViewModels
             {
                 Filter = entry => FilterBibtex(entry as BibtexEntry)
             };
-            _showingEntry = new("", "");
+            ShowingEntry = BibtexEntry.Null;
             UndoRedoManager = new();
         }
 
-        public void ChangeShowing(object i)
+        public void ChangeShowing(object o)
         {
-            if (i is not BibtexEntry entry) { return; }
+            if (o is not BibtexEntry entry) { return; }
             ShowingEntry = entry;
         }
 
@@ -94,7 +134,10 @@ namespace Litenbib.ViewModels
                 // 通过对话框的公共属性获取返回值
                 string bibtex = ((AddEntryViewModel)dialog.DataContext).BibtexText;
                 foreach (BibtexEntry entry in BibtexParser.Parse(bibtex))
-                { BibtexEntries.Add(entry); }
+                {
+                    UndoRedoManager.AddAction(new AddEntryAction(BibtexEntries, entry, BibtexEntries.Count));
+                    BibtexEntries.Add(entry);
+                }
             }
         }
 
@@ -110,27 +153,82 @@ namespace Litenbib.ViewModels
             return false;
         }
 
-        private void OnEntryPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        private void SetIsTailSelected()
         {
-            var item = sender as BibtexEntry;
-            if (item == null || e.PropertyName == null) { return; }
-            if (e is PropertyChangedEventArgsEx extendedArgs)
+            if (UndoRedoManager.LastEditedBox is TextBox tb)
             {
-                // 创建并添加操作到管理器
-                var action = new EntryChangeAction(item, e.PropertyName, (string?)extendedArgs.OldValue, (string?)extendedArgs.NewValue);
-                UndoRedoManager.AddAction(action);
+                if (string.IsNullOrEmpty(tb.Text))
+                { isTailSelected = 0 == selectionEnd || 0 ==  selectionStart; }
+                else
+                { isTailSelected = tb.Text.Length == selectionEnd || tb.Text.Length == selectionStart;}
             }
         }
 
-        //[RelayCommand]
-        //public void UndoEdit()
-        //{
-        //    UndoRedoManager.Undo();
-        //}
-        //[RelayCommand]
-        //public void RedoEdit()
-        //{
-        //    UndoRedoManager.Redo();
-        //}
+        private async void OnEntryPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            // 当前观察：在TextBox中操作之后如果鼠标在最后，会先改变NewSelectionStart
+            // 如果不是在最后，会先改变TextBox.Selected，之后才Delay才
+            if (sender is not BibtexEntry item || e.PropertyName == null) { return; }
+            if (e is PropertyChangedEventArgsEx extendedArgs)
+            {
+                if (isTailSelected)
+                {
+                    var action = new EntryChangeAction(item, e.PropertyName,
+                        (string?)extendedArgs.OldValue, (string?)extendedArgs.NewValue,
+                        int.Max(oldSelectionStart, oldSelectionEnd), selectionStart);
+                    UndoRedoManager.AddAction(action);
+                }
+                else
+                {
+                    int oldEnd = selectionEnd;
+                    await Task.Delay(1);
+                    // 创建并添加操作到管理器
+                    var action = new EntryChangeAction(item, e.PropertyName,
+                        (string?)extendedArgs.OldValue, (string?)extendedArgs.NewValue,
+                        oldEnd, selectionStart);
+                    UndoRedoManager.AddAction(action);
+                }
+                NotifyCanUndoRedo();
+            }
+        }
+
+        private void NotifyCanUndoRedo()
+        {
+            UndoBibtexCommand.NotifyCanExecuteChanged();
+            RedoBibtexCommand.NotifyCanExecuteChanged();
+        }
+
+        [RelayCommand(CanExecute = nameof(CanUndo))]
+        private void UndoBibtex()
+        {
+            UndoRedoManager.Undo();
+            NotifyCanUndoRedo();
+        }
+
+        private bool CanUndo() => UndoRedoManager.CanUndo;
+
+        [RelayCommand(CanExecute = nameof(CanRedo))]
+        private void RedoBibtex()
+        {
+            UndoRedoManager.Redo();
+            NotifyCanUndoRedo();
+        }
+        private bool CanRedo() => UndoRedoManager.CanRedo;
+
+        [RelayCommand(CanExecute = nameof(CanDelete))]
+        private void DeleteBibtex()
+        {
+            // 把那些东西全部删除掉
+            if (SelectedIndexItems == null || SelectedIndexItems.Count == 0) { return; }
+            UndoRedoManager.AddAction(new DeleteEntriesAction(BibtexEntries, SelectedIndexItems));
+            foreach (var item in SelectedIndexItems)
+            { 
+                if (ShowingEntry == item.Item2)
+                { ShowingEntry = BibtexEntry.Null; }
+                BibtexEntries.Remove(item.Item2);
+            }
+            NotifyCanUndoRedo();
+        }
+        private bool CanDelete() => ShowingEntry != null && UndoRedoManager.NewEditedBox == null;
     }
 }

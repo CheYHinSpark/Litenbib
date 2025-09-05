@@ -5,6 +5,7 @@ using Litenbib.Models;
 using Litenbib.ViewModels;
 using System;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Litenbib.Views;
 
@@ -22,11 +23,14 @@ public partial class BibtexView : UserControl
     // 选中事件
     private void DataGrid_SelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
-        if (sender == null || DataContext == null) { return; }
-        ((BibtexViewModel)DataContext).ChangeShowing(((DataGrid)sender).SelectedItem);
-        ShowDetail();
+        if (sender is DataGrid grid && DataContext is BibtexViewModel vm)
+        {
+            vm.ChangeShowing(grid.SelectedItem);
+            ShowDetail();
+            vm.SetSelectedItems(grid.SelectedItems.Cast<BibtexEntry>());
+        }
+        
     }
-
 
     private void ShowDetail()
     {

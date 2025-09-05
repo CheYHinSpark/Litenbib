@@ -237,5 +237,7 @@ namespace Litenbib.Models
             // TODO: 解析DOI
             return entry;
         }
+
+        public static BibtexEntry Null => new BibtexEntry("", "");
     }
 }

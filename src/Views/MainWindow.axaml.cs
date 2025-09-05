@@ -21,8 +21,6 @@ namespace Litenbib.Views
         }
 
         private void TitleBar_PointerPressed(object? sender, PointerPressedEventArgs e)
-        {
-            this.BeginMoveDrag(e);
-        }
+        { this.BeginMoveDrag(e); }
     }
 }

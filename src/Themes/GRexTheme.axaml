@@ -8,6 +8,7 @@
 	<PathGeometry x:Key="brPath" Figures="M 0,8 L 8,8 L 8,0 M 10,2 L 8,0 L 6,2 M 2,6 L 0,8 L 2,10"/>
 	<PathGeometry x:Key="UndoPath" Figures="M 8,11 L 8,7 A 4,4 0 0 0 4,3 L 0,3 M 3,0 L 0,3 L 3,6"/>
 	<PathGeometry x:Key="RedoPath" Figures="M 0,11 L 0,7 A 4,4 0 0 1 4,3 L 8,3 M 5,0 L 8,3 L 5,6"/>
+	<PathGeometry x:Key="DeletePath" Figures="M 3,0 L 6,0 L 6,1 L 9,1 L 9,2 L 0,2 L 0,1 L 3,1 Z M 8,3 L 8,9 L 7,10 L 2,10 L 1,9 L 1,3 Z"/>
     
     <SolidColorBrush x:Key="DisabledForeground" Color="{DynamicResource DisabledForegroundColor}"/>
     <SolidColorBrush x:Key="HighlightBackground" Color="{DynamicResource HighlightBackgroundColor}"/>
@@ -81,6 +82,10 @@
 		
 		<Style Selector="^.warning:pointerover">
 			<Setter Property="Background" Value="{DynamicResource WarningBackground}"/>
+		</Style>
+
+		<Style Selector="^:disabled">
+			<Setter Property="Foreground" Value="{DynamicResource DisabledForeground}"/>
 		</Style>
 		
 		<Style Selector="^.window">

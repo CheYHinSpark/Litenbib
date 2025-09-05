@@ -15,18 +15,21 @@
 		<m:WindowStateToPathConverter x:Key="WindowStateToPathConverter"/>
 	</Window.Resources>
 
+
     <Design.DataContext>
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
     <Grid Name="RootGrid" RowDefinitions="Auto, Auto, *">
+		<Rectangle Grid.RowSpan="2"
+                   HorizontalAlignment="Stretch"
+                   VerticalAlignment="Stretch"
+                   Fill="{DynamicResource MainBackground}"
+                   PointerPressed="TitleBar_PointerPressed"/>
+		
         <!--title-->
         <Grid ColumnDefinitions="*,*,*">
-            <Rectangle Grid.ColumnSpan="3"
-                       HorizontalAlignment="Stretch"
-                       VerticalAlignment="Stretch"
-                       Fill="{DynamicResource MainBackground}"
-                       PointerPressed="TitleBar_PointerPressed"/>
+            
             <TextBox Grid.Column="1" UndoLimit="200"
                      Text="{CompiledBinding FilterText}"
                      Watermark="Search or add..."
@@ -69,14 +72,19 @@
 			<StackPanel Orientation="Horizontal" Margin="4 0"
 						VerticalAlignment="Top">
 				<Button Width="28" Height="28"
-						Command="{CompiledBinding UndoBibtexCommand}">
+						Command="{CompiledBinding SelectecdBibtex.UndoBibtexCommand}">
 					<Path Data="{StaticResource UndoPath}" StrokeThickness="1"
 						  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
 				</Button>
 				<Button Width="28" Height="28"
-						Command="{CompiledBinding RedoBibtexCommand}">
+						Command="{CompiledBinding SelectecdBibtex.RedoBibtexCommand}">
 					<Path Data="{StaticResource RedoPath}" StrokeThickness="1"
 						  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+				</Button>
+				<Button Width="28" Height="28"
+						Command="{CompiledBinding SelectecdBibtex.DeleteBibtexCommand}">
+					<Path Data="{StaticResource DeletePath}"
+						  Fill="{CompiledBinding $parent[Button].Foreground}"/>
 				</Button>
 			</StackPanel>
 		</Grid>
@@ -89,7 +97,7 @@
         <!--content-->
         <TabControl Grid.Row="2" Padding="0"
 					ItemsSource="{CompiledBinding BibtexViewers}"
-                    SelectedValue="{CompiledBinding SelectecdBibtex}">
+                    SelectedItem="{CompiledBinding SelectecdBibtex}">
             <!-- Tab Header -->
             <TabControl.ItemTemplate>
                 <DataTemplate>

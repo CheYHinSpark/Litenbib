@@ -27,9 +27,19 @@
             <Setter Property="AcceptsTab" Value="True"/>
             <Setter Property="TextWrapping" Value="Wrap"/>
             <Setter Property="Margin" Value="2"/>
-			<Setter Property="UndoLimit" Value="0"/>
+			<Setter Property="IsUndoEnabled" Value="False"/>
+			<Setter Property="SelectionStart" Value="{Binding SelectionStart, Mode=OneWayToSource}"/>
+			<Setter Property="SelectionEnd" Value="{Binding SelectionEnd, Mode=OneWayToSource}"/>
+			<Setter Property="m:FocusEx.BindTo" Value="{Binding CurrentTextBox, Mode=OneWayToSource}"/>
         </Style>
     </UserControl.Styles>
+
+
+	<UserControl.KeyBindings>
+		<KeyBinding Command="{CompiledBinding UndoBibtexCommand}" Gesture="Ctrl+Z"/>
+		<KeyBinding Command="{CompiledBinding RedoBibtexCommand}" Gesture="Ctrl+Y"/>
+		<KeyBinding Command="{CompiledBinding DeleteBibtexCommand}" Gesture="Delete"/>
+	</UserControl.KeyBindings>
     
     <Grid Name="RootGrid" Background="{DynamicResource TabBackground}">
         <Grid.ColumnDefinitions>
@@ -50,16 +60,6 @@
                   SelectionChanged="DataGrid_SelectionChanged"
                   DragDrop.AllowDrop="True">
             <DataGrid.Columns>
-                <DataGridTemplateColumn Width="40" CanUserResize="False" IsReadOnly="False">
-                    <DataGridTemplateColumn.Header>
-                        <CheckBox HorizontalAlignment="Center" IsChecked="{Binding AllSelected}"/>
-                    </DataGridTemplateColumn.Header>
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate x:DataType="m:BibtexEntry">
-                            <CheckBox HorizontalAlignment="Center" IsChecked="{Binding Selected}" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
                 <DataGridTemplateColumn Width="Auto" CanUserResize="False">
                     <DataGridTemplateColumn.Header>Type</DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
@@ -142,7 +142,8 @@
 						</Grid.RowDefinitions>
 
 						<TextBlock Text="CitationKey" Classes="right"/>
-						<TextBox Text="{CompiledBinding ShowingEntry.CitationKey}" Grid.Column="1"/>
+						<TextBox Text="{CompiledBinding ShowingEntry.CitationKey}" Grid.Column="1"
+								 />
 						<TextBlock Text="Author" Classes="right" Grid.Row="1"/>
 						<TextBox Text="{CompiledBinding ShowingEntry.Author}" Grid.Row="1" Grid.Column="1"/>
 						<TextBlock Text="Title" Classes="right" Grid.Row="2"/>
