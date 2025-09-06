@@ -10,12 +10,16 @@
         </ResourceDictionary>
     </Styles.Resources>
 
-	<Style Selector="Border">
+	<Style Selector="Border.hide_show">
 		<Setter Property="Transitions">
 			<Transitions>
 				<DoubleTransition Property="Opacity" Duration="0:0:0.2"/>
 			</Transitions>
 		</Setter>
+		<Setter Property="Opacity" Value="0"/>
+		<Style Selector="^[IsEnabled=True]">
+			<Setter Property="Opacity" Value="1"/>
+		</Style>
 	</Style>
 
     <Style Selector="Button">

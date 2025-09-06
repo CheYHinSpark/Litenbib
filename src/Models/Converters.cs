@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Data.Converters;
 using Avalonia.Media;
+using Litenbib.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -40,19 +41,6 @@ namespace Litenbib.Models
 
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         { return value; }
-    }
-
-    public class BoolToClassesConverter : IValueConverter
-    {
-        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
-        {
-            var s = value as string;
-            var p = parameter == null;
-            return string.IsNullOrEmpty(s) || p ? 0 : 1;
-        }
-
-        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
-        { throw new NotSupportedException(); }
     }
 
     public class FilterModeConverter : IValueConverter

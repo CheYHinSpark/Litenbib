@@ -14,7 +14,6 @@
     <Window.Resources>
 		<m:FilterModeConverter x:Key="FilterModeConverter"/>
 		<m:WindowStateToPathConverter x:Key="WindowStateToPathConverter"/>
-		<m:BoolToClassesConverter x:Key="BoolToClassesConverter"/>
     </Window.Resources>
 
 	<Window.KeyBindings>
@@ -38,16 +37,13 @@
         <Grid Name="TitleBarGrid" ColumnDefinitions="*,*,*"
 			  RowDefinitions="Auto,Auto">
 			<Border Grid.Column="1" Grid.RowSpan="2" CornerRadius="0 0 12 12"
-					Background="{DynamicResource TabBackground}"
-				    Opacity="{Binding #FilterTextBox.Text,
-					Converter={StaticResource BoolToClassesConverter},
-					ConverterParameter={Binding SelectecdBibtex}, Mode=OneWay}">
-				<!--<Border.Opacity>
-					<MultiBinding Converter="{StaticResource BoolToClassesConverter}">
-						<Binding Path="#FilterTextBox.Text" Converter="{x:Static StringConverters.IsNotNullOrEmpty}}"/>
-						<Binding Path="SelectecdBibtex" Converter="{x:Static ObjectConverters.IsNotNull}}"/>
+					Background="{DynamicResource TabBackground}" Classes="hide_show">
+				<Border.IsEnabled>
+					<MultiBinding Converter="{x:Static BoolConverters.And}">
+						<Binding Path="#FilterTextBox.Text" Converter="{x:Static StringConverters.IsNotNullOrEmpty}}" />
+						<Binding Path="SelectecdBibtex" Converter="{x:Static ObjectConverters.IsNotNull}" />
 					</MultiBinding>
-				</Border.Opacity>-->
+				</Border.IsEnabled>
 				<Grid ColumnDefinitions="*,*,*" Margin="4 0"
 					  VerticalAlignment="Bottom">
 					<RadioButton IsChecked="{CompiledBinding SelectecdBibtex.FilterMode,
