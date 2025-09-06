@@ -21,6 +21,12 @@ namespace Litenbib.Views
         }
 
         private void TitleBar_PointerPressed(object? sender, PointerPressedEventArgs e)
-        { this.BeginMoveDrag(e); }
+        {
+            TitleBarGrid.IsHitTestVisible = false;
+            this.BeginMoveDrag(e);
+        }
+
+        private void TitleBar_PointerReleased(object? sender, Avalonia.Input.PointerReleasedEventArgs e)
+        { TitleBarGrid.IsHitTestVisible = true; }
     }
 }

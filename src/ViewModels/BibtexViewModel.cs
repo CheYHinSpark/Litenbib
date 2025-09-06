@@ -20,6 +20,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Litenbib.ViewModels
 {
@@ -29,38 +30,66 @@ namespace Litenbib.ViewModels
 
         public string FullPath { get; set; }
 
+        public bool Edited { get => UndoRedoManager.Edited; }
+
         public UndoRedoManager UndoRedoManager { get; set; }
 
-        public ObservableCollection<BibtexEntry> BibtexEntries { get; set; }
+        public ObservableRangeCollection<BibtexEntry> BibtexEntries { get; set; }
+        
         public DataGridCollectionView BibtexView { get; }
 
-        [ObservableProperty]
-        private BibtexEntry _showingEntry;
-        partial void OnShowingEntryChanged(BibtexEntry value)
-        { DeleteBibtexCommand.NotifyCanExecuteChanged(); }
+        private bool _suppressShowingEntry = false;
+        private BibtexEntry _holdShowingEntry;
+
+        private BibtexEntry? _showingEntry;
+        public BibtexEntry? ShowingEntry
+        {
+            get => _showingEntry;
+            set
+            {
+                if (_suppressShowingEntry)
+                { _holdShowingEntry = value!; }
+                else
+                {
+                    SetProperty(ref _showingEntry, value);
+                    _holdShowingEntry = value!;
+                    DeleteBibtexCommand.NotifyCanExecuteChanged();
+                    DeleteBibtexKeyCommand.NotifyCanExecuteChanged();
+                }
+            }
+        }
 
         public List<(int, BibtexEntry)>? SelectedIndexItems { get; set; }
 
         public void SetSelectedItems(IEnumerable<BibtexEntry> entries)
         {
             SelectedIndexItems = [];
-            foreach (var entry in entries)
-            { SelectedIndexItems.Add((BibtexEntries.IndexOf(entry), entry)); }
+            foreach (var e in entries)
+            { SelectedIndexItems.Add((BibtexEntries.IndexOf(e), e)); }
         }
 
-        private string filterText = string.Empty;
         private string[] filters = [];
+        private string filterText = string.Empty;
 
         public string FilterText
         {
             get => filterText;
             set
             {
-                if (filterText == value) { return; }
-                filterText = value;
+                this.SetProperty(ref filterText, value);
                 if (!string.IsNullOrEmpty(value))
                 { filters = value.Split(' '); }
                 BibtexView.Refresh();
+            }
+        }
+
+        private bool isFiltering = false;
+        public bool IsFiltering
+        {
+            get => isFiltering;
+            set
+            {
+                this.SetProperty(ref isFiltering, value);
             }
         }
 
@@ -104,28 +133,22 @@ namespace Litenbib.ViewModels
         {
             Header = header;
             FullPath = fullPath;
-            BibtexEntries = new ObservableCollection<BibtexEntry>(BibtexParser.Parse(filecontent));
+            BibtexEntries = new ObservableRangeCollection<BibtexEntry>(BibtexParser.Parse(filecontent));
             foreach (var entry in BibtexEntries)
             { entry.UndoRedoPropertyChanged += OnEntryPropertyChanged; }
             BibtexView = new(BibtexEntries)
             {
                 Filter = entry => FilterBibtex(entry as BibtexEntry)
             };
-            ShowingEntry = BibtexEntry.Null;
+            _holdShowingEntry = null!;
             UndoRedoManager = new();
-        }
-
-        public void ChangeShowing(object o)
-        {
-            if (o is not BibtexEntry entry) { return; }
-            ShowingEntry = entry;
         }
 
         public async Task AddBibtexEntry(Window window)
         {
             AddEntryWindow dialog = new();
 
-            // 5. 显示对话框并等待结果 (ShowDialog 需要传入父窗口引用)
+            // 显示对话框并等待结果 (ShowDialog 需要传入父窗口引用)
             var result = await dialog.ShowDialog<bool>(window); // 等待对话框关闭并获取 DialogResult
 
             if (result == true) // 如果用户点击了 OK
@@ -196,72 +219,85 @@ namespace Litenbib.ViewModels
         {
             UndoBibtexCommand.NotifyCanExecuteChanged();
             RedoBibtexCommand.NotifyCanExecuteChanged();
+            SaveBibtexCommand.NotifyCanExecuteChanged();
+            OnPropertyChanged(nameof(Edited));
         }
 
         [RelayCommand(CanExecute = nameof(CanUndo))]
         private void UndoBibtex()
         {
+            _suppressShowingEntry = true;
             UndoRedoManager.Undo();
+            _suppressShowingEntry = false;
+            ShowingEntry = _holdShowingEntry ?? null;
             NotifyCanUndoRedo();
         }
 
-        private bool CanUndo() => UndoRedoManager.CanUndo;
+        private bool CanUndo() => UndoRedoManager.CanUndo && !isFiltering;
 
         [RelayCommand(CanExecute = nameof(CanRedo))]
         private void RedoBibtex()
         {
+            _suppressShowingEntry = true;
             UndoRedoManager.Redo();
+            _suppressShowingEntry = false;
+            ShowingEntry = _holdShowingEntry ?? null;
             NotifyCanUndoRedo();
         }
-        private bool CanRedo() => UndoRedoManager.CanRedo;
+        private bool CanRedo() => UndoRedoManager.CanRedo && !isFiltering;
 
         [RelayCommand(CanExecute = nameof(CanDelete))]
         private void DeleteBibtex()
+        { Delete(); }
+        private bool CanDelete() => ShowingEntry != null;
+
+        [RelayCommand(CanExecute = nameof(CanDeleteKey))]
+        private void DeleteBibtexKey()
+        { Delete(); }
+        private bool CanDeleteKey() => ShowingEntry != null 
+            && UndoRedoManager.NewEditedBox == null && !isFiltering;
+
+        private void Delete()
         {
             // 把那些东西全部删除掉
             if (SelectedIndexItems == null || SelectedIndexItems.Count == 0) { return; }
             UndoRedoManager.AddAction(new DeleteEntriesAction(BibtexEntries, SelectedIndexItems));
-            foreach (var item in SelectedIndexItems)
-            { 
-                if (ShowingEntry == item.Item2)
-                { ShowingEntry = BibtexEntry.Null; }
-                BibtexEntries.Remove(item.Item2);
-            }
+            _suppressShowingEntry = true;
+            BibtexEntries.RemoveRange(SelectedIndexItems.Select(t => t.Item2));
+            _suppressShowingEntry = false;
+            ShowingEntry = _holdShowingEntry ?? null;
             NotifyCanUndoRedo();
         }
-        private bool CanDelete() => ShowingEntry != null && UndoRedoManager.NewEditedBox == null;
 
+        [RelayCommand(CanExecute = nameof(Edited))]
+        private async Task SaveBibtex()
+        {
+            using var writer = new StreamWriter(FullPath, append: false, encoding: Encoding.UTF8, bufferSize: 65536); // 缓冲区大小设置为64KB
+            foreach (var entry in BibtexEntries)
+            { await writer.WriteAsync(entry.BibTeX); }
+            UndoRedoManager.Edited = false;
+            OnPropertyChanged(nameof(Edited));
+        }
 
         [RelayCommand]
-        private void ToLink(object o)
+        private static void ToLink(object o)
         {
             if (o is BibtexEntry entry)
             {
                 string url = entry.DOI == "" ? entry.Url : "https://doi.org/" + entry.DOI;
                 try
-                {
-                    Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
-                }
+                { Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }); }
                 catch
                 {
                     // 跨平台兼容处理
                     if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                    {
-                        url = url.Replace("&", "^&");
-                        Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
-                    }
+                    { Process.Start(new ProcessStartInfo("cmd", $"/c start {url.Replace("&", "^&")}") { CreateNoWindow = true }); }
                     else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                    {
-                        Process.Start("xdg-open", url);
-                    }
+                    { Process.Start("xdg-open", url); }
                     else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                    {
-                        Process.Start("open", url);
-                    }
+                    { Process.Start("open", url); }
                     else
-                    {
-                        throw;
-                    }
+                    { throw; }
                 }
             }
         }

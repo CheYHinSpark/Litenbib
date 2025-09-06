@@ -11,84 +11,99 @@
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
         Title="Litenbib">
-	<Window.Resources>
-		<m:WindowStateToPathConverter x:Key="WindowStateToPathConverter"/>
-	</Window.Resources>
+    <Window.Resources>
+        <m:WindowStateToPathConverter x:Key="WindowStateToPathConverter"/>
+    </Window.Resources>
 
+	<Window.KeyBindings>
+        <KeyBinding Command="{CompiledBinding SelectecdBibtex.UndoBibtexCommand}" Gesture="Ctrl+Z"/>
+        <KeyBinding Command="{CompiledBinding SelectecdBibtex.RedoBibtexCommand}" Gesture="Ctrl+Y"/>
+		<KeyBinding Command="{CompiledBinding SelectecdBibtex.DeleteBibtexKeyCommand}" Gesture="Delete"/>
+		<KeyBinding Command="{CompiledBinding SelectecdBibtex.SaveBibtexCommand}" Gesture="Ctrl+S"/>
+    </Window.KeyBindings>
 
     <Design.DataContext>
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
     <Grid Name="RootGrid" RowDefinitions="Auto, Auto, *">
-		<Rectangle Grid.RowSpan="2"
+        <Rectangle Grid.RowSpan="2"
                    HorizontalAlignment="Stretch"
                    VerticalAlignment="Stretch"
                    Fill="{DynamicResource MainBackground}"
-                   PointerPressed="TitleBar_PointerPressed"/>
-		
+                   PointerPressed="TitleBar_PointerPressed"
+				   PointerReleased="TitleBar_PointerReleased"/>
+        
         <!--title-->
-        <Grid ColumnDefinitions="*,*,*">
+        <Grid Name="TitleBarGrid" ColumnDefinitions="*,*,*"
+			  Height="{StaticResource TitleBarHeight}">
             
             <TextBox Grid.Column="1" UndoLimit="200"
-                     Text="{CompiledBinding FilterText}"
+					 m:FocusEx.IsFocused="{CompiledBinding SelectecdBibtex.IsFiltering, Mode=OneWayToSource}"
+                     Text="{CompiledBinding SelectecdBibtex.FilterText, Mode=OneWayToSource}"
                      Watermark="Search or add..."
                      VerticalAlignment="Bottom"/>
             
             <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
                 <Menu>
-                    <MenuItem Header="_File">
+                    <MenuItem Header="_File" Classes="Top">
                         <MenuItem Header="_New"/>
                         <MenuItem Header="_Open..."
                                   Command="{CompiledBinding OpenFileCommand}"
                                   CommandParameter="{CompiledBinding $parent[Window]}"/>
-                        <MenuItem Header="_Save"
-                                  Command="{CompiledBinding SaveFileCommand}"/>
+                        <MenuItem Header="_Save All"
+                                  Command="{CompiledBinding SaveAllCommand}"/>
                     </MenuItem>
-                    <MenuItem Header="_Add"
+                    <MenuItem Header="_Add" Classes="Top"
                               Command="{CompiledBinding AddBibtexEntryCommand}"
                               CommandParameter="{CompiledBinding $parent[Window]}"/>
                 </Menu>
             </StackPanel>
+			
             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Grid.Column="2">
-				<Button Name="MinButton" Click="TitleButton_Click" Classes="window">
-					<Path Data="{StaticResource -Path}" StrokeThickness="1"
-						  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
-				</Button>
+                <Button Name="MinButton" Click="TitleButton_Click" Classes="window">
+                    <Path Data="{StaticResource -Path}" StrokeThickness="1"
+                          Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+                </Button>
                 <Button Name="MaxButton" Click="TitleButton_Click" Classes="window">
-					<Path Data="{CompiledBinding $parent[Window].WindowState, Converter={StaticResource WindowStateToPathConverter}}"
-						  StrokeThickness="1" Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+                    <Path Data="{CompiledBinding $parent[Window].WindowState, Converter={StaticResource WindowStateToPathConverter}}"
+                          StrokeThickness="1" Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+                </Button>
+                <Button Name="CloseButton" Click="TitleButton_Click" Classes="warning window">
+                    <Path Data="{StaticResource xPath}" StrokeThickness="1"
+                          Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+                </Button>
+            </StackPanel>
+        </Grid>
+        
+        <!--tool-->
+        <Grid Grid.Row="1" Height="{StaticResource ToolBarHeight}"
+              Opacity="{Binding ShowToolBar}">
+            <StackPanel Orientation="Horizontal" Margin="4 0"
+                        VerticalAlignment="Top">
+                <Button Width="28" Height="28"
+                        Command="{CompiledBinding SelectecdBibtex.UndoBibtexCommand}">
+                    <Path Data="{StaticResource UndoPath}" StrokeThickness="1"
+                          Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+                </Button>
+                <Button Width="28" Height="28"
+                        Command="{CompiledBinding SelectecdBibtex.RedoBibtexCommand}">
+                    <Path Data="{StaticResource RedoPath}" StrokeThickness="1"
+                          Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+                </Button>
+				<Button Width="28" Height="28"
+                        Command="{CompiledBinding SelectecdBibtex.DeleteBibtexCommand}">
+					<Path Data="{StaticResource DeletePath}"
+                          Fill="{CompiledBinding $parent[Button].Foreground}"/>
 				</Button>
-				<Button Name="CloseButton" Click="TitleButton_Click" Classes="warning window">
-					<Path Data="{StaticResource xPath}" StrokeThickness="1"
-						  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+				<Button Width="28" Height="28"
+                        Command="{CompiledBinding SelectecdBibtex.SaveBibtexCommand}">
+					<Path Data="{StaticResource SavePath}"
+                          Fill="{CompiledBinding $parent[Button].Foreground}"/>
 				</Button>
             </StackPanel>
         </Grid>
-		
-		<!--tool-->
-		<Grid Grid.Row="1" Height="{StaticResource ToolBarHeight}"
-			  Opacity="{Binding ShowToolBar}">
-			<StackPanel Orientation="Horizontal" Margin="4 0"
-						VerticalAlignment="Top">
-				<Button Width="28" Height="28"
-						Command="{CompiledBinding SelectecdBibtex.UndoBibtexCommand}">
-					<Path Data="{StaticResource UndoPath}" StrokeThickness="1"
-						  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
-				</Button>
-				<Button Width="28" Height="28"
-						Command="{CompiledBinding SelectecdBibtex.RedoBibtexCommand}">
-					<Path Data="{StaticResource RedoPath}" StrokeThickness="1"
-						  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
-				</Button>
-				<Button Width="28" Height="28"
-						Command="{CompiledBinding SelectecdBibtex.DeleteBibtexCommand}">
-					<Path Data="{StaticResource DeletePath}"
-						  Fill="{CompiledBinding $parent[Button].Foreground}"/>
-				</Button>
-			</StackPanel>
-		</Grid>
-		
+        
         <!--welcome-->
         <!--<TextBlock Grid.Row="1" Text="Welcome to LitenBib"
                    HorizontalAlignment="Center"
@@ -96,22 +111,24 @@
                    FontSize="24"/>-->
         <!--content-->
         <TabControl Grid.Row="2" Padding="0"
-					ItemsSource="{CompiledBinding BibtexViewers}"
+                    ItemsSource="{CompiledBinding BibtexViewers}"
                     SelectedItem="{CompiledBinding SelectecdBibtex}">
             <!-- Tab Header -->
             <TabControl.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <TextBlock Text="*" FontSize="{CompiledBinding $parent[Window].FontSize}"
+                                   IsVisible="{CompiledBinding Edited}" Margin="4 0 0 0"/>
                         <TextBlock Text="{CompiledBinding Header}" Margin="4 0"
                                    VerticalAlignment="Center"
                                    FontSize="{CompiledBinding $parent[Window].FontSize}"/>
-						<Button Classes="tab_button warning"
+                        <Button Classes="tab_button warning"
                                 FontSize="{CompiledBinding $parent[Window].FontSize}"
                                 Command="{CompiledBinding #LitbibMainWindow.DataContext.CloseTabCommand}"
                                 CommandParameter="{CompiledBinding}">
-							<Path Data="{StaticResource xPath}" StrokeThickness="1"
-						          Stroke="{CompiledBinding $parent[Button].Foreground}"/>
-						</Button>
+                            <Path Data="{StaticResource xPath}" StrokeThickness="1"
+                                  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+                        </Button>
                     </StackPanel>
                 </DataTemplate>
             </TabControl.ItemTemplate>

@@ -119,8 +119,8 @@ namespace Litenbib.Models
                 // 这里根据你的逻辑返回不同的颜色
                 return value switch
                 {
-                    WindowState.Maximized => PathGeometry.Parse("M 0,2 L 6,2 L 6,8 L 0,8 Z M 2,0 L 8,0 L 8,6"),
-                    _ => PathGeometry.Parse("M 0,0 L 8,0 L 8,7 L 0,7 Z"), // 默认背景
+                    WindowState.Maximized => PathGeometry.Parse("M 0,2 L 6,2 6,8 0,8 Z M 2,0 L 8,0 8,6"),
+                    _ => PathGeometry.Parse("M 0,0 L 8,0 8,7 0,7 Z"), // 默认背景
                 };
             }
             // 如果value不是字符串，返回默认颜色

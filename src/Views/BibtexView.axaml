@@ -16,9 +16,17 @@
     </UserControl.Resources>
 
     <UserControl.Styles>
+		<Style Selector="Button">
+			<Setter Property="Height" Value="28"/>
+			<Setter Property="Width" Value="28"/>
+		</Style>
         <Style Selector="ComboBox">
             <Setter Property="Margin" Value="2"/>
         </Style>
+		<Style Selector="Path">
+			<Setter Property="Stroke" Value="{CompiledBinding $parent[Button].Foreground}"/>
+			<Setter Property="StrokeThickness" Value="1"/>
+		</Style>
         <Style Selector="TextBlock">
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="FontSize" Value="{CompiledBinding $parent[Window].FontSize}"/>
@@ -36,13 +44,6 @@
         </Style>
     </UserControl.Styles>
 
-
-    <UserControl.KeyBindings>
-        <KeyBinding Command="{CompiledBinding UndoBibtexCommand}" Gesture="Ctrl+Z"/>
-        <KeyBinding Command="{CompiledBinding RedoBibtexCommand}" Gesture="Ctrl+Y"/>
-        <KeyBinding Command="{CompiledBinding DeleteBibtexCommand}" Gesture="Delete"/>
-    </UserControl.KeyBindings>
-    
     <Grid Name="RootGrid" Background="{DynamicResource TabBackground}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -59,6 +60,7 @@
         <DataGrid Name="DataGridView" Margin="8" ItemsSource="{CompiledBinding BibtexView}"
                   CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True"
                   IsReadOnly="True"
+				  SelectedItem="{CompiledBinding ShowingEntry}"
                   SelectionChanged="DataGrid_SelectionChanged"
                   DragDrop.AllowDrop="True">
             <DataGrid.Columns>
@@ -130,20 +132,16 @@
                               ItemsSource="{CompiledBinding TypeList}"
                               SelectedItem="{CompiledBinding ShowingEntry.Type, Converter={StaticResource BibTypeConverter}}"/>
                     <StackPanel Grid.Column="1" Orientation="Horizontal">
-                        <Button Click="ChangeButton_Click"
-                                Width="28" Height="28">
-                            <Path Data="{StaticResource brPath}" StrokeThickness="1"
-                                  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+                        <Button Click="ChangeButton_Click">
+                            <Path Data="{StaticResource brPath}"/>
                         </Button>
-                        <Button Click="CloseButton_Click"
-                                Width="28" Height="28">
-                            <Path Data="{StaticResource xPath}" StrokeThickness="1"
-                                  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+                        <Button Click="CloseButton_Click">
+                            <Path Data="{StaticResource xPath}"/>
                         </Button>
                     </StackPanel>
                 </Grid>
                 <ScrollViewer Grid.Row="1" Grid.ColumnSpan="2">
-                    <Grid>
+                    <Grid Margin="0 0 4 0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" SharedSizeGroup="Key"/>
                             <ColumnDefinition Width="*"/>
@@ -158,12 +156,12 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
                         <TextBlock Text="CitationKey" Classes="right"/>
-                        <TextBox Text="{CompiledBinding ShowingEntry.CitationKey}" Grid.Column="1"
-                                 />
+                        <TextBox Text="{CompiledBinding ShowingEntry.CitationKey}" Grid.Column="1"/>
                         <TextBlock Text="Author" Classes="right" Grid.Row="1"/>
                         <TextBox Text="{CompiledBinding ShowingEntry.Author}" Grid.Row="1" Grid.Column="1"/>
                         <TextBlock Text="Title" Classes="right" Grid.Row="2"/>
@@ -186,16 +184,33 @@
                         </Grid>
                         <TextBlock Text="Publisher" Classes="right" Grid.Row="6"/>
                         <TextBox Text="{CompiledBinding ShowingEntry.Publisher}" Grid.Row="6" Grid.Column="1"/>
-                        <TextBlock Text="DOI" Classes="right" Grid.Row="7"/>
-                        <Grid Grid.Row="7" Grid.Column="1" ColumnDefinitions="*, Auto">
-                            <TextBox Text="{CompiledBinding ShowingEntry.DOI}"/>
-                            <Button Content="v" Grid.Column="1"/>
-                        </Grid>
-                        <TextBlock Text="File" Classes="right" Grid.Row="8"/>
-                        <TextBox Text="{CompiledBinding ShowingEntry.File}" Grid.Row="8" Grid.Column="1"/>
-                        <TextBlock Text="BibTeX" Classes="right" Grid.Row="9"/>
-                        <TextBox FontFamily="Consolas" IsReadOnly="True"
-                                 Text="{CompiledBinding ShowingEntry.BibTeX}" Grid.Row="9" Grid.Column="1"/>
+						<TextBlock Text="DOI" Classes="right" Grid.Row="7"/>
+						<Grid Grid.Row="7" Grid.Column="1" ColumnDefinitions="*,Auto,Auto">
+							<TextBox Text="{CompiledBinding ShowingEntry.DOI}"/>
+							<Button Grid.Column="1">
+								<Path Data="{StaticResource ImportPath}"/>
+							</Button>
+							<Button Grid.Column="2">
+								<Path Data="{StaticResource ToLinkPath}"/>
+							</Button>
+						</Grid>
+						<TextBlock Text="Url" Classes="right" Grid.Row="8"/>
+						<Grid Grid.Row="8" Grid.Column="1" ColumnDefinitions="*,Auto">
+							<TextBox Text="{CompiledBinding ShowingEntry.Url}"/>
+							<Button Grid.Column="1">
+								<Path Data="{StaticResource ToLinkPath}"/>
+							</Button>
+						</Grid>
+                        <TextBlock Text="File" Classes="right" Grid.Row="9"/>
+                        <TextBox Text="{CompiledBinding ShowingEntry.File}" Grid.Row="9" Grid.Column="1"/>
+						<Grid Grid.Row="10" RowDefinitions="Auto,Auto" VerticalAlignment="Center">
+							<Button HorizontalAlignment="Right">
+								<Path Data="{StaticResource CopyPath}"/>
+							</Button>
+							<TextBlock Text="BibTeX" Classes="right" Grid.Row="1"/>
+						</Grid>
+						<TextBox FontFamily="Consolas" IsReadOnly="True"
+                                 Text="{CompiledBinding ShowingEntry.BibTeX}" Grid.Row="10" Grid.Column="1"/>
                     </Grid>
                 </ScrollViewer>
             </Grid>

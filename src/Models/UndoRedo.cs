@@ -19,9 +19,11 @@ namespace Litenbib.Models
 
     public class UndoRedoManager
     {
+        private int savedStep = 0;
+        public bool Edited { get => _undoList.Count != savedStep; set => savedStep = _undoList.Count; }
         private DateTime lastTime = DateTime.Now;
-        private readonly LinkedList<IUndoableAction> _undoList = new ();
-        private readonly LinkedList<IUndoableAction> _redoList = new ();
+        private readonly LinkedList<IUndoableAction> _undoList = new();
+        private readonly LinkedList<IUndoableAction> _redoList = new();
         public TextBox? LastEditedBox { get; set; }
         public TextBox? NewEditedBox { get; set; }
 
@@ -49,7 +51,10 @@ namespace Litenbib.Models
             }
             _undoList.AddLast(action);
             if (_undoList.Count > 200) // 最大限制200条
-            { _undoList.RemoveFirst(); }
+            {
+                _undoList.RemoveFirst();
+                --savedStep;
+            }
             _redoList.Clear(); // 添加新操作时，重做历史被清空
             lastTime = DateTime.Now;
             LastEditedBox = NewEditedBox;
@@ -125,9 +130,9 @@ namespace Litenbib.Models
         }
     }
 
-    public class AddEntryAction(ObservableCollection<BibtexEntry> holder, BibtexEntry entry, int index) : IUndoableAction
+    public class AddEntryAction(ObservableRangeCollection<BibtexEntry> holder, BibtexEntry entry, int index) : IUndoableAction
     {
-        private readonly ObservableCollection<BibtexEntry> _holder = holder;
+        private readonly ObservableRangeCollection<BibtexEntry> _holder = holder;
         private readonly BibtexEntry _entry = entry;
         private readonly int _index = index;
 
@@ -138,20 +143,15 @@ namespace Litenbib.Models
         { _holder.Insert(_index, _entry); }
     }
 
-    public class DeleteEntriesAction(ObservableCollection<BibtexEntry> holder, List<(int, BibtexEntry)> index_entries) : IUndoableAction
+    public class DeleteEntriesAction(ObservableRangeCollection<BibtexEntry> holder, List<(int, BibtexEntry)> index_entries) : IUndoableAction
     {
-        private readonly ObservableCollection<BibtexEntry> _holder = holder;
+        private readonly ObservableRangeCollection<BibtexEntry> _holder = holder;
         private readonly List<(int, BibtexEntry)> _index_entries = index_entries;
 
         public override void Undo()
-        {
-            foreach (var ie in _index_entries)
-            { _holder.Insert(ie.Item1, ie.Item2); }
-        }
+        { _holder.InsertRange(_index_entries); }
+
         public override void Redo()
-        {
-            foreach (var ie in _index_entries)
-            { _holder.Remove(ie.Item2); }
-        }
+        { _holder.RemoveRange(_index_entries.Select(t => t.Item2)); }
     }
 }

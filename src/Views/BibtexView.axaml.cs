@@ -25,7 +25,6 @@ public partial class BibtexView : UserControl
     {
         if (sender is DataGrid grid && DataContext is BibtexViewModel vm)
         {
-            vm.ChangeShowing(grid.SelectedItem);
             ShowDetail();
             vm.SetSelectedItems(grid.SelectedItems.Cast<BibtexEntry>());
         }

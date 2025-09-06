@@ -18,36 +18,17 @@ namespace Litenbib.ViewModels
     {
         public ObservableCollection<BibtexViewModel> BibtexViewers { get; set; }
 
-        private string filterText = string.Empty;
-        public string FilterText
-        {
-            get => filterText;
-            set
-            {
-                filterText = value;
-                if (SelectecdBibtex != null)
-                { SelectecdBibtex.FilterText = filterText; }
-            }
-        }
-
         [ObservableProperty]
         private BibtexViewModel? _selectecdBibtex;
-
-        partial void OnSelectecdBibtexChanged(BibtexViewModel? oldValue, BibtexViewModel? newValue)
-        { OnPropertyChanged(nameof(ShowToolBar)); }
-
-        public bool ShowToolBar { get => SelectecdBibtex != null; }
-
         partial void OnSelectecdBibtexChanged(BibtexViewModel? value)
         {
             // inform Commands to update
+            OnPropertyChanged(nameof(ShowToolBar));
             AddBibtexEntryCommand.NotifyCanExecuteChanged();
-            SaveFileCommand.NotifyCanExecuteChanged();
-
-            if (value != null)
-            { value.FilterText = filterText; }
+            SaveAllCommand.NotifyCanExecuteChanged();
         }
 
+        public bool ShowToolBar { get => SelectecdBibtex != null; }
 
         public MainWindowViewModel()
         {
@@ -83,24 +64,6 @@ namespace Litenbib.ViewModels
                 var fileContent = await streamReader.ReadToEndAsync();
                 BibtexViewers.Add(new BibtexViewModel(file.Name, file.Path.AbsolutePath, fileContent));
             }
-
-            //// 从当前控件获取 TopLevel。或者，您也可以使用 Window 引用。
-            //      var topLevel = TopLevel.GetTopLevel(this);
-
-            //          // 启动异步操作以打开对话框。
-            //          var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
-            //          {
-            //              Title = "Save Text File"
-            //          });
-
-            //          if (file is not null)
-            //          {
-            //              // 打开文件的写入流。
-            //              await using var stream = await file.OpenWriteAsync();
-            //              using var streamWriter = new StreamWriter(stream);
-            //              // 将一些内容写入文件。
-            //              await streamWriter.WriteLineAsync("Hello World!");
-            //          }
         }
 
         [RelayCommand]
@@ -125,9 +88,9 @@ namespace Litenbib.ViewModels
 
         private bool CanAddBibtexEntry() => SelectecdBibtex != null;
 
-        [RelayCommand(CanExecute = nameof(CanSaveFile))]
-        private async Task SaveFile()
+        [RelayCommand(CanExecute = nameof(CanSaveAll))]
+        private async Task SaveAll()
         { }
-        private bool CanSaveFile() => SelectecdBibtex != null;
+        private bool CanSaveAll() => SelectecdBibtex != null;
     }
 }
