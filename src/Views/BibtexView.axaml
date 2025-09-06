@@ -12,7 +12,6 @@
         <m:BibTypeConverter x:Key="BibTypeConverter"/>
         <m:TextToBackgroundConverter x:Key="TextToBackgroundConverter"/>
 		<m:StringSelectorConverter x:Key="StringSelectorConverter"/>
-		<m:UrlToBoolConverter x:Key="UrlToBoolConverter"/>
     </UserControl.Resources>
 
     <UserControl.Styles>
@@ -71,8 +70,13 @@
 						<DataTemplate x:DataType="m:BibtexEntry">
 							<Button Command="{CompiledBinding #BibtexViewRoot.DataContext.ToLinkCommand}"
                                     CommandParameter="{CompiledBinding}"
-									IsVisible="{CompiledBinding DOI, Converter={StaticResource UrlToBoolConverter}, ConverterParameter={Binding Url}, Mode=OneWay}"
 									Classes="link_in_row">
+								<Button.IsVisible>
+									<MultiBinding Converter="{x:Static BoolConverters.Or}">
+										<Binding Path="DOI" Converter="{x:Static StringConverters.IsNotNullOrEmpty}"/>
+										<Binding Path="Url" Converter="{x:Static StringConverters.IsNotNullOrEmpty}"/>
+									</MultiBinding>
+								</Button.IsVisible>
 								<Viewbox Width="14" Height="14">
 									<Path Data="{DynamicResource LinkPath}" StrokeThickness="1"
 										  Stretch="UniformToFill" Margin="1"
@@ -204,7 +208,9 @@
                         <TextBlock Text="File" Classes="right" Grid.Row="9"/>
                         <TextBox Text="{CompiledBinding ShowingEntry.File}" Grid.Row="9" Grid.Column="1"/>
 						<Grid Grid.Row="10" RowDefinitions="Auto,Auto" VerticalAlignment="Center">
-							<Button HorizontalAlignment="Right">
+							<Button HorizontalAlignment="Right"
+									Command="{CompiledBinding CopyBibtexCommand}"
+									CommandParameter="{CompiledBinding $parent[Window]}">
 								<Path Data="{StaticResource CopyPath}"/>
 							</Button>
 							<TextBlock Text="BibTeX" Classes="right" Grid.Row="1"/>

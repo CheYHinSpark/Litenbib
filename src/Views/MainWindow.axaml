@@ -9,10 +9,12 @@
         Name="LitbibMainWindow"
         x:Class="Litenbib.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Icon="/Assets/avalonia-logo.ico"
+        Icon="/Assets/logo.ico"
         Title="Litenbib">
     <Window.Resources>
-        <m:WindowStateToPathConverter x:Key="WindowStateToPathConverter"/>
+		<m:FilterModeConverter x:Key="FilterModeConverter"/>
+		<m:WindowStateToPathConverter x:Key="WindowStateToPathConverter"/>
+		<m:BoolToClassesConverter x:Key="BoolToClassesConverter"/>
     </Window.Resources>
 
 	<Window.KeyBindings>
@@ -26,25 +28,50 @@
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-    <Grid Name="RootGrid" RowDefinitions="Auto, Auto, *">
-        <Rectangle Grid.RowSpan="2"
-                   HorizontalAlignment="Stretch"
+    <Grid Name="RootGrid" RowDefinitions="Auto,*">
+        <Rectangle HorizontalAlignment="Stretch"
                    VerticalAlignment="Stretch"
                    Fill="{DynamicResource MainBackground}"
                    PointerPressed="TitleBar_PointerPressed"
 				   PointerReleased="TitleBar_PointerReleased"/>
         
-        <!--title-->
         <Grid Name="TitleBarGrid" ColumnDefinitions="*,*,*"
-			  Height="{StaticResource TitleBarHeight}">
-            
-            <TextBox Grid.Column="1" UndoLimit="200"
+			  RowDefinitions="Auto,Auto">
+			<Border Grid.Column="1" Grid.RowSpan="2" CornerRadius="0 0 12 12"
+					Background="{DynamicResource TabBackground}"
+				    Opacity="{Binding #FilterTextBox.Text,
+					Converter={StaticResource BoolToClassesConverter},
+					ConverterParameter={Binding SelectecdBibtex}, Mode=OneWay}">
+				<!--<Border.Opacity>
+					<MultiBinding Converter="{StaticResource BoolToClassesConverter}">
+						<Binding Path="#FilterTextBox.Text" Converter="{x:Static StringConverters.IsNotNullOrEmpty}}"/>
+						<Binding Path="SelectecdBibtex" Converter="{x:Static ObjectConverters.IsNotNull}}"/>
+					</MultiBinding>
+				</Border.Opacity>-->
+				<Grid ColumnDefinitions="*,*,*" Margin="4 0"
+					  VerticalAlignment="Bottom">
+					<RadioButton IsChecked="{CompiledBinding SelectecdBibtex.FilterMode,
+								 Converter={StaticResource FilterModeConverter},
+								 Mode=TwoWay, ConverterParameter=0, FallbackValue=True}"
+						         GroupName="FilterMode" Margin="4">and</RadioButton>
+					<RadioButton IsChecked="{CompiledBinding SelectecdBibtex.FilterMode,
+								 Converter={StaticResource FilterModeConverter},
+								 Mode=OneWayToSource, ConverterParameter=1}"
+								 GroupName="FilterMode" Margin="4" Grid.Column="1">or</RadioButton>
+					<RadioButton IsChecked="{CompiledBinding SelectecdBibtex.FilterMode,
+								 Converter={StaticResource FilterModeConverter},
+								 Mode=OneWayToSource, ConverterParameter=2}"
+								 GroupName="FilterMode" Margin="4" Grid.Column="2">all</RadioButton>
+				</Grid>
+			</Border>
+            <TextBox x:Name="FilterTextBox" Grid.Column="1" Grid.RowSpan="2" UndoLimit="200"
 					 m:FocusEx.IsFocused="{CompiledBinding SelectecdBibtex.IsFiltering, Mode=OneWayToSource}"
                      Text="{CompiledBinding SelectecdBibtex.FilterText, Mode=OneWayToSource}"
                      Watermark="Search or add..."
-                     VerticalAlignment="Bottom"/>
-            
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
+                     VerticalAlignment="Top" Margin="8 6"/>
+
+			<!--title-->
+			<StackPanel Orientation="Horizontal" VerticalAlignment="Top">
                 <Menu>
                     <MenuItem Header="_File" Classes="Top">
                         <MenuItem Header="_New"/>
@@ -74,35 +101,35 @@
                           Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                 </Button>
             </StackPanel>
+
+			<!--tool-->
+			<Grid Grid.Row="1" Height="{StaticResource TitleBarHeight}"
+				  Opacity="{Binding ShowToolBar}">
+				<StackPanel Orientation="Horizontal" Margin="4 0">
+					<Button Width="28" Height="28"
+							Command="{CompiledBinding SelectecdBibtex.UndoBibtexCommand}">
+						<Path Data="{StaticResource UndoPath}" StrokeThickness="1"
+							  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+					</Button>
+					<Button Width="28" Height="28"
+							Command="{CompiledBinding SelectecdBibtex.RedoBibtexCommand}">
+						<Path Data="{StaticResource RedoPath}" StrokeThickness="1"
+							  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+					</Button>
+					<Button Width="28" Height="28"
+							Command="{CompiledBinding SelectecdBibtex.DeleteBibtexCommand}">
+						<Path Data="{StaticResource DeletePath}"
+							  Fill="{CompiledBinding $parent[Button].Foreground}"/>
+					</Button>
+					<Button Width="28" Height="28"
+							Command="{CompiledBinding SelectecdBibtex.SaveBibtexCommand}">
+						<Path Data="{StaticResource SavePath}"
+							  Fill="{CompiledBinding $parent[Button].Foreground}"/>
+					</Button>
+				</StackPanel>
+			</Grid>
         </Grid>
         
-        <!--tool-->
-        <Grid Grid.Row="1" Height="{StaticResource ToolBarHeight}"
-              Opacity="{Binding ShowToolBar}">
-            <StackPanel Orientation="Horizontal" Margin="4 0"
-                        VerticalAlignment="Top">
-                <Button Width="28" Height="28"
-                        Command="{CompiledBinding SelectecdBibtex.UndoBibtexCommand}">
-                    <Path Data="{StaticResource UndoPath}" StrokeThickness="1"
-                          Stroke="{CompiledBinding $parent[Button].Foreground}"/>
-                </Button>
-                <Button Width="28" Height="28"
-                        Command="{CompiledBinding SelectecdBibtex.RedoBibtexCommand}">
-                    <Path Data="{StaticResource RedoPath}" StrokeThickness="1"
-                          Stroke="{CompiledBinding $parent[Button].Foreground}"/>
-                </Button>
-				<Button Width="28" Height="28"
-                        Command="{CompiledBinding SelectecdBibtex.DeleteBibtexCommand}">
-					<Path Data="{StaticResource DeletePath}"
-                          Fill="{CompiledBinding $parent[Button].Foreground}"/>
-				</Button>
-				<Button Width="28" Height="28"
-                        Command="{CompiledBinding SelectecdBibtex.SaveBibtexCommand}">
-					<Path Data="{StaticResource SavePath}"
-                          Fill="{CompiledBinding $parent[Button].Foreground}"/>
-				</Button>
-            </StackPanel>
-        </Grid>
         
         <!--welcome-->
         <!--<TextBlock Grid.Row="1" Text="Welcome to LitenBib"
@@ -110,7 +137,7 @@
                    VerticalAlignment="Center"
                    FontSize="24"/>-->
         <!--content-->
-        <TabControl Grid.Row="2" Padding="0"
+        <TabControl Grid.Row="1" Padding="0"
                     ItemsSource="{CompiledBinding BibtexViewers}"
                     SelectedItem="{CompiledBinding SelectecdBibtex}">
             <!-- Tab Header -->

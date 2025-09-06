@@ -8,6 +8,7 @@
         WindowStartupLocation="CenterScreen"
         x:Class="Litenbib.Views.AddEntryWindow"
         x:DataType="vm:AddEntryViewModel"
+        Icon="/Assets/logo.ico"
         Title="Add Entry">
     <Window.Styles>
 		<Style Selector="TextBox">

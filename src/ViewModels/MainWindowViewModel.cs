@@ -62,7 +62,8 @@ namespace Litenbib.ViewModels
                 using var streamReader = new StreamReader(stream);
                 //// 将文件的所有内容作为文本读取。
                 var fileContent = await streamReader.ReadToEndAsync();
-                BibtexViewers.Add(new BibtexViewModel(file.Name, file.Path.AbsolutePath, fileContent));
+                int newMode = SelectecdBibtex == null ? 0 : SelectecdBibtex.FilterMode;
+                BibtexViewers.Add(new BibtexViewModel(file.Name, file.Path.AbsolutePath, fileContent, newMode));
             }
         }
 

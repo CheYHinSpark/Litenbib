@@ -10,6 +10,14 @@
         </ResourceDictionary>
     </Styles.Resources>
 
+	<Style Selector="Border">
+		<Setter Property="Transitions">
+			<Transitions>
+				<DoubleTransition Property="Opacity" Duration="0:0:0.2"/>
+			</Transitions>
+		</Setter>
+	</Style>
+
     <Style Selector="Button">
         <Setter Property="Transitions">
             <Transitions>

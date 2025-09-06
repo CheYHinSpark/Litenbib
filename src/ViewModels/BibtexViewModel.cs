@@ -8,6 +8,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Litenbib.Models;
 using Litenbib.Views;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -73,25 +74,28 @@ namespace Litenbib.ViewModels
 
         public string FilterText
         {
-            get => filterText;
             set
             {
-                this.SetProperty(ref filterText, value);
-                if (!string.IsNullOrEmpty(value))
-                { filters = value.Split(' '); }
-                BibtexView.Refresh();
+                SetProperty(ref filterText, value);
+                RefreshFilter();
+            }
+        }
+
+        private int filterMode = -1;
+        public int FilterMode
+        {
+            get => filterMode;
+            set
+            {
+                if (value < 0) { return; }
+                SetProperty(ref filterMode, value);
+                RefreshFilter();
             }
         }
 
         private bool isFiltering = false;
         public bool IsFiltering
-        {
-            get => isFiltering;
-            set
-            {
-                this.SetProperty(ref isFiltering, value);
-            }
-        }
+        { set { SetProperty(ref isFiltering, value); } }
 
         private int oldSelectionStart = -1;
         private int selectionStart = -1;
@@ -129,7 +133,7 @@ namespace Litenbib.ViewModels
                 "TechReport", "Unpublished"];
         }
 
-        public BibtexViewModel(string header, string fullPath, string filecontent)
+        public BibtexViewModel(string header, string fullPath, string filecontent, int filterMode = 0)
         {
             Header = header;
             FullPath = fullPath;
@@ -142,6 +146,7 @@ namespace Litenbib.ViewModels
             };
             _holdShowingEntry = null!;
             UndoRedoManager = new();
+            FilterMode = filterMode;
         }
 
         public async Task AddBibtexEntry(Window window)
@@ -164,15 +169,45 @@ namespace Litenbib.ViewModels
             }
         }
 
+
+
+        private void RefreshFilter()
+        {
+            if (string.IsNullOrEmpty(filterText))
+            { filters = []; }
+            else
+            {
+                if (filterMode == 2)
+                { filters = [filterText]; }
+                else
+                { filters = filterText.Split(' '); }
+            }
+            BibtexView.Refresh();
+        }
+
         private bool FilterBibtex(BibtexEntry? entry)
         {
+            // Mode=0 and // Mode=1 or // Mode=2 all
             if (string.IsNullOrEmpty(filterText)) { return true; }
             if (entry == null) { return false; }
-            foreach (string s in filters)
+            if (filterMode == 1)
             {
-                if (!string.IsNullOrEmpty(s) && entry.BibTeX.Contains(s, StringComparison.OrdinalIgnoreCase))
-                { return true; }
+                foreach (string s in filters)
+                {
+                    if (!string.IsNullOrEmpty(s) && entry.BibTeX.Contains(s, StringComparison.OrdinalIgnoreCase))
+                    { return true; }
+                }
             }
+            else
+            {
+                foreach (string s in filters)
+                {
+                    if (!string.IsNullOrEmpty(s) && !entry.BibTeX.Contains(s, StringComparison.OrdinalIgnoreCase))
+                    { return false; }
+                }
+                return true;
+            }
+            
             return false;
         }
 
@@ -214,6 +249,8 @@ namespace Litenbib.ViewModels
                 NotifyCanUndoRedo();
             }
         }
+
+
 
         private void NotifyCanUndoRedo()
         {
@@ -299,6 +336,18 @@ namespace Litenbib.ViewModels
                     else
                     { throw; }
                 }
+            }
+        }
+
+        [RelayCommand]
+        private async Task CopyBibtex(object sender)
+        {
+            if (sender is Control c)
+            {
+                // 通过当前控件获取UI上下文
+                var clipboard = TopLevel.GetTopLevel(c)?.Clipboard;
+                if (clipboard != null && ShowingEntry != null)
+                { await clipboard.SetTextAsync(ShowingEntry.BibTeX); }
             }
         }
     }
