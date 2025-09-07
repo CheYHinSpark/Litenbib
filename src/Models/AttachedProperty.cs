@@ -1,10 +1,19 @@
 ﻿using Avalonia;
+using Avalonia.Animation;
+using Avalonia.Animation.Easings;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Media;
+using Avalonia.Styling;
+using System;
 using System.Collections;
 using System.Collections.Specialized;
+using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Litenbib.Models
 {
@@ -52,4 +61,101 @@ namespace Litenbib.Models
             });
         }
     }
+
+    //public static class PopupIsOpenEx
+    //{
+    //    public static readonly AttachedProperty<bool> IsOpenExProperty =
+    //        AvaloniaProperty.RegisterAttached<Popup, bool>("IsOpenEx", typeof(PopupIsOpenEx), false);
+
+
+    //    // Getter
+    //    public static bool GetIsOpenEx(Popup popup) =>
+    //        popup.GetValue(IsOpenExProperty);
+
+    //    // Setter
+    //    public static void SetIsOpenEx(Popup popup, bool value) =>
+    //        popup.SetValue(IsOpenExProperty, value);
+
+    //    static PopupIsOpenEx()
+    //    {
+    //        IsOpenExProperty.Changed.AddClassHandler<Popup>((popup, e) =>
+    //        {
+    //            OnIsOpenExChanged(e);
+    //        });
+    //    }
+
+    //    private static async void OnIsOpenExChanged(AvaloniaPropertyChangedEventArgs e)
+    //    {
+    //        if (e.Sender is Popup popup && e.NewValue is bool b)
+    //        {
+    //            if (b)
+    //            {
+    //                popup.IsOpen = true;
+    //                // 播放打开动画
+    //                if (popup.Child is Control child)
+    //                {
+    //                    Debug.WriteLine(b);
+    //                    // 播放关闭动画
+    //                    var animation = new Animation
+    //                    {
+    //                        Duration = TimeSpan.FromMilliseconds(2000),
+    //                        Children =
+    //                        {
+    //                            new KeyFrame
+    //                            {
+    //                                Cue = new Cue(0),
+    //                                Setters =
+    //                                {
+    //                                    new Setter(Visual.OpacityProperty, 0.0),
+    //                                }
+    //                            },
+    //                            new KeyFrame
+    //                            {
+    //                                Cue = new Cue(1),
+    //                                Setters =
+    //                                {
+    //                                    new Setter(Visual.OpacityProperty, 1.0),
+    //                                }
+    //                            }
+    //                        }
+    //                    };
+    //                    await animation.RunAsync(child, CancellationToken.None);
+    //                }
+    //            }
+    //            else
+    //            {
+    //                if (popup.Child is Control child)
+    //                {
+    //                    Debug.WriteLine(b);
+    //                    // 播放关闭动画
+    //                    var animation = new Animation
+    //                    {
+    //                        Duration = TimeSpan.FromMilliseconds(2000),
+    //                        Children =
+    //                        {
+    //                            new KeyFrame
+    //                            {
+    //                                Cue = new Cue(0),
+    //                                Setters =
+    //                                {
+    //                                    new Setter(Visual.OpacityProperty, 1.0),
+    //                                }
+    //                            },
+    //                            new KeyFrame
+    //                            {
+    //                                Cue = new Cue(1),
+    //                                Setters =
+    //                                {
+    //                                    new Setter(Visual.OpacityProperty, 0.0),
+    //                                }
+    //                            }
+    //                        }
+    //                    };
+    //                    await animation.RunAsync(child, CancellationToken.None);
+    //                }
+    //                popup.IsOpen = false; // 动画结束后再真正关闭
+    //            }
+    //        }
+    //    }
+    //}
 }

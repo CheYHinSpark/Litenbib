@@ -1,12 +1,14 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,6 +21,7 @@ namespace Litenbib.Models
     {
         private string type = type;
         private string citationKey = citationKey;
+        private string bibtex = "";
         public Dictionary<string, string> Fields = new(StringComparer.OrdinalIgnoreCase);
 
         // editable fields
@@ -27,9 +30,12 @@ namespace Litenbib.Models
             get => type;
             set
             {
-                string t = type;
-                type = value;
-                OnPropertyChanged(nameof(Type), t, value);
+                if (type != value && value != null)
+                {
+                    string t = type;
+                    type = value;
+                    OnPropertyChanged(nameof(Type), t, value);
+                }
             }
         }
         public string CitationKey
@@ -37,168 +43,169 @@ namespace Litenbib.Models
             get => citationKey;
             set
             {
-                string t = citationKey;
-                citationKey = value;
-                OnPropertyChanged(nameof(CitationKey), t, value);
+                if (citationKey != value)
+                {
+                    string t = citationKey;
+                    citationKey = value;
+                    OnPropertyChanged(nameof(CitationKey), t, value);
+                }
             }
         }
         public string Author
         {
             get => GetValue("author");
-            set => SetValue("author", value, nameof(Author));
+            set => SetValue(nameof(Author), value);
         }
         public string Title
         {
             get => GetValue("title");
-            set => SetValue("title", value, nameof(Title));
+            set => SetValue(nameof(Title), value);
         }
         public string Year
         {
             get => GetValue("year");
-            set => SetValue("year", value, nameof(Year));
+            set => SetValue(nameof(Year), value);
         }
         public string Month
         {
             get => GetValue("month");
-            set => SetValue("month", value, nameof(Month));
+            set => SetValue(nameof(Month), value);
         }
         
         public string Editor
         {
             get => GetValue("editor");
-            set => SetValue("editor", value, nameof(Editor));
+            set => SetValue(nameof(Editor), value);
         }
         public string Journal
         {
             get => GetValue("journal");
-            set => SetValue("journal", value, nameof(Journal));
+            set => SetValue(nameof(Journal), value);
         }
         public string Volume
         {
             get => GetValue("volume");
-            set => SetValue("volume", value, nameof(Volume));
+            set => SetValue(nameof(Volume), value);
         }
         public string Number
         {
             get => GetValue("number");
-            set => SetValue("number", value, nameof(Number));
+            set => SetValue(nameof(Number), value);
         }
         public string Pages
         {
             get => GetValue("pages");
-            set => SetValue("pages", value, nameof(Pages));
+            set => SetValue(nameof(Pages), value);
         }
         public string Publisher
         {
             get => GetValue("publisher");
-            set => SetValue("publisher", value, nameof(Publisher));
+            set => SetValue(nameof(Publisher), value);
         }
         public string Booktitle
         {
             get => GetValue("booktitle");
-            set => SetValue("booktitle", value, nameof(Booktitle));
+            set => SetValue(nameof(Booktitle), value);
         }
         public string Address
         {
             get => GetValue("address");
-            set => SetValue("address", value, nameof(Address));
+            set => SetValue(nameof(Address), value);
         }
         public string School
         {
             get => GetValue("school");
-            set => SetValue("school", value, nameof(School));
+            set => SetValue(nameof(School), value);
         }
         public string Edition
         {
             get => GetValue("edition");
-            set => SetValue("edition", value, nameof(Edition));
+            set => SetValue(nameof(Edition), value);
         }
         public string Chapter
         {
             get => GetValue("chapter");
-            set => SetValue("chapter", value, nameof(Chapter));
+            set => SetValue(nameof(Chapter), value);
         }
         public string Note
         {
             get => GetValue("note");
-            set => SetValue("note", value, nameof(Note));
+            set => SetValue(nameof(Note), value);
         }
 
         public string DOI
         {
             get => GetValue("doi");
-            set => SetValue("doi", value, nameof(DOI));
+            set => SetValue(nameof(DOI), value);
         }
         public string Url
         {
             get => GetValue("url");
-            set => SetValue("url", value, nameof(Url));
+            set => SetValue(nameof(Url), value);
         }
         public string ISSN
         {
             get => GetValue("issn");
-            set => SetValue("issn", value, nameof(ISSN));
+            set => SetValue(nameof(ISSN), value);
         }
         public string File
         {
             get => GetValue("file");
-            set => SetValue("file", value, nameof(File));
+            set => SetValue(nameof(File), value);
         }
 
         public string Abstract
         {
             get => GetValue("abstract");
-            set => SetValue("abstract", value, nameof(Abstract));
+            set => SetValue(nameof(Abstract), value);
         }
         public string Keywords
         {
             get => GetValue("keywords");
-            set => SetValue("keywords", value, nameof(Keywords));
+            set => SetValue(nameof(Keywords), value);
         }
         public string Comment
         {
             get => GetValue("comment");
-            set => SetValue("comment", value, nameof(Comment));
+            set => SetValue(nameof(Comment), value);
         }
 
         public string BibTeX
         {
-            get
-            {
-                int maxFieldLength = 0;
-                foreach (var k in Fields.Keys)
-                { maxFieldLength = Math.Max(maxFieldLength, k.Length); }
-                string s = $"@{type}{{{citationKey},\r\n";
-                foreach (KeyValuePair<string, string> kvp in Fields)
-                {
-                    s += $"    {kvp.Key}";
-                    s += new string(' ', maxFieldLength - kvp.Key.Length);
-                    s += $" = {{{kvp.Value}}},\r\n";
-                }
-                return s + "}\r\n";
-            }
+            get => bibtex;
+            set => UpdateBibtex(value);
         }
 
         // 通用的属性变化事件，用于通知其他控件的显示
         public event PropertyChangedEventHandler? PropertyChanged;
-        // 用于UndoRedo功能
+        // 用于UndoRedo的功能
         public event PropertyChangedEventHandler? UndoRedoPropertyChanged;
 
+        // Get Field元素
         private string GetValue(string k)
         { return Fields.TryGetValue(k, out string? value) ? value : ""; }
 
-        private void SetValue(string k, string v, string notification)
+        // Set Field元素
+        private void SetValue(string k, string v)
         {
-            string? t = Fields.TryGetValue(k, out string? value) ? value : null;
-            Fields[k] = v;
-            OnPropertyChanged(notification, t, v);
+            string kl = k.ToLower();
+            string? t = Fields.TryGetValue(kl, out string? value) ? value : null;
+            if (v == t) { return; }
+            Fields[kl] = v;
+            if (string.IsNullOrWhiteSpace(v))
+            { Fields.Remove(kl); }
+            OnPropertyChanged(k, t, v);
         }
 
+        // 不触发UndoRedo的修改
         public void SetValueSilent(string propertyName, string? v)
         {
             switch (propertyName)
             {
                 case "":
+                    return;
+                case "BibTeX":
+                    { UpdateBibtex(v, true); }
                     return;
                 case "Type":
                     type = v ?? "";
@@ -208,21 +215,21 @@ namespace Litenbib.Models
                     break;
                 default:
                     {
-                        if (string.IsNullOrEmpty(v))
+                        if (string.IsNullOrWhiteSpace(v))
                         { Fields.Remove(propertyName.ToLower()); }
                         else{ Fields[propertyName.ToLower()] = v; }
                     }
                     break;
             }
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BibTeX)));
+            UpdateBibtex();
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null, string? oldValue = null, string? newValue = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             UndoRedoPropertyChanged?.Invoke(this, new PropertyChangedEventArgsEx(propertyName, oldValue, newValue));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BibTeX)));
+            if (propertyName != nameof(BibTeX)) { UpdateBibtex(); }
             Debug.WriteLine("Changing " + propertyName);
         }
 
@@ -232,6 +239,70 @@ namespace Litenbib.Models
             entry.Fields["doi"] = doi;
             // TODO: 解析DOI
             return entry;
+        }
+
+        // 如果不是直接更新BibTeX，表示从其他属性修改的。不触发BibTeX的Undo
+        public void UpdateBibtex(string? newBibtex = null, bool isSilent = false)
+        {
+            if (newBibtex == null)
+            {
+                int maxFieldLength = 0;
+                foreach (var k in Fields.Keys)
+                { maxFieldLength = Math.Max(maxFieldLength, k.Length); }
+                string s = $"@{type}{{{citationKey},\r\n";
+                foreach (KeyValuePair<string, string> kvp in Fields)
+                { s += $"    {kvp.Key}" + new string(' ', maxFieldLength - kvp.Key.Length) + $" = {{{kvp.Value}}},\r\n"; }
+                bibtex = s + "}\r\n";
+            }
+            else
+            {
+                // 直接修改的BibTeX，需要反过来更新其他东西
+                string oldBibtex = bibtex;
+                bibtex = newBibtex;
+                if (oldBibtex == newBibtex) { return; }
+                if (!isSilent)
+                { UndoRedoPropertyChanged?.Invoke(this, new PropertyChangedEventArgsEx(nameof(BibTeX), oldBibtex, newBibtex)); }
+                BibtexEntry? entry = BibtexParser.ParseBibTeX(newBibtex);
+                if (entry != null) { CopyFromBibtex(entry); }
+                Debug.WriteLine("Changing BibTeX");
+            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BibTeX)));
+        }
+
+        public void CopyFromBibtex(BibtexEntry entry)
+        {
+            if (type != entry.Type)
+            {
+                string t = type;
+                type = entry.Type;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Type)));
+            }
+            if (citationKey != entry.CitationKey)
+            {
+                string t = citationKey;
+                citationKey = entry.CitationKey;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CitationKey)));
+            }
+
+            var properties = this.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .Where(p => p.CanRead && p.CanWrite && p.GetIndexParameters().Length == 0)
+                .Select(p => p.Name);
+
+            foreach (var propertyName in properties)
+            {
+                if (propertyName == "Type" || propertyName == "CitationKey" || propertyName == "BibTeX")
+                { continue; }
+                string property = propertyName.ToLower();
+                entry.Fields.TryGetValue(property, out string? value);
+                Fields.TryGetValue(property, out string? oldValue);
+                if (value != oldValue)
+                {
+                    Fields[property] = value!;
+                    if (string.IsNullOrWhiteSpace(value))
+                    { Fields.Remove(property); }
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                }
+            }
         }
     }
 }

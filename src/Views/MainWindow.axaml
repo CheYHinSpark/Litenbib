@@ -128,11 +128,16 @@
         
         
         <!--welcome-->
-        <!--<TextBlock Grid.Row="1" Text="Welcome to LitenBib"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"
-                   FontSize="24"/>-->
-        <!--content-->
+        <!---->
+
+		<StackPanel Grid.RowSpan="2" VerticalAlignment="Center">
+			<Image Source="/Assets/logo.ico" Width="100"/>
+			<TextBlock Text="Welcome to LitenBib"
+                       HorizontalAlignment="Center"
+                       FontSize="24"/>
+		</StackPanel>
+
+		<!--content-->
         <TabControl Grid.Row="1" Padding="0"
                     ItemsSource="{CompiledBinding BibtexViewers}"
                     SelectedItem="{CompiledBinding SelectecdBibtex}">

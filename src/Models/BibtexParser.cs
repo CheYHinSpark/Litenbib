@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -38,10 +39,43 @@ namespace Litenbib.Models
                 // 解析字段
                 ParseTags(entryContent, entry);
 
+                entry.UpdateBibtex(isSilent: true);
+
                 entries.Add(entry);
             }
 
             return entries;
+        }
+
+        public static BibtexEntry? ParseBibTeX(string bibTeXText)
+        {
+            // 移除注释
+            bibTeXText = RemoveComments(bibTeXText);
+
+            // 查找所有条目
+            var entryMatch = Regex.Match(bibTeXText,
+                @"@(\w+)\s*{\s*([^,]+)\s*,", RegexOptions.IgnoreCase);
+
+            string entryType = entryMatch.Groups[1].Value;
+            string citationKey = entryMatch.Groups[2].Value.Trim();
+
+            // 找到当前条目的开始和结束位置
+            int startPos = entryMatch.Index;
+            int endPos = FindMatchingBrace(bibTeXText, startPos + entryMatch.Length - 1);
+
+            if (endPos == -1) return null; // 如果没有找到匹配的括号
+
+            // 提取条目内容
+            string entryContent = bibTeXText[(startPos + entryMatch.Length)..endPos].Trim();
+
+            // 创建条目对象
+            BibtexEntry entry = new(entryType, citationKey);
+
+            // 解析字段
+            if (ParseTagsStrict(entryContent, entry))
+            { return entry; }
+            else
+            { return null; }
         }
 
         // 移除BibTeX注释
@@ -57,7 +91,7 @@ namespace Litenbib.Models
             int braceCount = 1;
             bool inQuotes = false;
 
-            for (int i = startPos; i < text.Length; i++)
+            for (int i = int.Max(startPos, 0); i < text.Length; i++)
             {
                 char c = text[i];
 
@@ -99,6 +133,41 @@ namespace Litenbib.Models
 
                 entry.Fields[fieldName] = fieldValue;
             }
+        }
+
+
+        // 解析字段
+        private static bool ParseTagsStrict(string content, BibtexEntry entry)
+        {
+            // 匹配字段: 字段名 = {值} 或 字段名 = "值" 或 字段名 = 值
+            var fieldMatches = Regex.Matches(content,
+                @"(\w+)\s*=\s*({(?:[^{}]|(?<c>{)|(?<-c>}))*(?(c)(?!))}|""[^""]*""|[^,}]+)",
+                RegexOptions.IgnoreCase);
+
+            foreach (Match match in fieldMatches)
+            {
+                string fieldName = match.Groups[1].Value.Trim().ToLower();
+                string fieldValue = match.Groups[2].Value.Trim();
+
+                // 清理字段值（移除大括号和引号）
+                if (fieldValue.StartsWith('{'))
+                {
+                    if (fieldValue.EndsWith('}'))
+                    { fieldValue = fieldValue[1..^1].Trim(); }
+                    else
+                    { return false; }
+                }
+                else if (fieldValue.StartsWith('\"') && fieldValue.EndsWith('\"'))
+                {
+                    if (fieldValue.EndsWith('\"'))
+                    { fieldValue = fieldValue[1..^1].Trim(); }
+                    else
+                    { return false; }
+                }
+                
+                entry.Fields[fieldName] = fieldValue;
+            }
+            return true;
         }
     }
 }

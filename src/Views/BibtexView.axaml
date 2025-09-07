@@ -215,7 +215,7 @@
 							</Button>
 							<TextBlock Text="BibTeX" Classes="right" Grid.Row="1"/>
 						</Grid>
-						<TextBox FontFamily="Consolas" IsReadOnly="True"
+						<TextBox FontFamily="Consolas"
                                  Text="{CompiledBinding ShowingEntry.BibTeX}" Grid.Row="10" Grid.Column="1"/>
                     </Grid>
                 </ScrollViewer>
