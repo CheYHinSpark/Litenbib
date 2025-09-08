@@ -49,6 +49,7 @@
     <SolidColorBrush x:Key="ComboBoxItemBackgroundSelectedPressed" Color="{DynamicResource ThemeHighlightColor}"/>
     <SolidColorBrush x:Key="ComboBoxItemForegroundSelectedPressed" Color="{DynamicResource HighlightForegroundColor}"/>
 
+    <SolidColorBrush x:Key="MenuFlyoutItemBackground" Color="{DynamicResource InputBackgroundColor}"/>
     <SolidColorBrush x:Key="MenuFlyoutItemForeground" Color="{DynamicResource MainForegroundColor}"/>
     <SolidColorBrush x:Key="MenuFlyoutItemForegroundDisabled" Color="{DynamicResource DisabledForegroundColor}"/>
     <SolidColorBrush x:Key="MenuFlyoutItemBackgroundPointerOver" Color="{DynamicResource ThemeBackgroundColor}"/>
@@ -57,6 +58,7 @@
     <SolidColorBrush x:Key="MenuFlyoutItemForegroundPressed" Color="{DynamicResource HighlightForegroundColor}"/>
     <SolidColorBrush x:Key="MenuFlyoutPresenterBackground" Color="{DynamicResource InputBackgroundColor}"/>
     <SolidColorBrush x:Key="MenuFlyoutPresenterBorderBrush" Color="{DynamicResource MainBorderColor}"/>
+
 
     <Thickness x:Key="ComboBoxDropdownContentMargin">3</Thickness>
     <Thickness x:Key="MenuFlyoutItemThemePaddingNarrow">6</Thickness>
@@ -193,7 +195,112 @@
         </Style>
     </ControlTheme>
 
-    <ControlTheme x:Key="{x:Type ComboBox}" TargetType="ComboBox">
+    <ControlTheme x:Key="{x:Type v:ExComboBox}" TargetType="v:ExComboBox">
+        <Setter Property="MinHeight" Value="28"/>
+        <Setter Property="Background" Value="{DynamicResource InputBackground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource MainBorder}"/>
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Padding" Value="8 6" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <DataValidationErrors>
+                    <Grid ColumnDefinitions="*,24">
+                        <Border x:Name="Background"
+                                Grid.ColumnSpan="2"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="{TemplateBinding CornerRadius}" />
+                        <ContentControl x:Name="ContentPresenter"
+                                        Content="{TemplateBinding SelectionBoxItem}"
+                                        Grid.Column="0"
+                                        Margin="{TemplateBinding Padding}"
+                                        HorizontalContentAlignment="Stretch"
+                                        VerticalContentAlignment="Center"/>
+                        <PathIcon x:Name="DropDownGlyph"
+                                  Grid.Column="1"
+                                  UseLayoutRounding="False"
+                                  IsHitTestVisible="False"
+                                  Height="12"
+                                  Width="12"
+                                  Margin="0,0,10,0"
+                                  HorizontalAlignment="Right"
+                                  VerticalAlignment="Center"
+                                  Foreground="{DynamicResource MainForeground}"
+                                  Data="M1939 486L2029 576L1024 1581L19 576L109 486L1024 1401L1939 486Z"/>
+                        <v:ExPopup x:Name="PART_Popup"
+                                   WindowManagerAddShadowHint="False"
+                                   IsOpenEx="{TemplateBinding IsDropDownOpen, Mode=TwoWay}"
+                                   MinWidth="{Binding Bounds.Width, RelativeSource={RelativeSource TemplatedParent}}"
+                                   MaxHeight="{TemplateBinding MaxDropDownHeight}"
+                                   PlacementTarget="Background"
+                                   InheritsTransform="True">
+							<v:ExPopup.OpenAnimation>
+								<Animation Duration="0:0:0.2" FillMode="Both">
+									<KeyFrame Cue="0%">
+										<Setter Property="Opacity" Value="0.0"/>
+										<Setter Property="Margin" Value="0 0 0 100.0"/>
+									</KeyFrame>
+									<KeyFrame Cue="100%">
+										<Setter Property="Opacity" Value="1.0"/>
+										<Setter Property="Margin" Value="0 0 0 0.0"/>
+									</KeyFrame>
+								</Animation>
+							</v:ExPopup.OpenAnimation>
+							<v:ExPopup.CloseAnimation>
+								<Animation Duration="0:0:0.2" FillMode="Both">
+									<KeyFrame Cue="0%">
+										<Setter Property="Opacity" Value="1.0"/>
+										<Setter Property="Margin" Value="0 0 0 0.0"/>
+									</KeyFrame>
+									<KeyFrame Cue="100%">
+										<Setter Property="Opacity" Value="0.0"/>
+										<Setter Property="Margin" Value="0 0 0 100.0"/>
+									</KeyFrame>
+								</Animation>
+							</v:ExPopup.CloseAnimation>
+                            <Border x:Name="PopupBorder"
+                                    Background="{DynamicResource MenuFlyoutPresenterBackground}"
+                                    BorderBrush="{DynamicResource MenuFlyoutPresenterBorderBrush}"
+                                    BorderThickness="1"
+                                    HorizontalAlignment="Stretch"
+                                    Padding="{DynamicResource ComboBoxDropdownContentMargin}"
+                                    CornerRadius="{DynamicResource OverlayCornerRadius}">
+                                <ScrollViewer HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                                              VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
+                                              IsDeferredScrollingEnabled="{TemplateBinding (ScrollViewer.IsDeferredScrollingEnabled)}">
+                                    <ItemsPresenter Name="PART_ItemsPresenter"
+                                                    Margin="{DynamicResource ComboBoxDropdownContentMargin}"
+                                                    ItemsPanel="{TemplateBinding ItemsPanel}" />
+                                </ScrollViewer>
+                            </Border>
+                        </v:ExPopup >
+                    </Grid>
+                </DataValidationErrors>
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^:pointerover">
+            <Setter Property="BorderBrush" Value="{DynamicResource HighlightBorder}"/>
+            <Style Selector="^ /template/ PathIcon#DropDownGlyph">
+                <Setter Property="Foreground" Value="{DynamicResource HighlightForeground}"/>
+            </Style>
+        </Style>
+
+        <Style Selector="^:focus">
+            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorder}"/>
+            <Setter Property="BorderThickness" Value="2"/>
+        </Style>
+        
+        <Style Selector="^[IsDropDownOpen=True]">
+            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorder}"/>
+            <Setter Property="BorderThickness" Value="2"/>
+        </Style>
+    </ControlTheme>
+
+
+    <!--<ControlTheme x:Key="{x:Type v:ExComboBox}" TargetType="v:ExComboBox">
         <Setter Property="MinHeight" Value="28"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="Background" Value="{DynamicResource InputBackground}" />
@@ -237,7 +344,6 @@
                                PlacementTarget="Background"
                                IsLightDismissEnabled="True"
                                InheritsTransform="True">
-							
                             <Border x:Name="PopupBorder"
                                     Background="{DynamicResource MenuFlyoutPresenterBackground}"
                                     BorderBrush="{DynamicResource MenuFlyoutPresenterBorderBrush}"
@@ -253,7 +359,7 @@
                                                     ItemsPanel="{TemplateBinding ItemsPanel}" />
                                 </ScrollViewer>
                             </Border>
-                        </Popup>
+                        </Popup >
                     </Grid>
                 </DataValidationErrors>
             </ControlTemplate>
@@ -270,8 +376,13 @@
             <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorder}"/>
             <Setter Property="BorderThickness" Value="2"/>
         </Style>
-    </ControlTheme>
 
+        <Style Selector="^[IsDropDownOpen=True]">
+            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorder}"/>
+            <Setter Property="BorderThickness" Value="2"/>
+        </Style>
+    </ControlTheme>-->
+    
     <ControlTheme x:Key="{x:Type GridSplitter}" TargetType="GridSplitter">
         <Setter Property="Focusable" Value="True" />
         <Setter Property="MinWidth" Value="6" />
@@ -378,61 +489,61 @@
         <Setter Property="Background" Value="{DynamicResource MainBackground}"/>
         <Setter Property="Foreground" Value="{DynamicResource MainForeground}"/>
         <Setter Property="BorderThickness" Value="1"/>
-		<Setter Property="BorderBrush" Value="{DynamicResource MainBorder}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource MainBorder}"/>
         <Setter Property="Padding" Value="4"/>
         <Setter Property="CornerRadius" Value="12"/>
         <Setter Property="Template">
             <ControlTemplate>
-				<Grid>
-					<Border x:Name="PART_Bg"
-							Background="{TemplateBinding Background}"
+                <Grid>
+                    <Border x:Name="PART_Bg"
+                            Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="{TemplateBinding CornerRadius}">
-						<Border x:Name="PART_Highlight"
-								Opacity="0.5"
-								Background="Transparent"
-								CornerRadius="{TemplateBinding CornerRadius}"/>
-					</Border>
-					<ContentPresenter x:Name="PART_ContentPresenter"
+                        <Border x:Name="PART_Highlight"
+                                Opacity="0.5"
+                                Background="Transparent"
+                                CornerRadius="{TemplateBinding CornerRadius}"/>
+                    </Border>
+                    <ContentPresenter x:Name="PART_ContentPresenter"
                                       Content="{TemplateBinding Content}"
                                       ContentTemplate="{TemplateBinding ContentTemplate}"
-									  Foreground="{TemplateBinding Foreground}"
+                                      Foreground="{TemplateBinding Foreground}"
                                       Padding="{TemplateBinding Padding}"
                                       RecognizesAccessKey="True"
                                       HorizontalAlignment="Stretch"
                                       VerticalAlignment="Stretch"
                                       HorizontalContentAlignment="Center"
                                       VerticalContentAlignment="Center" />
-				</Grid>
+                </Grid>
             </ControlTemplate>
         </Setter>
 
-		<Style Selector="^:pointerover">
-			<Setter Property="Foreground" Value="{DynamicResource HighlightForeground}" />
-			<Setter Property="BorderBrush" Value="{DynamicResource HighlightBackground}" />
-			<Setter Property="Background" Value="{DynamicResource HighlightBackground}" />
-		</Style>
+        <Style Selector="^:pointerover">
+            <Setter Property="Foreground" Value="{DynamicResource HighlightForeground}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource HighlightBackground}" />
+            <Setter Property="Background" Value="{DynamicResource HighlightBackground}" />
+        </Style>
 
-		<Style Selector="^:pressed">
+        <Style Selector="^:pressed">
             <Setter Property="RenderTransform" Value="scale(0.98)" />
         </Style>
 
-		<Style Selector="^:checked">
-			<Setter Property="BorderBrush" Value="{DynamicResource ThemeBorder}" />
-			<Setter Property="Background" Value="{DynamicResource ThemeBorder}" />
+        <Style Selector="^:checked">
+            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorder}" />
+            <Setter Property="Background" Value="{DynamicResource ThemeBorder}" />
             
-			<Style Selector="^:pointerover">
-				<Setter Property="Foreground" Value="{DynamicResource MainForeground}" />
-			</Style>
+            <Style Selector="^:pointerover">
+                <Setter Property="Foreground" Value="{DynamicResource MainForeground}" />
+            </Style>
 
-			<Style Selector="^:pressed">
-				<Setter Property="RenderTransform" Value="scale(1)" />
-			</Style>
+            <Style Selector="^:pressed">
+                <Setter Property="RenderTransform" Value="scale(1)" />
+            </Style>
         </Style>
 
-		<Style Selector="^:disabled">
-			<Setter Property="Foreground" Value="{DynamicResource DisabledForeground}" />
-		</Style>
-	</ControlTheme>
+        <Style Selector="^:disabled">
+            <Setter Property="Foreground" Value="{DynamicResource DisabledForeground}" />
+        </Style>
+    </ControlTheme>
 </ResourceDictionary>

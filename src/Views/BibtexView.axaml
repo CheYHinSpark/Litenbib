@@ -3,29 +3,31 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:Litenbib.ViewModels"
              xmlns:m="using:Litenbib.Models"
+             xmlns:v="using:Litenbib.Views"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="720"
              x:DataType="vm:BibtexViewModel"
              x:Class="Litenbib.Views.BibtexView">
+    
     <UserControl.Resources>
         <m:BibTypeConverter x:Key="BibTypeConverter"/>
         <m:TextToBackgroundConverter x:Key="TextToBackgroundConverter"/>
-		<m:StringSelectorConverter x:Key="StringSelectorConverter"/>
+        <m:StringSelectorConverter x:Key="StringSelectorConverter"/>
     </UserControl.Resources>
 
     <UserControl.Styles>
-		<Style Selector="Button">
-			<Setter Property="Height" Value="28"/>
-			<Setter Property="Width" Value="28"/>
-		</Style>
+        <Style Selector="Button">
+            <Setter Property="Height" Value="28"/>
+            <Setter Property="Width" Value="28"/>
+        </Style>
         <Style Selector="ComboBox">
             <Setter Property="Margin" Value="2"/>
         </Style>
-		<Style Selector="Path">
-			<Setter Property="Stroke" Value="{CompiledBinding $parent[Button].Foreground}"/>
-			<Setter Property="StrokeThickness" Value="1"/>
-		</Style>
+        <Style Selector="Path">
+            <Setter Property="Stroke" Value="{CompiledBinding $parent[Button].Foreground}"/>
+            <Setter Property="StrokeThickness" Value="1"/>
+        </Style>
         <Style Selector="TextBlock">
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="FontSize" Value="{CompiledBinding $parent[Window].FontSize}"/>
@@ -59,7 +61,7 @@
         <DataGrid Name="DataGridView" Margin="8" ItemsSource="{CompiledBinding BibtexView}"
                   CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True"
                   IsReadOnly="True"
-				  SelectedItem="{CompiledBinding ShowingEntry}"
+                  SelectedItem="{CompiledBinding ShowingEntry}"
                   SelectionChanged="DataGrid_SelectionChanged"
                   DragDrop.AllowDrop="True">
             <DataGrid.Columns>
@@ -67,22 +69,22 @@
                     <DataGridTemplateColumn.Header>Link</DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <!--<DataTemplate>-->
-						<DataTemplate x:DataType="m:BibtexEntry">
-							<Button Command="{CompiledBinding #BibtexViewRoot.DataContext.ToLinkCommand}"
+                        <DataTemplate x:DataType="m:BibtexEntry">
+                            <Button Command="{CompiledBinding #BibtexViewRoot.DataContext.ToLinkCommand}"
                                     CommandParameter="{CompiledBinding}"
-									Classes="link_in_row">
-								<Button.IsVisible>
-									<MultiBinding Converter="{x:Static BoolConverters.Or}">
-										<Binding Path="DOI" Converter="{x:Static StringConverters.IsNotNullOrEmpty}"/>
-										<Binding Path="Url" Converter="{x:Static StringConverters.IsNotNullOrEmpty}"/>
-									</MultiBinding>
-								</Button.IsVisible>
-								<Viewbox Width="14" Height="14">
-									<Path Data="{DynamicResource LinkPath}" StrokeThickness="1"
-										  Stretch="UniformToFill" Margin="1"
+                                    Classes="link_in_row">
+                                <Button.IsVisible>
+                                    <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                        <Binding Path="DOI" Converter="{x:Static StringConverters.IsNotNullOrEmpty}"/>
+                                        <Binding Path="Url" Converter="{x:Static StringConverters.IsNotNullOrEmpty}"/>
+                                    </MultiBinding>
+                                </Button.IsVisible>
+                                <Viewbox Width="14" Height="14">
+                                    <Path Data="{DynamicResource LinkPath}" StrokeThickness="1"
+                                          Stretch="UniformToFill" Margin="1"
                                           Stroke="{CompiledBinding $parent[Button].Foreground}"/>
-								</Viewbox>
-							</Button>
+                                </Viewbox>
+                            </Button>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -132,9 +134,9 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <ComboBox HorizontalAlignment="Stretch"
-                              ItemsSource="{CompiledBinding TypeList}"
-                              SelectedItem="{CompiledBinding ShowingEntry.Type, Converter={StaticResource BibTypeConverter}}"/>
+                    <v:ExComboBox HorizontalAlignment="Stretch" Margin="2"
+                                  ItemsSource="{CompiledBinding TypeList}"
+                                  SelectedItem="{CompiledBinding ShowingEntry.Type, Converter={StaticResource BibTypeConverter}}"/>
                     <StackPanel Grid.Column="1" Orientation="Horizontal">
                         <Button Click="ChangeButton_Click">
                             <Path Data="{StaticResource brPath}"/>
@@ -160,8 +162,8 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
-							<RowDefinition Height="Auto"/>
-							<RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
                         <TextBlock Text="CitationKey" Classes="right"/>
@@ -188,34 +190,34 @@
                         </Grid>
                         <TextBlock Text="Publisher" Classes="right" Grid.Row="6"/>
                         <TextBox Text="{CompiledBinding ShowingEntry.Publisher}" Grid.Row="6" Grid.Column="1"/>
-						<TextBlock Text="DOI" Classes="right" Grid.Row="7"/>
-						<Grid Grid.Row="7" Grid.Column="1" ColumnDefinitions="*,Auto,Auto">
-							<TextBox Text="{CompiledBinding ShowingEntry.DOI}"/>
-							<Button Grid.Column="1">
-								<Path Data="{StaticResource ImportPath}"/>
-							</Button>
-							<Button Grid.Column="2">
-								<Path Data="{StaticResource ToLinkPath}"/>
-							</Button>
-						</Grid>
-						<TextBlock Text="Url" Classes="right" Grid.Row="8"/>
-						<Grid Grid.Row="8" Grid.Column="1" ColumnDefinitions="*,Auto">
-							<TextBox Text="{CompiledBinding ShowingEntry.Url}"/>
-							<Button Grid.Column="1">
-								<Path Data="{StaticResource ToLinkPath}"/>
-							</Button>
-						</Grid>
+                        <TextBlock Text="DOI" Classes="right" Grid.Row="7"/>
+                        <Grid Grid.Row="7" Grid.Column="1" ColumnDefinitions="*,Auto,Auto">
+                            <TextBox Text="{CompiledBinding ShowingEntry.DOI}"/>
+                            <Button Grid.Column="1">
+                                <Path Data="{StaticResource ImportPath}"/>
+                            </Button>
+                            <Button Grid.Column="2">
+                                <Path Data="{StaticResource ToLinkPath}"/>
+                            </Button>
+                        </Grid>
+                        <TextBlock Text="Url" Classes="right" Grid.Row="8"/>
+                        <Grid Grid.Row="8" Grid.Column="1" ColumnDefinitions="*,Auto">
+                            <TextBox Text="{CompiledBinding ShowingEntry.Url}"/>
+                            <Button Grid.Column="1">
+                                <Path Data="{StaticResource ToLinkPath}"/>
+                            </Button>
+                        </Grid>
                         <TextBlock Text="File" Classes="right" Grid.Row="9"/>
                         <TextBox Text="{CompiledBinding ShowingEntry.File}" Grid.Row="9" Grid.Column="1"/>
-						<Grid Grid.Row="10" RowDefinitions="Auto,Auto" VerticalAlignment="Center">
-							<Button HorizontalAlignment="Right"
-									Command="{CompiledBinding CopyBibtexCommand}"
-									CommandParameter="{CompiledBinding $parent[Window]}">
-								<Path Data="{StaticResource CopyPath}"/>
-							</Button>
-							<TextBlock Text="BibTeX" Classes="right" Grid.Row="1"/>
-						</Grid>
-						<TextBox FontFamily="Consolas"
+                        <Grid Grid.Row="10" RowDefinitions="Auto,Auto" VerticalAlignment="Center">
+                            <Button HorizontalAlignment="Right"
+                                    Command="{CompiledBinding CopyBibtexCommand}"
+                                    CommandParameter="{CompiledBinding $parent[Window]}">
+                                <Path Data="{StaticResource CopyPath}"/>
+                            </Button>
+                            <TextBlock Text="BibTeX" Classes="right" Grid.Row="1"/>
+                        </Grid>
+                        <TextBox FontFamily="Consolas"
                                  Text="{CompiledBinding ShowingEntry.BibTeX}" Grid.Row="10" Grid.Column="1"/>
                     </Grid>
                 </ScrollViewer>
