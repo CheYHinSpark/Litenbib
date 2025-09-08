@@ -15,7 +15,7 @@
 	<Style Selector="Border.hide_show">
 		<Setter Property="Transitions">
 			<Transitions>
-				<DoubleTransition Property="Opacity" Duration="0:0:0.15"/>
+				<DoubleTransition Property="Opacity" Duration="0:0:0.2"/>
 			</Transitions>
 		</Setter>
 		<Setter Property="Opacity" Value="0"/>
@@ -27,7 +27,7 @@
     <Style Selector="Button">
         <Setter Property="Transitions">
             <Transitions>
-                <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                <BrushTransition Property="Background" Duration="0:0:0.1"/>
                 <CornerRadiusTransition Property="CornerRadius" Duration="0:0:0.15"/>
             </Transitions>
         </Setter>
@@ -74,7 +74,7 @@
 		<Style Selector="^ /template/ Border#PART_LayoutRoot">
 			<Setter Property="Transitions">
 				<Transitions>
-					<BrushTransition Property="Background" Duration="0:0:0.15"/>
+					<BrushTransition Property="Background" Duration="0:0:0.1"/>
 				</Transitions>
 			</Setter>
 		</Style>

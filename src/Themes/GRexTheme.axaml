@@ -4,7 +4,7 @@
     <Design.PreviewWith>
         <Border Padding="10">
             <Path Stroke="White" StrokeThickness="1"
-                  Data="M 2,1 L 0,1 0,8 8,8 8,1 6,1 M 4,0 L 4,6 M 2,4 L 4,6 6,4"/>
+                  Data="M 2,1 L 0,1 0,7 1,8 7,8 8,7 8,1 6,1 M 4,0 L 4,6 M 2,4 L 4,6 6,4"/>
         </Border>
     </Design.PreviewWith>
     
@@ -240,11 +240,11 @@
 								<Animation Duration="0:0:0.2" FillMode="Both">
 									<KeyFrame Cue="0%">
 										<Setter Property="Opacity" Value="0.0"/>
-										<Setter Property="Margin" Value="0 0 0 100.0"/>
+										<Setter Property="TranslateTransform.Y" Value="-80.0"/>
 									</KeyFrame>
 									<KeyFrame Cue="100%">
 										<Setter Property="Opacity" Value="1.0"/>
-										<Setter Property="Margin" Value="0 0 0 0.0"/>
+										<Setter Property="TranslateTransform.Y" Value="0.0"/>
 									</KeyFrame>
 								</Animation>
 							</v:ExPopup.OpenAnimation>
@@ -252,15 +252,15 @@
 								<Animation Duration="0:0:0.2" FillMode="Both">
 									<KeyFrame Cue="0%">
 										<Setter Property="Opacity" Value="1.0"/>
-										<Setter Property="Margin" Value="0 0 0 0.0"/>
+										<Setter Property="TranslateTransform.Y" Value="0.0"/>
 									</KeyFrame>
 									<KeyFrame Cue="100%">
 										<Setter Property="Opacity" Value="0.0"/>
-										<Setter Property="Margin" Value="0 0 0 100.0"/>
+										<Setter Property="TranslateTransform.Y" Value="-80.0"/>
 									</KeyFrame>
 								</Animation>
 							</v:ExPopup.CloseAnimation>
-                            <Border x:Name="PopupBorder"
+                            <Border x:Name="PopupBorder" RenderTransformOrigin="0.5,0"
                                     Background="{DynamicResource MenuFlyoutPresenterBackground}"
                                     BorderBrush="{DynamicResource MenuFlyoutPresenterBorderBrush}"
                                     BorderThickness="1"
@@ -298,90 +298,6 @@
             <Setter Property="BorderThickness" Value="2"/>
         </Style>
     </ControlTheme>
-
-
-    <!--<ControlTheme x:Key="{x:Type v:ExComboBox}" TargetType="v:ExComboBox">
-        <Setter Property="MinHeight" Value="28"/>
-        <Setter Property="VerticalContentAlignment" Value="Center"/>
-        <Setter Property="Background" Value="{DynamicResource InputBackground}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource MainBorder}"/>
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="8" />
-        <Setter Property="Padding" Value="8 6" />
-        <Setter Property="Template">
-            <ControlTemplate>
-                <DataValidationErrors>
-                    <Grid ColumnDefinitions="*,24">
-                        <Border x:Name="Background"
-                                Grid.ColumnSpan="2"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="{TemplateBinding CornerRadius}" />
-                        <ContentControl x:Name="ContentPresenter"
-                                        Content="{TemplateBinding SelectionBoxItem}"
-                                        Grid.Column="0"
-                                        Margin="{TemplateBinding Padding}"
-                                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                        ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
-                                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                        <PathIcon x:Name="DropDownGlyph"
-                                  Grid.Column="1"
-                                  UseLayoutRounding="False"
-                                  IsHitTestVisible="False"
-                                  Height="12"
-                                  Width="12"
-                                  Margin="0,0,10,0"
-                                  HorizontalAlignment="Right"
-                                  VerticalAlignment="Center"
-                                  Foreground="{DynamicResource MainForeground}"
-                                  Data="M1939 486L2029 576L1024 1581L19 576L109 486L1024 1401L1939 486Z"/>
-                        <Popup x:Name="PART_Popup"
-                               WindowManagerAddShadowHint="False"
-                               IsOpen="{TemplateBinding IsDropDownOpen, Mode=TwoWay}"
-                               MinWidth="{Binding Bounds.Width, RelativeSource={RelativeSource TemplatedParent}}"
-                               MaxHeight="{TemplateBinding MaxDropDownHeight}"
-                               PlacementTarget="Background"
-                               IsLightDismissEnabled="True"
-                               InheritsTransform="True">
-                            <Border x:Name="PopupBorder"
-                                    Background="{DynamicResource MenuFlyoutPresenterBackground}"
-                                    BorderBrush="{DynamicResource MenuFlyoutPresenterBorderBrush}"
-                                    BorderThickness="1"
-                                    HorizontalAlignment="Stretch"
-                                    Padding="{DynamicResource ComboBoxDropdownContentMargin}"
-                                    CornerRadius="{DynamicResource OverlayCornerRadius}">
-                                <ScrollViewer HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
-                                              VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
-                                              IsDeferredScrollingEnabled="{TemplateBinding (ScrollViewer.IsDeferredScrollingEnabled)}">
-                                    <ItemsPresenter Name="PART_ItemsPresenter"
-                                                    Margin="{DynamicResource ComboBoxDropdownContentMargin}"
-                                                    ItemsPanel="{TemplateBinding ItemsPanel}" />
-                                </ScrollViewer>
-                            </Border>
-                        </Popup >
-                    </Grid>
-                </DataValidationErrors>
-            </ControlTemplate>
-        </Setter>
-
-        <Style Selector="^:pointerover">
-            <Setter Property="BorderBrush" Value="{DynamicResource HighlightBorder}"/>
-            <Style Selector="^ /template/ PathIcon#DropDownGlyph">
-                <Setter Property="Foreground" Value="{DynamicResource HighlightForeground}"/>
-            </Style>
-        </Style>
-
-        <Style Selector="^:focus">
-            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorder}"/>
-            <Setter Property="BorderThickness" Value="2"/>
-        </Style>
-
-        <Style Selector="^[IsDropDownOpen=True]">
-            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorder}"/>
-            <Setter Property="BorderThickness" Value="2"/>
-        </Style>
-    </ControlTheme>-->
     
     <ControlTheme x:Key="{x:Type GridSplitter}" TargetType="GridSplitter">
         <Setter Property="Focusable" Value="True" />

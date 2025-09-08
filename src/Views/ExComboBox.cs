@@ -84,13 +84,7 @@ namespace Litenbib.Views
 
         protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
-            if (_popup != null)
-            {
-                _popup.Closed -= PopupClosed;
-            }
-
             _popup = e.NameScope.Get<ExPopup>("PART_Popup");
-            _popup.Closed += PopupClosed;
         }
 
         protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
@@ -118,11 +112,9 @@ namespace Litenbib.Views
             base.OnPointerReleased(e);
 
             // Toggle the dropdown state on a click.
-            if (!e.Handled && !IsDropDownOpen && _popup != null)
+            if (!e.Handled && !IsDropDownOpen && _popup != null && !_popup.IsOpen)
             {
                 SetValue(IsDropDownOpenProperty, true);
-                _popup.IsOpenEx = true;
-                Debug.WriteLine(123);
                 e.Handled = true;
             }
 
@@ -135,12 +127,6 @@ namespace Litenbib.Views
                     e.Handled = true;
                 }
             }
-        }
-
-        private void PopupClosed(object? sender, EventArgs e)
-        {
-            // Reset focus back to the control when the popup closes.
-            Focus();
         }
 
         private void UpdateSelectionBoxItem(object? item)
@@ -169,7 +155,6 @@ namespace Litenbib.Views
 
             if (e.Handled)
                 return;
-            Debug.WriteLine(e.Key);
             switch (e.Key)
             {
                 case Key.Down:
@@ -201,7 +186,6 @@ namespace Litenbib.Views
 
         private bool MoveSelection(int startIndex, int step, bool wrap)
         {
-            Debug.WriteLine(startIndex);
             static bool IsSelectable(object? o) => (o as AvaloniaObject)?.GetValue(IsEnabledProperty) ?? true;
 
             var count = ItemCount;
