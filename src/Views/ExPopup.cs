@@ -50,22 +50,19 @@ namespace Litenbib.Views
         private LightDismissOverlayLayer? dismissLayer;
         protected bool isAnimating;
 
-
-        public CancellationTokenSource cancellationTokenSource = new();
-        public double animationProgress = 0.0;
-
-        public ExPopup()
+        static ExPopup()
         {
-            IsOpenExProperty.Changed.AddClassHandler<ExPopup>(OnIsOpenExChanged);
             IsLightDismissEnabledProperty.OverrideDefaultValue<ExPopup>(false);
+            IsOpenExProperty.Changed.AddClassHandler<ExPopup>(OnIsOpenExChanged);
         }
 
         // 在Popup打开时订阅全局事件
-        protected void OnOpen()
+        protected async Task OnOpen()
         {
             OverlayDismissEventPassThrough = true;
             isAnimating = true;
-            dismissLayer ??= LightDismissOverlayLayer.GetLightDismissOverlayLayer(TopLevel.GetTopLevel(PlacementTarget)!);
+            if (TopLevel.GetTopLevel(PlacementTarget) is Visual v)
+            { dismissLayer ??= LightDismissOverlayLayer.GetLightDismissOverlayLayer(v); }
             if (dismissLayer != null)
             {
                 dismissLayer.IsVisible = true;
@@ -76,21 +73,37 @@ namespace Litenbib.Views
             {
                 window.Deactivated += Window_Deactivated;
             }
+
+
+            IsOpen = true;
+            if (OpenAnimation != null)
+            {
+                await OpenAnimation.RunAsync(Child!);
+            }
         }
 
         // 在Popup关闭时取消订阅，防止内存泄漏
-        protected void OnClose()
+        protected async Task OnClose()
         {
             isAnimating = true;
-            if (dismissLayer == null) { return; }
-            dismissLayer.PointerPressed -= PointerPressedDismissOverlay;
-            dismissLayer.InputPassThroughElement = null;
-            dismissLayer.IsVisible = false;
+            if (dismissLayer != null)
+            {
+                dismissLayer.PointerPressed -= PointerPressedDismissOverlay;
+                dismissLayer.InputPassThroughElement = null;
+                dismissLayer.IsVisible = false;
+            }
+
+            if (CloseAnimation != null)
+            {
+                await CloseAnimation.RunAsync(Child!);
+            }
+            IsOpen = false;
         }
 
         private void Window_Deactivated(object? sender, EventArgs e)
         {
             IsOpen = false;
+            Debug.Write("From Window ");
             IsOpenEx = false;
             if (TopLevel.GetTopLevel(PlacementTarget) is Window window)
             { window.Deactivated -= Window_Deactivated; }
@@ -102,6 +115,7 @@ namespace Litenbib.Views
             {
                 if (OverlayDismissEventPassThrough)
                 { PassThroughEvent(e); }
+                Debug.Write("From OverlayDismiss ");
                 IsOpenEx = false;
             }
         }
@@ -123,28 +137,19 @@ namespace Litenbib.Views
             }
         }
 
-        private  async void OnIsOpenExChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
+        private static async void OnIsOpenExChanged(ExPopup popup, AvaloniaPropertyChangedEventArgs e)
         {
             if (e.NewValue is not bool b) { return; }
+            Debug.WriteLine($"Set IsOpenEx {b}");
             if (b == true)
             {
-                OnOpen();
-                IsOpen = true;
-                if (OpenAnimation != null)
-                {
-                    await OpenAnimation.RunAsync(Child!);
-                }
+                await popup.OnOpen();
             }
             else
             {
-                OnClose();
-                if (CloseAnimation != null)
-                {
-                    await CloseAnimation.RunAsync(Child!);
-                }
-                IsOpen = false;
+                await popup.OnClose();
             }
-            isAnimating = false;
+            popup.isAnimating = false;
         }
     }
 }

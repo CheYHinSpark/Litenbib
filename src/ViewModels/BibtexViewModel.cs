@@ -35,6 +35,20 @@ namespace Litenbib.ViewModels
 
         public UndoRedoManager UndoRedoManager { get; set; }
 
+        public ObservableCollection<WarningError> WarningErrors { get; set; }
+
+        public string WarningHint
+        {
+            get
+            {
+                if (WarningErrors == null || WarningErrors.Count == 0)
+                {
+                    return string.Empty;
+                }
+                return $"{WarningErrors.Count} warnings or errors";
+            }
+        }
+
         public ObservableRangeCollection<BibtexEntry> BibtexEntries { get; set; }
         
         public DataGridCollectionView BibtexView { get; }
@@ -138,6 +152,7 @@ namespace Litenbib.ViewModels
             Header = header;
             FullPath = fullPath;
             BibtexEntries = new ObservableRangeCollection<BibtexEntry>(BibtexParser.Parse(filecontent));
+            WarningErrors = null!;
             foreach (var entry in BibtexEntries)
             { entry.UndoRedoPropertyChanged += OnEntryPropertyChanged; }
             BibtexView = new(BibtexEntries)
@@ -250,14 +265,21 @@ namespace Litenbib.ViewModels
             }
         }
 
+        private async void CheckErrors()
+        {
+            WarningErrors = new ObservableCollection<WarningError>(await WarningErrorChecker.CheckBibtex(BibtexEntries));
+            OnPropertyChanged(nameof(WarningErrors));
+            OnPropertyChanged(nameof(WarningHint));
+        }
 
-
+        #region Command
         private void NotifyCanUndoRedo()
         {
             UndoBibtexCommand.NotifyCanExecuteChanged();
             RedoBibtexCommand.NotifyCanExecuteChanged();
             SaveBibtexCommand.NotifyCanExecuteChanged();
             OnPropertyChanged(nameof(Edited));
+            CheckErrors();
         }
 
         [RelayCommand(CanExecute = nameof(CanUndo))]
@@ -291,7 +313,7 @@ namespace Litenbib.ViewModels
         [RelayCommand(CanExecute = nameof(CanDeleteKey))]
         private void DeleteBibtexKey()
         { Delete(); }
-        private bool CanDeleteKey() => ShowingEntry != null 
+        private bool CanDeleteKey() => ShowingEntry != null
             && UndoRedoManager.NewEditedBox == null && !isFiltering;
 
         private void Delete()
@@ -350,5 +372,6 @@ namespace Litenbib.ViewModels
                 { await clipboard.SetTextAsync(ShowingEntry.BibTeX); }
             }
         }
+        #endregion
     }
 }

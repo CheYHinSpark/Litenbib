@@ -58,63 +58,123 @@
         </Grid.RowDefinitions>
 
         <!--bib数据列表-->
-        <DataGrid Name="DataGridView" Margin="8" ItemsSource="{CompiledBinding BibtexView}"
-                  CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True"
-                  IsReadOnly="True"
-                  SelectedItem="{CompiledBinding ShowingEntry}"
-                  SelectionChanged="DataGrid_SelectionChanged"
-                  DragDrop.AllowDrop="True">
-            <DataGrid.Columns>
-                <DataGridTemplateColumn Width="Auto" CanUserResize="False" CanUserSort="False">
-                    <DataGridTemplateColumn.Header>Link</DataGridTemplateColumn.Header>
-                    <DataGridTemplateColumn.CellTemplate>
-                        <!--<DataTemplate>-->
-                        <DataTemplate x:DataType="m:BibtexEntry">
-                            <Button Command="{CompiledBinding #BibtexViewRoot.DataContext.ToLinkCommand}"
-                                    CommandParameter="{CompiledBinding}"
-                                    Classes="link_in_row">
-                                <Button.IsVisible>
-                                    <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                                        <Binding Path="DOI" Converter="{x:Static StringConverters.IsNotNullOrEmpty}"/>
-                                        <Binding Path="Url" Converter="{x:Static StringConverters.IsNotNullOrEmpty}"/>
-                                    </MultiBinding>
-                                </Button.IsVisible>
-                                <Viewbox Width="14" Height="14">
-                                    <Path Data="{DynamicResource LinkPath}" StrokeThickness="1"
-                                          Stretch="UniformToFill" Margin="1"
-                                          Stroke="{CompiledBinding $parent[Button].Foreground}"/>
-                                </Viewbox>
-                            </Button>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTemplateColumn Width="Auto" CanUserResize="False">
-                    <DataGridTemplateColumn.Header>Type</DataGridTemplateColumn.Header>
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate x:DataType="m:BibtexEntry">
-                            <Border Margin="0 4" HorizontalAlignment="Stretch" CornerRadius="12"
-                                    Background="{CompiledBinding #TypeText.Text, Converter={StaticResource TextToBackgroundConverter}}">
-                                <TextBlock Name="TypeText" HorizontalAlignment="Center"
-                                           Text="{CompiledBinding Type, Converter={StaticResource BibTypeConverter}}"/>
-                            </Border>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTextColumn Header="Author/Editor"
-                                    Binding="{CompiledBinding Author, Converter={StaticResource StringSelectorConverter}, ConverterParameter={Binding Editor}, Mode=OneWay}"
-                                    x:DataType="m:BibtexEntry" Width="1*"/>
-                <DataGridTextColumn Header="Title" Binding="{CompiledBinding Title}"
-                                    x:DataType="m:BibtexEntry" Width="3*"/>
-                <DataGridTextColumn Header="Journal/Booktitle"
-                                    Binding="{CompiledBinding Journal, Converter={StaticResource StringSelectorConverter}, ConverterParameter={Binding Booktitle}, Mode=OneWay}"
-                                    x:DataType="m:BibtexEntry" Width="1*"/>
-                <DataGridTextColumn Header="Year" Binding="{CompiledBinding Year}"
-                                    x:DataType="m:BibtexEntry" Width="Auto"
-                                    CanUserResize="False"/>
-            </DataGrid.Columns>
-        </DataGrid>
-        
-        <GridSplitter Name="Splitter" Grid.Column="1"
+		<Grid RowDefinitions="*,Auto">
+            <DataGrid Name="DataGridView" Margin="8 8 8 0" ItemsSource="{CompiledBinding BibtexView}"
+                      CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True"
+                      IsReadOnly="True"
+                      SelectedItem="{CompiledBinding ShowingEntry}"
+                      SelectionChanged="DataGrid_SelectionChanged"
+                      DragDrop.AllowDrop="True">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Width="Auto" CanUserResize="False" CanUserSort="False">
+                        <DataGridTemplateColumn.Header>Link</DataGridTemplateColumn.Header>
+                        <DataGridTemplateColumn.CellTemplate>
+                            <!--<DataTemplate>-->
+                            <DataTemplate x:DataType="m:BibtexEntry">
+                                <Button Command="{CompiledBinding #BibtexViewRoot.DataContext.ToLinkCommand}"
+                                        CommandParameter="{CompiledBinding}"
+                                        Classes="link_in_row">
+                                    <Button.IsVisible>
+                                        <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                            <Binding Path="DOI" Converter="{x:Static StringConverters.IsNotNullOrEmpty}"/>
+                                            <Binding Path="Url" Converter="{x:Static StringConverters.IsNotNullOrEmpty}"/>
+                                        </MultiBinding>
+                                    </Button.IsVisible>
+                                    <Viewbox Width="14" Height="14">
+                                        <Path Data="{DynamicResource LinkPath}" StrokeThickness="1"
+                                              Stretch="UniformToFill" Margin="1"
+                                              Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+                                    </Viewbox>
+                                </Button>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Width="Auto" CanUserResize="False">
+                        <DataGridTemplateColumn.Header>Type</DataGridTemplateColumn.Header>
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate x:DataType="m:BibtexEntry">
+                                <Border Margin="0 4" HorizontalAlignment="Stretch" CornerRadius="12"
+                                        Background="{CompiledBinding #TypeText.Text, Converter={StaticResource TextToBackgroundConverter}}">
+                                    <TextBlock Name="TypeText" HorizontalAlignment="Center"
+                                               Text="{CompiledBinding Type, Converter={StaticResource BibTypeConverter}}"/>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Author/Editor"
+                                        Binding="{CompiledBinding Author, Converter={StaticResource StringSelectorConverter}, ConverterParameter={Binding Editor}, Mode=OneWay}"
+                                        x:DataType="m:BibtexEntry" Width="1*"/>
+                    <DataGridTextColumn Header="Title" Binding="{CompiledBinding Title}"
+                                        x:DataType="m:BibtexEntry" Width="3*"/>
+                    <DataGridTextColumn Header="Journal/Booktitle"
+                                        Binding="{CompiledBinding Journal, Converter={StaticResource StringSelectorConverter}, ConverterParameter={Binding Booktitle}, Mode=OneWay}"
+                                        x:DataType="m:BibtexEntry" Width="1*"/>
+                    <DataGridTextColumn Header="Year" Binding="{CompiledBinding Year}"
+                                        x:DataType="m:BibtexEntry" Width="Auto"
+                                        CanUserResize="False"/>
+                </DataGrid.Columns>
+            </DataGrid>
+			<StackPanel Orientation="Horizontal" Height="{DynamicResource ToolBarHeight}"
+						VerticalAlignment="Bottom" Grid.Row="1">
+				<TextBlock Text="This is the Hint bar" />
+				<ToggleButton x:Name="WarningToggle" Content="{CompiledBinding WarningHint}"/>
+				<v:ExPopup x:Name="WarningPopup"
+					       WindowManagerAddShadowHint="False"
+						   Placement="TopEdgeAlignedLeft"
+                           IsOpenEx="{CompiledBinding #WarningToggle.IsChecked, Mode=TwoWay}"
+                           PlacementTarget="WarningToggle"
+                           InheritsTransform="True">
+					<!--<v:ExPopup.OpenAnimation>
+						<Animation Duration="0:0:0.2" FillMode="Both">
+							<KeyFrame Cue="0%">
+								<Setter Property="Border.Opacity" Value="0.0"/>
+								<Setter Property="Border.TranslateTransform.Y" Value="80.0"/>
+								<Setter Property="Border.TranslateTransform.X" Value="-40.0"/>
+							</KeyFrame>
+							<KeyFrame Cue="100%">
+								<Setter Property="Border.Opacity" Value="1.0"/>
+								<Setter Property="Border.TranslateTransform.Y" Value="0.0"/>
+								<Setter Property="Border.TranslateTransform.X" Value="0.0"/>
+							</KeyFrame>
+						</Animation>
+					</v:ExPopup.OpenAnimation>
+					<v:ExPopup.CloseAnimation>
+						<Animation Duration="0:0:0.2" FillMode="Both">
+							<KeyFrame Cue="0%">
+								<Setter Property="Border.Opacity" Value="1.0"/>
+								<Setter Property="Border.TranslateTransform.Y" Value="0.0"/>
+								<Setter Property="Border.TranslateTransform.X" Value="0.0"/>
+							</KeyFrame>
+							<KeyFrame Cue="100%">
+								<Setter Property="Border.Opacity" Value="0.0"/>
+								<Setter Property="Border.TranslateTransform.Y" Value="80.0"/>
+								<Setter Property="Border.TranslateTransform.Y" Value="-40.0"/>
+							</KeyFrame>
+						</Animation>
+					</v:ExPopup.CloseAnimation>-->
+					<Border Background="{DynamicResource InputBackground}"
+							BorderBrush="{DynamicResource MainBorder}"
+							BorderThickness="1"
+							HorizontalAlignment="Stretch"
+							Padding="8"
+							CornerRadius="8">
+						<ScrollViewer>
+							<ListBox ItemsSource="{CompiledBinding WarningErrors}">
+								<ListBox.ItemTemplate>
+									<DataTemplate>
+										<Border Background="Red">
+											<Button Content="{CompiledBinding HintString}"/>
+										</Border>
+									</DataTemplate>
+								</ListBox.ItemTemplate>
+							</ListBox>
+						</ScrollViewer>
+					</Border>
+				</v:ExPopup >
+			</StackPanel>
+		</Grid>
+
+		<GridSplitter Name="Splitter" Grid.Column="1"
                       DragDelta="GridSplitter_DragDelta"/>
         
         <!--entry详细数据-->

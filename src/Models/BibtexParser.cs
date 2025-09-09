@@ -54,7 +54,7 @@ namespace Litenbib.Models
 
             // 查找所有条目
             var entryMatch = Regex.Match(bibTeXText,
-                @"@(\w+)\s*{\s*([^,]+)\s*,", RegexOptions.IgnoreCase);
+                @"@(\w*)\s*{\s*([^,]*)\s*,", RegexOptions.IgnoreCase);
 
             string entryType = entryMatch.Groups[1].Value;
             string citationKey = entryMatch.Groups[2].Value.Trim();

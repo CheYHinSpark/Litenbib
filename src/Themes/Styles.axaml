@@ -4,9 +4,10 @@
     <Styles.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceInclude Source="/Themes/GRexTheme.axaml"/>
-                <ResourceInclude Source="/Themes/Tab.axaml"/>
-                <ResourceInclude Source="/Themes/DataGrid.axaml"/>
+				<ResourceInclude Source="/Themes/GRexTheme.axaml"/>
+				<ResourceInclude Source="/Themes/MenuItem.axaml"/>
+				<ResourceInclude Source="/Themes/Tab.axaml"/>
+				<ResourceInclude Source="/Themes/DataGrid.axaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Styles.Resources>

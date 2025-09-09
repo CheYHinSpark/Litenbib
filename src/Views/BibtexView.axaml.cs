@@ -1,6 +1,9 @@
 using Avalonia;
+using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
+using Avalonia.Styling;
 using Litenbib.Models;
 using Litenbib.ViewModels;
 using System;
@@ -18,6 +21,67 @@ public partial class BibtexView : UserControl
     public BibtexView()
     {
         InitializeComponent();
+        SetPopup();
+    }
+
+    private void SetPopup()
+    {
+        WarningPopup.OpenAnimation = new Animation()
+        {
+            Duration = TimeSpan.FromSeconds(0.15),
+            FillMode = FillMode.Both,
+            Children =
+            {
+                new KeyFrame
+                {
+                    Cue = new Cue(0.0),
+                    Setters =
+                    {
+                        new Setter(OpacityProperty, 0.0),
+                        new Setter(TranslateTransform.XProperty, -40.0),
+                        new Setter(TranslateTransform.YProperty, 80.0)
+                    }
+                },
+                new KeyFrame
+                {
+                    Cue = new Cue(1.0),
+                    Setters =
+                    {
+                        new Setter(OpacityProperty, 1.0),
+                        new Setter(TranslateTransform.XProperty, 0.0),
+                        new Setter(TranslateTransform.YProperty, 0.0)
+                    }
+                }
+            }
+        };
+        WarningPopup.CloseAnimation = new Animation()
+        {
+            Duration = TimeSpan.FromSeconds(0.15),
+            FillMode = FillMode.Both,
+            Children =
+            {
+                new KeyFrame
+                {
+                    Cue = new Cue(0.0),
+                    Setters =
+                    {
+                        new Setter(OpacityProperty, 1.0),
+                        new Setter(TranslateTransform.XProperty, 0.0),
+                        new Setter(TranslateTransform.YProperty, 0.0)
+                    }
+                },
+                new KeyFrame
+                {
+                    Cue = new Cue(1.0),
+                    Setters =
+                    {
+                        new Setter(OpacityProperty, 0.0),
+                        new Setter(TranslateTransform.XProperty, -40.0),
+                        new Setter(TranslateTransform.YProperty, 80.0)
+                    }
+                }
+            }
+        };
     }
 
     // 选中事件
@@ -28,7 +92,6 @@ public partial class BibtexView : UserControl
             ShowDetail();
             vm.SetSelectedItems(grid.SelectedItems.Cast<BibtexEntry>());
         }
-        
     }
 
     private void ShowDetail()

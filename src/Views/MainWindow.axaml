@@ -69,15 +69,31 @@
 			<!--title-->
 			<StackPanel Orientation="Horizontal" VerticalAlignment="Top">
                 <Menu>
-                    <MenuItem Header="_File" Classes="Top">
-                        <MenuItem Header="_New"/>
-                        <MenuItem Header="_Open..."
-                                  Command="{CompiledBinding OpenFileCommand}"
-                                  CommandParameter="{CompiledBinding $parent[Window]}"/>
-                        <MenuItem Header="_Save All"
-                                  Command="{CompiledBinding SaveAllCommand}"/>
+					<MenuItem Header="_File" Classes="Top">
+						<MenuItem Header="_New"/>
+						<MenuItem Header="_Open..."
+                                      Command="{CompiledBinding OpenFileCommand}"
+                                      CommandParameter="{CompiledBinding $parent[Window]}"/>
+						<MenuItem Header="_Save All"
+                                      Command="{CompiledBinding SaveAllCommand}">
+							<MenuItem Header="123"/>
+							<MenuItem Header="123"/>
+							<MenuItem Header="123"/>
+							<MenuItem Header="123">
+								<MenuItem Header="123"/>
+								<MenuItem Header="123"/>
+								<MenuItem Header="123"/>
+								<MenuItem Header="123"/>
+							</MenuItem>
+							<MenuItem Header="123">
+								<MenuItem Header="123"/>
+								<MenuItem Header="123"/>
+								<MenuItem Header="123"/>
+								<MenuItem Header="123"/>
+							</MenuItem>
+						</MenuItem>
                     </MenuItem>
-                    <MenuItem Header="_Add" Classes="Top"
+					<MenuItem Header="_Add" Classes="Top"
                               Command="{CompiledBinding AddBibtexEntryCommand}"
                               CommandParameter="{CompiledBinding $parent[Window]}"/>
                 </Menu>
@@ -128,8 +144,6 @@
         
         
         <!--welcome-->
-        <!---->
-
 		<StackPanel Grid.RowSpan="2" VerticalAlignment="Center">
 			<Image Source="/Assets/logo.ico" Width="100"/>
 			<TextBlock Text="Welcome to LitenBib"
