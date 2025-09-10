@@ -1,15 +1,16 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:v="using:Litenbib.Views" >
-    <Design.PreviewWith>
+    <!--<Design.PreviewWith>
         <Border Padding="10">
             <Path Stroke="White" StrokeThickness="1"
                   Data="M 2,1 L 0,1 0,7 1,8 7,8 8,7 8,1 6,1 M 4,0 L 4,6 M 2,4 L 4,6 6,4"/>
         </Border>
-    </Design.PreviewWith>
+    </Design.PreviewWith>-->
     
     <x:Double x:Key="TitleBarHeight">36</x:Double>
-    <x:Double x:Key="ToolBarHeight">32</x:Double>
+	<x:Double x:Key="ToolBarHeight">32</x:Double>
+	<x:Double x:Key="HintBarHeight">28</x:Double>
     
     <PathGeometry x:Key="-Path" Figures="M 0,0 L 10,0"/>
     <PathGeometry x:Key="xPath" Figures="M 0,0 L 8,8 M 0,8 L 8,0"/>
@@ -406,21 +407,16 @@
         <Setter Property="Foreground" Value="{DynamicResource MainForeground}"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="BorderBrush" Value="{DynamicResource MainBorder}"/>
-        <Setter Property="Padding" Value="4"/>
+        <Setter Property="Padding" Value="8 4"/>
         <Setter Property="CornerRadius" Value="12"/>
         <Setter Property="Template">
             <ControlTemplate>
-                <Grid>
+                <Panel>
                     <Border x:Name="PART_Bg"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{TemplateBinding CornerRadius}">
-                        <Border x:Name="PART_Highlight"
-                                Opacity="0.5"
-                                Background="Transparent"
-                                CornerRadius="{TemplateBinding CornerRadius}"/>
-                    </Border>
+                            CornerRadius="{TemplateBinding CornerRadius}"/>
                     <ContentPresenter x:Name="PART_ContentPresenter"
                                       Content="{TemplateBinding Content}"
                                       ContentTemplate="{TemplateBinding ContentTemplate}"
@@ -431,7 +427,7 @@
                                       VerticalAlignment="Stretch"
                                       HorizontalContentAlignment="Center"
                                       VerticalContentAlignment="Center" />
-                </Grid>
+                </Panel>
             </ControlTemplate>
         </Setter>
 
@@ -462,4 +458,74 @@
             <Setter Property="Foreground" Value="{DynamicResource DisabledForeground}" />
         </Style>
     </ControlTheme>
+
+
+	<Design.PreviewWith>
+		<Border Padding="20">
+			<StackPanel Spacing="20">
+				<ToggleButton Content="Click Me!" />
+				<ToggleButton Content="Disabled" IsEnabled="False" />
+				<ToggleButton Content="Three state" IsThreeState="True" />
+			</StackPanel>
+		</Border>
+	</Design.PreviewWith>
+
+	<ControlTheme x:Key="{x:Type ToggleButton}" TargetType="ToggleButton">
+		<Setter Property="Background" Value="{DynamicResource MainBackground}"/>
+		<Setter Property="Foreground" Value="{DynamicResource MainForeground}"/>
+		<Setter Property="BorderThickness" Value="1"/>
+		<Setter Property="BorderBrush" Value="{DynamicResource MainBorder}"/>
+		<Setter Property="Padding" Value="8 4"/>
+		<Setter Property="CornerRadius" Value="12"/>
+		<Setter Property="Template">
+			<ControlTemplate>
+				<Panel>
+					<Border x:Name="PART_Highlight"
+							Background="Transparent"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}"/>
+					<Border x:Name="PART_Bg"
+							Opacity="0.64"
+							Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+							CornerRadius="{TemplateBinding CornerRadius}"/>
+					<ContentPresenter x:Name="PART_ContentPresenter"
+                                      Content="{TemplateBinding Content}"
+                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                      Foreground="{TemplateBinding Foreground}"
+                                      Padding="{TemplateBinding Padding}"
+                                      RecognizesAccessKey="True"
+                                      HorizontalAlignment="Stretch"
+                                      VerticalAlignment="Stretch"
+                                      HorizontalContentAlignment="Center"
+                                      VerticalContentAlignment="Center" />
+				</Panel>
+			</ControlTemplate>
+		</Setter>
+
+		<Style Selector="^:pointerover">
+			<Setter Property="Foreground" Value="{DynamicResource HighlightForeground}" />
+			<Style Selector="^ /template/ Border#PART_Highlight">
+				<Setter Property="Background" Value="{DynamicResource HighlightBackground}"/>
+			</Style>
+		</Style>
+
+		<Style Selector="^:pressed">
+			<Setter Property="RenderTransform" Value="scale(0.98)" />
+		</Style>
+
+		<Style Selector="^:checked">
+			<Style Selector="^ /template/ Border#PART_Highlight">
+				<Setter Property="BorderBrush" Value="{TemplateBinding Background}"/>
+				<Setter Property="BorderThickness" Value="2"/>
+			</Style>
+		</Style>
+
+		<Style Selector="^:disabled">
+			<Setter Property="Foreground" Value="{DynamicResource DisabledForeground}" />
+		</Style>
+	</ControlTheme>
+	
+	
 </ResourceDictionary>

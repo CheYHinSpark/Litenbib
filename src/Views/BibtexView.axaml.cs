@@ -1,12 +1,15 @@
 using Avalonia;
 using Avalonia.Animation;
 using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Styling;
 using Litenbib.Models;
 using Litenbib.ViewModels;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
@@ -18,17 +21,36 @@ public partial class BibtexView : UserControl
 
     private bool isDetailShowing = false;
 
+    private BibtexViewModel viewModel = null!;
+
+    private bool changingInside = false;
+
     public BibtexView()
     {
         InitializeComponent();
         SetPopup();
     }
 
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        viewModel = (BibtexViewModel)DataContext!;
+        viewModel.CheckingEvent += (list, e) => { SetSelectionAndScroll(list); };
+    }
+
+    private void SetSelectionAndScroll(object? o)
+    {
+        changingInside = true;
+        DataGridView.SelectAll();
+        changingInside = false;
+    }
+
+
     private void SetPopup()
     {
         WarningPopup.OpenAnimation = new Animation()
         {
-            Duration = TimeSpan.FromSeconds(0.15),
+            Duration = TimeSpan.FromSeconds(0.1),
             FillMode = FillMode.Both,
             Children =
             {
@@ -38,8 +60,8 @@ public partial class BibtexView : UserControl
                     Setters =
                     {
                         new Setter(OpacityProperty, 0.0),
-                        new Setter(TranslateTransform.XProperty, -40.0),
-                        new Setter(TranslateTransform.YProperty, 80.0)
+                        new Setter(TranslateTransform.XProperty, -20.0),
+                        new Setter(TranslateTransform.YProperty, 40.0)
                     }
                 },
                 new KeyFrame
@@ -56,7 +78,7 @@ public partial class BibtexView : UserControl
         };
         WarningPopup.CloseAnimation = new Animation()
         {
-            Duration = TimeSpan.FromSeconds(0.15),
+            Duration = TimeSpan.FromSeconds(0.1),
             FillMode = FillMode.Both,
             Children =
             {
@@ -76,8 +98,8 @@ public partial class BibtexView : UserControl
                     Setters =
                     {
                         new Setter(OpacityProperty, 0.0),
-                        new Setter(TranslateTransform.XProperty, -40.0),
-                        new Setter(TranslateTransform.YProperty, 80.0)
+                        new Setter(TranslateTransform.XProperty, -20.0),
+                        new Setter(TranslateTransform.YProperty, 40.0)
                     }
                 }
             }
@@ -87,10 +109,15 @@ public partial class BibtexView : UserControl
     // 选中事件
     private void DataGrid_SelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
-        if (sender is DataGrid grid && DataContext is BibtexViewModel vm)
+        if (sender is DataGrid grid && !changingInside)
         {
+            if (e.AddedItems.Count > 0 && viewModel.ShowingEntry == e.AddedItems[0])
+            {
+                grid.ScrollIntoView(viewModel.ShowingEntry, null);
+                grid.SelectedItems.Add(viewModel.ShowingEntry);
+            }
             ShowDetail();
-            vm.SetSelectedItems(grid.SelectedItems.Cast<BibtexEntry>());
+            viewModel.SetSelectedItems(grid.SelectedItems.Cast<BibtexEntry>());
         }
     }
 
@@ -138,17 +165,17 @@ public partial class BibtexView : UserControl
         isDetailShowing = false;
     }
 
-    private void ChangeButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void ChangeButton_Click(object? sender, RoutedEventArgs e)
     {
         isColumns = !isColumns;
         ShowDetail();
     }
-    private void CloseButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void CloseButton_Click(object? sender, RoutedEventArgs e)
     {
         CloseDetail();
     }
 
-    private void GridSplitter_DragDelta(object? sender, Avalonia.Input.VectorEventArgs e)
+    private void GridSplitter_DragDelta(object? sender, VectorEventArgs e)
     {
         if (isColumns)
         {

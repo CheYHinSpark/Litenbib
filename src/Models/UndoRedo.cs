@@ -24,7 +24,9 @@ namespace Litenbib.Models
         private DateTime lastTime = DateTime.Now;
         private readonly LinkedList<IUndoableAction> _undoList = new();
         private readonly LinkedList<IUndoableAction> _redoList = new();
+        /// <summary> 上个修改的Box </summary>
         public TextBox? LastEditedBox { get; set; }
+        /// <summary> 当前修改的Box </summary>
         public TextBox? NewEditedBox { get; set; }
 
         // 检查是否可以撤销
@@ -50,7 +52,7 @@ namespace Litenbib.Models
                 }
             }
             _undoList.AddLast(action);
-            if (_undoList.Count > 200) // 最大限制200条
+            if (_undoList.Count > 100) // 最大限制100条
             {
                 _undoList.RemoveFirst();
                 --savedStep;
@@ -58,6 +60,8 @@ namespace Litenbib.Models
             _redoList.Clear(); // 添加新操作时，重做历史被清空
             lastTime = DateTime.Now;
             LastEditedBox = NewEditedBox;
+            if (savedStep >= _undoList.Count)
+            { savedStep = -1; }
         }
 
         // 执行撤销
@@ -107,8 +111,7 @@ namespace Litenbib.Models
         private readonly BibtexEntry _entry = entry; // 更改的行对象
         private readonly string _propertyName = propertyName; // 更改的属性名
         private readonly string? _oldValue = oldValue;   // 更改前的值
-        private string? _newValue = newValue;   // 更改后的值
-        public string? NewValue { get => _newValue; set => _newValue = value; }
+        public string? NewValue = newValue; // 更改后的值
         public int OldIndex = oldIndex;
         public int NewIndex = newIndex;
 
@@ -116,7 +119,7 @@ namespace Litenbib.Models
         { _entry.SetValueSilent(_propertyName, _oldValue); }
 
         public override void Redo()
-        { _entry.SetValueSilent(_propertyName, _newValue); }
+        { _entry.SetValueSilent(_propertyName, NewValue); }
 
         public static bool IsSameField(EntryChangeAction oldAction, EntryChangeAction newAction)
         {
@@ -124,7 +127,7 @@ namespace Litenbib.Models
                 && oldAction._propertyName != "Type")
             {
                 return oldAction._propertyName == newAction._propertyName 
-                    && oldAction._oldValue != newAction._newValue;
+                    && oldAction._oldValue != newAction.NewValue;
             }
             return false;
         }

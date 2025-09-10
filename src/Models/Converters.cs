@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data.Converters;
+using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Media;
 using Litenbib.ViewModels;
 using System;
@@ -97,6 +98,32 @@ namespace Litenbib.Models
                     "techreport" => SolidColorBrush.Parse("#525252"),
                     "unpublished" => SolidColorBrush.Parse("#3d3d3d"),
                     _ => Brushes.Transparent, // 默认背景
+                };
+            }
+            // 如果value不是字符串，返回默认颜色
+            return Brushes.Transparent;
+        }
+
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            // 双向绑定可能需要实现，这里不需要，直接抛出异常或返回null
+            throw new NotSupportedException();
+        }
+    }
+
+    public class WarningToBrushConverter : IValueConverter
+    {
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            // 检查value是否为string类型
+            if (value is int i)
+            {
+                // 这里根据你的逻辑返回不同的颜色
+                return i switch
+                {
+                    0 => Brushes.Transparent,
+                    > 0 => SolidColorBrush.Parse("#cc2929"),
+                    < 0 => SolidColorBrush.Parse("#cca329")
                 };
             }
             // 如果value不是字符串，返回默认颜色

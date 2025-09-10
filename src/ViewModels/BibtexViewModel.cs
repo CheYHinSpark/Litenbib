@@ -49,6 +49,11 @@ namespace Litenbib.ViewModels
             }
         }
 
+        private int hasError = -1;
+        public int HasError { get => hasError; }
+
+        public EventHandler? CheckingEvent;
+
         public ObservableRangeCollection<BibtexEntry> BibtexEntries { get; set; }
         
         public DataGridCollectionView BibtexView { get; }
@@ -137,8 +142,6 @@ namespace Litenbib.ViewModels
 
         private bool isTailSelected = false;
 
-        public TextBox? CurrentTextBox { set { UndoRedoManager.NewEditedBox = value; } }
-
         public static ObservableCollection<string> TypeList
         {
             get => ["Article", "Book", "Booklet", "Conference",
@@ -185,7 +188,6 @@ namespace Litenbib.ViewModels
         }
 
 
-
         private void RefreshFilter()
         {
             if (string.IsNullOrEmpty(filterText))
@@ -228,7 +230,7 @@ namespace Litenbib.ViewModels
 
         private void SetIsTailSelected()
         {
-            if (UndoRedoManager.LastEditedBox is TextBox tb)
+            if (UndoRedoManager.NewEditedBox is TextBox tb)
             {
                 if (string.IsNullOrEmpty(tb.Text))
                 { isTailSelected = 0 == selectionEnd || 0 ==  selectionStart; }
@@ -267,9 +269,12 @@ namespace Litenbib.ViewModels
 
         private async void CheckErrors()
         {
-            WarningErrors = new ObservableCollection<WarningError>(await WarningErrorChecker.CheckBibtex(BibtexEntries));
+            var result = await WarningErrorChecker.CheckBibtex(BibtexEntries);
+            WarningErrors = new ObservableCollection<WarningError>(result.Item1);
+            hasError = result.Item2;
             OnPropertyChanged(nameof(WarningErrors));
             OnPropertyChanged(nameof(WarningHint));
+            OnPropertyChanged(nameof(HasError));
         }
 
         #region Command
@@ -370,6 +375,48 @@ namespace Litenbib.ViewModels
                 var clipboard = TopLevel.GetTopLevel(c)?.Clipboard;
                 if (clipboard != null && ShowingEntry != null)
                 { await clipboard.SetTextAsync(ShowingEntry.BibTeX); }
+            }
+        }
+
+        [RelayCommand]
+        private void CheckWarningError(object sender)
+        {
+            if (sender is not WarningError we) { return; }
+            if (we.Class == WarningErrorClass.SameCitationKey)
+            {
+                List<BibtexEntry> removed = [we.SourceEntries[0]];
+                BibtexEntry toRemoved = we.SourceEntries[0];
+                int minIndex = BibtexEntries.IndexOf(toRemoved);
+                for (int i = 1; i < we.SourceEntries.Count; ++i)
+                {
+                    int n = BibtexEntries.IndexOf(we.SourceEntries[i]);
+                    if (n < minIndex)
+                    {
+                        removed.Add(toRemoved);
+                        BibtexEntries.Remove(toRemoved);
+                        toRemoved = we.SourceEntries[i];
+                        minIndex = n;
+                    }
+                    else
+                    {
+                        removed.Add(we.SourceEntries[i]);
+                        BibtexEntries.Remove(we.SourceEntries[i]);
+                    }
+                }
+                for (int i = 1; i < we.SourceEntries.Count; ++i)
+                {
+                    BibtexEntries.Insert(minIndex + i, removed[i]);
+                }
+                FilterText = we.FieldName;
+                RefreshFilter();
+                CheckingEvent?.Invoke(we.FieldName, EventArgs.Empty);
+                FilterText = "";
+                RefreshFilter();
+                ShowingEntry = toRemoved;
+            }
+            else
+            {
+                ShowingEntry = we.SourceEntries[0];
             }
         }
         #endregion

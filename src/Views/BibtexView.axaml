@@ -13,7 +13,8 @@
     <UserControl.Resources>
         <m:BibTypeConverter x:Key="BibTypeConverter"/>
         <m:TextToBackgroundConverter x:Key="TextToBackgroundConverter"/>
-        <m:StringSelectorConverter x:Key="StringSelectorConverter"/>
+		<m:StringSelectorConverter x:Key="StringSelectorConverter"/>
+		<m:WarningToBrushConverter x:Key="WarningToBrushConverter"/>
     </UserControl.Resources>
 
     <UserControl.Styles>
@@ -41,7 +42,7 @@
             <Setter Property="IsUndoEnabled" Value="False"/>
             <Setter Property="SelectionStart" Value="{CompiledBinding SelectionStart, Mode=OneWayToSource}"/>
             <Setter Property="SelectionEnd" Value="{CompiledBinding SelectionEnd, Mode=OneWayToSource}"/>
-            <Setter Property="m:FocusEx.BindTo" Value="{CompiledBinding CurrentTextBox, Mode=OneWayToSource}"/>
+            <Setter Property="m:FocusEx.BindTo" Value="{CompiledBinding UndoRedoManager.NewEditedBox, Mode=OneWayToSource}"/>
         </Style>
     </UserControl.Styles>
 
@@ -59,7 +60,7 @@
 
         <!--bib数据列表-->
 		<Grid RowDefinitions="*,Auto">
-            <DataGrid Name="DataGridView" Margin="8 8 8 0" ItemsSource="{CompiledBinding BibtexView}"
+            <DataGrid x:Name="DataGridView" Margin="8 8 8 0" ItemsSource="{CompiledBinding BibtexView}"
                       CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True"
                       IsReadOnly="True"
                       SelectedItem="{CompiledBinding ShowingEntry}"
@@ -114,62 +115,34 @@
                                         CanUserResize="False"/>
                 </DataGrid.Columns>
             </DataGrid>
-			<StackPanel Orientation="Horizontal" Height="{DynamicResource ToolBarHeight}"
+			<StackPanel Orientation="Horizontal" Height="{DynamicResource HintBarHeight}"
 						VerticalAlignment="Bottom" Grid.Row="1">
-				<TextBlock Text="This is the Hint bar" />
-				<ToggleButton x:Name="WarningToggle" Content="{CompiledBinding WarningHint}"/>
+				<TextBlock Margin="8 0 0 0" Text="{CompiledBinding BibtexEntries.Count}"/>
+				<TextBlock Margin="0 0 8 0" Text=" Entry(ies)"/>
+				<ToggleButton x:Name="WarningToggle" Content="{CompiledBinding WarningHint}"
+							  IsVisible="{CompiledBinding WarningHint, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+							  Background="{CompiledBinding HasError, Converter={StaticResource WarningToBrushConverter}}"/>
 				<v:ExPopup x:Name="WarningPopup"
 					       WindowManagerAddShadowHint="False"
 						   Placement="TopEdgeAlignedLeft"
                            IsOpenEx="{CompiledBinding #WarningToggle.IsChecked, Mode=TwoWay}"
                            PlacementTarget="WarningToggle"
                            InheritsTransform="True">
-					<!--<v:ExPopup.OpenAnimation>
-						<Animation Duration="0:0:0.2" FillMode="Both">
-							<KeyFrame Cue="0%">
-								<Setter Property="Border.Opacity" Value="0.0"/>
-								<Setter Property="Border.TranslateTransform.Y" Value="80.0"/>
-								<Setter Property="Border.TranslateTransform.X" Value="-40.0"/>
-							</KeyFrame>
-							<KeyFrame Cue="100%">
-								<Setter Property="Border.Opacity" Value="1.0"/>
-								<Setter Property="Border.TranslateTransform.Y" Value="0.0"/>
-								<Setter Property="Border.TranslateTransform.X" Value="0.0"/>
-							</KeyFrame>
-						</Animation>
-					</v:ExPopup.OpenAnimation>
-					<v:ExPopup.CloseAnimation>
-						<Animation Duration="0:0:0.2" FillMode="Both">
-							<KeyFrame Cue="0%">
-								<Setter Property="Border.Opacity" Value="1.0"/>
-								<Setter Property="Border.TranslateTransform.Y" Value="0.0"/>
-								<Setter Property="Border.TranslateTransform.X" Value="0.0"/>
-							</KeyFrame>
-							<KeyFrame Cue="100%">
-								<Setter Property="Border.Opacity" Value="0.0"/>
-								<Setter Property="Border.TranslateTransform.Y" Value="80.0"/>
-								<Setter Property="Border.TranslateTransform.Y" Value="-40.0"/>
-							</KeyFrame>
-						</Animation>
-					</v:ExPopup.CloseAnimation>-->
-					<Border Background="{DynamicResource InputBackground}"
-							BorderBrush="{DynamicResource MainBorder}"
-							BorderThickness="1"
-							HorizontalAlignment="Stretch"
-							Padding="8"
-							CornerRadius="8">
-						<ScrollViewer>
-							<ListBox ItemsSource="{CompiledBinding WarningErrors}">
-								<ListBox.ItemTemplate>
-									<DataTemplate>
-										<Border Background="Red">
-											<Button Content="{CompiledBinding HintString}"/>
-										</Border>
-									</DataTemplate>
-								</ListBox.ItemTemplate>
-							</ListBox>
-						</ScrollViewer>
-					</Border>
+					<ListBox ItemsSource="{CompiledBinding WarningErrors}">
+						<ListBox.ItemTemplate>
+							<DataTemplate>
+								<Panel>
+									<Button Background="{CompiledBinding WarningClass, Converter={StaticResource WarningToBrushConverter}}"
+										    CornerRadius="{CompiledBinding $parent[ListBoxItem].CornerRadius}" Opacity="0.64"
+											Command="{CompiledBinding #BibtexViewRoot.DataContext.CheckWarningErrorCommand}"
+											CommandParameter="{CompiledBinding .}"
+											Width="{CompiledBinding $parent[Panel].Width}">
+									</Button>
+									<TextBlock Text="{CompiledBinding HintString}" Margin="8 2" IsHitTestVisible="False"/>
+								</Panel>
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+					</ListBox>
 				</v:ExPopup >
 			</StackPanel>
 		</Grid>

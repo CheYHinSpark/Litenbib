@@ -30,6 +30,8 @@ namespace Litenbib.Models
         public WarningErrorClass Class = _class;
         public string FieldName = _field;
 
+        public int WarningClass { get => (int)Class; }
+
         public string HintString
         {
             get
@@ -48,17 +50,19 @@ namespace Litenbib.Models
     /// </summary>
     public static class WarningErrorChecker
     {
-        public static async Task<IList<WarningError>> CheckBibtex(IEnumerable<BibtexEntry> entries)
+        public static async Task<(IList<WarningError>, int)> CheckBibtex(IEnumerable<BibtexEntry> entries)
         {
             Dictionary<string, List<BibtexEntry>> keysCount = [];
             IList<WarningError> result = [];
+            int _error = -1;
             await Task.Run(() =>
             {
                 foreach (BibtexEntry entry in entries)
                 {
                     if (string.IsNullOrWhiteSpace(entry.CitationKey))
                     {
-                        result.Add(new WarningError([entry], WarningErrorClass.MissingCitationKey));
+                        result.Add(new WarningError([entry], WarningErrorClass.MissingCitationKey, "citationKey"));
+                        _error = 1;
                         continue;
                     }
 
@@ -73,24 +77,22 @@ namespace Litenbib.Models
 
                     if (string.IsNullOrWhiteSpace(entry.Type))
                     {
-                        result.Add(new WarningError([entry], WarningErrorClass.MissingType));
+                        result.Add(new WarningError([entry], WarningErrorClass.MissingType, "type"));
+                        _error = 1;
                         continue;
                     }
 
                     if (string.IsNullOrWhiteSpace(entry.Title))
                     {
                         result.Add(new WarningError([entry], WarningErrorClass.MissingNecessaryField, "title"));
-                        continue;
                     }
                     if (string.IsNullOrWhiteSpace(entry.Year))
                     {
                         result.Add(new WarningError([entry], WarningErrorClass.MissingNecessaryField, "year"));
-                        continue;
                     }
                     if (string.IsNullOrWhiteSpace(entry.Author) && string.IsNullOrWhiteSpace(entry.Editor))
                     {
                         result.Add(new WarningError([entry], WarningErrorClass.MissingNecessaryField, "author or editor"));
-                        continue;
                     }
                 }
 
@@ -99,11 +101,11 @@ namespace Litenbib.Models
                     if (kv.Value.Count > 1)
                     {
                         result.Add(new WarningError(kv.Value, WarningErrorClass.SameCitationKey, kv.Key));
+                        _error = 1;
                     }
                 }
             });
-
-            return result;
+            return (result, _error);
         }
     }
 }
