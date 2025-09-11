@@ -27,9 +27,11 @@ namespace Litenbib.ViewModels
 {
     public partial class BibtexViewModel: ViewModelBase
     {
-        public string Header { get; set; }
+        [ObservableProperty]
+        private string _header;
 
-        public string FullPath { get; set; }
+        [ObservableProperty]
+        private string _fullPath;
 
         public bool Edited { get => UndoRedoManager.Edited; }
 
@@ -49,8 +51,11 @@ namespace Litenbib.ViewModels
             }
         }
 
-        private int hasError = -1;
-        public int HasError { get => hasError; }
+        [ObservableProperty]
+        private int _hasError = -1;
+
+        [ObservableProperty]
+        private bool _isChecking;
 
         public EventHandler? CheckingEvent;
 
@@ -90,9 +95,9 @@ namespace Litenbib.ViewModels
 
         private string[] filters = [];
         private string filterText = string.Empty;
-
         public string FilterText
         {
+            get => filterText;
             set
             {
                 SetProperty(ref filterText, value);
@@ -106,15 +111,23 @@ namespace Litenbib.ViewModels
             get => filterMode;
             set
             {
-                if (value < 0) { return; }
                 SetProperty(ref filterMode, value);
                 RefreshFilter();
             }
         }
 
-        private bool isFiltering = false;
-        public bool IsFiltering
-        { set { SetProperty(ref isFiltering, value); } }
+        private string filterField = "Whole";
+        public string FilterField
+        {
+            get => filterField;
+            set
+            {
+                SetProperty(ref filterField, value);
+                RefreshFilter();
+            }
+        }
+
+        public bool IsFiltering { get; set; }
 
         private int oldSelectionStart = -1;
         private int selectionStart = -1;
@@ -187,7 +200,6 @@ namespace Litenbib.ViewModels
             }
         }
 
-
         private void RefreshFilter()
         {
             if (string.IsNullOrEmpty(filterText))
@@ -207,37 +219,38 @@ namespace Litenbib.ViewModels
             // Mode=0 and // Mode=1 or // Mode=2 all
             if (string.IsNullOrEmpty(filterText)) { return true; }
             if (entry == null) { return false; }
-            if (filterMode == 1)
+            string target_s = filterField switch
+            {
+                "Author" => entry.Author,
+                "Title" => entry.Title,
+                "Citation Key" => entry.CitationKey,
+                _ => entry.BibTeX,
+            };
+            // -1是特殊情形
+            if (filterMode == -1)
+            {  return filterText == target_s; }
+            // 或
+            else if (filterMode == 1)
             {
                 foreach (string s in filters)
                 {
-                    if (!string.IsNullOrEmpty(s) && entry.BibTeX.Contains(s, StringComparison.OrdinalIgnoreCase))
+                    if (!string.IsNullOrEmpty(s) && target_s.Contains(s, StringComparison.OrdinalIgnoreCase))
                     { return true; }
                 }
             }
+            // 且
             else
             {
                 foreach (string s in filters)
                 {
-                    if (!string.IsNullOrEmpty(s) && !entry.BibTeX.Contains(s, StringComparison.OrdinalIgnoreCase))
+                    if (!string.IsNullOrEmpty(s) && !target_s.Contains(s, StringComparison.OrdinalIgnoreCase))
                     { return false; }
                 }
                 return true;
             }
-            
             return false;
         }
 
-        private void SetIsTailSelected()
-        {
-            if (UndoRedoManager.NewEditedBox is TextBox tb)
-            {
-                if (string.IsNullOrEmpty(tb.Text))
-                { isTailSelected = 0 == selectionEnd || 0 ==  selectionStart; }
-                else
-                { isTailSelected = tb.Text.Length == selectionEnd || tb.Text.Length == selectionStart;}
-            }
-        }
 
         private async void OnEntryPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
@@ -267,59 +280,16 @@ namespace Litenbib.ViewModels
             }
         }
 
+        #region Method
+
         private async void CheckErrors()
         {
             var result = await WarningErrorChecker.CheckBibtex(BibtexEntries);
             WarningErrors = new ObservableCollection<WarningError>(result.Item1);
-            hasError = result.Item2;
+            HasError = result.Item2;
             OnPropertyChanged(nameof(WarningErrors));
             OnPropertyChanged(nameof(WarningHint));
-            OnPropertyChanged(nameof(HasError));
         }
-
-        #region Command
-        private void NotifyCanUndoRedo()
-        {
-            UndoBibtexCommand.NotifyCanExecuteChanged();
-            RedoBibtexCommand.NotifyCanExecuteChanged();
-            SaveBibtexCommand.NotifyCanExecuteChanged();
-            OnPropertyChanged(nameof(Edited));
-            CheckErrors();
-        }
-
-        [RelayCommand(CanExecute = nameof(CanUndo))]
-        private void UndoBibtex()
-        {
-            _suppressShowingEntry = true;
-            UndoRedoManager.Undo();
-            _suppressShowingEntry = false;
-            ShowingEntry = _holdShowingEntry ?? null;
-            NotifyCanUndoRedo();
-        }
-
-        private bool CanUndo() => UndoRedoManager.CanUndo && !isFiltering;
-
-        [RelayCommand(CanExecute = nameof(CanRedo))]
-        private void RedoBibtex()
-        {
-            _suppressShowingEntry = true;
-            UndoRedoManager.Redo();
-            _suppressShowingEntry = false;
-            ShowingEntry = _holdShowingEntry ?? null;
-            NotifyCanUndoRedo();
-        }
-        private bool CanRedo() => UndoRedoManager.CanRedo && !isFiltering;
-
-        [RelayCommand(CanExecute = nameof(CanDelete))]
-        private void DeleteBibtex()
-        { Delete(); }
-        private bool CanDelete() => ShowingEntry != null;
-
-        [RelayCommand(CanExecute = nameof(CanDeleteKey))]
-        private void DeleteBibtexKey()
-        { Delete(); }
-        private bool CanDeleteKey() => ShowingEntry != null
-            && UndoRedoManager.NewEditedBox == null && !isFiltering;
 
         private void Delete()
         {
@@ -332,6 +302,63 @@ namespace Litenbib.ViewModels
             ShowingEntry = _holdShowingEntry ?? null;
             NotifyCanUndoRedo();
         }
+
+        private void NotifyCanUndoRedo()
+        {
+            UndoBibtexCommand.NotifyCanExecuteChanged();
+            RedoBibtexCommand.NotifyCanExecuteChanged();
+            SaveBibtexCommand.NotifyCanExecuteChanged();
+            OnPropertyChanged(nameof(Edited));
+            CheckErrors();
+        }
+        private void SetIsTailSelected()
+        {
+            if (UndoRedoManager.NewEditedBox is TextBox tb)
+            {
+                if (string.IsNullOrEmpty(tb.Text))
+                { isTailSelected = 0 == selectionEnd || 0 == selectionStart; }
+                else
+                { isTailSelected = tb.Text.Length == selectionEnd || tb.Text.Length == selectionStart; }
+            }
+        }
+        #endregion
+
+
+        #region Command
+
+        [RelayCommand(CanExecute = nameof(CanUndo))]
+        private void UndoBibtex()
+        {
+            _suppressShowingEntry = true;
+            UndoRedoManager.Undo();
+            _suppressShowingEntry = false;
+            ShowingEntry = _holdShowingEntry ?? null;
+            NotifyCanUndoRedo();
+        }
+
+        private bool CanUndo() => UndoRedoManager.CanUndo && !IsFiltering;
+
+        [RelayCommand(CanExecute = nameof(CanRedo))]
+        private void RedoBibtex()
+        {
+            _suppressShowingEntry = true;
+            UndoRedoManager.Redo();
+            _suppressShowingEntry = false;
+            ShowingEntry = _holdShowingEntry ?? null;
+            NotifyCanUndoRedo();
+        }
+        private bool CanRedo() => UndoRedoManager.CanRedo && !IsFiltering;
+
+        [RelayCommand(CanExecute = nameof(CanDelete))]
+        private void DeleteBibtex()
+        { Delete(); }
+        private bool CanDelete() => ShowingEntry != null;
+
+        [RelayCommand(CanExecute = nameof(CanDeleteKey))]
+        private void DeleteBibtexKey()
+        { Delete(); }
+        private bool CanDeleteKey() => ShowingEntry != null
+            && UndoRedoManager.NewEditedBox == null && !IsFiltering;
 
         [RelayCommand(CanExecute = nameof(Edited))]
         private async Task SaveBibtex()
@@ -407,10 +434,17 @@ namespace Litenbib.ViewModels
                 {
                     BibtexEntries.Insert(minIndex + i, removed[i]);
                 }
-                FilterText = we.FieldName;
+                string tempText = FilterText;
+                int tempMode = FilterMode;
+                string tempField = FilterField;
+                filterText = we.FieldName;
+                filterMode = -1;
+                filterField = "Citation Key";
                 RefreshFilter();
                 CheckingEvent?.Invoke(we.FieldName, EventArgs.Empty);
-                FilterText = "";
+                FilterText = tempText;
+                FilterMode = tempMode;
+                FilterField = tempField;
                 RefreshFilter();
                 ShowingEntry = toRemoved;
             }
@@ -418,6 +452,7 @@ namespace Litenbib.ViewModels
             {
                 ShowingEntry = we.SourceEntries[0];
             }
+            IsChecking = false;
         }
         #endregion
     }

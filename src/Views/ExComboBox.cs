@@ -33,7 +33,7 @@ namespace Litenbib.Views
         public bool IsDropDownOpen
         {
             get => GetValue(IsDropDownOpenProperty);
-            set => SetValue(IsDropDownOpenProperty, value);
+            set => SetCurrentValue(IsDropDownOpenProperty, value);
         }
 
         /// <summary>
@@ -107,16 +107,21 @@ namespace Litenbib.Views
             }
         }
 
-        protected override void OnPointerReleased(PointerReleasedEventArgs e)
-        {
-            base.OnPointerReleased(e);
 
+        protected override void OnPointerPressed(PointerPressedEventArgs e)
+        {
+            base.OnPointerPressed(e);
             // Toggle the dropdown state on a click.
-            if (!e.Handled && !IsDropDownOpen && _popup != null && !_popup.IsOpen)
+            if (!e.Handled && !IsDropDownOpen && _popup != null && !_popup.IsOpenEx && !_popup.IsOpen)
             {
                 SetValue(IsDropDownOpenProperty, true);
                 e.Handled = true;
             }
+        }
+
+        protected override void OnPointerReleased(PointerReleasedEventArgs e)
+        {
+            base.OnPointerReleased(e);
 
             // If an item inside the popup was clicked, select it.
             if ( e.Source is Visual visual && _popup?.IsInsidePopup(visual) == true)
@@ -146,7 +151,6 @@ namespace Litenbib.Views
         {
             return NeedsContainer<ComboBoxItem>(item, out recycleKey);
         }
-
 
         /// <inheritdoc/>
         protected override void OnKeyDown(KeyEventArgs e)

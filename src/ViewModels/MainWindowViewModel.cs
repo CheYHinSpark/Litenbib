@@ -30,11 +30,15 @@ namespace Litenbib.ViewModels
 
         public bool ShowToolBar { get => SelectecdBibtex != null; }
 
+        public static ObservableCollection<string> FilterFieldList
+        { get => ["Whole", "Author", "Title", "Citation Key"]; }
+
         public MainWindowViewModel()
         {
             BibtexViewers = [];
         }
 
+        #region Command
         [RelayCommand]
         private async Task OpenFile(Window? window)
         {
@@ -92,6 +96,8 @@ namespace Litenbib.ViewModels
         [RelayCommand(CanExecute = nameof(CanSaveAll))]
         private async Task SaveAll()
         { }
+
         private bool CanSaveAll() => SelectecdBibtex != null;
+        #endregion
     }
 }

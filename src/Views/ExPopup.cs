@@ -29,7 +29,7 @@ namespace Litenbib.Views
         public bool IsOpenEx
         {
             get => GetValue(IsOpenExProperty);
-            set => SetCurrentValue(IsOpenExProperty, value);
+            set => SetCurrentValue(IsOpenExProperty, value);    // SetCurrentValue
         }
 
         public static readonly StyledProperty<Animation> OpenAnimationProperty =
@@ -142,13 +142,9 @@ namespace Litenbib.Views
             if (e.NewValue is not bool b) { return; }
             Debug.WriteLine($"Set IsOpenEx {b}");
             if (b == true)
-            {
-                await popup.OnOpen();
-            }
+            { await popup.OnOpen(); }
             else
-            {
-                await popup.OnClose();
-            }
+            { await popup.OnClose(); }
             popup.isAnimating = false;
         }
     }

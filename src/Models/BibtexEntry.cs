@@ -17,24 +17,24 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Litenbib.Models
 {
-    public class BibtexEntry(string type, string citationKey): INotifyPropertyChanged
+    public class BibtexEntry(string entryType, string citationKey): INotifyPropertyChanged
     {
-        private string type = type;
+        private string entryType = entryType;
         private string citationKey = citationKey;
         private string bibtex = "";
         public Dictionary<string, string> Fields = new(StringComparer.OrdinalIgnoreCase);
 
-        // editable fields
-        public string Type
+        #region Fields
+        public string EntryType
         {
-            get => type;
+            get => entryType;
             set
             {
-                if (type != value && value != null)
+                if (entryType != value && value != null)
                 {
-                    string t = type;
-                    type = value;
-                    OnPropertyChanged(nameof(Type), t, value);
+                    string t = entryType;
+                    entryType = value;
+                    OnPropertyChanged(nameof(EntryType), t, value);
                 }
             }
         }
@@ -51,130 +51,46 @@ namespace Litenbib.Models
                 }
             }
         }
-        public string Author
-        {
-            get => GetValue("author");
-            set => SetValue(nameof(Author), value);
-        }
-        public string Title
-        {
-            get => GetValue("title");
-            set => SetValue(nameof(Title), value);
-        }
-        public string Year
-        {
-            get => GetValue("year");
-            set => SetValue(nameof(Year), value);
-        }
-        public string Month
-        {
-            get => GetValue("month");
-            set => SetValue(nameof(Month), value);
-        }
-        
-        public string Editor
-        {
-            get => GetValue("editor");
-            set => SetValue(nameof(Editor), value);
-        }
-        public string Journal
-        {
-            get => GetValue("journal");
-            set => SetValue(nameof(Journal), value);
-        }
-        public string Volume
-        {
-            get => GetValue("volume");
-            set => SetValue(nameof(Volume), value);
-        }
-        public string Number
-        {
-            get => GetValue("number");
-            set => SetValue(nameof(Number), value);
-        }
-        public string Pages
-        {
-            get => GetValue("pages");
-            set => SetValue(nameof(Pages), value);
-        }
-        public string Publisher
-        {
-            get => GetValue("publisher");
-            set => SetValue(nameof(Publisher), value);
-        }
-        public string Booktitle
-        {
-            get => GetValue("booktitle");
-            set => SetValue(nameof(Booktitle), value);
-        }
-        public string Address
-        {
-            get => GetValue("address");
-            set => SetValue(nameof(Address), value);
-        }
-        public string School
-        {
-            get => GetValue("school");
-            set => SetValue(nameof(School), value);
-        }
-        public string Edition
-        {
-            get => GetValue("edition");
-            set => SetValue(nameof(Edition), value);
-        }
-        public string Chapter
-        {
-            get => GetValue("chapter");
-            set => SetValue(nameof(Chapter), value);
-        }
-        public string Note
-        {
-            get => GetValue("note");
-            set => SetValue(nameof(Note), value);
-        }
 
-        public string DOI
-        {
-            get => GetValue("doi");
-            set => SetValue(nameof(DOI), value);
-        }
-        public string Url
-        {
-            get => GetValue("url");
-            set => SetValue(nameof(Url), value);
-        }
-        public string ISSN
-        {
-            get => GetValue("issn");
-            set => SetValue(nameof(ISSN), value);
-        }
-        public string File
-        {
-            get => GetValue("file");
-            set => SetValue(nameof(File), value);
-        }
+        #region important fields
+        public string Author { get => GetValue("author"); set => SetValue(nameof(Author), value); }
+        public string Title { get => GetValue("title"); set => SetValue(nameof(Title), value); }
+        public string Year { get => GetValue("year"); set => SetValue(nameof(Year), value); }
+        public string BibTeX { get => bibtex; set => UpdateBibtex(value); }
+        #endregion
 
-        public string Abstract
-        {
-            get => GetValue("abstract");
-            set => SetValue(nameof(Abstract), value);
-        }
-        public string Keywords
-        {
-            get => GetValue("keywords");
-            set => SetValue(nameof(Keywords), value);
-        }
-        public string Comment
-        {
-            get => GetValue("comment");
-            set => SetValue(nameof(Comment), value);
-        }
-
-        public string BibTeX
-        {
-            get => bibtex;
-            set => UpdateBibtex(value);
-        }
+        #region other fields sorted by abc
+        public string Abstract { get => GetValue("abstract"); set => SetValue(nameof(Abstract), value); }
+        public string Address { get => GetValue("address"); set => SetValue(nameof(Address), value); }
+        public string Annote { get => GetValue("annote"); set => SetValue(nameof(Annote), value); }
+        public string Booktitle { get => GetValue("booktitle"); set => SetValue(nameof(Booktitle), value); }
+        public string Chapter { get => GetValue("chapter"); set => SetValue(nameof(Chapter), value); }
+        public string Comment { get => GetValue("comment"); set => SetValue(nameof(Comment), value); }
+        public string Crossref { get => GetValue("crossref"); set => SetValue(nameof(Crossref), value); }
+        public string DOI { get => GetValue("doi"); set => SetValue(nameof(DOI), value); }
+        public string Edition { get => GetValue("edition"); set => SetValue(nameof(Edition), value); }
+        public string Editor { get => GetValue("editor"); set => SetValue(nameof(Editor), value); }
+        public string File { get => GetValue("file"); set => SetValue(nameof(File), value); }
+        public string Howpublished { get => GetValue("howpublished"); set => SetValue(nameof(Howpublished), value); }
+        public string Institution { get => GetValue("institution"); set => SetValue(nameof(Institution), value); }
+        public string ISBN { get => GetValue("isbn"); set => SetValue(nameof(ISBN), value); }
+        public string ISSN { get => GetValue("issn"); set => SetValue(nameof(ISSN), value); }
+        public string Journal { get => GetValue("journal"); set => SetValue(nameof(Journal), value); }
+        public string Key { get => GetValue("key"); set => SetValue(nameof(Key), value); }
+        public string Keywords { get => GetValue("keywords"); set => SetValue(nameof(Keywords), value); }
+        public string Month { get => GetValue("month"); set => SetValue(nameof(Month), value); }
+        public string Note { get => GetValue("note"); set => SetValue(nameof(Note), value); }
+        public string Number { get => GetValue("number"); set => SetValue(nameof(Number), value); }
+        public string Organization { get => GetValue("organization"); set => SetValue(nameof(Organization), value); }
+        public string Pages { get => GetValue("pages"); set => SetValue(nameof(Pages), value); }
+        public string Publisher { get => GetValue("publisher"); set => SetValue(nameof(Publisher), value); }
+        public string School { get => GetValue("school"); set => SetValue(nameof(School), value); }
+        public string Series { get => GetValue("series"); set => SetValue(nameof(Series), value); }
+        public string Type { get => GetValue("type"); set => SetValue(nameof(Type), value); }
+        public string Url { get => GetValue("url"); set => SetValue(nameof(Url), value); }
+        public string Volume { get => GetValue("volume"); set => SetValue(nameof(Volume), value); }
+        #endregion
+        #endregion
 
         // 通用的属性变化事件，用于通知其他控件的显示
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -207,8 +123,8 @@ namespace Litenbib.Models
                 case "BibTeX":
                     { UpdateBibtex(v, true); }
                     return;
-                case "Type":
-                    type = v ?? "";
+                case "EntryType":
+                    entryType = v ?? "";
                     break;
                 case "CitationKey":
                     citationKey = v ?? "";
@@ -249,7 +165,7 @@ namespace Litenbib.Models
                 int maxFieldLength = 0;
                 foreach (var k in Fields.Keys)
                 { maxFieldLength = Math.Max(maxFieldLength, k.Length); }
-                string s = $"@{type}{{{citationKey},\r\n";
+                string s = $"@{entryType}{{{citationKey},\r\n";
                 foreach (KeyValuePair<string, string> kvp in Fields)
                 { s += $"    {kvp.Key}" + new string(' ', maxFieldLength - kvp.Key.Length) + $" = {{{kvp.Value}}},\r\n"; }
                 bibtex = s + "}\r\n";
@@ -271,11 +187,11 @@ namespace Litenbib.Models
 
         public void CopyFromBibtex(BibtexEntry entry)
         {
-            if (type != entry.Type)
+            if (entryType != entry.EntryType)
             {
-                string t = type;
-                type = entry.Type;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Type)));
+                string t = entryType;
+                entryType = entry.EntryType;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(EntryType)));
             }
             if (citationKey != entry.CitationKey)
             {
@@ -290,7 +206,7 @@ namespace Litenbib.Models
 
             foreach (var propertyName in properties)
             {
-                if (propertyName == "Type" || propertyName == "CitationKey" || propertyName == "BibTeX")
+                if (propertyName == "EntryType" || propertyName == "CitationKey" || propertyName == "BibTeX")
                 { continue; }
                 string property = propertyName.ToLower();
                 entry.Fields.TryGetValue(property, out string? value);

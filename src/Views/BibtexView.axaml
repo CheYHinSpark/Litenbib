@@ -91,13 +91,13 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTemplateColumn Width="Auto" CanUserResize="False">
-                        <DataGridTemplateColumn.Header>Type</DataGridTemplateColumn.Header>
+                        <DataGridTemplateColumn.Header>Entry Type</DataGridTemplateColumn.Header>
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate x:DataType="m:BibtexEntry">
                                 <Border Margin="0 4" HorizontalAlignment="Stretch" CornerRadius="12"
                                         Background="{CompiledBinding #TypeText.Text, Converter={StaticResource TextToBackgroundConverter}}">
                                     <TextBlock Name="TypeText" HorizontalAlignment="Center"
-                                               Text="{CompiledBinding Type, Converter={StaticResource BibTypeConverter}}"/>
+                                               Text="{CompiledBinding EntryType, Converter={StaticResource BibTypeConverter}}"/>
                                 </Border>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -120,6 +120,7 @@
 				<TextBlock Margin="8 0 0 0" Text="{CompiledBinding BibtexEntries.Count}"/>
 				<TextBlock Margin="0 0 8 0" Text=" Entry(ies)"/>
 				<ToggleButton x:Name="WarningToggle" Content="{CompiledBinding WarningHint}"
+							  IsChecked="{CompiledBinding IsChecking}"
 							  IsVisible="{CompiledBinding WarningHint, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
 							  Background="{CompiledBinding HasError, Converter={StaticResource WarningToBrushConverter}}"/>
 				<v:ExPopup x:Name="WarningPopup"
@@ -152,6 +153,11 @@
         
         <!--entry详细数据-->
         <Border Name="DetailPanel" Background="{DynamicResource MainBackground}" Grid.Column="2">
+			<Border.Styles>
+				<Style Selector="TextBlock.right">
+					<Setter Property="HorizontalAlignment" Value="Right"/>
+				</Style>
+			</Border.Styles>
             <Grid Grid.IsSharedSizeScope="True">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" SharedSizeGroup="Key"/>
@@ -161,7 +167,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <TextBlock Text="Type" Classes="right"/>
+                <TextBlock Text="Entry Type" Classes="right"/>
                 <Grid Grid.Column="1">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -169,7 +175,7 @@
                     </Grid.ColumnDefinitions>
                     <v:ExComboBox HorizontalAlignment="Stretch" Margin="2"
                                   ItemsSource="{CompiledBinding TypeList}"
-                                  SelectedItem="{CompiledBinding ShowingEntry.Type, Converter={StaticResource BibTypeConverter}}"/>
+                                  SelectedItem="{CompiledBinding ShowingEntry.EntryType, Converter={StaticResource BibTypeConverter}}"/>
                     <StackPanel Grid.Column="1" Orientation="Horizontal">
                         <Button Click="ChangeButton_Click">
                             <Path Data="{StaticResource brPath}"/>

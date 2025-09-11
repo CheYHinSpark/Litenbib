@@ -14,10 +14,15 @@ namespace Litenbib.Models
     /// </summary>
     public enum WarningErrorClass
     {
-        MissingType = 1,
+        /// <summary> 错误：缺少Type </summary>
+        MissingEntryType = 1,
+        /// <summary> 错误：缺少Citation </summary>
         MissingCitationKey = 2,
+        /// <summary> 错误：相同Key </summary>
         SameCitationKey = 3,
+        /// <summary> 警告：缺少要求字段如Author、Title、Year </summary>
         MissingRequiredField = -1,
+        /// <summary> 警告：缺少重要字段如 </summary>
         MissingNecessaryField = -2
     }
 
@@ -75,9 +80,9 @@ namespace Litenbib.Models
                         keysCount[entry.CitationKey] = [entry];
                     }
 
-                    if (string.IsNullOrWhiteSpace(entry.Type))
+                    if (string.IsNullOrWhiteSpace(entry.EntryType))
                     {
-                        result.Add(new WarningError([entry], WarningErrorClass.MissingType, "type"));
+                        result.Add(new WarningError([entry], WarningErrorClass.MissingEntryType, "entry type"));
                         _error = 1;
                         continue;
                     }
@@ -94,6 +99,8 @@ namespace Litenbib.Models
                     {
                         result.Add(new WarningError([entry], WarningErrorClass.MissingNecessaryField, "author or editor"));
                     }
+
+
                 }
 
                 foreach (var kv in keysCount)

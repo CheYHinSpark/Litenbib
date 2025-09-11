@@ -44,7 +44,8 @@
 						<Binding Path="SelectecdBibtex" Converter="{x:Static ObjectConverters.IsNotNull}" />
 					</MultiBinding>
 				</Border.IsEnabled>
-				<Grid ColumnDefinitions="*,*,*" Margin="4 0"
+				<Grid ColumnDefinitions="*,*,*,2*" Margin="4 2"
+					  Height="{DynamicResource ToolBarHeight}"
 					  VerticalAlignment="Bottom">
 					<RadioButton IsChecked="{CompiledBinding SelectecdBibtex.FilterMode,
 								 Converter={StaticResource FilterModeConverter},
@@ -58,6 +59,11 @@
 								 Converter={StaticResource FilterModeConverter},
 								 Mode=OneWayToSource, ConverterParameter=2}"
 								 GroupName="FilterMode" Margin="4" Grid.Column="2">all</RadioButton>
+					<v:ExComboBox Margin="4" Grid.Column="3"
+								  CornerRadius="12" Padding="12 0"
+								  SelectedItem="{CompiledBinding SelectecdBibtex.FilterField,
+								  Mode=OneWayToSource}" SelectedIndex="0"
+								  ItemsSource="{CompiledBinding FilterFieldList}"/>
 				</Grid>
 			</Border>
             <TextBox x:Name="FilterTextBox" Grid.Column="1" Grid.RowSpan="2" UndoLimit="200"
