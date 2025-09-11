@@ -36,10 +36,10 @@ public partial class BibtexView : UserControl
     {
         base.OnInitialized();
         viewModel = (BibtexViewModel)DataContext!;
-        viewModel.CheckingEvent += (list, e) => { SetSelectionAndScroll(list); };
+        viewModel.CheckingEvent += (_, e) => { SetSelectionAndScroll(); };
     }
 
-    private void SetSelectionAndScroll(object? o)
+    private void SetSelectionAndScroll()
     {
         changingInside = true;
         DataGridView.SelectAll();

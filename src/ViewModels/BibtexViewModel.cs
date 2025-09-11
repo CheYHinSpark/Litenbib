@@ -441,7 +441,7 @@ namespace Litenbib.ViewModels
                 filterMode = -1;
                 filterField = "Citation Key";
                 RefreshFilter();
-                CheckingEvent?.Invoke(we.FieldName, EventArgs.Empty);
+                CheckingEvent?.Invoke(null, EventArgs.Empty);
                 FilterText = tempText;
                 FilterMode = tempMode;
                 FilterField = tempField;

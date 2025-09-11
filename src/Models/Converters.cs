@@ -61,6 +61,7 @@ namespace Litenbib.Models
     {
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
+            if (value == null && parameter == null) { return ""; }
             // value 是绑定的第一个字符串，也就是 a
             var primaryString = value as string;
             // parameter 是绑定的第二个字符串，也就是 b
@@ -136,6 +137,27 @@ namespace Litenbib.Models
             throw new NotSupportedException();
         }
     }
+
+    public class EntryTypeToVisibleConverter : IValueConverter
+    {
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            if (parameter is not string list || value is not string s) { return false; }
+            var items = list.Split(',');
+            foreach (var item in items)
+            { if (s.ToLower() == item) { return true; } }
+            return false;
+        }
+
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            // 双向绑定可能需要实现，这里不需要，直接抛出异常或返回null
+            throw new NotSupportedException();
+        }
+    }
+
+
+
 
     public class WindowStateToPathConverter : IValueConverter
     {
