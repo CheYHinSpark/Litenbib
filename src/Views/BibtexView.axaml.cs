@@ -35,8 +35,11 @@ public partial class BibtexView : UserControl
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        viewModel = (BibtexViewModel)DataContext!;
-        viewModel.CheckingEvent += (_, e) => { SetSelectionAndScroll(); };
+        if (DataContext is BibtexViewModel vm)
+        {
+            viewModel = vm;
+            viewModel.CheckingEvent += (_, e) => { SetSelectionAndScroll(); };
+        }
     }
 
     private void SetSelectionAndScroll()
@@ -183,7 +186,7 @@ public partial class BibtexView : UserControl
             if (isDetailShowing)
             { if (e.Vector.X > 400 * 0.6) { CloseDetail(); } }
             else
-            { if (e.Vector.X < - 400 * 0.6) { ShowDetail(); } }
+            { if (e.Vector.X < -400 * 0.6) { ShowDetail(); } }
         }
         else
         {
