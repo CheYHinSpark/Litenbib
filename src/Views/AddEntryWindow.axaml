@@ -48,7 +48,8 @@
 			</Grid>
         </Grid>
         <TextBox Grid.Row="2" Margin="8 4"
-					Text="{Binding BibtexText}"/>
+				 Watermark="Output BibTeX entries."
+				 Text="{Binding BibtexText}"/>
 		<TextBlock Grid.Row="3" Margin="8 0"
 					HorizontalAlignment="Left"
 					VerticalAlignment="Center"

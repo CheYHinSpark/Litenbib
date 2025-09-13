@@ -29,9 +29,15 @@ namespace Litenbib.ViewModels
         [RelayCommand]
         private async Task ParseDoi()
         {
-            var x = await DoiResolver.Doi2BibTeXAsync(DoiText);
-            BibtexText = x ?? "";
-            HintText = x == null ? "Resolve failed." : "Resolve successed.";
+            var dois = DoiText.Split('\n');
+            List<Task<string>> tasks = [];
+            foreach (var doi in dois)
+            {
+                if (!string.IsNullOrWhiteSpace(doi))
+                { tasks.Add(DoiResolver.GetBibTeXAsync(doi)); }
+            }
+            BibtexText = string.Join("\n\n", await Task.WhenAll(tasks));
+            HintText = string.IsNullOrWhiteSpace(BibtexText) ? "Resolve failed." : "Resolve successed.";
         }
     }
 }
