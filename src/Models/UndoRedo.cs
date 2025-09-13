@@ -133,17 +133,16 @@ namespace Litenbib.Models
         }
     }
 
-    public class AddEntryAction(ObservableRangeCollection<BibtexEntry> holder, BibtexEntry entry, int index) : IUndoableAction
+    public class AddEntriesAction(ObservableRangeCollection<BibtexEntry> holder, List<(int, BibtexEntry)> index_entries) : IUndoableAction
     {
         private readonly ObservableRangeCollection<BibtexEntry> _holder = holder;
-        private readonly BibtexEntry _entry = entry;
-        private readonly int _index = index;
+        private readonly List<(int, BibtexEntry)> _index_entries = index_entries;
 
         public override void Undo()
-        { _holder.Remove(_entry); }
+        { _holder.RemoveRange(_index_entries.Select(t => t.Item2)); }
 
         public override void Redo()
-        { _holder.Insert(_index, _entry); }
+        { _holder.InsertRange(_index_entries); }
     }
 
     public class DeleteEntriesAction(ObservableRangeCollection<BibtexEntry> holder, List<(int, BibtexEntry)> index_entries) : IUndoableAction

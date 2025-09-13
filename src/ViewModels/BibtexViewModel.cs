@@ -105,12 +105,13 @@ namespace Litenbib.ViewModels
             }
         }
 
-        private int filterMode = -1;
+        private int filterMode = 0;
         public int FilterMode
         {
             get => filterMode;
             set
             {
+                if (value < 0) { return; }  // necessary
                 SetProperty(ref filterMode, value);
                 RefreshFilter();
             }
@@ -192,11 +193,16 @@ namespace Litenbib.ViewModels
                 if (dialog.DataContext == null) { return; }
                 // 通过对话框的公共属性获取返回值
                 string bibtex = ((AddEntryViewModel)dialog.DataContext).BibtexText;
+                List<(int, BibtexEntry)> index_entries = [];
+                int c = BibtexEntries.Count;
                 foreach (BibtexEntry entry in BibtexParser.Parse(bibtex))
                 {
-                    UndoRedoManager.AddAction(new AddEntryAction(BibtexEntries, entry, BibtexEntries.Count));
+                    index_entries.Add((c, entry));
                     BibtexEntries.Add(entry);
+                    c++;
                 }
+                UndoRedoManager.AddAction(new AddEntriesAction(BibtexEntries, index_entries));
+                NotifyCanUndoRedo();
             }
         }
 

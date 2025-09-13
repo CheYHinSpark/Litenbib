@@ -157,14 +157,16 @@
         <Border Name="DetailPanel" Background="{DynamicResource MainBackground}" Grid.Column="2">
             <Border.Styles>
                 <Style Selector="TextBlock.right">
-                    <Setter Property="HorizontalAlignment" Value="Right"/>
+					<Setter Property="Margin" Value="0 0 4 0"/>
+					<Setter Property="HorizontalAlignment" Value="Right"/>
+					<Setter Property="VerticalAlignment" Value="Center"/>
                 </Style>
             </Border.Styles>
-            <Grid RowDefinitions="Auto,*" Grid.IsSharedSizeScope="True">
+            <Grid RowDefinitions="Auto,*">
                 <!--Type and Key-->
                 <Grid RowDefinitions="Auto,Auto" Margin="0 0 8 0">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" SharedSizeGroup="Key"/>
+                        <ColumnDefinition Width="100"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Text="Entry Type" Classes="right"/>
@@ -190,86 +192,119 @@
                     <TextBox Text="{CompiledBinding ShowingEntry.CitationKey}" Grid.Row="1" Grid.Column="1"/>
                 </Grid>
                 <!--detailed-->
-                <ScrollViewer Grid.Row="1">
+                <ScrollViewer Grid.Row="1"
+                              IsVisible="{CompiledBinding ShowingEntry,
+                              Converter={x:Static ObjectConverters.IsNotNull}}">
                     <StackPanel Margin="0 0 8 0">
                         <Expander Header="Required Fields" IsExpanded="True">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" SharedSizeGroup="Key"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <TextBlock Text="Author" Classes="right"/>
-                                <TextBox Text="{CompiledBinding ShowingEntry.Author}" Grid.Column="1"/>
-                                <TextBlock Text="Editor" Classes="right" Grid.Row="1"
-                                           IsVisible="{CompiledBinding ShowingEntry.EntryType,
-                                           Converter={StaticResource EntryTypeToVisibleConverter},
-                                           ConverterParameter='book,inbook'}"/>
-                                <TextBox Text="{CompiledBinding ShowingEntry.Editor}" Grid.Row="1" Grid.Column="1"
+                            <Expander.Styles>
+                                <Style Selector="TextBox">
+                                    <Setter Property="Theme" Value="{StaticResource DetailTextBox}"/>
+                                </Style>
+                            </Expander.Styles>
+                            <StackPanel>
+                                <TextBox Watermark="Title" Text="{CompiledBinding ShowingEntry.Title}"/>
+                                <TextBox Watermark="Author" Text="{CompiledBinding ShowingEntry.Author}"/>
+                                <TextBox Watermark="Year" Text="{CompiledBinding ShowingEntry.Year}"/>
+                                <TextBox Name="r_editor" Watermark="Editor" Text="{CompiledBinding ShowingEntry.Editor}"
                                          IsVisible="{CompiledBinding ShowingEntry.EntryType,
                                          Converter={StaticResource EntryTypeToVisibleConverter},
                                          ConverterParameter='book,inbook'}"/>
-                                <TextBlock Text="Title" Classes="right" Grid.Row="2"/>
-                                <TextBox Text="{CompiledBinding ShowingEntry.Title}" Grid.Row="2" Grid.Column="1"/>
-                                <TextBlock Text="Year" Classes="right" Grid.Row="3"/>
-                                <TextBox Text="{CompiledBinding ShowingEntry.Year}" Grid.Row="3" Grid.Column="1"/>
-                            </Grid>
+                                <TextBox Name="r_chapter" Watermark="Chapter" Text="{CompiledBinding ShowingEntry.Chapter}"
+                                         IsVisible="{CompiledBinding ShowingEntry.EntryType,
+                                         Converter={StaticResource EntryTypeToVisibleConverter},
+                                         ConverterParameter='inbook'}"/>
+                                <TextBox Watermark="Booktitle" Text="{CompiledBinding ShowingEntry.Booktitle}"
+                                         IsVisible="{CompiledBinding ShowingEntry.EntryType,
+                                         Converter={StaticResource EntryTypeToVisibleConverter},
+                                         ConverterParameter='conference,incollection,inproceedings'}"/>
+                                <TextBox Name="r_school" Watermark="School" Text="{CompiledBinding ShowingEntry.School}"
+                                         IsVisible="{CompiledBinding ShowingEntry.EntryType,
+                                         Converter={StaticResource EntryTypeToVisibleConverter},
+                                         ConverterParameter='mastersthesis,phdthesis'}"/>
+                                <TextBox Name="r_institution" Watermark="Institution" Text="{CompiledBinding ShowingEntry.Institution}"
+                                         IsVisible="{CompiledBinding ShowingEntry.EntryType,
+                                         Converter={StaticResource EntryTypeToVisibleConverter},
+                                         ConverterParameter='techreport'}"/>
+                                <TextBox Name="r_journal" Watermark="Journal" Text="{CompiledBinding ShowingEntry.Journal}"
+                                         IsVisible="{CompiledBinding ShowingEntry.EntryType,
+                                         Converter={StaticResource EntryTypeToVisibleConverter},
+                                         ConverterParameter='article'}"/>
+                                <TextBox Name="r_publisher" Watermark="Publisher" Text="{CompiledBinding ShowingEntry.Publisher}"
+                                         IsVisible="{CompiledBinding ShowingEntry.EntryType,
+                                         Converter={StaticResource EntryTypeToVisibleConverter},
+                                         ConverterParameter='book,inbook,incollection'}"/>
+                            </StackPanel>
                         </Expander>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" SharedSizeGroup="Key"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
+                        <Expander Header="Optional Fields" IsExpanded="True">
+                            <Expander.Styles>
+                                <Style Selector="TextBox">
+                                    <Setter Property="Theme" Value="{StaticResource DetailTextBox}"/>
+                                </Style>
+                            </Expander.Styles>
+                            <StackPanel>
+                                <Grid ColumnDefinitions="*,*"
+                                      IsVisible="{CompiledBinding ShowingEntry.EntryType,
+                                      Converter={StaticResource EntryTypeToVisibleConverter},
+                                      ConverterParameter='article,book,conference,inbook,incollection,inproceedings,proceedings'}">
+                                    <TextBox Watermark="Volume" Text="{CompiledBinding ShowingEntry.Volume}"/>
+                                    <TextBox Grid.Column="1" Watermark="Number" Text="{CompiledBinding ShowingEntry.Number}"/>
+                                </Grid>
 
-                            <TextBlock Text="Journal" Classes="right" Grid.Row="4"/>
-                            <TextBox Text="{CompiledBinding ShowingEntry.Journal}" Grid.Row="4" Grid.Column="1"/>
-                            <TextBlock Text="Volume" Classes="right" Grid.Row="5"/>
-                            <Grid Grid.Row="5" Grid.Column="1" ColumnDefinitions="*,Auto,*,Auto,*">
-                                <TextBox Text="{CompiledBinding ShowingEntry.Volume}"/>
-                                <TextBlock Text="Number" Classes="right" Grid.Column="1"/>
-                                <TextBox Text="{CompiledBinding ShowingEntry.Number}" Grid.Column="2"/>
-                                <TextBlock Text="Pages" Classes="right" Grid.Column="3"/>
-                                <TextBox Text="{CompiledBinding ShowingEntry.Pages}" Grid.Column="4"/>
-                            </Grid>
-                            <TextBlock Text="Publisher" Classes="right" Grid.Row="6"/>
-                            <TextBox Text="{CompiledBinding ShowingEntry.Publisher}" Grid.Row="6" Grid.Column="1"/>
-                            
-                        </Grid>
+                                <Grid ColumnDefinitions="*,*">
+                                    <TextBox Watermark="Pages" Text="{CompiledBinding ShowingEntry.Pages}"/>
+									<TextBox Grid.Column="1" Watermark="Month" Text="{CompiledBinding ShowingEntry.Month}"/>
+                                </Grid>
+                                <Grid ColumnDefinitions="*,*"
+                                      IsVisible="{CompiledBinding ShowingEntry.EntryType,
+                                         Converter={StaticResource EntryTypeToVisibleConverter},
+                                         ConverterParameter='book,inbook,conference,incollection,inproceedings,manual,proceedings'}">
+                                    <TextBox Watermark="Series" Text="{CompiledBinding ShowingEntry.Series}"/>
+									<TextBox Grid.Column="1" Watermark="Edition" Text="{CompiledBinding ShowingEntry.Edition}"/>
+                                </Grid>
+                                
+                                <TextBox Watermark="Howpublished" Text="{CompiledBinding ShowingEntry.Howpublished}"
+                                         IsVisible="{CompiledBinding ShowingEntry.EntryType,
+                                         Converter={StaticResource EntryTypeToVisibleConverter},
+                                         ConverterParameter='booklet,misc'}"/>
+
+                                <TextBox Watermark="Type" Text="{CompiledBinding ShowingEntry.Type}"
+                                         IsVisible="{CompiledBinding ShowingEntry.EntryType,
+                                         Converter={StaticResource EntryTypeToVisibleConverter},
+                                         ConverterParameter='inbook,incollection,mastersthesis,phdthesis,techreport'}"/>
+                                
+                                <TextBox Watermark="Chapter" Text="{CompiledBinding ShowingEntry.Chapter}"
+                                         IsVisible="{CompiledBinding ShowingEntry.EntryType,
+                                         Converter={StaticResource EntryTypeToVisibleConverter},
+                                         ConverterParameter='incollection'}"/>
+                                
+                                <TextBox Watermark="Address" Text="{CompiledBinding ShowingEntry.Address}"
+                                         IsVisible="{CompiledBinding ShowingEntry.EntryType,
+                                         Converter={StaticResource EntryTypeToVisibleConverter},
+                                         ConverterParameter='_,article,misc,unpublished'}"/>
+                                
+                                <TextBox Watermark="Organization" Text="{CompiledBinding ShowingEntry.Organization}"
+                                         IsVisible="{CompiledBinding ShowingEntry.EntryType,
+                                         Converter={StaticResource EntryTypeToVisibleConverter},
+                                         ConverterParameter='conference,inproceedings,proceedings'}"/>
+                                
+                                <TextBox Watermark="Publisher" Text="{CompiledBinding ShowingEntry.Publisher}"
+                                         IsVisible="{CompiledBinding #r_publisher.IsVisible,
+										 Converter={x:Static BoolConverters.Not}}"/>
+                                
+                                <TextBox Watermark="Note" Text="{CompiledBinding ShowingEntry.Note}"/>
+                            </StackPanel>
+                        </Expander>
 
                         <Expander Header="Source Fields" IsExpanded="True">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" SharedSizeGroup="Key"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <TextBlock Text="DOI" Classes="right"/>
-                                <Grid Grid.Column="1" ColumnDefinitions="*,Auto,Auto">
-                                    <TextBox Text="{CompiledBinding ShowingEntry.DOI}"/>
+                            <Expander.Styles>
+                                <Style Selector="TextBox">
+                                    <Setter Property="Theme" Value="{StaticResource DetailTextBox}"/>
+                                </Style>
+                            </Expander.Styles>
+                            <StackPanel>
+                                <Grid ColumnDefinitions="*,Auto,Auto">
+                                    <TextBox Watermark="DOI" Text="{CompiledBinding ShowingEntry.DOI}"/>
                                     <Button Grid.Column="1">
                                         <Path Data="{StaticResource ImportPath}"/>
                                     </Button>
@@ -277,25 +312,35 @@
                                         <Path Data="{StaticResource ToLinkPath}"/>
                                     </Button>
                                 </Grid>
-                                <TextBlock Text="Url" Classes="right" Grid.Row="1"/>
-                                <Grid Grid.Row="1" Grid.Column="1" ColumnDefinitions="*,Auto">
-                                    <TextBox Text="{CompiledBinding ShowingEntry.Url}"/>
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <TextBox Watermark="Url" Text="{CompiledBinding ShowingEntry.Url}"/>
                                     <Button Grid.Column="1">
                                         <Path Data="{StaticResource ToLinkPath}"/>
                                     </Button>
                                 </Grid>
-                                <TextBlock Text="File" Classes="right" Grid.Row="2"/>
-                                <TextBox Text="{CompiledBinding ShowingEntry.File}" Grid.Row="2" Grid.Column="1"/>
-                                <TextBlock Text="ISSN" Classes="right" Grid.Row="3"/>
-                                <TextBox Text="{CompiledBinding ShowingEntry.ISSN}" Grid.Row="3" Grid.Column="1"/>
-                                <TextBlock Text="ISBN" Classes="right" Grid.Row="4"/>
-                                <TextBox Text="{CompiledBinding ShowingEntry.ISBN}" Grid.Row="4" Grid.Column="1"/>
-                            </Grid>
+								<TextBox Watermark="Crossref" Text="{CompiledBinding ShowingEntry.Crossref}"/>
+								<TextBox Watermark="File" Text="{CompiledBinding ShowingEntry.File}"/>
+                                <TextBox Watermark="ISSN" Text="{CompiledBinding ShowingEntry.ISSN}"/>
+                                <TextBox Watermark="ISBN" Text="{CompiledBinding ShowingEntry.ISBN}"/>
+                            </StackPanel>
                         </Expander>
-
+                        
+                        <Expander Header="Other Fields" IsExpanded="False">
+                            <Expander.Styles>
+                                <Style Selector="TextBox">
+                                    <Setter Property="Theme" Value="{StaticResource DetailTextBox}"/>
+                                </Style>
+                            </Expander.Styles>
+                            <StackPanel>
+								<TextBox Watermark="Abstract" Text="{CompiledBinding ShowingEntry.Abstract}"/>
+								<TextBox Watermark="Keywords" Text="{CompiledBinding ShowingEntry.Keywords}"/>
+								<TextBox Watermark="Comment" Text="{CompiledBinding ShowingEntry.Comment}"/>
+							</StackPanel>
+                        </Expander>
+                        
                         <Grid RowDefinitions="*,*">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" SharedSizeGroup="Key"/>
+                                <ColumnDefinition Width="100"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <Button HorizontalAlignment="Right" VerticalAlignment="Bottom"

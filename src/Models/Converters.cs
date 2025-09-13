@@ -48,13 +48,16 @@ namespace Litenbib.Models
     {
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            if (parameter is string paraString)
-            { return value != null && value.Equals(int.Parse(paraString)); }
+            if (parameter is string s)
+            { return s == "0"; }
             return false;
         }
 
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
-        { return value != null && value.Equals(true) ? parameter : -1; }
+        {
+            if (value is not bool b || parameter is not string s) { return -1; }
+            return b ? s : -1;
+        }
     }
 
     public class StringSelectorConverter : IValueConverter
@@ -144,9 +147,18 @@ namespace Litenbib.Models
         {
             if (parameter is not string list || value is not string s) { return false; }
             var items = list.Split(',');
-            foreach (var item in items)
-            { if (s.ToLower() == item) { return true; } }
-            return false;
+            if (items[0] == "_")
+            {
+                foreach (var item in items)
+                { if (s.Equals(item, StringComparison.CurrentCultureIgnoreCase)) { return false; } }
+                return true;
+            }
+            else
+            {
+                foreach (var item in items)
+                { if (s.Equals(item, StringComparison.CurrentCultureIgnoreCase)) { return true; } }
+                return false;
+            }
         }
 
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

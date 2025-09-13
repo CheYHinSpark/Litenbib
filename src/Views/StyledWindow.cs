@@ -10,7 +10,7 @@ namespace Litenbib.Views
 {
     public class StyledWindow : Window
     {
-        protected void TitleButton_Click(object? sender, RoutedEventArgs e)
+        protected async void TitleButton_Click(object? sender, RoutedEventArgs e)
         {
             if (e.Source is not Button button) { return; }
             switch (button.Name)
@@ -29,9 +29,15 @@ namespace Litenbib.Views
                     }
                     break;
                 case "CloseButton":
-                    { this.Close(false); }
+                    {
+                        if (await OnCloseButtonClicked())
+                        { this.Close(false); }
+                    }
                     break;
             }
         }
+
+        protected virtual async Task<bool> OnCloseButtonClicked()
+        { return await Task.FromResult(true); }
     }
 }

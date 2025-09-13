@@ -131,7 +131,7 @@ public partial class BibtexView : UserControl
         {
             RootGrid.RowDefinitions[2].MinHeight = 0;
             RootGrid.RowDefinitions[2].MaxHeight = 0;
-            RootGrid.ColumnDefinitions[2].MinWidth = 400;
+            RootGrid.ColumnDefinitions[2].MinWidth = 500;
             RootGrid.ColumnDefinitions[2].MaxWidth = 800;
             Grid.SetRow(Splitter, 0);
             Grid.SetRow(DetailPanel, 0);
@@ -145,7 +145,7 @@ public partial class BibtexView : UserControl
         else
         {
             RootGrid.RowDefinitions[2].MinHeight = 250;
-            RootGrid.RowDefinitions[2].MaxHeight = 500;
+            RootGrid.RowDefinitions[2].MaxHeight = 400;
             RootGrid.ColumnDefinitions[2].MinWidth = 0;
             RootGrid.ColumnDefinitions[2].MaxWidth = 0;
             Grid.SetRow(Splitter, 1);
@@ -191,9 +191,9 @@ public partial class BibtexView : UserControl
         else
         {
             if (isDetailShowing)
-            { if (e.Vector.Y > 250 * 0.6) { CloseDetail(); } }
+            { if (e.Vector.Y > 200 * 0.6) { CloseDetail(); } }
             else
-            { if (e.Vector.Y < -250 * 0.6) { ShowDetail(); } }
+            { if (e.Vector.Y < -200 * 0.6) { ShowDetail(); } }
         }
     }
 }

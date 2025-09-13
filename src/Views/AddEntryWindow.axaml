@@ -23,9 +23,9 @@
         <vm:AddEntryViewModel/>
     </Design.DataContext>
 
-    <Grid RowDefinitions="Auto, *">
+    <Grid RowDefinitions="Auto,*,2*,Auto">
 		<TextBlock HorizontalAlignment="Center"
-				   VerticalAlignment="Center">Add New BibTeX Entry</TextBlock>
+				   VerticalAlignment="Center">Add BibTeX Entry</TextBlock>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
 			<Button Name="MinButton" Click="TitleButton_Click" Classes="window">
 				<Path Data="{StaticResource -Path}" StrokeThickness="1"
@@ -36,27 +36,28 @@
 					  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
 			</Button>
         </StackPanel>
-        <Grid Grid.Row="1"
-              RowDefinitions="Auto, *, Auto">
-            <Grid Margin="4" ColumnDefinitions="Auto,*,Auto">
-                <TextBlock Text="Add from DOI" Classes="right"/>
-                <TextBox Text="{Binding DoiText}"
-						 Grid.Column="1" MaxHeight="100" Margin="4 0"/>
-				<Button Grid.Column="2" Content="Parse"
+		
+        <Grid Grid.Row="1" Margin="4" ColumnDefinitions="*,Auto">
+            <TextBox Text="{Binding DoiText}" Margin="4 0"
+					 Watermark="Input DOI or arXiv links one per line."/>
+			<Grid Grid.Column="1" >
+				<TextBlock Text="Add from DOI" Margin="8"/>
+				<Button VerticalAlignment="Bottom" Content="Parse"
+						Margin="4 0"
 						Command="{Binding ParseDoiCommand}"/>
-            </Grid>
-            <TextBox Grid.Row="1" Margin="4"
-					 Text="{Binding BibtexText}"/>
-			<TextBlock Grid.Row="2" Margin="8 0"
-					   HorizontalAlignment="Left"
-					   VerticalAlignment="Center"
-					   Text="{Binding HintText}"/>
-            <StackPanel Grid.Row="2" Orientation="Horizontal"
-						Margin="4"
-                        HorizontalAlignment="Right">
-				<Button Content="Cancel" Click="CancelButton_Click"/>
-				<Button Content="Add" Click="AddButton_Click"/>
-            </StackPanel>
+			</Grid>
         </Grid>
+        <TextBox Grid.Row="2" Margin="8 4"
+					Text="{Binding BibtexText}"/>
+		<TextBlock Grid.Row="3" Margin="8 0"
+					HorizontalAlignment="Left"
+					VerticalAlignment="Center"
+					Text="{Binding HintText}"/>
+        <StackPanel Grid.Row="3" Orientation="Horizontal"
+					Margin="0 4 8 8"
+                    HorizontalAlignment="Right">
+			<Button Content="Cancel" Width="64" Click="CancelButton_Click"/>
+			<Button Content="Add" Width="64" Click="AddButton_Click"/>
+        </StackPanel>
     </Grid>
 </Window>
