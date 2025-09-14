@@ -57,6 +57,12 @@
 		</Style>
 	</Style>
 
+	<Style Selector="ComboBoxItem">
+		<Setter Property="Padding" Value="8 6"/>
+		<Setter Property="VerticalContentAlignment" Value="Center"/>
+		<Setter Property="CornerRadius" Value="8"/>
+	</Style>
+	
 	<Style Selector="v|ExComboBox">
 		<Setter Property="Transitions">
 			<Transitions>
@@ -65,12 +71,6 @@
 			</Transitions>
 		</Setter>
 	</Style>
-
-	<Style Selector="ComboBoxItem">
-        <Setter Property="Padding" Value="8 6"/>
-        <Setter Property="VerticalContentAlignment" Value="Center"/>
-        <Setter Property="CornerRadius" Value="8"/>
-    </Style>
 
 	<Style Selector="MenuItem">
 		<Setter Property="CornerRadius" Value="6"/>
@@ -81,7 +81,6 @@
 				</Transitions>
 			</Setter>
 		</Style>
-
 		<Style Selector="^:pressed">
 			<Setter Property="RenderTransform" Value="scale(0.98)" />
 		</Style>

@@ -85,8 +85,8 @@
 						</v:ExPopup.CloseAnimation>
 						<Border Background="{DynamicResource MenuFlyoutPresenterBackground}"
 								BorderBrush="{DynamicResource MenuFlyoutPresenterBorderBrush}"
-								BorderThickness="{DynamicResource MenuFlyoutPresenterBorderThemeThickness}"
-								Padding="{DynamicResource MenuFlyoutPresenterThemePadding}"
+								BorderThickness="1"
+								Padding="8 2"
 								MaxWidth="{DynamicResource FlyoutThemeMaxWidth}"
 								MinHeight="{DynamicResource MenuFlyoutThemeMinHeight}"
 								HorizontalAlignment="Stretch"
@@ -225,8 +225,8 @@
 							</v:ExPopup.CloseAnimation>
 							<Border Background="{DynamicResource InputBackground}"
 									BorderBrush="{DynamicResource MainBorder}"
-									BorderThickness="{DynamicResource MenuFlyoutPresenterBorderThemeThickness}"
-									Padding="{DynamicResource MenuFlyoutPresenterThemePadding}"
+									BorderThickness="1"
+									Padding="8 2"
 									MaxWidth="{DynamicResource FlyoutThemeMaxWidth}"
 									MinHeight="{DynamicResource MenuFlyoutThemeMinHeight}"
 									HorizontalAlignment="Stretch"
