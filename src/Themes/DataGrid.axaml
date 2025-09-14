@@ -102,7 +102,7 @@
 		
 		<Style Selector="^[IsVisible=True]">
 			<Style.Animations>
-				<Animation Duration="0:0:0.4">
+				<Animation Duration="0:0:0.3">
 					<KeyFrame Cue="0%">
 						<Setter Property="Opacity" Value="0.0"/>
 					</KeyFrame>

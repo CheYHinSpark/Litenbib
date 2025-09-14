@@ -4,8 +4,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -72,6 +74,27 @@ namespace Litenbib.Models
         public static void Write(string path, string content)
         {
 
+        }
+    }
+
+    internal static class UriProcessor
+    {
+        public static void StartProcess(string uri)
+        {
+            try
+            { Process.Start(new ProcessStartInfo(uri) { UseShellExecute = true }); }
+            catch
+            {
+                // 跨平台兼容处理
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                { Process.Start(new ProcessStartInfo("cmd", $"/c start {uri.Replace("&", "^&")}") { CreateNoWindow = true }); }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                { Process.Start("xdg-open", uri); }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                { Process.Start("open", uri); }
+                else
+                { throw; }
+            }
         }
     }
 }

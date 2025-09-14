@@ -1,27 +1,19 @@
 ﻿using Avalonia.Collections;
 using Avalonia.Controls;
-using Avalonia.Controls.Selection;
-using Avalonia.Controls.Shapes;
-using Avalonia.Data;
-using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Litenbib.Models;
 using Litenbib.Views;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Litenbib.ViewModels
 {
@@ -44,9 +36,7 @@ namespace Litenbib.ViewModels
             get
             {
                 if (WarningErrors == null || WarningErrors.Count == 0)
-                {
-                    return string.Empty;
-                }
+                { return string.Empty; }
                 return $"{WarningErrors.Count} warnings or errors";
             }
         }
@@ -341,7 +331,6 @@ namespace Litenbib.ViewModels
             ShowingEntry = _holdShowingEntry ?? null;
             NotifyCanUndoRedo();
         }
-
         private bool CanUndo() => UndoRedoManager.CanUndo && !IsFiltering;
 
         [RelayCommand(CanExecute = nameof(CanRedo))]
@@ -380,23 +369,19 @@ namespace Litenbib.ViewModels
         private static void ToLink(object o)
         {
             if (o is BibtexEntry entry)
-            {
-                string url = entry.DOI == "" ? entry.Url : "https://doi.org/" + entry.DOI;
-                try
-                { Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }); }
-                catch
-                {
-                    // 跨平台兼容处理
-                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                    { Process.Start(new ProcessStartInfo("cmd", $"/c start {url.Replace("&", "^&")}") { CreateNoWindow = true }); }
-                    else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                    { Process.Start("xdg-open", url); }
-                    else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                    { Process.Start("open", url); }
-                    else
-                    { throw; }
-                }
-            }
+            { UriProcessor.StartProcess(entry.DOI == "" ? entry.Url : "https://doi.org/" + entry.DOI); }
+        }
+
+        [RelayCommand]
+        private static void ToFile(object o)
+        {
+            if (o is not BibtexEntry entry) { return; }
+            string path = entry.File.Replace("\\:", ":");
+            // 使用 Regex.Match 查找匹配项
+            Match match = Regex.Match(path, "^:(.+):(.+)$");
+            if (match.Success)
+            { path = match.Groups[1].Value; }
+            UriProcessor.StartProcess(path);
         }
 
         [RelayCommand]
@@ -462,11 +447,11 @@ namespace Litenbib.ViewModels
         }
 
 
-        [RelayCommand]
+        [RelayCommand(CanExecute = nameof(CanCopyPasteBibtex))]
         private async Task CopyBibtex(object? sender)
         {
-            if (SelectedIndexItems == null || sender is not MainWindowViewModel mwvm
-                || IsFiltering || UndoRedoManager.NewEditedBox != null)
+            Debug.WriteLine("start copy");
+            if (SelectedIndexItems == null || sender is not MainWindowViewModel mwvm)
             { return; }
             await Task.Run(() =>
             {
@@ -485,11 +470,11 @@ namespace Litenbib.ViewModels
             Debug.WriteLine($"copied {mwvm.CopiedBibtex.Count} entries");
         }
 
-        [RelayCommand]
+        [RelayCommand(CanExecute = nameof(CanCopyPasteBibtex))]
         private void PasteBibtex(object? sender)
         {
-            if (sender is not MainWindowViewModel mwvm
-                || IsFiltering || UndoRedoManager.NewEditedBox != null)
+            Debug.WriteLine("start paste");
+            if (sender is not MainWindowViewModel mwvm)
             { return; }
             int c = ShowingEntry != null ? BibtexEntries.IndexOf(ShowingEntry) + 1 : BibtexEntries.Count;
             List<(int, BibtexEntry)> index_entries = [];
@@ -504,6 +489,8 @@ namespace Litenbib.ViewModels
             UndoRedoManager.AddAction(new AddEntriesAction(BibtexEntries, index_entries));
             NotifyCanUndoRedo();
         }
+
+        private bool CanCopyPasteBibtex() => !(IsFiltering || UndoRedoManager.NewEditedBox != null);
         #endregion
     }
 }

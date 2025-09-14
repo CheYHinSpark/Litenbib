@@ -68,9 +68,24 @@
                       SelectionChanged="DataGrid_SelectionChanged"
                       DragDrop.AllowDrop="True">
                 <DataGrid.Columns>
+					<DataGridTemplateColumn Header="File" Width="Auto" CanUserResize="False" CanUserSort="False">
+						<DataGridTemplateColumn.CellTemplate>
+							<DataTemplate x:DataType="m:BibtexEntry">
+								<Button Command="{CompiledBinding #BibtexViewRoot.DataContext.ToFileCommand}"
+                                        CommandParameter="{CompiledBinding .}"
+                                        Classes="link_in_row"
+										IsVisible="{CompiledBinding File, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+									<Viewbox Width="14" Height="14">
+										<Path Data="{DynamicResource FilePath}" StrokeThickness="1"
+                                              Stretch="UniformToFill" Margin="1"
+                                              Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+									</Viewbox>
+								</Button>
+							</DataTemplate>
+						</DataGridTemplateColumn.CellTemplate>
+					</DataGridTemplateColumn>
                     <DataGridTemplateColumn Header="Link" Width="Auto" CanUserResize="False" CanUserSort="False">
                         <DataGridTemplateColumn.CellTemplate>
-                            <!--<DataTemplate>-->
                             <DataTemplate x:DataType="m:BibtexEntry">
                                 <Button Command="{CompiledBinding #BibtexViewRoot.DataContext.ToLinkCommand}"
                                         CommandParameter="{CompiledBinding .}"
