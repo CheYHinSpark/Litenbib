@@ -131,7 +131,7 @@
                            IsOpenEx="{CompiledBinding #WarningToggle.IsChecked, Mode=TwoWay}"
                            PlacementTarget="WarningToggle"
                            InheritsTransform="True">
-                    <ListBox ItemsSource="{CompiledBinding WarningErrors}">
+                    <ListBox ItemsSource="{CompiledBinding WarningErrors}" MaxHeight="400">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Panel>
@@ -344,7 +344,7 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <Button HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                                    Command="{CompiledBinding CopyBibtexCommand}"
+                                    Command="{CompiledBinding CopyBibtexTextCommand}"
                                     CommandParameter="{CompiledBinding $parent[Window]}">
                                 <Path Data="{StaticResource CopyPath}"/>
                             </Button>

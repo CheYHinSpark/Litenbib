@@ -34,7 +34,7 @@ namespace Litenbib.ViewModels
             foreach (var doi in dois)
             {
                 if (!string.IsNullOrWhiteSpace(doi))
-                { tasks.Add(DoiResolver.GetBibTeXAsync(doi)); }
+                { tasks.Add(LinkResolver.GetBibTeXAsync(doi)); }
             }
             BibtexText = string.Join("\n\n", await Task.WhenAll(tasks));
             HintText = string.IsNullOrWhiteSpace(BibtexText) ? "Resolve failed." : "Resolve successed.";

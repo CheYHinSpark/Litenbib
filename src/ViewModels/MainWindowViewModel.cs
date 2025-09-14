@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -19,11 +20,13 @@ namespace Litenbib.ViewModels
 {
     public partial class MainWindowViewModel : ViewModelBase
     {
+        public List<BibtexEntry> CopiedBibtex = [];
+
         public ObservableCollection<BibtexViewModel> BibtexViewers { get; set; }
 
         [ObservableProperty]
-        private BibtexViewModel? _selectecdBibtex;
-        partial void OnSelectecdBibtexChanged(BibtexViewModel? value)
+        private BibtexViewModel? _selectedFile;
+        partial void OnSelectedFileChanged(BibtexViewModel? value)
         {
             // inform Commands to update
             OnPropertyChanged(nameof(ShowToolBar));
@@ -31,7 +34,7 @@ namespace Litenbib.ViewModels
             SaveAllCommand.NotifyCanExecuteChanged();
         }
 
-        public bool ShowToolBar { get => SelectecdBibtex != null; }
+        public bool ShowToolBar { get => SelectedFile != null; }
 
         public static ObservableCollection<string> FilterFieldList
         { get => ["Whole", "Author", "Title", "Citation Key"]; }
@@ -78,7 +81,7 @@ namespace Litenbib.ViewModels
 
             using var writer = new StreamWriter(file.Path.AbsolutePath, append: false, encoding: Encoding.UTF8, bufferSize: 65536); // 缓冲区大小设置为64KB
             await writer.WriteAsync(string.Empty);
-            int newMode = SelectecdBibtex == null ? 0 : SelectecdBibtex.FilterMode;
+            int newMode = SelectedFile == null ? 0 : SelectedFile.FilterMode;
             BibtexViewers.Add(new BibtexViewModel(file.Name, file.Path.AbsolutePath, string.Empty, newMode));
         }
 
@@ -109,7 +112,7 @@ namespace Litenbib.ViewModels
                 using var streamReader = new StreamReader(stream);
                 //// 将文件的所有内容作为文本读取。
                 var fileContent = await streamReader.ReadToEndAsync();
-                int newMode = SelectecdBibtex == null ? 0 : SelectecdBibtex.FilterMode;
+                int newMode = SelectedFile == null ? 0 : SelectedFile.FilterMode;
                 BibtexViewers.Add(new BibtexViewModel(file.Name, file.Path.AbsolutePath, fileContent, newMode));
             }
         }
@@ -138,16 +141,16 @@ namespace Litenbib.ViewModels
         [RelayCommand(CanExecute = nameof(CanAddBibtexEntry))]
         private async Task AddBibtexEntry(Window window)
         {
-            if (SelectecdBibtex == null)
+            if (SelectedFile == null)
             {
                 Debug.WriteLine("No opened bib file");
                 return;
             }
             // 创建对话框实例，并传入参数
-            await SelectecdBibtex.AddBibtexEntry(window);
+            await SelectedFile.AddBibtexEntry(window);
         }
 
-        private bool CanAddBibtexEntry() => SelectecdBibtex != null;
+        private bool CanAddBibtexEntry() => SelectedFile != null;
 
         [RelayCommand(CanExecute = nameof(CanSaveAll))]
         private async Task SaveAll()
@@ -161,7 +164,9 @@ namespace Litenbib.ViewModels
             await Task.WhenAll(tasks);
         }
 
-        private bool CanSaveAll() => SelectecdBibtex != null;
+        private bool CanSaveAll() => SelectedFile != null;
+
+
         #endregion
     }
 }

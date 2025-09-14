@@ -21,10 +21,14 @@
                     CommandParameter="{CompiledBinding #LitbibMainWindow}"/>
         <KeyBinding Command="{CompiledBinding AddBibtexEntryCommand}" Gesture="Ctrl+Shift+A"
                     CommandParameter="{CompiledBinding #LitbibMainWindow}"/>
-        <KeyBinding Command="{CompiledBinding SelectecdBibtex.UndoBibtexCommand}" Gesture="Ctrl+Z"/>
-        <KeyBinding Command="{CompiledBinding SelectecdBibtex.RedoBibtexCommand}" Gesture="Ctrl+Y"/>
-        <KeyBinding Command="{CompiledBinding SelectecdBibtex.DeleteBibtexKeyCommand}" Gesture="Delete"/>
-        <KeyBinding Command="{CompiledBinding SelectecdBibtex.SaveBibtexCommand}" Gesture="Ctrl+S"/>
+		<KeyBinding Command="{CompiledBinding SelectedFile.CopyBibtexCommand}" Gesture="Ctrl+C"
+					CommandParameter="{CompiledBinding #LitbibMainWindow.DataContext}"/>
+		<KeyBinding Command="{CompiledBinding SelectedFile.PasteBibtexCommand}" Gesture="Ctrl+V"
+					CommandParameter="{CompiledBinding #LitbibMainWindow.DataContext}"/>
+		<KeyBinding Command="{CompiledBinding SelectedFile.UndoBibtexCommand}" Gesture="Ctrl+Z"/>
+        <KeyBinding Command="{CompiledBinding SelectedFile.RedoBibtexCommand}" Gesture="Ctrl+Y"/>
+        <KeyBinding Command="{CompiledBinding SelectedFile.DeleteBibtexKeyCommand}" Gesture="Delete"/>
+        <KeyBinding Command="{CompiledBinding SelectedFile.SaveBibtexCommand}" Gesture="Ctrl+S"/>
     </Window.KeyBindings>
 
     <Design.DataContext>
@@ -45,34 +49,34 @@
                 <Border.IsEnabled>
                     <MultiBinding Converter="{x:Static BoolConverters.And}">
                         <Binding Path="#FilterTextBox.Text" Converter="{x:Static StringConverters.IsNotNullOrEmpty}}" />
-                        <Binding Path="SelectecdBibtex" Converter="{x:Static ObjectConverters.IsNotNull}" />
+                        <Binding Path="SelectedFile" Converter="{x:Static ObjectConverters.IsNotNull}" />
                     </MultiBinding>
                 </Border.IsEnabled>
                 <Grid ColumnDefinitions="*,*,*,2*" Margin="4 2"
                       Height="{DynamicResource ToolBarHeight}"
                       VerticalAlignment="Bottom">
-                    <RadioButton IsChecked="{CompiledBinding SelectecdBibtex.FilterMode,
+                    <RadioButton IsChecked="{CompiledBinding SelectedFile.FilterMode,
                                  Converter={StaticResource FilterModeConverter},
                                  Mode=TwoWay, ConverterParameter=0, FallbackValue=True}"
                                  GroupName="FilterMode" Margin="4">and</RadioButton>
-                    <RadioButton IsChecked="{CompiledBinding SelectecdBibtex.FilterMode,
+                    <RadioButton IsChecked="{CompiledBinding SelectedFile.FilterMode,
                                  Converter={StaticResource FilterModeConverter},
                                  Mode=OneWayToSource, ConverterParameter=1}"
                                  GroupName="FilterMode" Margin="4" Grid.Column="1">or</RadioButton>
-                    <RadioButton IsChecked="{CompiledBinding SelectecdBibtex.FilterMode,
+                    <RadioButton IsChecked="{CompiledBinding SelectedFile.FilterMode,
                                  Converter={StaticResource FilterModeConverter},
                                  Mode=OneWayToSource, ConverterParameter=2}"
                                  GroupName="FilterMode" Margin="4" Grid.Column="2">all</RadioButton>
                     <v:ExComboBox Margin="4" Grid.Column="3"
                                   CornerRadius="12" Padding="12 0"
-                                  SelectedItem="{CompiledBinding SelectecdBibtex.FilterField,
+                                  SelectedItem="{CompiledBinding SelectedFile.FilterField,
                                   Mode=OneWayToSource}" SelectedIndex="0"
                                   ItemsSource="{CompiledBinding FilterFieldList}"/>
                 </Grid>
             </Border>
             <TextBox x:Name="FilterTextBox" Grid.Column="1" Grid.RowSpan="2" UndoLimit="200"
-                     m:FocusEx.IsFocused="{CompiledBinding SelectecdBibtex.IsFiltering, Mode=OneWayToSource}"
-                     Text="{CompiledBinding SelectecdBibtex.FilterText, Mode=OneWayToSource}"
+                     m:FocusEx.IsFocused="{CompiledBinding SelectedFile.IsFiltering, Mode=OneWayToSource}"
+                     Text="{CompiledBinding SelectedFile.FilterText, Mode=OneWayToSource}"
                      Watermark="Search or add..."
                      VerticalAlignment="Top" Margin="8 6"/>
 
@@ -90,9 +94,17 @@
                                   Command="{CompiledBinding SaveAllCommand}">
                         </MenuItem>
                     </MenuItem>
-                    <MenuItem Header="_Add" Classes="Top"
-                              Command="{CompiledBinding AddBibtexEntryCommand}"
-                              CommandParameter="{CompiledBinding $parent[Window]}"/>
+					<MenuItem Header="_Edit" Classes="Top">
+						<MenuItem Header="_Add..."
+								  Command="{CompiledBinding AddBibtexEntryCommand}"
+								  CommandParameter="{CompiledBinding $parent[Window]}"/>
+						<MenuItem Header="_Copy"
+								  Command="{CompiledBinding SelectedFile.CopyBibtexCommand}"
+								  CommandParameter="{CompiledBinding $parent[Window].DataContext}"/>
+						<MenuItem Header="_Paste"
+								  Command="{CompiledBinding SelectedFile.PasteBibtexCommand}"
+								  CommandParameter="{CompiledBinding $parent[Window].DataContext}"/>
+					</MenuItem>
                 </Menu>
             </StackPanel>
             
@@ -116,22 +128,22 @@
                   Opacity="{Binding ShowToolBar}">
                 <StackPanel Orientation="Horizontal" Margin="4 0">
                     <Button Width="28" Height="28"
-                            Command="{CompiledBinding SelectecdBibtex.UndoBibtexCommand}">
+                            Command="{CompiledBinding SelectedFile.UndoBibtexCommand}">
                         <Path Data="{StaticResource UndoPath}" StrokeThickness="1"
                               Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                     </Button>
                     <Button Width="28" Height="28"
-                            Command="{CompiledBinding SelectecdBibtex.RedoBibtexCommand}">
+                            Command="{CompiledBinding SelectedFile.RedoBibtexCommand}">
                         <Path Data="{StaticResource RedoPath}" StrokeThickness="1"
                               Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                     </Button>
                     <Button Width="28" Height="28"
-                            Command="{CompiledBinding SelectecdBibtex.DeleteBibtexCommand}">
+                            Command="{CompiledBinding SelectedFile.DeleteBibtexCommand}">
                         <Path Data="{StaticResource DeletePath}"
                               Fill="{CompiledBinding $parent[Button].Foreground}"/>
                     </Button>
                     <Button Width="28" Height="28"
-                            Command="{CompiledBinding SelectecdBibtex.SaveBibtexCommand}">
+                            Command="{CompiledBinding SelectedFile.SaveBibtexCommand}">
                         <Path Data="{StaticResource SavePath}"
                               Fill="{CompiledBinding $parent[Button].Foreground}"/>
                     </Button>
@@ -151,7 +163,7 @@
         <!--content-->
         <TabControl Grid.Row="1" Padding="0"
                     ItemsSource="{CompiledBinding BibtexViewers}"
-                    SelectedItem="{CompiledBinding SelectecdBibtex}">
+                    SelectedItem="{CompiledBinding SelectedFile}">
             <!-- Tab Header -->
             <TabControl.ItemTemplate>
                 <DataTemplate>

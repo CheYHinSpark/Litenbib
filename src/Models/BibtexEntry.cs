@@ -17,7 +17,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Litenbib.Models
 {
-    public class BibtexEntry(string entryType, string citationKey): INotifyPropertyChanged
+    public class BibtexEntry(string entryType = "", string citationKey = ""): INotifyPropertyChanged
     {
         private string entryType = entryType;
         private string citationKey = citationKey;
@@ -151,7 +151,7 @@ namespace Litenbib.Models
 
         public static BibtexEntry FromDOI(string doi)
         {
-            BibtexEntry entry = new("Unknown" ,doi);
+            BibtexEntry entry = new("" ,doi);
             entry.Fields["doi"] = doi;
             // TODO: 解析DOI
             return entry;

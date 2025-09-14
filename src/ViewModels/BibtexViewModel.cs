@@ -400,7 +400,7 @@ namespace Litenbib.ViewModels
         }
 
         [RelayCommand]
-        private async Task CopyBibtex(object sender)
+        private async Task CopyBibtexText(object sender)
         {
             if (sender is Control c)
             {
@@ -459,6 +459,50 @@ namespace Litenbib.ViewModels
                 ShowingEntry = we.SourceEntries[0];
             }
             IsChecking = false;
+        }
+
+
+        [RelayCommand]
+        private async Task CopyBibtex(object? sender)
+        {
+            if (SelectedIndexItems == null || sender is not MainWindowViewModel mwvm
+                || IsFiltering || UndoRedoManager.NewEditedBox != null)
+            { return; }
+            await Task.Run(() =>
+            {
+                var list = SelectedIndexItems.Select(t => t.Item2);
+                mwvm.CopiedBibtex = [];
+                foreach (var item in list)
+                {
+                    if (item is BibtexEntry entry)
+                    {
+                        BibtexEntry e = new();
+                        e.CopyFromBibtex(entry);
+                        mwvm.CopiedBibtex.Add(e);
+                    }
+                }
+            });
+            Debug.WriteLine($"copied {mwvm.CopiedBibtex.Count} entries");
+        }
+
+        [RelayCommand]
+        private void PasteBibtex(object? sender)
+        {
+            if (sender is not MainWindowViewModel mwvm
+                || IsFiltering || UndoRedoManager.NewEditedBox != null)
+            { return; }
+            int c = ShowingEntry != null ? BibtexEntries.IndexOf(ShowingEntry) + 1 : BibtexEntries.Count;
+            List<(int, BibtexEntry)> index_entries = [];
+            foreach (var entry in mwvm.CopiedBibtex)
+            {
+                BibtexEntry e = new();
+                e.CopyFromBibtex(entry);
+                index_entries.Add((c, e));
+                BibtexEntries.Insert(c, e);
+                c++;
+            }
+            UndoRedoManager.AddAction(new AddEntriesAction(BibtexEntries, index_entries));
+            NotifyCanUndoRedo();
         }
         #endregion
     }
