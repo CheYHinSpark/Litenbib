@@ -272,8 +272,8 @@
                                 </Grid>
                                 <Grid ColumnDefinitions="*,*"
                                       IsVisible="{CompiledBinding ShowingEntry.EntryType,
-                                         Converter={StaticResource EntryTypeToVisibleConverter},
-                                         ConverterParameter='book,inbook,conference,incollection,inproceedings,manual,proceedings'}">
+                                      Converter={StaticResource EntryTypeToVisibleConverter},
+                                      ConverterParameter='book,inbook,conference,incollection,inproceedings,manual,proceedings'}">
                                     <TextBox Watermark="Series" Text="{CompiledBinding ShowingEntry.Series}"/>
 									<TextBox Grid.Column="1" Watermark="Edition" Text="{CompiledBinding ShowingEntry.Edition}"/>
                                 </Grid>
@@ -318,18 +318,27 @@
                                 </Style>
                             </Expander.Styles>
                             <StackPanel>
-                                <Grid ColumnDefinitions="*,Auto,Auto">
+                                <Grid ColumnDefinitions="*,Auto">
                                     <TextBox Watermark="DOI" Text="{CompiledBinding ShowingEntry.DOI}"/>
-                                    <Button Grid.Column="1">
-                                        <Path Data="{StaticResource ImportPath}"/>
-                                    </Button>
-                                    <Button Grid.Column="2">
-                                        <Path Data="{StaticResource ToLinkPath}"/>
-                                    </Button>
-                                </Grid>
+									<StackPanel Orientation="Horizontal" Grid.Column="1">
+										<Button>
+											<Path Data="{StaticResource ImportPath}"/>
+										</Button>
+										<Button Command="{CompiledBinding GetDblpFromDoiCommand}">
+											<Viewbox Margin="2">
+												<Svg Path="/Assets/dblp.svg"/>
+											</Viewbox>
+										</Button>
+										<Button Command="{CompiledBinding ToShowingLinkCommand}"
+												CommandParameter="DOI">
+											<Path Data="{StaticResource ToLinkPath}"/>
+										</Button>
+									</StackPanel>
+								</Grid>
                                 <Grid ColumnDefinitions="*,Auto">
                                     <TextBox Watermark="Url" Text="{CompiledBinding ShowingEntry.Url}"/>
-                                    <Button Grid.Column="1">
+                                    <Button Grid.Column="1" Command="{CompiledBinding ToShowingLinkCommand}"
+											CommandParameter="Url">
                                         <Path Data="{StaticResource ToLinkPath}"/>
                                     </Button>
                                 </Grid>

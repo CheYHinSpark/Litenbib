@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   version="1.1"
+   width="24.877625"
+   height="32.002865"
+   viewBox="0 0 24.877624 32.002865"
+   id="svg1"
+   sodipodi:docname="dblp.svg"
+   inkscape:version="1.4 (86a8ad7, 2024-10-11)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="26.450213"
+     inkscape:cx="12.362849"
+     inkscape:cy="19.054667"
+     inkscape:window-width="1298"
+     inkscape:window-height="1220"
+     inkscape:window-x="709"
+     inkscape:window-y="158"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg1" />
+  <title
+     id="title1">dblp</title>
+  <path
+     d="M 0.54031583,0.0025276 C 0.41225913,0.0193147 0.33348763,0.12355884 0.41336273,0.41268385 L 3.0637533,10.309168 0.57547203,11.469324 c 0,0 -0.7511094,0.344859 -0.5371093,1.130859 L 3.3039876,24.813074 c 0,0 0.2148438,0.786359 0.9648438,0.443359 l 9.9570306,-4.640625 c 0,0 0.694453,-0.323734 0.564453,-1.052734 l -0.01758,-0.08203 -1.503906,-5.625 -1.775391,-6.5898435 v -0.050781 c 0,0 -0.215093,-0.7869843 -1.121093,-1.3339843 L 1.106722,0.18807447 c 0,0 -0.35297847,-0.21352539 -0.56640617,-0.18554687 z"
+     style="display:inline;fill:#004f9f;fill-opacity:1"
+     id="path2" />
+  <path
+     d="m 20.872347,6.7056526 c -0.07838,0.011744 -0.164641,0.038406 -0.259766,0.082031 l -7.464844,3.4687494 1.146485,4.265625 1.453125,5.439453 0.0098,0.08203 c 0.068,0.625 -0.546875,1.052734 -0.546875,1.052734 l -2.505859,1.160156 0.667969,2.515625 0.05078,0.134766 c 0.094,0.229 0.375984,0.802844 1.083984,1.214844 l 9.265625,5.693359 c 0,0 0.90636,0.546391 0.69336,-0.224609 l -2.640625,-9.869141 2.478515,-1.146484 c 0,0 0.749156,-0.343766 0.535156,-1.134766 l 0.002,-0.002 -3.265625,-12.2070311 c 0,0 -0.154459,-0.6075996 -0.703125,-0.5253906 z"
+     style="display:inline;fill:#fbba00;fill-opacity:1"
+     id="path3" />
+</svg>

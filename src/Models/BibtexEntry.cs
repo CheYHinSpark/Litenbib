@@ -147,6 +147,7 @@ namespace Litenbib.Models
             UndoRedoPropertyChanged?.Invoke(this, new PropertyChangedEventArgsEx(propertyName, oldValue, newValue));
             if (propertyName != nameof(BibTeX)) { UpdateBibtex(); }
             Debug.WriteLine("Changing " + propertyName);
+            Debug.WriteLine(BibTeX);
         }
 
         public static BibtexEntry FromDOI(string doi)

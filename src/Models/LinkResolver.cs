@@ -62,7 +62,7 @@ namespace Litenbib.Models
             result = await GetFromDoiAsync(link);
             if (!string.IsNullOrWhiteSpace(result)) { return result; }
 
-            // 接着，假设这是一个arxiv链接，直接截取后面部分
+            // 接着，假设这是一个arxiv链接，提取id
             string pattern = @"(?<=\/| |^)(\w+\/\d{7}|\d{4}\.\d{4,5})(v\d+)?(?=\.|\s|$)";
             Match match = Regex.Match(link, pattern);
             if (match.Success)
@@ -80,29 +80,6 @@ namespace Litenbib.Models
                     return await response.Content.ReadAsStringAsync();
                 }
             }
-           
-
-            //// 尝试使用Crossref或得更新的DOI
-
-            //// Construct the API URL. We need to specify the fields we want.
-            //string requestUrl = $"https://api.semanticscholar.org/graph/v1/paper/ARXIV:{arxivId}" +
-            //    $"?fields=paperId,externalIds";
-            //client.DefaultRequestHeaders.Clear();
-            //response = await client.GetAsync(requestUrl);
-            ////response.EnsureSuccessStatusCode();
-
-            //string jsonString = await response.Content.ReadAsStringAsync();
-            //return jsonString;
-            ////var paperData = JsonSerializer.Deserialize<PaperResponse>(jsonString);
-
-            //// Now, build the BibTeX string from the parsed data
-            ////return GenerateBibtex(paperData);
-            //// 如果Crossref没有，可以返回null或尝试其他数据源（如Semantic Scholar, NASA ADS）
-            ////return null;
-
-
-
-
 
             // TODO更多的链接，从链接提取
             // 尝试从常见学术URL中提取DOI
@@ -128,6 +105,38 @@ namespace Litenbib.Models
             return string.Empty;
         }
 
-        
+        public static async Task GetDblpFromDoi(string doi)
+        {
+            // Construct the API URL. We need to specify the fields we want.
+            string requestUrl = $"https://api.semanticscholar.org/graph/v1/paper/DOI:{doi}?fields=externalIds";
+            var response = await client.GetAsync(requestUrl);
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonString = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine(jsonString);
+                try
+                {
+                    string pattern = @"""DBLP""\s*:\s*""(.*?)""";
+
+                    Match match = Regex.Match(jsonString, pattern);
+
+                    // 检查是否找到匹配项，并返回捕获的组（即括号内的内容）
+                    if (match.Success && match.Groups.Count > 1)
+                    {
+                        string dblp = match.Groups[1].Value;
+                    
+                        Debug.WriteLine(dblp);
+                        response = await client.GetAsync($"https://dblp.org/rec/{dblp}.bib");
+                        if (response.IsSuccessStatusCode)
+                        {
+                            Debug.WriteLine(await response.Content.ReadAsStringAsync());
+                        }
+                        //return paperData.ExternalIds["DBLP"];https://dblp.org/rec/{your_dblp_key}.bib
+                    }
+                }
+                catch { }
+            }
+        }
     }
+
 }

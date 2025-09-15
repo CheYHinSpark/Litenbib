@@ -366,6 +366,16 @@ namespace Litenbib.ViewModels
         }
 
         [RelayCommand]
+        private void ToShowingLink(string s)
+        {
+            if (ShowingEntry == null) { return; }
+            if (s == "DOI")
+            { UriProcessor.StartProcess("https://doi.org/" + ShowingEntry.DOI); }
+            else if (s == "Url")
+            { UriProcessor.StartProcess(ShowingEntry.Url); }
+        }
+
+        [RelayCommand]
         private static void ToLink(object o)
         {
             if (o is BibtexEntry entry)
@@ -491,6 +501,13 @@ namespace Litenbib.ViewModels
         }
 
         private bool CanCopyPasteBibtex() => !(IsFiltering || UndoRedoManager.NewEditedBox != null);
+
+        [RelayCommand]
+        private async Task GetDblpFromDoi()
+        {
+            if (ShowingEntry == null) { return; }
+            await LinkResolver.GetDblpFromDoi(ShowingEntry.DOI);
+        }
         #endregion
     }
 }

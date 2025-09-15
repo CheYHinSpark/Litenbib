@@ -41,7 +41,7 @@ namespace Litenbib.Models
         }
 
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
-        { return value; }
+        { return value is string text ? text.ToLower() : value; }
     }
 
     public class FilterModeConverter : IValueConverter
@@ -168,9 +168,6 @@ namespace Litenbib.Models
         }
     }
 
-
-
-
     public class WindowStateToPathConverter : IValueConverter
     {
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
@@ -181,8 +178,8 @@ namespace Litenbib.Models
                 // 这里根据你的逻辑返回不同的颜色
                 return value switch
                 {
-                    WindowState.Maximized => PathGeometry.Parse("M 0,2 L 6,2 6,8 0,8 Z M 2,0 L 8,0 8,6"),
-                    _ => PathGeometry.Parse("M 0,0 L 8,0 8,7 0,7 Z"), // 默认背景
+                    WindowState.Maximized => PathGeometry.Parse("M 0,2 L 8,2 8,9 0,9 Z M 2,0 L 10,0 10,7"),
+                    _ => PathGeometry.Parse("M 0,0 L 9,0 9,8 0,8 Z"), // 默认背景
                 };
             }
             // 如果value不是字符串，返回默认颜色

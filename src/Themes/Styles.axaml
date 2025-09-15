@@ -61,6 +61,10 @@
 		<Setter Property="Padding" Value="8 6"/>
 		<Setter Property="VerticalContentAlignment" Value="Center"/>
 		<Setter Property="CornerRadius" Value="8"/>
+		<Style Selector="^:selected">
+			<Setter Property="Padding" Value="6 4"/>
+			<Setter Property="BorderThickness" Value="2"/>
+		</Style>
 	</Style>
 	
 	<Style Selector="v|ExComboBox">
