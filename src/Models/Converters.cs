@@ -8,6 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Litenbib.Models
 {
@@ -44,6 +46,34 @@ namespace Litenbib.Models
         { return value is string text ? text.ToLower() : value; }
     }
 
+    /// <summary>
+    /// 这是为了单选按钮绑定而写的转换器
+    /// </summary>
+    public class DictionaryContentConverter : IValueConverter
+    {
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            return AvaloniaProperty.UnsetValue;
+        }
+
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            if (value is not bool b) { return ("", ""); }
+            return b ? parameter : AvaloniaProperty.UnsetValue;
+        }
+    }
+
+    public class MultiStringConverter : IMultiValueConverter
+    {
+        public object? Convert(IList<object?> values, Type targetType, object? parameter, CultureInfo culture)
+        {
+            // 检查所有值是否都是 bool 类型且为 true
+            foreach (var v in values)
+            { if (v is string s && !string.IsNullOrWhiteSpace(s)) { return s; } }
+            return AvaloniaProperty.UnsetValue;
+        }
+    }
+
     public class FilterModeConverter : IValueConverter
     {
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
@@ -58,23 +88,6 @@ namespace Litenbib.Models
             if (value is not bool b || parameter is not string s) { return -1; }
             return b ? s : -1;
         }
-    }
-
-    public class StringSelectorConverter : IValueConverter
-    {
-        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
-        {
-            if (value == null && parameter == null) { return ""; }
-            // value 是绑定的第一个字符串，也就是 a
-            var primaryString = value as string;
-            // parameter 是绑定的第二个字符串，也就是 b
-            var fallbackString = parameter as string;
-            // 如果 a 非空且不为空白，则返回 a，否则返回 b
-            return string.IsNullOrWhiteSpace(primaryString) ? fallbackString : primaryString;
-        }
-
-        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
-        { throw new NotSupportedException(); }
     }
 
     public class TextToBackgroundConverter : IValueConverter

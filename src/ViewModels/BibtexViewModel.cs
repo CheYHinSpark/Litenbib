@@ -180,9 +180,9 @@ namespace Litenbib.ViewModels
 
             if (result == true) // 如果用户点击了 OK
             {
-                if (dialog.DataContext == null) { return; }
+                if (dialog.DataContext is not AddEntryViewModel aevm) { return; }
                 // 通过对话框的公共属性获取返回值
-                string bibtex = ((AddEntryViewModel)dialog.DataContext).BibtexText;
+                string bibtex = aevm.BibtexText;
                 List<(int, BibtexEntry)> index_entries = [];
                 int c = BibtexEntries.Count;
                 foreach (BibtexEntry entry in BibtexParser.Parse(bibtex))
@@ -503,10 +503,44 @@ namespace Litenbib.ViewModels
         private bool CanCopyPasteBibtex() => !(IsFiltering || UndoRedoManager.NewEditedBox != null);
 
         [RelayCommand]
-        private async Task GetDblpFromDoi()
+        private async Task GetDblpFromDoi(object? sender)
         {
-            if (ShowingEntry == null) { return; }
-            await LinkResolver.GetDblpFromDoi(ShowingEntry.DOI);
+            if (ShowingEntry == null || sender is not MainWindow window) { return; }
+            //await LinkResolver.GetDblpFromDoi(ShowingEntry.DOI);
+            var list = await LinkResolver.GetDblpFromTitle(ShowingEntry.Title);
+            if (list.Count == 0) { return; }
+            list.Insert(0, ShowingEntry);
+            CompareEntryView dialog = new(list);
+            // 显示对话框并等待结果 (ShowDialog 需要传入父窗口引用)
+            var result = await dialog.ShowDialog<bool>(window); // 等待对话框关闭并获取 DialogResult
+            if (result == true)
+            {
+                if (dialog.DataContext is not CompareEntryViewModel cevm) { return; }
+                ShowingEntry.CopyFromBibtex(cevm.MergedEntry);
+            }
+
+
+            //AddEntryWindow dialog = new();
+
+            //// 显示对话框并等待结果 (ShowDialog 需要传入父窗口引用)
+            //var result = await dialog.ShowDialog<bool>(window); // 等待对话框关闭并获取 DialogResult
+
+            //if (result == true) // 如果用户点击了 OK
+            //{
+            //    if (dialog.DataContext is not AddEntryViewModel aevm) { return; }
+            //    // 通过对话框的公共属性获取返回值
+            //    string bibtex = aevm.BibtexText;
+            //    List<(int, BibtexEntry)> index_entries = [];
+            //    int c = BibtexEntries.Count;
+            //    foreach (BibtexEntry entry in BibtexParser.Parse(bibtex))
+            //    {
+            //        index_entries.Add((c, entry));
+            //        BibtexEntries.Add(entry);
+            //        c++;
+            //    }
+            //    UndoRedoManager.AddAction(new AddEntriesAction(BibtexEntries, index_entries));
+            //    NotifyCanUndoRedo();
+            //}
         }
         #endregion
     }

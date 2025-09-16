@@ -137,6 +137,35 @@ namespace Litenbib.Models
                 catch { }
             }
         }
+
+        public static async Task<List<BibtexEntry>> GetDblpFromTitle(string title)
+        {
+            try
+            {
+                // 将文章名中的空格替换为 '+'，以符合 URL 编码规范
+                string query = title.Replace(' ', '+').Replace(":", "");
+                // 发送 GET 请求
+                var response = await client.GetAsync($"https://dblp.org/search/publ/api?q=title:{query}&format=json");
+                if (response.IsSuccessStatusCode)
+                {
+                    MatchCollection matches = Regex.Matches(await response.Content.ReadAsStringAsync(), @"""key""\s*:\s*""(.*?)""");
+                    string bibtex_s = "";
+
+                    foreach (Match match in matches)
+                    {
+                        if (match.Success)
+                        {
+                            response = await client.GetAsync($"https://dblp.org/rec/{match.Groups[1].Value}.bib");
+                            if (response.IsSuccessStatusCode)
+                            { bibtex_s += await response.Content.ReadAsStringAsync() + "\n\n"; }
+                        }
+                    }
+                    return BibtexParser.Parse(bibtex_s);
+                }
+            }
+            catch (HttpRequestException) { }
+            return [];
+        }
     }
 
 }

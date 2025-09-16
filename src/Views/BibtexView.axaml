@@ -13,10 +13,10 @@
     <UserControl.Resources>
         <m:BibTypeConverter x:Key="BibTypeConverter"/>
         <m:TextToBackgroundConverter x:Key="TextToBackgroundConverter"/>
-        <m:StringSelectorConverter x:Key="StringSelectorConverter"/>
         <m:WarningToBrushConverter x:Key="WarningToBrushConverter"/>
-        <m:EntryTypeToVisibleConverter x:Key="EntryTypeToVisibleConverter"/>
-    </UserControl.Resources>
+		<m:EntryTypeToVisibleConverter x:Key="EntryTypeToVisibleConverter"/>
+		<m:MultiStringConverter x:Key="MultiStringConverter"/>
+	</UserControl.Resources>
 
     <UserControl.Styles>
         <Style Selector="Button">
@@ -51,7 +51,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="0" MaxWidth="0" MinWidth="0"/>
+			<ColumnDefinition Width="0" MaxWidth="0" MinWidth="0"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -105,8 +105,7 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Width="Auto" CanUserResize="False">
-                        <DataGridTemplateColumn.Header>Entry Type</DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn Header="Entry Type" Width="Auto" CanUserResize="False">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate x:DataType="m:BibtexEntry">
                                 <Border Margin="0 4" HorizontalAlignment="Stretch" CornerRadius="12"
@@ -117,16 +116,36 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTextColumn Header="Author/Editor"
-                                        Binding="{CompiledBinding Author, Converter={StaticResource StringSelectorConverter},
-                                        ConverterParameter={CompiledBinding Editor}, Mode=OneWay}"
-                                        x:DataType="m:BibtexEntry" Width="1*"/>
+					<DataGridTemplateColumn Header="Author/Editor" Width="1*">
+						<DataGridTemplateColumn.CellTemplate>
+							<DataTemplate x:DataType="m:BibtexEntry">
+								<TextBlock>
+									<TextBlock.Text>
+										<MultiBinding Converter="{StaticResource MultiStringConverter}" Mode="OneWay">
+											<Binding Path="Author"/>
+											<Binding Path="Editor"/>
+										</MultiBinding>
+									</TextBlock.Text>
+								</TextBlock>
+							</DataTemplate>
+						</DataGridTemplateColumn.CellTemplate>
+					</DataGridTemplateColumn>
                     <DataGridTextColumn Header="Title" Binding="{CompiledBinding Title}"
                                         x:DataType="m:BibtexEntry" Width="3*"/>
-                    <DataGridTextColumn Header="Journal/Booktitle"
-                                        Binding="{CompiledBinding Journal, Converter={StaticResource StringSelectorConverter},
-                                        ConverterParameter={CompiledBinding Booktitle}, Mode=OneWay}"
-                                        x:DataType="m:BibtexEntry" Width="1*"/>
+					<DataGridTemplateColumn Header="Journal/Booktitle" Width="1*">
+						<DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate x:DataType="m:BibtexEntry">
+								<TextBlock>
+									<TextBlock.Text>
+										<MultiBinding Converter="{StaticResource MultiStringConverter}" Mode="OneWay">
+											<Binding Path="Journal"/>
+											<Binding Path="Booktitle"/>
+										</MultiBinding>
+									</TextBlock.Text>
+								</TextBlock>
+							</DataTemplate>
+						</DataGridTemplateColumn.CellTemplate>
+					</DataGridTemplateColumn>
                     <DataGridTextColumn Header="Year" Binding="{CompiledBinding Year}"
                                         x:DataType="m:BibtexEntry" Width="Auto"
                                         CanUserResize="False"/>
@@ -310,7 +329,7 @@
                                 <TextBox Watermark="Note" Text="{CompiledBinding ShowingEntry.Note}"/>
                             </StackPanel>
                         </Expander>
-
+                        
                         <Expander Header="Source Fields" IsExpanded="True">
                             <Expander.Styles>
                                 <Style Selector="TextBox">
@@ -318,16 +337,20 @@
                                 </Style>
                             </Expander.Styles>
                             <StackPanel>
+								<StackPanel Orientation="Horizontal" Margin="2"
+									        HorizontalAlignment="Center">
+									<Button Command="{CompiledBinding GetDblpFromDoiCommand}"
+											CommandParameter="{CompiledBinding $parent[Window]}">
+										<Viewbox Margin="2">
+											<Svg Path="/Assets/dblp.svg"/>
+										</Viewbox>
+									</Button>
+								</StackPanel>
                                 <Grid ColumnDefinitions="*,Auto">
                                     <TextBox Watermark="DOI" Text="{CompiledBinding ShowingEntry.DOI}"/>
 									<StackPanel Orientation="Horizontal" Grid.Column="1">
 										<Button>
 											<Path Data="{StaticResource ImportPath}"/>
-										</Button>
-										<Button Command="{CompiledBinding GetDblpFromDoiCommand}">
-											<Viewbox Margin="2">
-												<Svg Path="/Assets/dblp.svg"/>
-											</Viewbox>
 										</Button>
 										<Button Command="{CompiledBinding ToShowingLinkCommand}"
 												CommandParameter="DOI">

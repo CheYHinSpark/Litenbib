@@ -487,7 +487,9 @@
 	</ControlTheme>
 
 	<ControlTheme x:Key="{x:Type RadioButton}" TargetType="RadioButton">
-        <Setter Property="Background" Value="{DynamicResource MainBackground}"/>
+		<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+		<Setter Property="VerticalContentAlignment" Value="Stretch"/>
+		<Setter Property="Background" Value="{DynamicResource MainBackground}"/>
         <Setter Property="Foreground" Value="{DynamicResource MainForeground}"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="BorderBrush" Value="{DynamicResource MainBorder}"/>
@@ -507,8 +509,8 @@
                                       Foreground="{TemplateBinding Foreground}"
                                       Padding="{TemplateBinding Padding}"
                                       RecognizesAccessKey="True"
-                                      HorizontalAlignment="Stretch"
-                                      VerticalAlignment="Stretch"
+                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                       HorizontalContentAlignment="Center"
                                       VerticalContentAlignment="Center" />
                 </Panel>

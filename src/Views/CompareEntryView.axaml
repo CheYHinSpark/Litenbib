@@ -1,0 +1,54 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:Litenbib.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="600"
+        x:Class="Litenbib.Views.CompareEntryView"
+        x:DataType="vm:CompareEntryViewModel"
+        WindowStartupLocation="CenterScreen"
+        Title="CompareEntryView">
+    <Window.Styles>
+        <Style Selector="RadioButton">
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="VerticalContentAlignment" Value="Top"/>
+            <Setter Property="Margin" Value="8 2"/>
+            <Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter">
+                <Setter Property="TextWrapping" Value="Wrap"/>
+            </Style>
+        </Style>
+        <Style Selector="Button[Tag=center]">
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="8 2"/>
+        </Style>
+    </Window.Styles>
+    <Grid RowDefinitions="Auto,Auto,*,Auto" Grid.IsSharedSizeScope="True">
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Name="MinButton" Click="TitleButton_Click" Classes="window">
+                <Path Data="{StaticResource -Path}" StrokeThickness="1"
+                      Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+            </Button>
+            <Button Name="CloseButton" Click="TitleButton_Click" Classes="warning window">
+                <Path Data="{StaticResource xPath}" StrokeThickness="1"
+                      Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+            </Button>
+        </StackPanel>
+
+		<Grid x:Name="HeaderGrid" Margin="8 4" Grid.Row="1"/>
+        
+        <ScrollViewer Grid.Row="2" Margin="4">
+            <Grid x:Name="MainGrid" Margin="4">
+                
+            </Grid>
+        </ScrollViewer>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right"
+                    Margin=" 8 8">
+			<Button Content="Cancel" Width="64"
+					Click="CancelButton_Click"/>
+			<Button Content="Merge" Width="64"
+					Command="{CompiledBinding MergeCommand}"
+					CommandParameter="{CompiledBinding $parent[Window]}"/>
+        </StackPanel>
+    </Grid>
+</Window>

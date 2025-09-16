@@ -15,9 +15,9 @@ public partial class AddEntryWindow : StyledWindow
         this.DataContext = new AddEntryViewModel();
     }
 
-    private void AddButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void AddButton_Click(object? sender, RoutedEventArgs e)
     { this.Close(true); }
 
-    private void CancelButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void CancelButton_Click(object? sender, RoutedEventArgs e)
     { this.Close(false); }
 }

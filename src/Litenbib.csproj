@@ -61,5 +61,8 @@
     <Compile Update="Views\BibtexView.axaml.cs">
       <DependentUpon>BibtexView.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\CompareEntryView.axaml.cs">
+      <DependentUpon>CompareEntryView.axaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>
