@@ -169,6 +169,7 @@ namespace Litenbib.ViewModels
             _holdShowingEntry = null!;
             UndoRedoManager = new();
             FilterMode = filterMode;
+            CheckErrors();
         }
 
         public async Task AddBibtexEntry(Window window)
@@ -189,6 +190,7 @@ namespace Litenbib.ViewModels
                 {
                     index_entries.Add((c, entry));
                     BibtexEntries.Add(entry);
+                    entry.UndoRedoPropertyChanged += OnEntryPropertyChanged;
                     c++;
                 }
                 UndoRedoManager.AddAction(new AddEntriesAction(BibtexEntries, index_entries));
@@ -307,6 +309,7 @@ namespace Litenbib.ViewModels
             OnPropertyChanged(nameof(Edited));
             CheckErrors();
         }
+
         private void SetIsTailSelected()
         {
             if (UndoRedoManager.NewEditedBox is TextBox tb)
@@ -516,31 +519,15 @@ namespace Litenbib.ViewModels
             if (result == true)
             {
                 if (dialog.DataContext is not CompareEntryViewModel cevm) { return; }
-                ShowingEntry.CopyFromBibtex(cevm.MergedEntry);
+                int i = BibtexEntries.IndexOf(ShowingEntry);
+                var oldEntry = ShowingEntry;
+                BibtexEntries.Insert(i, cevm.MergedEntry);
+                cevm.MergedEntry.UndoRedoPropertyChanged += OnEntryPropertyChanged;
+                BibtexEntries.Remove(oldEntry);
+                UndoRedoManager.AddAction(new ReplaceEntryAction(BibtexEntries, i, oldEntry, cevm.MergedEntry));
+                ShowingEntry = cevm.MergedEntry;
+                NotifyCanUndoRedo();
             }
-
-
-            //AddEntryWindow dialog = new();
-
-            //// 显示对话框并等待结果 (ShowDialog 需要传入父窗口引用)
-            //var result = await dialog.ShowDialog<bool>(window); // 等待对话框关闭并获取 DialogResult
-
-            //if (result == true) // 如果用户点击了 OK
-            //{
-            //    if (dialog.DataContext is not AddEntryViewModel aevm) { return; }
-            //    // 通过对话框的公共属性获取返回值
-            //    string bibtex = aevm.BibtexText;
-            //    List<(int, BibtexEntry)> index_entries = [];
-            //    int c = BibtexEntries.Count;
-            //    foreach (BibtexEntry entry in BibtexParser.Parse(bibtex))
-            //    {
-            //        index_entries.Add((c, entry));
-            //        BibtexEntries.Add(entry);
-            //        c++;
-            //    }
-            //    UndoRedoManager.AddAction(new AddEntriesAction(BibtexEntries, index_entries));
-            //    NotifyCanUndoRedo();
-            //}
         }
         #endregion
     }

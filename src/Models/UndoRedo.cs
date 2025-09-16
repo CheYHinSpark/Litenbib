@@ -156,4 +156,22 @@ namespace Litenbib.Models
         public override void Redo()
         { _holder.RemoveRange(_index_entries.Select(t => t.Item2)); }
     }
+
+    public class ReplaceEntryAction(ObservableRangeCollection<BibtexEntry> holder, int index, BibtexEntry oldEntry, BibtexEntry newEntry) : IUndoableAction
+    {
+        private readonly ObservableRangeCollection<BibtexEntry> _holder = holder;
+        private readonly int _index = index;
+        private readonly BibtexEntry _oldEntry = oldEntry;
+        private readonly BibtexEntry _newEntry = newEntry;
+        public override void Undo()
+        {
+            _holder.Remove(_newEntry);
+            _holder.Insert(_index, _oldEntry);
+        }
+        public override void Redo()
+        {
+            _holder.Remove(_oldEntry);
+            _holder.Insert(_index, _newEntry);
+        }
+    }
 }

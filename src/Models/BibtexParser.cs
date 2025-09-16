@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Litenbib.Models
 {
-    internal class BibtexParser
+    internal partial class BibtexParser
     {
         // 解析BibTeX字符串，返回条目列表
         public static List<BibtexEntry> Parse(string bibTeXText)
@@ -16,8 +16,7 @@ namespace Litenbib.Models
             bibTeXText = RemoveComments(bibTeXText);
 
             // 查找所有条目
-            var entryMatches = Regex.Matches(bibTeXText,
-                @"@(\w+)\s*{\s*([^,]+)\s*,", RegexOptions.IgnoreCase);
+            var entryMatches = BibtexEntryRegex().Matches(bibTeXText);
 
             foreach (Match entryMatch in entryMatches)
             {
@@ -37,7 +36,7 @@ namespace Litenbib.Models
                 BibtexEntry entry = new(entryType, citationKey);
 
                 // 解析字段
-                ParseTags(entryContent, entry);
+                ParseFields(entryContent, entry);
 
                 entry.UpdateBibtex(isSilent: true);
 
@@ -53,8 +52,7 @@ namespace Litenbib.Models
             bibTeXText = RemoveComments(bibTeXText);
 
             // 查找所有条目
-            var entryMatch = Regex.Match(bibTeXText,
-                @"@(\w*)\s*{\s*([^,]*)\s*,", RegexOptions.IgnoreCase);
+            var entryMatch = BibtexEntryRegex().Match(bibTeXText);
 
             string entryType = entryMatch.Groups[1].Value;
             string citationKey = entryMatch.Groups[2].Value.Trim();
@@ -72,7 +70,7 @@ namespace Litenbib.Models
             BibtexEntry entry = new(entryType, citationKey);
 
             // 解析字段
-            if (ParseTagsStrict(entryContent, entry))
+            if (ParseFieldsStrict(entryContent, entry))
             { return entry; }
             else
             { return null; }
@@ -82,7 +80,7 @@ namespace Litenbib.Models
         private static string RemoveComments(string text)
         {
             // 移除行内注释
-            return Regex.Replace(text, @"%.*?$", "", RegexOptions.Multiline);
+            return CommentRegex().Replace(text, "");
         }
 
         // 找到匹配的右大括号
@@ -113,17 +111,15 @@ namespace Litenbib.Models
         }
 
         // 解析字段
-        private static void ParseTags(string content, BibtexEntry entry)
+        private static void ParseFields(string content, BibtexEntry entry)
         {
             // 匹配字段: 字段名 = {值} 或 字段名 = "值" 或 字段名 = 值
-            var fieldMatches = Regex.Matches(content,
-                @"(\w+)\s*=\s*({(?:[^{}]|(?<c>{)|(?<-c>}))*(?(c)(?!))}|""[^""]*""|[^,}]+)",
-                RegexOptions.IgnoreCase);
+            var fieldMatches = FieldRegex().Matches(content);
 
             foreach (Match match in fieldMatches)
             {
                 string fieldName = match.Groups[1].Value.Trim().ToLower();
-                string fieldValue = match.Groups[2].Value.Trim();
+                string fieldValue = StringCleaner.CleanStringWithRegex(match.Groups[2].Value.Trim());
 
                 // 清理字段值（移除大括号和引号）
                 if (fieldValue.StartsWith('{') && fieldValue.EndsWith('}'))
@@ -137,17 +133,15 @@ namespace Litenbib.Models
 
 
         // 解析字段
-        private static bool ParseTagsStrict(string content, BibtexEntry entry)
+        private static bool ParseFieldsStrict(string content, BibtexEntry entry)
         {
             // 匹配字段: 字段名 = {值} 或 字段名 = "值" 或 字段名 = 值
-            var fieldMatches = Regex.Matches(content,
-                @"(\w+)\s*=\s*({(?:[^{}]|(?<c>{)|(?<-c>}))*(?(c)(?!))}|""[^""]*""|[^,}]+)",
-                RegexOptions.IgnoreCase);
+            var fieldMatches = FieldRegex().Matches(content);
 
             foreach (Match match in fieldMatches)
             {
                 string fieldName = match.Groups[1].Value.Trim().ToLower();
-                string fieldValue = match.Groups[2].Value.Trim();
+                string fieldValue = StringCleaner.CleanStringWithRegex(match.Groups[2].Value.Trim());
 
                 // 清理字段值（移除大括号和引号）
                 if (fieldValue.StartsWith('{'))
@@ -169,5 +163,14 @@ namespace Litenbib.Models
             }
             return true;
         }
+
+        [GeneratedRegex(@"@(\w*)\s*{\s*([^,]*)\s*,", RegexOptions.Compiled)]
+        private static partial Regex BibtexEntryRegex();
+
+        [GeneratedRegex(@"%.*?$", RegexOptions.Multiline)]
+        private static partial Regex CommentRegex();
+
+        [GeneratedRegex(@"(\w+)\s*=\s*({(?:[^{}]|(?<c>{)|(?<-c>}))*(?(c)(?!))}|""[^""]*""|[^,}]+)", RegexOptions.Compiled)]
+        private static partial Regex FieldRegex();
     }
 }

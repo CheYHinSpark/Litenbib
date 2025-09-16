@@ -40,6 +40,7 @@ namespace Litenbib.ViewModels
                 if (string.IsNullOrWhiteSpace(field.Value)) { continue; }
                 MergedEntry.Fields[field.Key] = field.Value;
             }
+            MergedEntry.UpdateBibtex();
             window.Close(true);
         }
     }

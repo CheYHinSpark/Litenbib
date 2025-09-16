@@ -12,7 +12,7 @@
             <ControlTemplate>
                 <Grid RowDefinitions="Auto,Auto,Auto">
                     <ToggleButton x:Name="ExpanderHeader"
-								  Background="{DynamicResource TabBackground}"
+								  Background="{DynamicResource ThemeHighlight}"
                                   MinHeight="{TemplateBinding MinHeight}"
                                   Margin="0 0 0 2"
                                   CornerRadius="{TemplateBinding CornerRadius}"
@@ -43,7 +43,7 @@
                                       Foreground="{TemplateBinding Foreground}"
                                       HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                       VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
-                    <Rectangle Grid.Row="2" Fill="{DynamicResource MainBorder}" Height="1" Margin="0 2 0 0"/>
+                    <Rectangle Grid.Row="2" Fill="{DynamicResource ThemeBorder}" Height="1" Margin="0 2 0 0"/>
                 </Grid>
             </ControlTemplate>
         </Setter>
@@ -55,7 +55,8 @@
 			<Setter Property="RenderTransform" Value="rotate(90deg)"/>
 		</Style>
 		<Style Selector="^:expanded /template/ ToggleButton#ExpanderHeader">
-			<Setter Property="Background" Value="{DynamicResource Background}"/>
+			<Setter Property="Background" Value="{DynamicResource MainBackground}"/>
+			<Setter Property="BorderBrush" Value="{DynamicResource ThemeHighlight}"/>
 		</Style>
     </ControlTheme>
 </ResourceDictionary>

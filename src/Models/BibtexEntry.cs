@@ -1,6 +1,7 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
+using CommunityToolkit.Mvvm.Input;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Litenbib.Models
 {
-    public class BibtexEntry(string entryType = "", string citationKey = ""): INotifyPropertyChanged
+    public partial class BibtexEntry(string entryType = "", string citationKey = "") : INotifyPropertyChanged
     {
         private string entryType = entryType;
         private string citationKey = citationKey;
@@ -133,7 +134,7 @@ namespace Litenbib.Models
                     {
                         if (string.IsNullOrWhiteSpace(v))
                         { Fields.Remove(propertyName.ToLower()); }
-                        else{ Fields[propertyName.ToLower()] = v; }
+                        else { Fields[propertyName.ToLower()] = v; }
                     }
                     break;
             }
@@ -147,12 +148,11 @@ namespace Litenbib.Models
             UndoRedoPropertyChanged?.Invoke(this, new PropertyChangedEventArgsEx(propertyName, oldValue, newValue));
             if (propertyName != nameof(BibTeX)) { UpdateBibtex(); }
             Debug.WriteLine("Changing " + propertyName);
-            Debug.WriteLine(BibTeX);
         }
 
         public static BibtexEntry FromDOI(string doi)
         {
-            BibtexEntry entry = new("" ,doi);
+            BibtexEntry entry = new("", doi);
             entry.Fields["doi"] = doi;
             // TODO: 解析DOI
             return entry;
@@ -220,6 +220,42 @@ namespace Litenbib.Models
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
                 }
             }
+        }
+
+        [RelayCommand]
+        private void GenerateCitationKey()
+        {
+            Debug.WriteLine("Generating Citation Key");
+            string newKey = string.Empty;
+            if (!string.IsNullOrWhiteSpace(Author))
+            {
+                var first_author = Author.Split(" and ")[0];
+                string family_name = string.Empty;
+                string[]? given_names;
+                if (first_author.Contains(','))
+                {
+                    var parts = first_author.Split(',');
+                    family_name = parts[0].Trim();
+                    given_names = parts[1].Trim().Split(' ');
+                }
+                else
+                {
+                    given_names = first_author.Split(' ');
+                    family_name = given_names[^1];
+                    given_names = given_names[..^1];
+                }
+                newKey += family_name;
+                foreach (var name in given_names)
+                {
+                    if (!string.IsNullOrWhiteSpace(name))
+                    { newKey += name[0]; }
+                }
+            }
+            if (!string.IsNullOrWhiteSpace(Year))
+            { newKey += '_' + Year; }
+
+            if (string.IsNullOrWhiteSpace(newKey)) { return; }
+            CitationKey = newKey;
         }
     }
 }

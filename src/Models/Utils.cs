@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Litenbib.Models
@@ -75,6 +76,18 @@ namespace Litenbib.Models
         {
 
         }
+    }
+
+    public static partial class StringCleaner
+    {
+        // 预编译正则表达式以获得最佳性能
+        private static readonly Regex _regex = ClearRegex();
+
+        public static string CleanStringWithRegex(string text)
+        { return string.IsNullOrEmpty(text) ? text : _regex.Replace(text, " ").Trim(); }
+
+        [GeneratedRegex(@"[\r\n\s]+", RegexOptions.Compiled)]
+        private static partial Regex ClearRegex();
     }
 
     internal static class UriProcessor

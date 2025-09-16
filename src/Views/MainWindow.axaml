@@ -124,31 +124,40 @@
             </StackPanel>
 
             <!--tool-->
-            <Grid Grid.Row="1" Height="{StaticResource TitleBarHeight}"
-                  Opacity="{Binding ShowToolBar}">
-                <StackPanel Orientation="Horizontal" Margin="4 0">
-                    <Button Width="28" Height="28"
-                            Command="{CompiledBinding SelectedFile.UndoBibtexCommand}">
-                        <Path Data="{StaticResource UndoPath}" StrokeThickness="1"
-                              Stroke="{CompiledBinding $parent[Button].Foreground}"/>
-                    </Button>
-                    <Button Width="28" Height="28"
-                            Command="{CompiledBinding SelectedFile.RedoBibtexCommand}">
-                        <Path Data="{StaticResource RedoPath}" StrokeThickness="1"
-                              Stroke="{CompiledBinding $parent[Button].Foreground}"/>
-                    </Button>
-                    <Button Width="28" Height="28"
-                            Command="{CompiledBinding SelectedFile.DeleteBibtexCommand}">
-                        <Path Data="{StaticResource DeletePath}"
-                              Fill="{CompiledBinding $parent[Button].Foreground}"/>
-                    </Button>
-                    <Button Width="28" Height="28"
-                            Command="{CompiledBinding SelectedFile.SaveBibtexCommand}">
-                        <Path Data="{StaticResource SavePath}"
-                              Fill="{CompiledBinding $parent[Button].Foreground}"/>
-                    </Button>
-                </StackPanel>
-            </Grid>
+			<Grid Grid.Row="1" Height="{StaticResource TitleBarHeight}"
+				Opacity="{Binding ShowToolBar}">
+				<Grid.Styles>
+					<Style Selector="Button">
+						<Setter Property="Background" Value="{DynamicResource InputBackground}"/>
+					</Style>
+				</Grid.Styles>
+				<Border Margin="8 0" Background="{DynamicResource InputBackground}"
+						HorizontalAlignment="Left" VerticalAlignment="Center"
+						CornerRadius="8">
+					<StackPanel Orientation="Horizontal" Margin="6 2">
+						<Button Width="28" Height="28"
+								Command="{CompiledBinding SelectedFile.UndoBibtexCommand}">
+							<Path Data="{StaticResource UndoPath}" StrokeThickness="1"
+								  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+						</Button>
+						<Button Width="28" Height="28"
+								Command="{CompiledBinding SelectedFile.RedoBibtexCommand}">
+							<Path Data="{StaticResource RedoPath}" StrokeThickness="1"
+								  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+						</Button>
+						<Button Width="28" Height="28"
+								Command="{CompiledBinding SelectedFile.DeleteBibtexCommand}">
+							<Path Data="{StaticResource DeletePath}"
+								  Fill="{CompiledBinding $parent[Button].Foreground}"/>
+						</Button>
+						<Button Width="28" Height="28"
+								Command="{CompiledBinding SelectedFile.SaveBibtexCommand}">
+							<Path Data="{StaticResource SavePath}" StrokeThickness="1"
+								  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+						</Button>
+					</StackPanel>
+				</Border>
+			</Grid>
         </Grid>
         
         

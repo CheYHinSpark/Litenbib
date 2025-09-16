@@ -10,7 +10,8 @@
         Title="CompareEntryView">
     <Window.Styles>
         <Style Selector="RadioButton">
-            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+			<Setter Property="Background" Value="{DynamicResource InputBackground}"/>
+			<Setter Property="HorizontalContentAlignment" Value="Left"/>
             <Setter Property="VerticalContentAlignment" Value="Top"/>
             <Setter Property="Margin" Value="8 2"/>
             <Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter">
@@ -18,9 +19,14 @@
             </Style>
         </Style>
         <Style Selector="Button[Tag=center]">
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+			<Setter Property="Background" Value="{DynamicResource InputBackground}"/>
+			<Setter Property="HorizontalContentAlignment" Value="Center"/>
             <Setter Property="Margin" Value="8 2"/>
         </Style>
+		<Style Selector="TextBlock">
+			<Setter Property="VerticalAlignment" Value="Center"/>
+			<Setter Property="HorizontalAlignment" Value="Right"/>
+		</Style>
     </Window.Styles>
     <Grid RowDefinitions="Auto,Auto,*,Auto" Grid.IsSharedSizeScope="True">
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
@@ -37,9 +43,7 @@
 		<Grid x:Name="HeaderGrid" Margin="8 4" Grid.Row="1"/>
         
         <ScrollViewer Grid.Row="2" Margin="4">
-            <Grid x:Name="MainGrid" Margin="4">
-                
-            </Grid>
+            <Grid x:Name="MainGrid" Margin="4"/>
         </ScrollViewer>
 
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right"

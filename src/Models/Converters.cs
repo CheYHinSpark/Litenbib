@@ -52,15 +52,10 @@ namespace Litenbib.Models
     public class DictionaryContentConverter : IValueConverter
     {
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
-        {
-            return AvaloniaProperty.UnsetValue;
-        }
+        { return AvaloniaProperty.UnsetValue; }
 
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
-        {
-            if (value is not bool b) { return ("", ""); }
-            return b ? parameter : AvaloniaProperty.UnsetValue;
-        }
+        { return (value is bool b && b) ? parameter : AvaloniaProperty.UnsetValue; }
     }
 
     public class MultiStringConverter : IMultiValueConverter
