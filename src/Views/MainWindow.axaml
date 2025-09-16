@@ -124,35 +124,43 @@
             </StackPanel>
 
             <!--tool-->
-			<Grid Grid.Row="1" Height="{StaticResource TitleBarHeight}"
-				Opacity="{Binding ShowToolBar}">
+			<Grid Grid.Row="1" Height="{StaticResource TitleBarHeight}">
+
+				<!--Opacity="{Binding ShowToolBar}"-->
 				<Grid.Styles>
 					<Style Selector="Button">
 						<Setter Property="Background" Value="{DynamicResource InputBackground}"/>
+						<Setter Property="Width" Value="28"/>
+						<Setter Property="Height" Value="28"/>
 					</Style>
 				</Grid.Styles>
 				<Border Margin="8 0" Background="{DynamicResource InputBackground}"
 						HorizontalAlignment="Left" VerticalAlignment="Center"
 						CornerRadius="8">
 					<StackPanel Orientation="Horizontal" Margin="6 2">
-						<Button Width="28" Height="28"
-								Command="{CompiledBinding SelectedFile.UndoBibtexCommand}">
+						<Button Command="{CompiledBinding SelectedFile.UndoBibtexCommand}">
 							<Path Data="{StaticResource UndoPath}" StrokeThickness="1"
 								  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
 						</Button>
-						<Button Width="28" Height="28"
-								Command="{CompiledBinding SelectedFile.RedoBibtexCommand}">
+						<Button Command="{CompiledBinding SelectedFile.RedoBibtexCommand}">
 							<Path Data="{StaticResource RedoPath}" StrokeThickness="1"
 								  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
 						</Button>
-						<Button Width="28" Height="28"
-								Command="{CompiledBinding SelectedFile.DeleteBibtexCommand}">
+						<Button Command="{CompiledBinding SelectedFile.DeleteBibtexCommand}">
 							<Path Data="{StaticResource DeletePath}"
 								  Fill="{CompiledBinding $parent[Button].Foreground}"/>
 						</Button>
-						<Button Width="28" Height="28"
-								Command="{CompiledBinding SelectedFile.SaveBibtexCommand}">
+						<Button Command="{CompiledBinding SelectedFile.SaveBibtexCommand}">
 							<Path Data="{StaticResource SavePath}" StrokeThickness="1"
+								  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+						</Button>
+						<Button Command="{CompiledBinding AddBibtexEntryCommand}"
+								CommandParameter="{CompiledBinding $parent[Window]}">
+							<Path Data="{StaticResource AddPath}"
+								  Fill="{CompiledBinding $parent[Button].Foreground}"/>
+						</Button>
+						<Button>
+							<Path Data="{StaticResource MergePath}" StrokeThickness="1"
 								  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
 						</Button>
 					</StackPanel>
