@@ -54,6 +54,23 @@ namespace Litenbib.ViewModels
             BibtexViewers = [];
         }
 
+        public async Task CopyBibtexEntries(IEnumerable<BibtexEntry> list)
+        {
+            await Task.Run(() =>
+            {
+                CopiedBibtex = [];
+                foreach (var item in list)
+                {
+                    if (item is BibtexEntry entry)
+                    {
+                        BibtexEntry e = new();
+                        e.CopyFromBibtex(entry);
+                        CopiedBibtex.Add(e);
+                    }
+                }
+            });
+        }
+
         #region Command
         [RelayCommand]
         private async Task NewFile(Window? window)
@@ -141,13 +158,11 @@ namespace Litenbib.ViewModels
         [RelayCommand(CanExecute = nameof(CanAddBibtexEntry))]
         private async Task AddBibtexEntry(Window window)
         {
-            if (SelectedFile == null)
+            if (SelectedFile != null)
             {
-                Debug.WriteLine("No opened bib file");
-                return;
+                // 创建对话框实例，并传入参数
+                await SelectedFile.AddBibtexEntry(window);
             }
-            // 创建对话框实例，并传入参数
-            await SelectedFile.AddBibtexEntry(window);
         }
 
         private bool CanAddBibtexEntry() => SelectedFile != null;

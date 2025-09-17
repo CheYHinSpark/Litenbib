@@ -14,9 +14,9 @@
         <m:BibTypeConverter x:Key="BibTypeConverter"/>
         <m:TextToBackgroundConverter x:Key="TextToBackgroundConverter"/>
         <m:WarningToBrushConverter x:Key="WarningToBrushConverter"/>
-		<m:EntryTypeToVisibleConverter x:Key="EntryTypeToVisibleConverter"/>
-		<m:MultiStringConverter x:Key="MultiStringConverter"/>
-	</UserControl.Resources>
+        <m:EntryTypeToVisibleConverter x:Key="EntryTypeToVisibleConverter"/>
+        <m:MultiStringConverter x:Key="MultiStringConverter"/>
+    </UserControl.Resources>
 
     <UserControl.Styles>
         <Style Selector="Button">
@@ -51,7 +51,8 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
-			<ColumnDefinition Width="0" MaxWidth="0" MinWidth="0"/>
+            <ColumnDefinition Width="300" MaxWidth="300" MinWidth="300"/>
+            <ColumnDefinition Width="0" MaxWidth="0" MinWidth="0"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -68,22 +69,22 @@
                       SelectionChanged="DataGrid_SelectionChanged"
                       DragDrop.AllowDrop="True">
                 <DataGrid.Columns>
-					<DataGridTemplateColumn Header="File" Width="Auto" CanUserResize="False" CanUserSort="False">
-						<DataGridTemplateColumn.CellTemplate>
-							<DataTemplate x:DataType="m:BibtexEntry">
-								<Button Command="{CompiledBinding #BibtexViewRoot.DataContext.ToFileCommand}"
+                    <DataGridTemplateColumn Header="File" Width="Auto" CanUserResize="False" CanUserSort="False">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate x:DataType="m:BibtexEntry">
+                                <Button Command="{CompiledBinding #BibtexViewRoot.DataContext.ToFileCommand}"
                                         CommandParameter="{CompiledBinding .}"
                                         Classes="link_in_row"
-										IsVisible="{CompiledBinding File, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
-									<Viewbox Width="14" Height="14">
-										<Path Data="{DynamicResource FilePath}" StrokeThickness="1"
+                                        IsVisible="{CompiledBinding File, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                                    <Viewbox Width="14" Height="14">
+                                        <Path Data="{DynamicResource FilePath}" StrokeThickness="1"
                                               Stretch="UniformToFill" Margin="1"
                                               Stroke="{CompiledBinding $parent[Button].Foreground}"/>
-									</Viewbox>
-								</Button>
-							</DataTemplate>
-						</DataGridTemplateColumn.CellTemplate>
-					</DataGridTemplateColumn>
+                                    </Viewbox>
+                                </Button>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                     <DataGridTemplateColumn Header="Link" Width="Auto" CanUserResize="False" CanUserSort="False">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate x:DataType="m:BibtexEntry">
@@ -116,36 +117,36 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-					<DataGridTemplateColumn Header="Author/Editor" Width="1*">
-						<DataGridTemplateColumn.CellTemplate>
-							<DataTemplate x:DataType="m:BibtexEntry">
-								<TextBlock>
-									<TextBlock.Text>
-										<MultiBinding Converter="{StaticResource MultiStringConverter}" Mode="OneWay">
-											<Binding Path="Author"/>
-											<Binding Path="Editor"/>
-										</MultiBinding>
-									</TextBlock.Text>
-								</TextBlock>
-							</DataTemplate>
-						</DataGridTemplateColumn.CellTemplate>
-					</DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Author/Editor" Width="1*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate x:DataType="m:BibtexEntry">
+                                <TextBlock>
+                                    <TextBlock.Text>
+                                        <MultiBinding Converter="{StaticResource MultiStringConverter}" Mode="OneWay">
+                                            <Binding Path="Author"/>
+                                            <Binding Path="Editor"/>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                     <DataGridTextColumn Header="Title" Binding="{CompiledBinding Title}"
                                         x:DataType="m:BibtexEntry" Width="3*"/>
-					<DataGridTemplateColumn Header="Journal/Booktitle" Width="1*">
-						<DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn Header="Journal/Booktitle" Width="1*">
+                        <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate x:DataType="m:BibtexEntry">
-								<TextBlock>
-									<TextBlock.Text>
-										<MultiBinding Converter="{StaticResource MultiStringConverter}" Mode="OneWay">
-											<Binding Path="Journal"/>
-											<Binding Path="Booktitle"/>
-										</MultiBinding>
-									</TextBlock.Text>
-								</TextBlock>
-							</DataTemplate>
-						</DataGridTemplateColumn.CellTemplate>
-					</DataGridTemplateColumn>
+                                <TextBlock>
+                                    <TextBlock.Text>
+                                        <MultiBinding Converter="{StaticResource MultiStringConverter}" Mode="OneWay">
+                                            <Binding Path="Journal"/>
+                                            <Binding Path="Booktitle"/>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                     <DataGridTextColumn Header="Year" Binding="{CompiledBinding Year}"
                                         x:DataType="m:BibtexEntry" Width="Auto"
                                         CanUserResize="False"/>
@@ -165,7 +166,7 @@
                            IsOpenEx="{CompiledBinding #WarningToggle.IsChecked, Mode=TwoWay}"
                            PlacementTarget="WarningToggle"
                            InheritsTransform="True">
-                    <ListBox ItemsSource="{CompiledBinding WarningErrors}" MaxHeight="400">
+                    <ListBox ItemsSource="{CompiledBinding Warnings}" MaxHeight="400">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Panel>
@@ -191,9 +192,9 @@
         <Border Name="DetailPanel" Background="{DynamicResource MainBackground}" Grid.Column="2">
             <Border.Styles>
                 <Style Selector="TextBlock.right">
-					<Setter Property="Margin" Value="0 0 4 0"/>
-					<Setter Property="HorizontalAlignment" Value="Right"/>
-					<Setter Property="VerticalAlignment" Value="Center"/>
+                    <Setter Property="Margin" Value="0 0 4 0"/>
+                    <Setter Property="HorizontalAlignment" Value="Right"/>
+                    <Setter Property="VerticalAlignment" Value="Center"/>
                 </Style>
             </Border.Styles>
             <Grid RowDefinitions="Auto,*">
@@ -222,16 +223,26 @@
                         </StackPanel>
                     </Grid>
 
-                    <TextBlock Text="CitationKey" Classes="right" Grid.Row="1"/>
-					<Grid ColumnDefinitions="*,Auto" Grid.Row="1" Grid.Column="1">
-						<TextBox Text="{CompiledBinding ShowingEntry.CitationKey}"/>
-						<Button Grid.Column="1"
-								Command="{CompiledBinding ShowingEntry.GenerateCitationKeyCommand}">
-							<Path Data="{StaticResource KeyPath}" StrokeThickness="0"
-								  Fill="{CompiledBinding $parent[Button].Foreground}"/>
-						</Button>
-					</Grid>
-				</Grid>
+                    <Button Grid.Row="1" Width="100" HorizontalContentAlignment="Stretch" Padding="0"
+                            Command="{CompiledBinding CopyCitationKeyCommand}"
+                            CommandParameter="{CompiledBinding $parent[Window]}">
+                        <Grid ColumnDefinitions="32,*">
+                            <Path Data="{StaticResource CopyPath}" StrokeThickness="1"
+                                  Stroke="{CompiledBinding $parent[Button].Foreground}"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" Text="Citekey" Grid.Row="1" Classes="right"/>
+                        </Grid>
+                    </Button>
+                    <Grid ColumnDefinitions="*,Auto" Grid.Row="1" Grid.Column="1">
+                        <TextBox Text="{CompiledBinding ShowingEntry.CitationKey}"/>
+                        <Button Grid.Column="1"
+                                Command="{CompiledBinding ShowingEntry.GenerateCitationKeyCommand}">
+                            <Path Data="{StaticResource KeyPath}" StrokeThickness="0"
+                                  Fill="{CompiledBinding $parent[Button].Foreground}"/>
+                        </Button>
+                    </Grid>
+                </Grid>
                 <!--detailed-->
                 <ScrollViewer Grid.Row="1"
                               IsVisible="{CompiledBinding ShowingEntry,
@@ -294,14 +305,14 @@
 
                                 <Grid ColumnDefinitions="*,*">
                                     <TextBox Watermark="Pages" Text="{CompiledBinding ShowingEntry.Pages}"/>
-									<TextBox Grid.Column="1" Watermark="Month" Text="{CompiledBinding ShowingEntry.Month}"/>
+                                    <TextBox Grid.Column="1" Watermark="Month" Text="{CompiledBinding ShowingEntry.Month}"/>
                                 </Grid>
                                 <Grid ColumnDefinitions="*,*"
                                       IsVisible="{CompiledBinding ShowingEntry.EntryType,
                                       Converter={StaticResource EntryTypeToVisibleConverter},
                                       ConverterParameter='book,inbook,conference,incollection,inproceedings,manual,proceedings'}">
                                     <TextBox Watermark="Series" Text="{CompiledBinding ShowingEntry.Series}"/>
-									<TextBox Grid.Column="1" Watermark="Edition" Text="{CompiledBinding ShowingEntry.Edition}"/>
+                                    <TextBox Grid.Column="1" Watermark="Edition" Text="{CompiledBinding ShowingEntry.Edition}"/>
                                 </Grid>
                                 
                                 <TextBox Watermark="Howpublished" Text="{CompiledBinding ShowingEntry.Howpublished}"
@@ -331,7 +342,7 @@
                                 
                                 <TextBox Watermark="Publisher" Text="{CompiledBinding ShowingEntry.Publisher}"
                                          IsVisible="{CompiledBinding #r_publisher.IsVisible,
-										 Converter={x:Static BoolConverters.Not}}"/>
+                                         Converter={x:Static BoolConverters.Not}}"/>
                                 
                                 <TextBox Watermark="Note" Text="{CompiledBinding ShowingEntry.Note}"/>
                             </StackPanel>
@@ -344,36 +355,36 @@
                                 </Style>
                             </Expander.Styles>
                             <StackPanel>
-								<StackPanel Orientation="Horizontal" Margin="2"
-									        HorizontalAlignment="Center">
-									<Button Command="{CompiledBinding GetDblpFromDoiCommand}"
-											CommandParameter="{CompiledBinding $parent[Window]}">
-										<Viewbox Margin="2">
-											<Svg Path="/Assets/dblp.svg"/>
-										</Viewbox>
-									</Button>
-								</StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="2"
+                                            HorizontalAlignment="Center">
+                                    <Button Command="{CompiledBinding GetDblpFromDoiCommand}"
+                                            CommandParameter="{CompiledBinding $parent[Window]}">
+                                        <Viewbox Margin="2">
+                                            <Svg Path="/Assets/dblp.svg"/>
+                                        </Viewbox>
+                                    </Button>
+                                </StackPanel>
                                 <Grid ColumnDefinitions="*,Auto">
                                     <TextBox Watermark="DOI" Text="{CompiledBinding ShowingEntry.DOI}"/>
-									<StackPanel Orientation="Horizontal" Grid.Column="1">
-										<Button>
-											<Path Data="{StaticResource ImportPath}"/>
-										</Button>
-										<Button Command="{CompiledBinding ToShowingLinkCommand}"
-												CommandParameter="DOI">
-											<Path Data="{StaticResource ToLinkPath}"/>
-										</Button>
-									</StackPanel>
-								</Grid>
+                                    <StackPanel Orientation="Horizontal" Grid.Column="1">
+                                        <Button>
+                                            <Path Data="{StaticResource ImportPath}"/>
+                                        </Button>
+                                        <Button Command="{CompiledBinding ToShowingLinkCommand}"
+                                                CommandParameter="DOI">
+                                            <Path Data="{StaticResource ToLinkPath}"/>
+                                        </Button>
+                                    </StackPanel>
+                                </Grid>
                                 <Grid ColumnDefinitions="*,Auto">
                                     <TextBox Watermark="Url" Text="{CompiledBinding ShowingEntry.Url}"/>
                                     <Button Grid.Column="1" Command="{CompiledBinding ToShowingLinkCommand}"
-											CommandParameter="Url">
+                                            CommandParameter="Url">
                                         <Path Data="{StaticResource ToLinkPath}"/>
                                     </Button>
                                 </Grid>
-								<TextBox Watermark="Crossref" Text="{CompiledBinding ShowingEntry.Crossref}"/>
-								<TextBox Watermark="File" Text="{CompiledBinding ShowingEntry.File}"/>
+                                <TextBox Watermark="Crossref" Text="{CompiledBinding ShowingEntry.Crossref}"/>
+                                <TextBox Watermark="File" Text="{CompiledBinding ShowingEntry.File}"/>
                                 <TextBox Watermark="ISSN" Text="{CompiledBinding ShowingEntry.ISSN}"/>
                                 <TextBox Watermark="ISBN" Text="{CompiledBinding ShowingEntry.ISBN}"/>
                             </StackPanel>
@@ -386,24 +397,29 @@
                                 </Style>
                             </Expander.Styles>
                             <StackPanel>
-								<TextBox Watermark="Abstract" Text="{CompiledBinding ShowingEntry.Abstract}"/>
-								<TextBox Watermark="Keywords" Text="{CompiledBinding ShowingEntry.Keywords}"/>
-								<TextBox Watermark="Comment" Text="{CompiledBinding ShowingEntry.Comment}"/>
-							</StackPanel>
+                                <TextBox Watermark="Abstract" Text="{CompiledBinding ShowingEntry.Abstract}"/>
+                                <TextBox Watermark="Keywords" Text="{CompiledBinding ShowingEntry.Keywords}"/>
+                                <TextBox Watermark="Comment" Text="{CompiledBinding ShowingEntry.Comment}"/>
+                            </StackPanel>
                         </Expander>
                         
-                        <Grid RowDefinitions="*,*">
+                        <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="100"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <Button HorizontalAlignment="Right" VerticalAlignment="Bottom"
+							<Button Width="100" HorizontalContentAlignment="Stretch" Padding="0"
                                     Command="{CompiledBinding CopyBibtexTextCommand}"
                                     CommandParameter="{CompiledBinding $parent[Window]}">
-                                <Path Data="{StaticResource CopyPath}"/>
-                            </Button>
-                            <TextBlock Text="BibTeX" Classes="right" Grid.Row="1" VerticalAlignment="Top"/>
-                            <TextBox FontFamily="Consolas" Grid.RowSpan="2" Grid.Column="1"
+								<Grid ColumnDefinitions="32,*">
+									<Path Data="{StaticResource CopyPath}" StrokeThickness="1"
+										  Stroke="{CompiledBinding $parent[Button].Foreground}"
+										  HorizontalAlignment="Center"
+										  VerticalAlignment="Center"/>
+									<TextBlock Grid.Column="1" Text="BibTeX" Grid.Row="1" Classes="right"/>
+								</Grid>
+							</Button>
+                            <TextBox FontFamily="Consolas" Grid.Column="1"
                                      Text="{CompiledBinding ShowingEntry.BibTeX}"/>
                         </Grid>
                     </StackPanel>

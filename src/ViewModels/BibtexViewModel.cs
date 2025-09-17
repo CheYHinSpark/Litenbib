@@ -29,17 +29,10 @@ namespace Litenbib.ViewModels
 
         public UndoRedoManager UndoRedoManager { get; set; }
 
-        public ObservableCollection<WarningError> WarningErrors { get; set; }
+        public ObservableCollection<WarningError> Warnings { get; set; }
 
         public string WarningHint
-        {
-            get
-            {
-                if (WarningErrors == null || WarningErrors.Count == 0)
-                { return string.Empty; }
-                return $"{WarningErrors.Count} warnings or errors";
-            }
-        }
+        { get { return Warnings.Count == 0 ? string.Empty : $"{Warnings.Count} warnings or errors"; } }
 
         [ObservableProperty]
         private int _hasError = -1;
@@ -148,10 +141,8 @@ namespace Litenbib.ViewModels
 
         public static ObservableCollection<string> TypeList
         {
-            get => ["Article", "Book", "Booklet", "Conference",
-                "InBook", "InCollection", "InProceedings", "Manual",
-                "MastersThesis", "Misc", "PhdThesis", "Proceedings",
-                "TechReport", "Unpublished"];
+            get => ["Article", "Book", "Booklet", "Conference", "InBook", "InCollection", "InProceedings",
+                "Manual", "MastersThesis", "Misc", "PhdThesis", "Proceedings", "TechReport", "Unpublished"];
         }
 
         public BibtexViewModel(string header, string fullPath, string filecontent, int filterMode = 0)
@@ -159,7 +150,7 @@ namespace Litenbib.ViewModels
             Header = header;
             FullPath = fullPath;
             BibtexEntries = new ObservableRangeCollection<BibtexEntry>(BibtexParser.Parse(filecontent));
-            WarningErrors = null!;
+            Warnings = [];
             foreach (var entry in BibtexEntries)
             { entry.UndoRedoPropertyChanged += OnEntryPropertyChanged; }
             BibtexView = new(BibtexEntries)
@@ -172,16 +163,44 @@ namespace Litenbib.ViewModels
             CheckErrors();
         }
 
+        #region Event
+        private async void OnEntryPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            // 当前观察：在TextBox中操作之后如果鼠标在最后，会先改变NewSelectionStart
+            // 如果不是在最后，会先改变TextBox.Selected，之后才Delay才
+            if (sender is not BibtexEntry item || e.PropertyName == null) { return; }
+            if (e is PropertyChangedEventArgsEx extendedArgs)
+            {
+                // 创建并添加操作到管理器
+                if (isTailSelected)
+                {
+                    UndoRedoManager.AddAction(new EntryChangeAction(item, e.PropertyName,
+                        (string?)extendedArgs.OldValue, (string?)extendedArgs.NewValue,
+                        int.Max(oldSelectionStart, oldSelectionEnd), selectionStart));
+                }
+                else
+                {
+                    int oldEnd = selectionEnd;
+                    await Task.Delay(1);
+                    UndoRedoManager.AddAction(new EntryChangeAction(item, e.PropertyName,
+                        (string?)extendedArgs.OldValue, (string?)extendedArgs.NewValue,
+                        oldEnd, selectionStart));
+                }
+                NotifyCanUndoRedo();
+            }
+        }
+        #endregion Event
+
+        #region Method
         public async Task AddBibtexEntry(Window window)
         {
             AddEntryWindow dialog = new();
 
             // 显示对话框并等待结果 (ShowDialog 需要传入父窗口引用)
             var result = await dialog.ShowDialog<bool>(window); // 等待对话框关闭并获取 DialogResult
-
-            if (result == true) // 如果用户点击了 OK
+            // 如果用户点击了 OK
+            if (result == true && dialog.DataContext is AddEntryViewModel aevm)
             {
-                if (dialog.DataContext is not AddEntryViewModel aevm) { return; }
                 // 通过对话框的公共属性获取返回值
                 string bibtex = aevm.BibtexText;
                 List<(int, BibtexEntry)> index_entries = [];
@@ -200,15 +219,10 @@ namespace Litenbib.ViewModels
 
         private void RefreshFilter()
         {
-            if (string.IsNullOrEmpty(filterText))
+            if (string.IsNullOrWhiteSpace(filterText))
             { filters = []; }
             else
-            {
-                if (filterMode == 2)
-                { filters = [filterText]; }
-                else
-                { filters = filterText.Split(' '); }
-            }
+            { filters = filterMode == 2 ? [filterText] : filterText.Split(' '); }
             BibtexView.Refresh();
         }
 
@@ -226,66 +240,26 @@ namespace Litenbib.ViewModels
             };
             // -1是特殊情形
             if (filterMode == -1)
-            {  return filterText == target_s; }
-            // 或
-            else if (filterMode == 1)
+            { return filterText == target_s; }
+            // 或 且
+            else
             {
+                bool b = filterMode == 1;
                 foreach (string s in filters)
                 {
                     if (!string.IsNullOrEmpty(s) && target_s.Contains(s, StringComparison.OrdinalIgnoreCase))
-                    { return true; }
+                    { return b; }
                 }
-            }
-            // 且
-            else
-            {
-                foreach (string s in filters)
-                {
-                    if (!string.IsNullOrEmpty(s) && !target_s.Contains(s, StringComparison.OrdinalIgnoreCase))
-                    { return false; }
-                }
-                return true;
             }
             return false;
         }
 
-
-        private async void OnEntryPropertyChanged(object? sender, PropertyChangedEventArgs e)
-        {
-            // 当前观察：在TextBox中操作之后如果鼠标在最后，会先改变NewSelectionStart
-            // 如果不是在最后，会先改变TextBox.Selected，之后才Delay才
-            if (sender is not BibtexEntry item || e.PropertyName == null) { return; }
-            if (e is PropertyChangedEventArgsEx extendedArgs)
-            {
-                if (isTailSelected)
-                {
-                    var action = new EntryChangeAction(item, e.PropertyName,
-                        (string?)extendedArgs.OldValue, (string?)extendedArgs.NewValue,
-                        int.Max(oldSelectionStart, oldSelectionEnd), selectionStart);
-                    UndoRedoManager.AddAction(action);
-                }
-                else
-                {
-                    int oldEnd = selectionEnd;
-                    await Task.Delay(1);
-                    // 创建并添加操作到管理器
-                    var action = new EntryChangeAction(item, e.PropertyName,
-                        (string?)extendedArgs.OldValue, (string?)extendedArgs.NewValue,
-                        oldEnd, selectionStart);
-                    UndoRedoManager.AddAction(action);
-                }
-                NotifyCanUndoRedo();
-            }
-        }
-
-        #region Method
-
         private async void CheckErrors()
         {
             var result = await WarningErrorChecker.CheckBibtex(BibtexEntries);
-            WarningErrors = new ObservableCollection<WarningError>(result.Item1);
+            Warnings = new ObservableCollection<WarningError>(result.Item1);
             HasError = result.Item2;
-            OnPropertyChanged(nameof(WarningErrors));
+            OnPropertyChanged(nameof(Warnings));
             OnPropertyChanged(nameof(WarningHint));
         }
 
@@ -320,44 +294,9 @@ namespace Litenbib.ViewModels
                 { isTailSelected = tb.Text.Length == selectionEnd || tb.Text.Length == selectionStart; }
             }
         }
-        #endregion
+        #endregion Method
 
-
-        #region Command
-
-        [RelayCommand(CanExecute = nameof(CanUndo))]
-        private void UndoBibtex()
-        {
-            _suppressShowingEntry = true;
-            UndoRedoManager.Undo();
-            _suppressShowingEntry = false;
-            ShowingEntry = _holdShowingEntry ?? null;
-            NotifyCanUndoRedo();
-        }
-        private bool CanUndo() => UndoRedoManager.CanUndo && !IsFiltering;
-
-        [RelayCommand(CanExecute = nameof(CanRedo))]
-        private void RedoBibtex()
-        {
-            _suppressShowingEntry = true;
-            UndoRedoManager.Redo();
-            _suppressShowingEntry = false;
-            ShowingEntry = _holdShowingEntry ?? null;
-            NotifyCanUndoRedo();
-        }
-        private bool CanRedo() => UndoRedoManager.CanRedo && !IsFiltering;
-
-        [RelayCommand(CanExecute = nameof(CanDelete))]
-        private void DeleteBibtex()
-        { Delete(); }
-        private bool CanDelete() => ShowingEntry != null;
-
-        [RelayCommand(CanExecute = nameof(CanDeleteKey))]
-        private void DeleteBibtexKey()
-        { Delete(); }
-        private bool CanDeleteKey() => ShowingEntry != null
-            && UndoRedoManager.NewEditedBox == null && !IsFiltering;
-
+        #region Non-edit Command
         [RelayCommand(CanExecute = nameof(Edited))]
         private async Task SaveBibtex()
         {
@@ -391,23 +330,55 @@ namespace Litenbib.ViewModels
             if (o is not BibtexEntry entry) { return; }
             string path = entry.File.Replace("\\:", ":");
             // 使用 Regex.Match 查找匹配项
-            Match match = Regex.Match(path, "^:(.+):(.+)$");
+            Match match = FileRegex().Match(path);
             if (match.Success)
             { path = match.Groups[1].Value; }
             UriProcessor.StartProcess(path);
         }
 
         [RelayCommand]
-        private async Task CopyBibtexText(object sender)
+        private void CopyBibtexText(object o)
+        { if (ShowingEntry != null && o is Window w) { w.Clipboard?.SetTextAsync(ShowingEntry.BibTeX); } }
+
+        [RelayCommand]
+        private void CopyCitationKey(object? o)
+        { if (ShowingEntry != null && o is Window w) { w.Clipboard?.SetTextAsync(ShowingEntry.CitationKey); } }
+        #endregion Non-edit Command
+
+        #region Edit Command
+
+        [RelayCommand(CanExecute = nameof(CanUndo))]
+        private void UndoBibtex()
         {
-            if (sender is Control c)
-            {
-                // 通过当前控件获取UI上下文
-                var clipboard = TopLevel.GetTopLevel(c)?.Clipboard;
-                if (clipboard != null && ShowingEntry != null)
-                { await clipboard.SetTextAsync(ShowingEntry.BibTeX); }
-            }
+            _suppressShowingEntry = true;
+            UndoRedoManager.Undo();
+            _suppressShowingEntry = false;
+            ShowingEntry = _holdShowingEntry ?? null;
+            NotifyCanUndoRedo();
         }
+        private bool CanUndo() => UndoRedoManager.CanUndo && !IsFiltering;
+
+        [RelayCommand(CanExecute = nameof(CanRedo))]
+        private void RedoBibtex()
+        {
+            _suppressShowingEntry = true;
+            UndoRedoManager.Redo();
+            _suppressShowingEntry = false;
+            ShowingEntry = _holdShowingEntry ?? null;
+            NotifyCanUndoRedo();
+        }
+        private bool CanRedo() => UndoRedoManager.CanRedo && !IsFiltering;
+
+        [RelayCommand(CanExecute = nameof(CanDelete))]
+        private void DeleteBibtex()
+        { Delete(); }
+        private bool CanDelete() => ShowingEntry != null;
+
+        [RelayCommand(CanExecute = nameof(CanDeleteKey))]
+        private void DeleteBibtexKey()
+        { Delete(); }
+        private bool CanDeleteKey() => ShowingEntry != null
+            && UndoRedoManager.NewEditedBox == null && !IsFiltering;
 
         [RelayCommand]
         private void CheckWarningError(object sender)
@@ -453,40 +424,20 @@ namespace Litenbib.ViewModels
                 ShowingEntry = toRemoved;
             }
             else
-            {
-                ShowingEntry = we.SourceEntries[0];
-            }
+            { ShowingEntry = we.SourceEntries[0]; }
             IsChecking = false;
         }
-
 
         [RelayCommand(CanExecute = nameof(CanCopyPasteBibtex))]
         private async Task CopyBibtex(object? sender)
         {
-            Debug.WriteLine("start copy");
-            if (SelectedIndexItems == null || sender is not MainWindowViewModel mwvm)
-            { return; }
-            await Task.Run(() =>
-            {
-                var list = SelectedIndexItems.Select(t => t.Item2);
-                mwvm.CopiedBibtex = [];
-                foreach (var item in list)
-                {
-                    if (item is BibtexEntry entry)
-                    {
-                        BibtexEntry e = new();
-                        e.CopyFromBibtex(entry);
-                        mwvm.CopiedBibtex.Add(e);
-                    }
-                }
-            });
-            Debug.WriteLine($"copied {mwvm.CopiedBibtex.Count} entries");
+            if (SelectedIndexItems != null && sender is MainWindowViewModel mwvm)
+            { await mwvm.CopyBibtexEntries(SelectedIndexItems.Select(t => t.Item2)); }
         }
 
         [RelayCommand(CanExecute = nameof(CanCopyPasteBibtex))]
         private void PasteBibtex(object? sender)
         {
-            Debug.WriteLine("start paste");
             if (sender is not MainWindowViewModel mwvm)
             { return; }
             int c = ShowingEntry != null ? BibtexEntries.IndexOf(ShowingEntry) + 1 : BibtexEntries.Count;
@@ -524,11 +475,41 @@ namespace Litenbib.ViewModels
                 BibtexEntries.Insert(i, cevm.MergedEntry);
                 cevm.MergedEntry.UndoRedoPropertyChanged += OnEntryPropertyChanged;
                 BibtexEntries.Remove(oldEntry);
-                UndoRedoManager.AddAction(new ReplaceEntryAction(BibtexEntries, i, oldEntry, cevm.MergedEntry));
+                UndoRedoManager.AddAction(new ReplaceEntriesAction(BibtexEntries, [(i, oldEntry)], [(i, cevm.MergedEntry)]));
                 ShowingEntry = cevm.MergedEntry;
                 NotifyCanUndoRedo();
             }
         }
-        #endregion
+
+        [RelayCommand]
+        private async Task MergeEntries(object? sender)
+        {
+            if (sender is not MainWindow window) { return; }
+            if (SelectedIndexItems == null || SelectedIndexItems.Count < 2) { return; }
+            var list = SelectedIndexItems.Select(t => t.Item2).ToList();
+            CompareEntryView dialog = new(list);
+            // 显示对话框并等待结果 (ShowDialog 需要传入父窗口引用)
+            var result = await dialog.ShowDialog<bool>(window); // 等待对话框关闭并获取 DialogResult
+            if (result == true)
+            {
+                if (dialog.DataContext is not CompareEntryViewModel cevm) { return; }
+                int i = BibtexEntries.IndexOf(list[0]);
+                List<(int, BibtexEntry)> removed = [];
+                foreach (var entry in list)
+                {
+                    removed.Add((BibtexEntries.IndexOf(entry), entry));
+                    BibtexEntries.Remove(entry);
+                }
+                BibtexEntries.Insert(i, cevm.MergedEntry);
+                cevm.MergedEntry.UndoRedoPropertyChanged += OnEntryPropertyChanged;
+                UndoRedoManager.AddAction(new ReplaceEntriesAction(BibtexEntries, removed, [(i, cevm.MergedEntry)]));
+                ShowingEntry = cevm.MergedEntry;
+                NotifyCanUndoRedo();
+            }
+        }
+        #endregion Edit Command
+
+        [GeneratedRegex("^:(.+):(.+)$", RegexOptions.Compiled)]
+        private static partial Regex FileRegex();
     }
 }

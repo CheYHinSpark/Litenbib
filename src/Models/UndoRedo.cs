@@ -133,7 +133,8 @@ namespace Litenbib.Models
         }
     }
 
-    public class AddEntriesAction(ObservableRangeCollection<BibtexEntry> holder, List<(int, BibtexEntry)> index_entries) : IUndoableAction
+    public class AddEntriesAction(ObservableRangeCollection<BibtexEntry> holder,
+        List<(int, BibtexEntry)> index_entries) : IUndoableAction
     {
         private readonly ObservableRangeCollection<BibtexEntry> _holder = holder;
         private readonly List<(int, BibtexEntry)> _index_entries = index_entries;
@@ -145,7 +146,8 @@ namespace Litenbib.Models
         { _holder.InsertRange(_index_entries); }
     }
 
-    public class DeleteEntriesAction(ObservableRangeCollection<BibtexEntry> holder, List<(int, BibtexEntry)> index_entries) : IUndoableAction
+    public class DeleteEntriesAction(ObservableRangeCollection<BibtexEntry> holder,
+        List<(int, BibtexEntry)> index_entries) : IUndoableAction
     {
         private readonly ObservableRangeCollection<BibtexEntry> _holder = holder;
         private readonly List<(int, BibtexEntry)> _index_entries = index_entries;
@@ -157,21 +159,20 @@ namespace Litenbib.Models
         { _holder.RemoveRange(_index_entries.Select(t => t.Item2)); }
     }
 
-    public class ReplaceEntryAction(ObservableRangeCollection<BibtexEntry> holder, int index, BibtexEntry oldEntry, BibtexEntry newEntry) : IUndoableAction
+    public class ReplaceEntriesAction(ObservableRangeCollection<BibtexEntry> holder,
+        List<(int, BibtexEntry)> old_index_entries, List<(int, BibtexEntry)> new_index_entries) : IUndoableAction
     {
-        private readonly ObservableRangeCollection<BibtexEntry> _holder = holder;
-        private readonly int _index = index;
-        private readonly BibtexEntry _oldEntry = oldEntry;
-        private readonly BibtexEntry _newEntry = newEntry;
+        private readonly AddEntriesAction _addAction = new(holder, new_index_entries);
+        private readonly DeleteEntriesAction _deleteAction = new(holder, old_index_entries);
         public override void Undo()
         {
-            _holder.Remove(_newEntry);
-            _holder.Insert(_index, _oldEntry);
+            _addAction.Undo();
+            _deleteAction.Undo();
         }
         public override void Redo()
         {
-            _holder.Remove(_oldEntry);
-            _holder.Insert(_index, _newEntry);
+            _deleteAction.Redo();
+            _addAction.Redo();
         }
     }
 }

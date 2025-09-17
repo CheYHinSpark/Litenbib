@@ -20,13 +20,7 @@ namespace Litenbib.ViewModels
         public BibtexEntry MergedEntry = new();
 
         public (string, string) SetField
-        {
-            set
-            {
-                if (value is not (string, string)) { return; }
-                SelectedField[value.Item1] = value.Item2;
-            }
-        }
+        { set { if (value is (string, string)) { SelectedField[value.Item1] = value.Item2; } } }
 
         [RelayCommand]
         private void Merge(object? sender)

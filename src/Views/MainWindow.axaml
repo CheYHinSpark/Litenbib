@@ -124,9 +124,8 @@
             </StackPanel>
 
             <!--tool-->
-			<Grid Grid.Row="1" Height="{StaticResource TitleBarHeight}">
-
-				<!--Opacity="{Binding ShowToolBar}"-->
+			<Grid Grid.Row="1" Height="{StaticResource TitleBarHeight}"
+				  Opacity="{Binding ShowToolBar}">
 				<Grid.Styles>
 					<Style Selector="Button">
 						<Setter Property="Background" Value="{DynamicResource InputBackground}"/>
@@ -159,7 +158,8 @@
 							<Path Data="{StaticResource AddPath}"
 								  Fill="{CompiledBinding $parent[Button].Foreground}"/>
 						</Button>
-						<Button>
+						<Button Command="{CompiledBinding SelectedFile.MergeEntriesCommand}"
+								CommandParameter="{CompiledBinding $parent[Window]}">
 							<Path Data="{StaticResource MergePath}" StrokeThickness="1"
 								  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
 						</Button>

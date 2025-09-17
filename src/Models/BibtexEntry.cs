@@ -247,7 +247,7 @@ namespace Litenbib.Models
                 foreach (var name in given_names)
                 {
                     if (!string.IsNullOrWhiteSpace(name))
-                    { newKey += name[0]; }
+                    { newKey += "_" + name[0]; }
                 }
             }
             if (!string.IsNullOrWhiteSpace(Year))

@@ -15,6 +15,8 @@
 								  Background="{DynamicResource ThemeHighlight}"
                                   MinHeight="{TemplateBinding MinHeight}"
                                   Margin="0 0 0 2"
+								  BorderThickness="2"
+								  Padding="6"
                                   CornerRadius="{TemplateBinding CornerRadius}"
                                   IsEnabled="{TemplateBinding IsEnabled}"
                                   IsChecked="{TemplateBinding IsExpanded, Mode=TwoWay}"
