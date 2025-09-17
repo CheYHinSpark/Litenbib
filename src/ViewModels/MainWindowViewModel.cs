@@ -63,8 +63,7 @@ namespace Litenbib.ViewModels
                 {
                     if (item is BibtexEntry entry)
                     {
-                        BibtexEntry e = new();
-                        e.CopyFromBibtex(entry);
+                        BibtexEntry e = BibtexEntry.CopyFrom(entry);
                         CopiedBibtex.Add(e);
                     }
                 }

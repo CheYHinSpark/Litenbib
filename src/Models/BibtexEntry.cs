@@ -1,4 +1,5 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
 using CommunityToolkit.Mvvm.Input;
@@ -11,6 +12,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Tmds.DBus.Protocol;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -165,10 +167,10 @@ namespace Litenbib.Models
                 int maxFieldLength = 0;
                 foreach (var k in Fields.Keys)
                 { maxFieldLength = Math.Max(maxFieldLength, k.Length); }
-                string s = $"@{entryType}{{{citationKey},\r\n";
+                string s = $"@{entryType}{{{citationKey},\n";
                 foreach (KeyValuePair<string, string> kvp in Fields)
-                { s += $"    {kvp.Key}" + new string(' ', maxFieldLength - kvp.Key.Length) + $" = {{{kvp.Value}}},\r\n"; }
-                bibtex = s + "}\r\n";
+                { s += $"    {kvp.Key}" + new string(' ', maxFieldLength - kvp.Key.Length) + $" = {{{kvp.Value}}},\n"; }
+                bibtex = s + "}\n";
             }
             else
             {
@@ -221,6 +223,18 @@ namespace Litenbib.Models
             }
         }
 
+
+        public static BibtexEntry CopyFrom(BibtexEntry e)
+        {
+            BibtexEntry entry = new(e.entryType, e.citationKey);
+            foreach (var kvp in e.Fields)
+            { entry.Fields[kvp.Key] = kvp.Value; }
+            entry.bibtex = e.bibtex;
+            return entry;
+        }
+
+
+        #region Command
         [RelayCommand]
         private void GenerateCitationKey()
         {
@@ -256,5 +270,41 @@ namespace Litenbib.Models
             if (string.IsNullOrWhiteSpace(newKey)) { return; }
             CitationKey = newKey;
         }
+
+        [RelayCommand]
+        private void ToShowingLink(string s)
+        {
+            if (s == "DOI")
+            { UriProcessor.StartProcess("https://doi.org/" + DOI); }
+            else if (s == "Url")
+            { UriProcessor.StartProcess(Url); }
+        }
+
+        [RelayCommand]
+        private void ToLink()
+        { UriProcessor.StartProcess(DOI == "" ? Url : "https://doi.org/" + DOI); }
+
+        [RelayCommand]
+        private void ToFile()
+        {
+            string path = File.Replace("\\:", ":");
+            // 使用 Regex.Match 查找匹配项
+            Match match = FileRegex().Match(path);
+            if (match.Success)
+            { path = match.Groups[1].Value; }
+            UriProcessor.StartProcess(path);
+        }
+
+        [RelayCommand]
+        private void CopyBibtexText(object o)
+        { if (o is Window w) { w.Clipboard?.SetTextAsync(BibTeX); } }
+
+        [RelayCommand]
+        private void CopyCitationKey(object? o)
+        { if (o is Window w) { w.Clipboard?.SetTextAsync(CitationKey); } }
+        #endregion Command
+
+        [GeneratedRegex("^:(.+):(.+)$", RegexOptions.Compiled)]
+        private static partial Regex FileRegex();
     }
 }

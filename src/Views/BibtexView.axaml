@@ -72,8 +72,7 @@
                     <DataGridTemplateColumn Header="File" Width="Auto" CanUserResize="False" CanUserSort="False">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate x:DataType="m:BibtexEntry">
-                                <Button Command="{CompiledBinding #BibtexViewRoot.DataContext.ToFileCommand}"
-                                        CommandParameter="{CompiledBinding .}"
+                                <Button Command="{CompiledBinding ToFileCommand}"
                                         Classes="link_in_row"
                                         IsVisible="{CompiledBinding File, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
                                     <Viewbox Width="14" Height="14">
@@ -88,8 +87,7 @@
                     <DataGridTemplateColumn Header="Link" Width="Auto" CanUserResize="False" CanUserSort="False">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate x:DataType="m:BibtexEntry">
-                                <Button Command="{CompiledBinding #BibtexViewRoot.DataContext.ToLinkCommand}"
-                                        CommandParameter="{CompiledBinding .}"
+								<Button Command="{CompiledBinding ToLinkCommand}"
                                         Classes="link_in_row">
                                     <Button.IsVisible>
                                         <MultiBinding Converter="{x:Static BoolConverters.Or}">
@@ -224,7 +222,7 @@
                     </Grid>
 
                     <Button Grid.Row="1" Width="100" HorizontalContentAlignment="Stretch" Padding="0"
-                            Command="{CompiledBinding CopyCitationKeyCommand}"
+                            Command="{CompiledBinding ShowingEntry.CopyCitationKeyCommand}"
                             CommandParameter="{CompiledBinding $parent[Window]}">
                         <Grid ColumnDefinitions="32,*">
                             <Path Data="{StaticResource CopyPath}" StrokeThickness="1"
@@ -370,7 +368,7 @@
                                         <Button>
                                             <Path Data="{StaticResource ImportPath}"/>
                                         </Button>
-                                        <Button Command="{CompiledBinding ToShowingLinkCommand}"
+                                        <Button Command="{CompiledBinding ShowingEntry.ToShowingLinkCommand}"
                                                 CommandParameter="DOI">
                                             <Path Data="{StaticResource ToLinkPath}"/>
                                         </Button>
@@ -378,7 +376,7 @@
                                 </Grid>
                                 <Grid ColumnDefinitions="*,Auto">
                                     <TextBox Watermark="Url" Text="{CompiledBinding ShowingEntry.Url}"/>
-                                    <Button Grid.Column="1" Command="{CompiledBinding ToShowingLinkCommand}"
+                                    <Button Grid.Column="1" Command="{CompiledBinding ShowingEntry.ToShowingLinkCommand}"
                                             CommandParameter="Url">
                                         <Path Data="{StaticResource ToLinkPath}"/>
                                     </Button>
@@ -409,7 +407,7 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 							<Button Width="100" HorizontalContentAlignment="Stretch" Padding="0"
-                                    Command="{CompiledBinding CopyBibtexTextCommand}"
+                                    Command="{CompiledBinding ShowingEntry.CopyBibtexTextCommand}"
                                     CommandParameter="{CompiledBinding $parent[Window]}">
 								<Grid ColumnDefinitions="32,*">
 									<Path Data="{StaticResource CopyPath}" StrokeThickness="1"

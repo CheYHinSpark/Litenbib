@@ -296,56 +296,16 @@ namespace Litenbib.ViewModels
         }
         #endregion Method
 
-        #region Non-edit Command
+        #region Command
         [RelayCommand(CanExecute = nameof(Edited))]
         private async Task SaveBibtex()
         {
             using var writer = new StreamWriter(FullPath, append: false, encoding: Encoding.UTF8, bufferSize: 65536); // 缓冲区大小设置为64KB
             foreach (var entry in BibtexEntries)
-            { await writer.WriteAsync(entry.BibTeX); }
+            { await writer.WriteAsync(entry.BibTeX + "\n"); }
             UndoRedoManager.Edited = false;
             OnPropertyChanged(nameof(Edited));
         }
-
-        [RelayCommand]
-        private void ToShowingLink(string s)
-        {
-            if (ShowingEntry == null) { return; }
-            if (s == "DOI")
-            { UriProcessor.StartProcess("https://doi.org/" + ShowingEntry.DOI); }
-            else if (s == "Url")
-            { UriProcessor.StartProcess(ShowingEntry.Url); }
-        }
-
-        [RelayCommand]
-        private static void ToLink(object o)
-        {
-            if (o is BibtexEntry entry)
-            { UriProcessor.StartProcess(entry.DOI == "" ? entry.Url : "https://doi.org/" + entry.DOI); }
-        }
-
-        [RelayCommand]
-        private static void ToFile(object o)
-        {
-            if (o is not BibtexEntry entry) { return; }
-            string path = entry.File.Replace("\\:", ":");
-            // 使用 Regex.Match 查找匹配项
-            Match match = FileRegex().Match(path);
-            if (match.Success)
-            { path = match.Groups[1].Value; }
-            UriProcessor.StartProcess(path);
-        }
-
-        [RelayCommand]
-        private void CopyBibtexText(object o)
-        { if (ShowingEntry != null && o is Window w) { w.Clipboard?.SetTextAsync(ShowingEntry.BibTeX); } }
-
-        [RelayCommand]
-        private void CopyCitationKey(object? o)
-        { if (ShowingEntry != null && o is Window w) { w.Clipboard?.SetTextAsync(ShowingEntry.CitationKey); } }
-        #endregion Non-edit Command
-
-        #region Edit Command
 
         [RelayCommand(CanExecute = nameof(CanUndo))]
         private void UndoBibtex()
@@ -444,8 +404,7 @@ namespace Litenbib.ViewModels
             List<(int, BibtexEntry)> index_entries = [];
             foreach (var entry in mwvm.CopiedBibtex)
             {
-                BibtexEntry e = new();
-                e.CopyFromBibtex(entry);
+                BibtexEntry e = BibtexEntry.CopyFrom(entry);
                 index_entries.Add((c, e));
                 BibtexEntries.Insert(c, e);
                 c++;
@@ -507,9 +466,6 @@ namespace Litenbib.ViewModels
                 NotifyCanUndoRedo();
             }
         }
-        #endregion Edit Command
-
-        [GeneratedRegex("^:(.+):(.+)$", RegexOptions.Compiled)]
-        private static partial Regex FileRegex();
+        #endregion Command
     }
 }
