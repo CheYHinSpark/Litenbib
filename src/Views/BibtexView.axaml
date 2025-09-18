@@ -129,8 +129,19 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTextColumn Header="Title" Binding="{CompiledBinding Title}"
-                                        x:DataType="m:BibtexEntry" Width="3*"/>
+					<DataGridTemplateColumn Header="Title" Width="2*">
+						<DataGridTemplateColumn.CellTemplate>
+							<DataTemplate x:DataType="m:BibtexEntry">
+								<TextBlock>
+									<TextBlock.Text>
+										<MultiBinding Converter="{StaticResource MultiStringConverter}" Mode="OneWay">
+											<Binding Path="Title"/>
+										</MultiBinding>
+									</TextBlock.Text>
+								</TextBlock>
+							</DataTemplate>
+						</DataGridTemplateColumn.CellTemplate>
+					</DataGridTemplateColumn>
                     <DataGridTemplateColumn Header="Journal/Booktitle" Width="1*">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate x:DataType="m:BibtexEntry">
@@ -229,7 +240,7 @@
                                   Stroke="{CompiledBinding $parent[Button].Foreground}"
                                   HorizontalAlignment="Center"
                                   VerticalAlignment="Center"/>
-                            <TextBlock Grid.Column="1" Text="Citekey" Grid.Row="1" Classes="right"/>
+							<TextBlock Grid.Column="1" Text="Citekey" Classes="right"/>
                         </Grid>
                     </Button>
                     <Grid ColumnDefinitions="*,Auto" Grid.Row="1" Grid.Column="1">
@@ -286,6 +297,7 @@
                                          ConverterParameter='book,inbook,incollection'}"/>
                             </StackPanel>
                         </Expander>
+					
                         <Expander Header="Optional Fields" IsExpanded="True">
                             <Expander.Styles>
                                 <Style Selector="TextBox">
@@ -362,24 +374,38 @@
                                         </Viewbox>
                                     </Button>
                                 </StackPanel>
-                                <Grid ColumnDefinitions="*,Auto">
-                                    <TextBox Watermark="DOI" Text="{CompiledBinding ShowingEntry.DOI}"/>
-                                    <StackPanel Orientation="Horizontal" Grid.Column="1">
+                                <Grid ColumnDefinitions="100,*,Auto">
+									<Button Width="100" HorizontalContentAlignment="Stretch" Padding="0"
+                                            Command="{CompiledBinding ShowingEntry.ToShowingLinkCommand}"
+                                            CommandParameter="DOI">
+										<Grid ColumnDefinitions="32,*">
+											<Path Data="{StaticResource ToLinkPath}"
+												  HorizontalAlignment="Center"
+												  VerticalAlignment="Center"/>
+											<TextBlock Grid.Column="1" Text="DOI" Classes="right"/>
+										</Grid>
+									</Button>
+									<TextBox Theme="{StaticResource {x:Type TextBox}}" Grid.Column="1"
+											 Text="{CompiledBinding ShowingEntry.DOI}"/>
+                                    <StackPanel Orientation="Horizontal" Grid.Column="2">
                                         <Button>
                                             <Path Data="{StaticResource ImportPath}"/>
                                         </Button>
-                                        <Button Command="{CompiledBinding ShowingEntry.ToShowingLinkCommand}"
-                                                CommandParameter="DOI">
-                                            <Path Data="{StaticResource ToLinkPath}"/>
-                                        </Button>
                                     </StackPanel>
                                 </Grid>
-                                <Grid ColumnDefinitions="*,Auto">
-                                    <TextBox Watermark="Url" Text="{CompiledBinding ShowingEntry.Url}"/>
-                                    <Button Grid.Column="1" Command="{CompiledBinding ShowingEntry.ToShowingLinkCommand}"
+                                <Grid ColumnDefinitions="100,*">
+									<Button Width="100" HorizontalContentAlignment="Stretch" Padding="0"
+                                            Command="{CompiledBinding ShowingEntry.ToShowingLinkCommand}"
                                             CommandParameter="Url">
-                                        <Path Data="{StaticResource ToLinkPath}"/>
-                                    </Button>
+										<Grid ColumnDefinitions="32,*">
+											<Path Data="{StaticResource ToLinkPath}"
+												  HorizontalAlignment="Center"
+												  VerticalAlignment="Center"/>
+											<TextBlock Grid.Column="1" Text="Url" Classes="right"/>
+										</Grid>
+									</Button>
+									<TextBox Theme="{StaticResource {x:Type TextBox}}" Grid.Column="1"
+											 Text="{CompiledBinding ShowingEntry.Url}"/>
                                 </Grid>
                                 <TextBox Watermark="Crossref" Text="{CompiledBinding ShowingEntry.Crossref}"/>
                                 <TextBox Watermark="File" Text="{CompiledBinding ShowingEntry.File}"/>

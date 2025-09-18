@@ -64,7 +64,7 @@ namespace Litenbib.Models
         {
             // 检查所有值是否都是 bool 类型且为 true
             foreach (var v in values)
-            { if (v is string s && !string.IsNullOrWhiteSpace(s)) { return s; } }
+            { if (v is string s && !string.IsNullOrWhiteSpace(s)) { return s.Replace("{", "").Replace("}", ""); } }
             return AvaloniaProperty.UnsetValue;
         }
     }

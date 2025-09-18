@@ -187,7 +187,6 @@ namespace Litenbib.ViewModels
                         oldEnd, selectionStart));
                 }
                 NotifyCanUndoRedo();
-                RefreshFilter();
             }
         }
         #endregion Event
@@ -301,7 +300,7 @@ namespace Litenbib.ViewModels
         [RelayCommand(CanExecute = nameof(Edited))]
         private async Task SaveBibtex()
         {
-            using var writer = new StreamWriter(FullPath, append: false, encoding: Encoding.UTF8, bufferSize: 65536); // 缓冲区大小设置为64KB
+            using var writer = new StreamWriter(FullPath, append: false, new UTF8Encoding(false), bufferSize: 65536); // 缓冲区大小设置为64KB
             foreach (var entry in BibtexEntries)
             { await writer.WriteAsync(entry.BibTeX + "\n"); }
             UndoRedoManager.Edited = false;

@@ -316,23 +316,26 @@
         <Setter Property="Focusable" Value="True" />
         <Setter Property="MinWidth" Value="6" />
         <Setter Property="MinHeight" Value="6" />
-        <Setter Property="CornerRadius" Value="3" />
+		<Setter Property="Background" Value="{DynamicResource MainBackground}" />
+		<Setter Property="CornerRadius" Value="3" />
         <Setter Property="Template">
             <ControlTemplate>
-                <Border BorderBrush="{TemplateBinding BorderBrush}"
+                <Border Name="Part_Border" BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{TemplateBinding CornerRadius}"
-                        Background="{DynamicResource ThemeBorder}">
-                    <Border Name="Part_Border" BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{TemplateBinding CornerRadius}"
-                            Background="{DynamicResource MainBorder}"/>
+                        Background="{TemplateBinding Background}">
                 </Border>
             </ControlTemplate>
         </Setter>
-        <Style Selector="^:pressed /template/ Border#Part_Border">
-            <Setter Property="IsVisible" Value="False"/>
-        </Style>
+		<Style Selector="^:pointerover">
+			<Setter Property="Background" Value="{DynamicResource HighlightBackground}"/>
+		</Style>
+		<Style Selector="^:pressed">
+			<Setter Property="Background" Value="{DynamicResource ThemeHighlight}"/>
+		</Style>
+		<Style Selector="^:pressed:pointerover">
+			<Setter Property="Background" Value="{DynamicResource ThemeHighlight}"/>
+		</Style>
     </ControlTheme>
     
     <ControlTheme x:Key="{x:Type TextBox}" TargetType="TextBox">

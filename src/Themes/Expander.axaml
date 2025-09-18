@@ -36,7 +36,7 @@
                             <TextBlock Text="{TemplateBinding Header}" Grid.Column="1"/>
                         </Grid>
                     </ToggleButton>
-                    <ContentPresenter x:Name="PART_ContentPresenter"
+					<ContentPresenter x:Name="PART_ContentPresenter"
                                       IsVisible="{TemplateBinding IsExpanded}"
                                       Grid.Row="1"
                                       Padding="{TemplateBinding Padding}"

@@ -98,7 +98,9 @@ namespace Litenbib.ViewModels
             using var writer = new StreamWriter(file.Path.AbsolutePath, append: false, encoding: Encoding.UTF8, bufferSize: 65536); // 缓冲区大小设置为64KB
             await writer.WriteAsync(string.Empty);
             int newMode = SelectedFile == null ? 0 : SelectedFile.FilterMode;
-            BibtexViewers.Add(new BibtexViewModel(file.Name, file.Path.AbsolutePath, string.Empty, newMode));
+            var newBVM = new BibtexViewModel(file.Name, file.Path.AbsolutePath, string.Empty, newMode);
+            BibtexViewers.Add(newBVM);
+            SelectedFile = newBVM;
         }
 
         [RelayCommand]
@@ -122,14 +124,15 @@ namespace Litenbib.ViewModels
 
             foreach (var file in files)
             {
-                //BibtexViewers.Add(new BibtexViewModel(file.Path.AbsolutePath));
                 // 打开文件的读取流。
                 await using var stream = await file.OpenReadAsync();
                 using var streamReader = new StreamReader(stream);
                 //// 将文件的所有内容作为文本读取。
                 var fileContent = await streamReader.ReadToEndAsync();
                 int newMode = SelectedFile == null ? 0 : SelectedFile.FilterMode;
-                BibtexViewers.Add(new BibtexViewModel(file.Name, file.Path.AbsolutePath, fileContent, newMode));
+                var newBVM = new BibtexViewModel(file.Name, file.Path.AbsolutePath, fileContent, newMode);
+                BibtexViewers.Add(newBVM);
+                SelectedFile = newBVM;
             }
         }
 
@@ -179,8 +182,6 @@ namespace Litenbib.ViewModels
         }
 
         private bool CanSaveAll() => SelectedFile != null;
-
-
-        #endregion
+        #endregion Command
     }
 }
