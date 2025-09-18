@@ -187,6 +187,7 @@ namespace Litenbib.ViewModels
                         oldEnd, selectionStart));
                 }
                 NotifyCanUndoRedo();
+                RefreshFilter();
             }
         }
         #endregion Event
@@ -247,11 +248,11 @@ namespace Litenbib.ViewModels
                 bool b = filterMode == 1;
                 foreach (string s in filters)
                 {
-                    if (!string.IsNullOrEmpty(s) && target_s.Contains(s, StringComparison.OrdinalIgnoreCase))
+                    if (!string.IsNullOrEmpty(s) && target_s.Contains(s, StringComparison.OrdinalIgnoreCase) == b)
                     { return b; }
                 }
+                return !b;
             }
-            return false;
         }
 
         private async void CheckErrors()
