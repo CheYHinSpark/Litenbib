@@ -32,7 +32,7 @@ namespace Litenbib.Models
             get => entryType;
             set
             {
-                if (entryType != value && value != null)
+                if (!entryType.Equals(value, StringComparison.OrdinalIgnoreCase) && value != null)
                 {
                     string t = entryType;
                     entryType = value;

@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using ExCSS;
 using Litenbib.Models;
 using Litenbib.Views;
 using System;
@@ -147,8 +148,8 @@ namespace Litenbib.ViewModels
 
         public BibtexViewModel(string header, string fullPath, string filecontent, int filterMode = 0)
         {
-            Header = header;
-            FullPath = fullPath;
+            Header = Uri.UnescapeDataString(header);
+            FullPath = Uri.UnescapeDataString(fullPath);
             BibtexEntries = new ObservableRangeCollection<BibtexEntry>(BibtexParser.Parse(filecontent));
             Warnings = [];
             foreach (var entry in BibtexEntries)
@@ -300,6 +301,7 @@ namespace Litenbib.ViewModels
         [RelayCommand(CanExecute = nameof(Edited))]
         private async Task SaveBibtex()
         {
+            Debug.WriteLine($"Saving...{FullPath}");
             using var writer = new StreamWriter(FullPath, append: false, new UTF8Encoding(false), bufferSize: 65536); // 缓冲区大小设置为64KB
             foreach (var entry in BibtexEntries)
             { await writer.WriteAsync(entry.BibTeX + "\n"); }
@@ -422,6 +424,7 @@ namespace Litenbib.ViewModels
             //await LinkResolver.GetDblpFromDoi(ShowingEntry.DOI);
             var list = await LinkResolver.GetDblpFromTitle(ShowingEntry.Title);
             if (list.Count == 0) { return; }
+            Debug.WriteLine("accepted");
             list.Insert(0, ShowingEntry);
             CompareEntryView dialog = new(list);
             // 显示对话框并等待结果 (ShowDialog 需要传入父窗口引用)

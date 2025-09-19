@@ -37,6 +37,8 @@
     </Style>
 
 	<Style Selector="Button.tab_button">
+		<Setter Property="HorizontalContentAlignment" Value="Center"/>
+		<Setter Property="VerticalContentAlignment" Value="Center"/>
 		<Setter Property="Height" Value="20"/>
 		<Setter Property="Width" Value="20"/>
 		<Setter Property="CornerRadius" Value="10"/>

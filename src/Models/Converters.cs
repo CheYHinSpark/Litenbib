@@ -13,7 +13,7 @@ using System.Text.RegularExpressions;
 
 namespace Litenbib.Models
 {
-    public class BibTypeConverter : IValueConverter
+    public class EntryTypeConverter : IValueConverter
     {
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {

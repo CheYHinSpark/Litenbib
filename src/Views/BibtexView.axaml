@@ -11,7 +11,7 @@
              x:Class="Litenbib.Views.BibtexView">
     
     <UserControl.Resources>
-        <m:BibTypeConverter x:Key="BibTypeConverter"/>
+        <m:EntryTypeConverter x:Key="EntryTypeConverter"/>
         <m:TextToBackgroundConverter x:Key="TextToBackgroundConverter"/>
         <m:WarningToBrushConverter x:Key="WarningToBrushConverter"/>
         <m:EntryTypeToVisibleConverter x:Key="EntryTypeToVisibleConverter"/>
@@ -110,7 +110,7 @@
                                 <Border Margin="0 4" HorizontalAlignment="Stretch" CornerRadius="12"
                                         Background="{CompiledBinding #TypeText.Text, Converter={StaticResource TextToBackgroundConverter}}">
                                     <TextBlock Name="TypeText" HorizontalAlignment="Center"
-                                               Text="{CompiledBinding EntryType, Converter={StaticResource BibTypeConverter}}"/>
+                                               Text="{CompiledBinding EntryType, Converter={StaticResource EntryTypeConverter}}"/>
                                 </Border>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -221,7 +221,7 @@
                         </Grid.ColumnDefinitions>
                         <v:ExComboBox HorizontalAlignment="Stretch" Margin="0 2"
                                       ItemsSource="{CompiledBinding TypeList}"
-                                      SelectedItem="{CompiledBinding ShowingEntry.EntryType, Converter={StaticResource BibTypeConverter}}"/>
+                                      SelectedItem="{CompiledBinding ShowingEntry.EntryType, Converter={StaticResource EntryTypeConverter}}"/>
                         <StackPanel Grid.Column="1" Orientation="Horizontal">
                             <Button Click="ChangeButton_Click">
                                 <Path Data="{StaticResource brPath}"/>

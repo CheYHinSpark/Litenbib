@@ -21,11 +21,11 @@
                     CommandParameter="{CompiledBinding #LitbibMainWindow}"/>
         <KeyBinding Command="{CompiledBinding AddBibtexEntryCommand}" Gesture="Ctrl+Shift+A"
                     CommandParameter="{CompiledBinding #LitbibMainWindow}"/>
-		<KeyBinding Command="{CompiledBinding SelectedFile.CopyBibtexCommand}" Gesture="Ctrl+C"
-					CommandParameter="{CompiledBinding #LitbibMainWindow.DataContext}"/>
-		<KeyBinding Command="{CompiledBinding SelectedFile.PasteBibtexCommand}" Gesture="Ctrl+V"
-					CommandParameter="{CompiledBinding #LitbibMainWindow.DataContext}"/>
-		<KeyBinding Command="{CompiledBinding SelectedFile.UndoBibtexCommand}" Gesture="Ctrl+Z"/>
+        <KeyBinding Command="{CompiledBinding SelectedFile.CopyBibtexCommand}" Gesture="Ctrl+C"
+                    CommandParameter="{CompiledBinding #LitbibMainWindow.DataContext}"/>
+        <KeyBinding Command="{CompiledBinding SelectedFile.PasteBibtexCommand}" Gesture="Ctrl+V"
+                    CommandParameter="{CompiledBinding #LitbibMainWindow.DataContext}"/>
+        <KeyBinding Command="{CompiledBinding SelectedFile.UndoBibtexCommand}" Gesture="Ctrl+Z"/>
         <KeyBinding Command="{CompiledBinding SelectedFile.RedoBibtexCommand}" Gesture="Ctrl+Y"/>
         <KeyBinding Command="{CompiledBinding SelectedFile.DeleteBibtexKeyCommand}" Gesture="Delete"/>
         <KeyBinding Command="{CompiledBinding SelectedFile.SaveBibtexCommand}" Gesture="Ctrl+S"/>
@@ -94,17 +94,17 @@
                                   Command="{CompiledBinding SaveAllCommand}">
                         </MenuItem>
                     </MenuItem>
-					<MenuItem Header="_Edit" Classes="Top">
-						<MenuItem Header="_Add..."
-								  Command="{CompiledBinding AddBibtexEntryCommand}"
-								  CommandParameter="{CompiledBinding $parent[Window]}"/>
-						<MenuItem Header="_Copy"
-								  Command="{CompiledBinding SelectedFile.CopyBibtexCommand}"
-								  CommandParameter="{CompiledBinding $parent[Window].DataContext}"/>
-						<MenuItem Header="_Paste"
-								  Command="{CompiledBinding SelectedFile.PasteBibtexCommand}"
-								  CommandParameter="{CompiledBinding $parent[Window].DataContext}"/>
-					</MenuItem>
+                    <MenuItem Header="_Edit" Classes="Top">
+                        <MenuItem Header="_Add..."
+                                  Command="{CompiledBinding AddBibtexEntryCommand}"
+                                  CommandParameter="{CompiledBinding $parent[Window]}"/>
+                        <MenuItem Header="_Copy"
+                                  Command="{CompiledBinding SelectedFile.CopyBibtexCommand}"
+                                  CommandParameter="{CompiledBinding $parent[Window].DataContext}"/>
+                        <MenuItem Header="_Paste"
+                                  Command="{CompiledBinding SelectedFile.PasteBibtexCommand}"
+                                  CommandParameter="{CompiledBinding $parent[Window].DataContext}"/>
+                    </MenuItem>
                 </Menu>
             </StackPanel>
             
@@ -124,48 +124,48 @@
             </StackPanel>
 
             <!--tool-->
-			<Grid Grid.Row="1" Height="{StaticResource TitleBarHeight}"
-				  Opacity="{Binding ShowToolBar}">
-				<Grid.Styles>
-					<Style Selector="Button">
-						<Setter Property="Background" Value="{DynamicResource InputBackground}"/>
-						<Setter Property="Width" Value="28"/>
-						<Setter Property="Height" Value="28"/>
-					</Style>
-				</Grid.Styles>
-				<Border Margin="8 0" Background="{DynamicResource InputBackground}"
-						HorizontalAlignment="Left" VerticalAlignment="Center"
-						CornerRadius="8">
-					<StackPanel Orientation="Horizontal" Margin="6 2">
-						<Button Command="{CompiledBinding SelectedFile.UndoBibtexCommand}">
-							<Path Data="{StaticResource UndoPath}" StrokeThickness="1"
-								  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
-						</Button>
-						<Button Command="{CompiledBinding SelectedFile.RedoBibtexCommand}">
-							<Path Data="{StaticResource RedoPath}" StrokeThickness="1"
-								  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
-						</Button>
-						<Button Command="{CompiledBinding SelectedFile.DeleteBibtexCommand}">
-							<Path Data="{StaticResource DeletePath}"
-								  Fill="{CompiledBinding $parent[Button].Foreground}"/>
-						</Button>
-						<Button Command="{CompiledBinding SelectedFile.SaveBibtexCommand}">
-							<Path Data="{StaticResource SavePath}" StrokeThickness="1"
-								  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
-						</Button>
-						<Button Command="{CompiledBinding AddBibtexEntryCommand}"
-								CommandParameter="{CompiledBinding $parent[Window]}">
-							<Path Data="{StaticResource AddPath}"
-								  Fill="{CompiledBinding $parent[Button].Foreground}"/>
-						</Button>
-						<Button Command="{CompiledBinding SelectedFile.MergeEntriesCommand}"
-								CommandParameter="{CompiledBinding $parent[Window]}">
-							<Path Data="{StaticResource MergePath}" StrokeThickness="1"
-								  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
-						</Button>
-					</StackPanel>
-				</Border>
-			</Grid>
+            <Grid Grid.Row="1" Height="{StaticResource TitleBarHeight}"
+                  Opacity="{Binding ShowToolBar}">
+                <Grid.Styles>
+                    <Style Selector="Button">
+                        <Setter Property="Background" Value="{DynamicResource InputBackground}"/>
+                        <Setter Property="Width" Value="28"/>
+                        <Setter Property="Height" Value="28"/>
+                    </Style>
+                </Grid.Styles>
+                <Border Margin="8 0" Background="{DynamicResource InputBackground}"
+                        HorizontalAlignment="Left" VerticalAlignment="Center"
+                        CornerRadius="8">
+                    <StackPanel Orientation="Horizontal" Margin="6 2">
+                        <Button Command="{CompiledBinding SelectedFile.UndoBibtexCommand}">
+                            <Path Data="{StaticResource UndoPath}" StrokeThickness="1"
+                                  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+                        </Button>
+                        <Button Command="{CompiledBinding SelectedFile.RedoBibtexCommand}">
+                            <Path Data="{StaticResource RedoPath}" StrokeThickness="1"
+                                  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+                        </Button>
+                        <Button Command="{CompiledBinding SelectedFile.DeleteBibtexCommand}">
+                            <Path Data="{StaticResource DeletePath}"
+                                  Fill="{CompiledBinding $parent[Button].Foreground}"/>
+                        </Button>
+                        <Button Command="{CompiledBinding SelectedFile.SaveBibtexCommand}">
+                            <Path Data="{StaticResource SavePath}" StrokeThickness="1"
+                                  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+                        </Button>
+                        <Button Command="{CompiledBinding AddBibtexEntryCommand}"
+                                CommandParameter="{CompiledBinding $parent[Window]}">
+                            <Path Data="{StaticResource AddPath}"
+                                  Fill="{CompiledBinding $parent[Button].Foreground}"/>
+                        </Button>
+                        <Button Command="{CompiledBinding SelectedFile.MergeEntriesCommand}"
+                                CommandParameter="{CompiledBinding $parent[Window]}">
+                            <Path Data="{StaticResource MergePath}" StrokeThickness="1"
+                                  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+                        </Button>
+                    </StackPanel>
+                </Border>
+            </Grid>
         </Grid>
         
         
@@ -178,7 +178,7 @@
         </StackPanel>
 
         <!--content-->
-        <TabControl Grid.Row="1" Padding="0"
+        <TabControl x:Name="MainTabControl" Grid.Row="1" Padding="0"
                     ItemsSource="{CompiledBinding BibtexViewers}"
                     SelectedItem="{CompiledBinding SelectedFile}">
             <!-- Tab Header -->
@@ -195,6 +195,8 @@
                                 Command="{CompiledBinding #LitbibMainWindow.DataContext.CloseTabCommand}"
                                 CommandParameter="{CompiledBinding}">
                             <Path Data="{StaticResource xPath}" StrokeThickness="1"
+                                  HorizontalAlignment="Stretch"
+                                  VerticalAlignment="Stretch"
                                   Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                         </Button>
                     </StackPanel>

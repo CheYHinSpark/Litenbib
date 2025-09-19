@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -20,6 +21,10 @@ namespace Litenbib.ViewModels
 {
     public partial class MainWindowViewModel : ViewModelBase
     {
+        // 添加静态只读 JsonSerializerOptions 实例以供重用
+        private static readonly JsonSerializerOptions CachedJsonOptions = new() { WriteIndented = true };
+        private readonly string localConfig = "localconfig.json";
+
         public List<BibtexEntry> CopiedBibtex = [];
 
         public ObservableCollection<BibtexViewModel> BibtexViewers { get; set; }
@@ -68,6 +73,67 @@ namespace Litenbib.ViewModels
                     }
                 }
             });
+        }
+
+        public async Task OpenFileInit()
+        {
+            // 读取局部配置文件
+            if (!File.Exists(localConfig))
+            { return; }
+
+            try
+            {
+                // 读取 JSON 文件的所有内容
+                string jsonString = await File.ReadAllTextAsync(localConfig);
+
+                // 反序列化 JSON 字符串到 Config 对象
+                var config = JsonSerializer.Deserialize<LocalConfig>(jsonString);
+
+                // 如果反序列化成功且列表不为空，返回它
+                if (config?.RecentFiles != null && config?.RecentFiles.Count > 0)
+                {
+                    foreach (var filePath in config.RecentFiles)
+                    {
+                        if (File.Exists(filePath))
+                        {
+                            string fileContent = await File.ReadAllTextAsync(filePath);
+                            var newBVM = new BibtexViewModel(Path.GetFileName(filePath), filePath, fileContent, 0);
+                            BibtexViewers.Add(newBVM);
+                            SelectedFile = newBVM;
+                        }
+                    }
+                }
+            }
+            catch (JsonException ex)
+            {
+                Debug.WriteLine($"Error deserializing JSON: {ex.Message}");
+                return;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"An unexpected error occurred: {ex.Message}");
+                return;
+            }
+        }
+
+        public void SaveLocalConfig()
+        {
+            var config = new LocalConfig { RecentFiles = [.. BibtexViewers.Select(b => b.FullPath)] };
+            Debug.WriteLine($"Saving {config.RecentFiles.Count} recent files to local config.");
+            try
+            {
+                // 使用缓存的 JsonSerializerOptions 实例
+                string jsonString = JsonSerializer.Serialize(config, CachedJsonOptions);
+                File.WriteAllText(localConfig, jsonString);
+            }
+            catch (JsonException ex)
+            {
+                Debug.WriteLine($"Error serializing to JSON: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"An unexpected error occurred: {ex.Message}");
+            }
         }
 
         #region Command
