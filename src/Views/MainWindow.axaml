@@ -90,9 +90,11 @@
                         <MenuItem Header="_Open..."
                                   Command="{CompiledBinding OpenFileCommand}"
                                   CommandParameter="{CompiledBinding $parent[Window]}"/>
+						<MenuItem Header="_Export"
+                                  Command="{CompiledBinding ExportFileCommand}"
+								  CommandParameter="{CompiledBinding $parent[Window]}"/>
                         <MenuItem Header="_Save All"
-                                  Command="{CompiledBinding SaveAllCommand}">
-                        </MenuItem>
+                                  Command="{CompiledBinding SaveAllCommand}"/>
                     </MenuItem>
                     <MenuItem Header="_Edit" Classes="Top">
                         <MenuItem Header="_Add..."

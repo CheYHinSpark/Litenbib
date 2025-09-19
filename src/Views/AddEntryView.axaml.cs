@@ -7,9 +7,9 @@ using System.Diagnostics;
 
 namespace Litenbib.Views;
 
-public partial class AddEntryWindow : StyledWindow
+public partial class AddEntryView : StyledWindow
 {
-    public AddEntryWindow()
+    public AddEntryView()
     {
         InitializeComponent();
         this.DataContext = new AddEntryViewModel();

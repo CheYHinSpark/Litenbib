@@ -159,14 +159,20 @@ namespace Litenbib.Models
             return entry;
         }
 
+        private int MaxFieldLength()
+        {
+            int maxFieldLength = 0;
+            foreach (var k in Fields.Keys)
+            { maxFieldLength = Math.Max(maxFieldLength, k.Length); }
+            return maxFieldLength;
+        }
+
         // 如果不是直接更新BibTeX，表示从其他属性修改的。不触发BibTeX的Undo
         public void UpdateBibtex(string? newBibtex = null, bool isSilent = false)
         {
             if (newBibtex == null)
             {
-                int maxFieldLength = 0;
-                foreach (var k in Fields.Keys)
-                { maxFieldLength = Math.Max(maxFieldLength, k.Length); }
+                int maxFieldLength = MaxFieldLength();
                 string s = $"@{entryType}{{{citationKey},\n";
                 foreach (KeyValuePair<string, string> kvp in Fields)
                 { s += $"    {kvp.Key}" + new string(' ', maxFieldLength - kvp.Key.Length) + $" = {{{kvp.Value}}},\n"; }
@@ -185,6 +191,31 @@ namespace Litenbib.Models
                 Debug.WriteLine("Changing BibTeX");
             }
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BibTeX)));
+        }
+
+        public string ExportBibtex(int author_format = 0, int max_authors = -1, string ending = "")
+        {
+            int maxFieldLength = MaxFieldLength();
+            string s = $"@{entryType}{{{citationKey},\n";
+            foreach (KeyValuePair<string, string> kvp in Fields)
+            {
+                if (kvp.Key == "author")
+                {
+                    string[]? authors = kvp.Value.Split(" and ", StringSplitOptions.TrimEntries & StringSplitOptions.RemoveEmptyEntries);
+                    max_authors = max_authors == -1 ? authors.Length : max_authors;
+                    for (int i = int.Min(max_authors, authors.Length) - 1; i >= 0; --i)
+                    {
+                        var a = Models.Author.GetFamilyGiven(authors[i]);
+                        authors[i] = author_format == 0 ? $"{a.Item2} {a.Item1}" : $"{a.Item1}, {a.Item2}";
+                    }
+                    string author = string.Join(" and ", authors[0..int.Min(max_authors, authors.Length)])
+                        + (max_authors > authors.Length ? "" : ending);
+                    s += "    author" + new string(' ', maxFieldLength - kvp.Key.Length) + $" = {{{author}}},\n";
+                }
+                else
+                { s += $"    {kvp.Key}" + new string(' ', maxFieldLength - kvp.Key.Length) + $" = {{{kvp.Value}}},\n"; }
+            }
+            return s + "}\n";
         }
 
         public void CopyFromBibtex(BibtexEntry entry)
@@ -243,8 +274,8 @@ namespace Litenbib.Models
             if (!string.IsNullOrWhiteSpace(Author))
             {
                 var first_author = Author.Split(" and ")[0];
-                string family_name = string.Empty;
                 string[]? given_names;
+                string family_name;
                 if (first_author.Contains(','))
                 {
                     var parts = first_author.Split(',');

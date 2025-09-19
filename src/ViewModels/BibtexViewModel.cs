@@ -195,7 +195,7 @@ namespace Litenbib.ViewModels
         #region Method
         public async Task AddBibtexEntry(Window window)
         {
-            AddEntryWindow dialog = new();
+            AddEntryView dialog = new();
 
             // 显示对话框并等待结果 (ShowDialog 需要传入父窗口引用)
             var result = await dialog.ShowDialog<bool>(window); // 等待对话框关闭并获取 DialogResult

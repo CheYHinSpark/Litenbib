@@ -3,7 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="using:Litenbib.ViewModels"
-        mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="600"
+        Width="1200" Height="800"
         x:Class="Litenbib.Views.CompareEntryView"
         x:DataType="vm:CompareEntryViewModel"
         WindowStartupLocation="CenterScreen"
@@ -19,9 +19,15 @@
             </Style>
         </Style>
         <Style Selector="Button[Tag=center]">
+			<Setter Property="BorderBrush" Value="{DynamicResource ThemeBorder}"/>
+			<Setter Property="BorderThickness" Value="2"/>
 			<Setter Property="Background" Value="{DynamicResource InputBackground}"/>
+			<Setter Property="CornerRadius" Value="8"/>
 			<Setter Property="HorizontalContentAlignment" Value="Center"/>
             <Setter Property="Margin" Value="8 2"/>
+			<Style Selector="^:pointerover">
+				<Setter Property="Background" Value="{DynamicResource HighlightBackground}"/>
+			</Style>
         </Style>
 		<Style Selector="TextBlock">
 			<Setter Property="VerticalAlignment" Value="Center"/>

@@ -3,10 +3,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:vm="using:Litenbib.ViewModels"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="600"
         Width="600" Height="600" CanResize="False"
         WindowStartupLocation="CenterScreen"
-        x:Class="Litenbib.Views.AddEntryWindow"
+        x:Class="Litenbib.Views.AddEntryView"
         x:DataType="vm:AddEntryViewModel"
         Icon="/Assets/logo.ico"
         Title="Add Entry">

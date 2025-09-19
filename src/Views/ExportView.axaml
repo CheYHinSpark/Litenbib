@@ -1,0 +1,107 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:m="using:Litenbib.Models"
+        xmlns:vm="using:Litenbib.ViewModels"
+        Width="800" Height="400"
+        x:Class="Litenbib.Views.ExportView"
+        x:DataType="vm:ExportViewModel"
+		WindowStartupLocation="CenterScreen"
+        Title="ExportView">
+	<Window.Resources>
+		<m:FilterModeConverter x:Key="FilterModeConverter"/>
+	</Window.Resources>
+	
+	<Window.Styles>
+		<Style Selector="RadioButton">
+			<Setter Property="Margin" Value="4"/>
+			<Setter Property="Padding" Value="4"/>
+		</Style>
+	</Window.Styles>
+	
+	<Grid RowDefinitions="Auto,*,Auto" Grid.IsSharedSizeScope="True">
+		<TextBlock Text="Export Options" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+		<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+			<Button Name="MinButton" Click="TitleButton_Click" Classes="window">
+				<Path Data="{StaticResource -Path}" StrokeThickness="1"
+                      Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+			</Button>
+			<Button Name="CloseButton" Click="TitleButton_Click" Classes="warning window">
+				<Path Data="{StaticResource xPath}" StrokeThickness="1"
+                      Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+			</Button>
+		</StackPanel>
+
+
+		<ScrollViewer Grid.Row="1" Margin="4">
+			<StackPanel Margin="4" Grid.IsSharedSizeScope="True">
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition SharedSizeGroup="Scope" Width="Auto"/>
+						<ColumnDefinition Width="*"/>
+						<ColumnDefinition Width="Auto"/>
+					</Grid.ColumnDefinitions>
+					<TextBlock Text="Path"
+							   HorizontalAlignment="Right" VerticalAlignment="Center"/>
+					<TextBox Grid.Column="1"  Margin="4" Text="{CompiledBinding Path}"/>
+					<Button Grid.Column="2" Margin="0 4 4 4">Browser</Button>
+				</Grid>
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition SharedSizeGroup="Scope" Width="Auto"/>
+						<ColumnDefinition Width="*"/>
+						<ColumnDefinition Width="*"/>
+					</Grid.ColumnDefinitions>
+					<TextBlock Classes="right" Text="Author Format"
+							   HorizontalAlignment="Right" VerticalAlignment="Center"/>
+					<RadioButton Grid.Column="1" GroupName="author_format"
+								 Content="Givenname Familyname"
+								 IsChecked="{CompiledBinding AuthorFormat,
+								 Converter={StaticResource FilterModeConverter},
+								 ConverterParameter=0, Mode=TwoWay, FallbackValue=True}"/>
+					<RadioButton Grid.Column="2" GroupName="author_format"
+								 Content="Familyname, Givenname"
+								 IsChecked="{CompiledBinding AuthorFormat,
+								 Converter={StaticResource FilterModeConverter},
+								 ConverterParameter=1, Mode=OneWayToSource}"/>
+				</Grid>
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition SharedSizeGroup="Scope" Width="Auto"/>
+						<ColumnDefinition Width="*"/>
+						<ColumnDefinition Width="2*"/>
+					</Grid.ColumnDefinitions>
+					<TextBlock Classes="right" Text="Author Clip"
+							   HorizontalAlignment="Right" VerticalAlignment="Center"/>
+					<RadioButton Grid.Column="1" GroupName="author_clip"
+								 Content="Keep all authors"
+								 IsChecked="{CompiledBinding AuthorClip,
+								 Converter={StaticResource FilterModeConverter},
+								 ConverterParameter=0, Mode=TwoWay, FallbackValue=True}"/>
+					<RadioButton Grid.Column="2" GroupName="author_clip"
+								 IsChecked="{CompiledBinding AuthorClip,
+								 Converter={StaticResource FilterModeConverter},
+								 ConverterParameter=1, Mode=OneWayToSource}">
+						<StackPanel Orientation="Horizontal">
+							<TextBlock Text="Keep at most "/>
+							<TextBox Text="{CompiledBinding MaxAuthors}" BorderThickness="0" Padding="8 0"
+									 MinWidth="24" HorizontalContentAlignment="Center"/>
+							<TextBlock Text=" authors, ending with "/>
+							<TextBox Text="{CompiledBinding Ending}" BorderThickness="0" Padding="8 0"
+									 MinWidth="24" HorizontalContentAlignment="Center"/>
+						</StackPanel>
+					</RadioButton>
+				</Grid>
+			</StackPanel>
+		</ScrollViewer>
+
+		<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right"
+                    Margin=" 8 8">
+			<Button Content="Cancel" Width="64"/>
+			<Button Content="Export" Width="64"
+					Command="{CompiledBinding ExportCommand}"
+					CommandParameter="{CompiledBinding $parent[Window]}"/>
+		</StackPanel>
+	</Grid>
+</Window>

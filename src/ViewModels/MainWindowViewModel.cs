@@ -7,6 +7,7 @@ using Litenbib.Views;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -137,6 +138,14 @@ namespace Litenbib.ViewModels
         }
 
         #region Command
+        [RelayCommand]
+        private async Task ExportFile(Window? window)
+        {
+            if (window == null || SelectedFile == null) { return; }
+            ExportView dialog = new([.. SelectedFile.BibtexEntries], SelectedFile.FullPath);
+            await dialog.ShowDialog(window);
+        }
+
         [RelayCommand]
         private async Task NewFile(Window? window)
         {

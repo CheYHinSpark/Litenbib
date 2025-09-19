@@ -10,7 +10,7 @@ namespace Litenbib.Views;
 
 public partial class CompareEntryView : StyledWindow
 {
-    private List<List<RadioButton>> radioButtons = [];
+    private readonly List<List<RadioButton>> radioButtons = [];
 
     public CompareEntryView()
     {
@@ -93,7 +93,7 @@ public partial class CompareEntryView : StyledWindow
         }
     }
 
-    private void ChoosingButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void ChoosingButton_Click(object? sender, RoutedEventArgs e)
     {
         if (sender is not Button button) { return; }
         int col = (int)button.GetValue(Grid.ColumnProperty);

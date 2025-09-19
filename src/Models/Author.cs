@@ -6,42 +6,85 @@ using System.Threading.Tasks;
 
 namespace Litenbib.Models
 {
-    public class Author(string lastName, string firstName)
+    public class Author(string familyName, string givenName)
     {
-        public string LastName { get; set; } = lastName;
-        public string FirstName { get; set; } = firstName;
+        public string FamilyName { get; set; } = familyName;
+        public string GivenName { get; set; } = givenName;
 
-        /// <summary> Return fullname as "Firstname Lastname" </summary>
-        public string FullName { get => FirstName + " " + LastName; }
+        /// <summary> Return fullname as "GivenName FamilyName" </summary>
+        public string FullName { get => GivenName + " " + FamilyName; }
 
-        /// <summary> Return fullname as "F. Lastname" </summary>
+        /// <summary> Return fullname as "G. FamilyName" </summary>
         public string FullNameShort
         {
-            get 
+            get
             {
-                var fl = FirstName.Split(' ');
                 string result = "";
-                foreach (var f in fl)
-                { result += f[0] + ". "; }
-                result += LastName;
+                foreach (var g in GivenName.Split(' '))
+                { result += g[0] + ". "; }
+                result += FamilyName;
                 return result;
             }
         }
 
-        /// <summary> Return fullname as "Lastname, Firstname" </summary>
-        public string FullNameSurFirst { get => LastName + ", " + FirstName; }
+        /// <summary> Return fullname as "FamilyName, GivenName" </summary>
+        public string FullNameFamilyFirst { get => FamilyName + ", " + GivenName; }
 
-        /// <summary> Return fullname as "Lastname, F." </summary>
-        public string FullNameSurFirstShort
+        /// <summary> Return fullname as "FamilyName, G." </summary>
+        public string FullNameFamilyFirstShort
         {
             get
             {
-                var fl = FirstName.Split(' ');
-                string result = LastName + ",";
-                foreach (var f in fl)
-                { result += " " + f[0] + "."; }
+                string result = FamilyName + ",";
+                foreach (var g in GivenName.Split(' '))
+                { result += " " + g[0] + "."; }
                 return result;
             }
+        }
+
+        public Author(string fullName) : this("", "")
+        {
+            if (fullName.Contains(','))
+            {
+                var parts = fullName.Split(',', 2);
+                FamilyName = parts[0].Trim();
+                GivenName = parts[1].Trim();
+            }
+            else
+            {
+                var parts = fullName.Split(' ', 2);
+                if (parts.Length < 2)
+                {
+                    FamilyName = parts[0].Trim();
+                    return;
+                }
+                FamilyName = parts[1].Trim();
+                GivenName = parts[0].Trim();
+            }
+        }
+
+        public static List<Author> Authors(string authors)
+        { return [.. authors.Split(" and ", StringSplitOptions.RemoveEmptyEntries).Select(a => new Author(a.Trim()))]; }
+
+        public static (string, string) GetFamilyGiven(string fullname)
+        {
+            string family, given;
+            if (fullname.LastIndexOf(',') is int i && i > -1)
+            {
+                family = fullname[..i];
+                given = fullname[(i + 1)..];
+            }
+            else if (fullname.LastIndexOf(' ') is int e && e > -1)
+            {
+                given = fullname[..e];
+                family = fullname[(e + 1)..];
+            }
+            else
+            {
+                family = fullname;
+                given = "";
+            }
+            return (family.Trim(), given.Trim());
         }
     }
 }

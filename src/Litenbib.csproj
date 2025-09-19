@@ -57,6 +57,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Views\AddEntryView.axaml.cs">
+      <DependentUpon>AddEntryView.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\BibtexView.axaml.cs">
       <DependentUpon>BibtexView.axaml</DependentUpon>
     </Compile>

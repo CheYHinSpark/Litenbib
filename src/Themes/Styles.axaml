@@ -4,28 +4,28 @@
     <Styles.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-				<ResourceInclude Source="/Themes/GRexTheme.axaml"/>
-				<ResourceInclude Source="/Themes/DataGrid.axaml"/>
-				<ResourceInclude Source="/Themes/Expander.axaml"/>
-				<ResourceInclude Source="/Themes/MenuItem.axaml"/>
-				<ResourceInclude Source="/Themes/ListBox.axaml"/>
-				<ResourceInclude Source="/Themes/Tab.axaml"/>
+                <ResourceInclude Source="/Themes/GRexTheme.axaml"/>
+                <ResourceInclude Source="/Themes/DataGrid.axaml"/>
+                <ResourceInclude Source="/Themes/Expander.axaml"/>
+                <ResourceInclude Source="/Themes/MenuItem.axaml"/>
+                <ResourceInclude Source="/Themes/ListBox.axaml"/>
+                <ResourceInclude Source="/Themes/Tab.axaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Styles.Resources>
 
-	
-	<Style Selector="Border.hide_show">
-		<Setter Property="Transitions">
-			<Transitions>
-				<DoubleTransition Property="Opacity" Duration="0:0:0.2"/>
-			</Transitions>
-		</Setter>
-		<Setter Property="Opacity" Value="0"/>
-		<Style Selector="^[IsEnabled=True]">
-			<Setter Property="Opacity" Value="1"/>
-		</Style>
-	</Style>
+    
+    <Style Selector="Border.hide_show">
+        <Setter Property="Transitions">
+            <Transitions>
+                <DoubleTransition Property="Opacity" Duration="0:0:0.2"/>
+            </Transitions>
+        </Setter>
+        <Setter Property="Opacity" Value="0"/>
+        <Style Selector="^[IsEnabled=True]">
+            <Setter Property="Opacity" Value="1"/>
+        </Style>
+    </Style>
 
     <Style Selector="Button">
         <Setter Property="Transitions">
@@ -36,86 +36,94 @@
         </Setter>
     </Style>
 
-	<Style Selector="Button.tab_button">
-		<Setter Property="HorizontalContentAlignment" Value="Center"/>
-		<Setter Property="VerticalContentAlignment" Value="Center"/>
-		<Setter Property="Height" Value="20"/>
-		<Setter Property="Width" Value="20"/>
-		<Setter Property="CornerRadius" Value="10"/>
-		<Setter Property="Transitions"></Setter>
-		<Setter Property="Background" Value="Transparent"/>
-		<Style Selector="^:pointerover">
-			<Setter Property="Background" Value="{DynamicResource WarningBackground}"/>
-		</Style>
-	</Style>
-	
-	<Style Selector="Button.link_in_row">
-		<Setter Property="Height" Value="24"/>
-		<Setter Property="Width" Value="24"/>
-		<Setter Property="Transitions"></Setter>
-		<Setter Property="Background" Value="Transparent"/>
-		<Style Selector="^:pointerover">
-			<Setter Property="Background" Value="{DynamicResource HighlightBackground}"/>
-		</Style>
-	</Style>
+    <Style Selector="Button.tab_button">
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Height" Value="20"/>
+        <Setter Property="Width" Value="20"/>
+        <Setter Property="CornerRadius" Value="10"/>
+        <Setter Property="Transitions"></Setter>
+        <Setter Property="Background" Value="Transparent"/>
+        <Style Selector="^:pointerover">
+            <Setter Property="Background" Value="{DynamicResource WarningBackground}"/>
+        </Style>
+    </Style>
+    
+    <Style Selector="Button.link_in_row">
+        <Setter Property="Height" Value="24"/>
+        <Setter Property="Width" Value="24"/>
+        <Setter Property="Transitions"></Setter>
+        <Setter Property="Background" Value="Transparent"/>
+        <Style Selector="^:pointerover">
+            <Setter Property="Background" Value="{DynamicResource HighlightBackground}"/>
+        </Style>
+    </Style>
 
-	<Style Selector="ComboBoxItem">
-		<Setter Property="Padding" Value="8 6"/>
-		<Setter Property="VerticalContentAlignment" Value="Center"/>
-		<Setter Property="CornerRadius" Value="8"/>
-		<Style Selector="^:selected">
-			<Setter Property="Padding" Value="6 4"/>
-			<Setter Property="BorderThickness" Value="2"/>
-		</Style>
-	</Style>
-	
-	<Style Selector="v|ExComboBox">
+    <Style Selector="ComboBoxItem">
+        <Setter Property="Padding" Value="8 6"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Style Selector="^:selected">
+            <Setter Property="Padding" Value="6 4"/>
+            <Setter Property="BorderThickness" Value="2"/>
+        </Style>
+    </Style>
+    
+    <Style Selector="v|ExComboBox">
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="BorderBrush" Duration="0:0:0.15"/>
+                <ThicknessTransition Property="BorderThickness" Duration="0:0:0.15"/>
+            </Transitions>
+        </Setter>
+    </Style>
+
+    <Style Selector="MenuItem">
+        <Setter Property="CornerRadius" Value="6"/>
+        <Style Selector="^ /template/ Border#PART_LayoutRoot">
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.1"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="^:pressed">
+            <Setter Property="RenderTransform" Value="scale(0.98)" />
+        </Style>
+    </Style>
+    
+    <Style Selector="MenuItem.Top">
+        <Setter Property="CornerRadius" Value="0"/>
+        <Style Selector="^ /template/ Border#PART_LayoutRoot">
+            <Setter Property="Background" Value="{DynamicResource MainBackground}"/>
+        
+        </Style>
+        <Style Selector="^:pointerover /template/ Border#PART_LayoutRoot">
+            <Setter Property="Background" Value="{DynamicResource HighlightBackground}"/>
+        </Style>
+
+        <Style Selector="^:pressed">
+            <Setter Property="RenderTransform" Value="scale(0.98)" />
+        </Style>
+    </Style>
+
+    <Style Selector="TextBox">
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="BorderBrush" Duration="0:0:0.1"/>
+                <ThicknessTransition Property="BorderThickness" Duration="0:0:0.1"/>
+            </Transitions>
+        </Setter>
+    </Style>
+    
+    <Style Selector="RadioButton">
 		<Setter Property="Transitions">
 			<Transitions>
-				<BrushTransition Property="BorderBrush" Duration="0:0:0.15"/>
-				<ThicknessTransition Property="BorderThickness" Duration="0:0:0.15"/>
+				<BrushTransition Property="Background" Duration="0:0:0.1"/>
 			</Transitions>
 		</Setter>
-	</Style>
-
-	<Style Selector="MenuItem">
-		<Setter Property="CornerRadius" Value="6"/>
-		<Style Selector="^ /template/ Border#PART_LayoutRoot">
-			<Setter Property="Transitions">
-				<Transitions>
-					<BrushTransition Property="Background" Duration="0:0:0.1"/>
-				</Transitions>
-			</Setter>
-		</Style>
-		<Style Selector="^:pressed">
-			<Setter Property="RenderTransform" Value="scale(0.98)" />
-		</Style>
-	</Style>
-	
-	<Style Selector="MenuItem.Top">
-		<Setter Property="CornerRadius" Value="0"/>
-		<Style Selector="^ /template/ Border#PART_LayoutRoot">
-			<Setter Property="Background" Value="{DynamicResource MainBackground}"/>
-		
-		</Style>
-		<Style Selector="^:pointerover /template/ Border#PART_LayoutRoot">
-			<Setter Property="Background" Value="{DynamicResource HighlightBackground}"/>
-		</Style>
-
-		<Style Selector="^:pressed">
-			<Setter Property="RenderTransform" Value="scale(0.98)" />
-		</Style>
-	</Style>
-
-	<Style Selector="TextBox">
-		<Setter Property="Transitions">
-			<Transitions>
-				<BrushTransition Property="BorderBrush" Duration="0:0:0.1"/>
-				<ThicknessTransition Property="BorderThickness" Duration="0:0:0.1"/>
-			</Transitions>
-		</Setter>
-	</Style>
-
+    </Style>
+    
     <Style Selector="Window">
         <Setter Property="Background" Value="{DynamicResource MainBackground}"/>
         <Setter Property="Foreground" Value="{DynamicResource MainForeground}"/>
