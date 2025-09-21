@@ -13,7 +13,8 @@
         Title="Litenbib">
     <Window.Resources>
         <m:FilterModeConverter x:Key="FilterModeConverter"/>
-        <m:WindowStateToPathConverter x:Key="WindowStateToPathConverter"/>
+		<m:MultiObjectEqualConverter x:Key="MultiObjectEqualConverter"/>
+		<m:WindowStateToPathConverter x:Key="WindowStateToPathConverter"/>
     </Window.Resources>
 
     <Window.KeyBindings>
@@ -180,41 +181,52 @@
         </StackPanel>
 
         <!--content-->
-        <TabControl x:Name="MainTabControl" Grid.Row="1" Padding="0"
-                    ItemsSource="{CompiledBinding BibtexViewers}"
-                    SelectedItem="{CompiledBinding SelectedFile}">
-            <!-- Tab Header -->
-            <TabControl.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Grid.Column="1" Orientation="Horizontal">
-                        <TextBlock Text="*" FontSize="{CompiledBinding $parent[Window].FontSize}"
-                                   IsVisible="{CompiledBinding Edited}" Margin="4 0 0 0"/>
-                        <TextBlock Text="{CompiledBinding Header}" Margin="4 0"
-                                   VerticalAlignment="Center"
-                                   FontSize="{CompiledBinding $parent[Window].FontSize}"/>
-                        <Button Classes="tab_button warning"
-                                FontSize="{CompiledBinding $parent[Window].FontSize}"
-                                Command="{CompiledBinding #LitbibMainWindow.DataContext.CloseTabCommand}"
-                                CommandParameter="{CompiledBinding}">
-                            <Path Data="{StaticResource xPath}" StrokeThickness="1"
-                                  HorizontalAlignment="Stretch"
-                                  VerticalAlignment="Stretch"
-                                  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
-                        </Button>
-                    </StackPanel>
-                </DataTemplate>
-            </TabControl.ItemTemplate>
-
-            <!-- Tab 内容 -->
-            <TabControl.ContentTemplate>
-                <DataTemplate>
-                    <TransitioningContentControl Content="{CompiledBinding}">
-                        <TransitioningContentControl.PageTransition>
-                            <CrossFade Duration="0:0:0.4"/>
-                        </TransitioningContentControl.PageTransition>
-                    </TransitioningContentControl>
-                </DataTemplate>
-            </TabControl.ContentTemplate>
-        </TabControl>
+		<Grid x:Name="MainTabControl" Grid.Row="1" RowDefinitions="Auto,*"
+			  PointerMoved="TabControl_PointerMoved">
+			<TabStrip x:Name="MainTabStrip" ItemsSource="{CompiledBinding BibtexTabs}"
+					  SelectedItem="{CompiledBinding SelectedFile}">
+				<TabStrip.ItemTemplate>
+					<DataTemplate>
+						<StackPanel Grid.Column="1" Orientation="Horizontal"
+								PointerPressed="TabItem_PointerPressed"
+								PointerReleased="TabItem_PointerReleased">
+							<TextBlock Text="*" FontSize="{CompiledBinding $parent[Window].FontSize}"
+									   IsVisible="{CompiledBinding Edited}" Margin="4 0 0 0"/>
+							<TextBlock Text="{CompiledBinding Header}" Margin="4 0"
+									   VerticalAlignment="Center"
+									   FontSize="{CompiledBinding $parent[Window].FontSize}"/>
+							<Button Classes="tab_button warning"
+									FontSize="{CompiledBinding $parent[Window].FontSize}"
+									Command="{CompiledBinding #LitbibMainWindow.DataContext.CloseTabCommand}"
+									CommandParameter="{CompiledBinding}">
+								<Path Data="{StaticResource xPath}" StrokeThickness="1"
+									  HorizontalAlignment="Stretch"
+									  VerticalAlignment="Stretch"
+									  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+							</Button>
+						</StackPanel>
+					</DataTemplate>
+				</TabStrip.ItemTemplate>
+			</TabStrip>
+			<ItemsControl Grid.Row="1" ItemsSource="{CompiledBinding BibtexTabs}">
+				<ItemsControl.ItemsPanel>
+					<ItemsPanelTemplate>
+						<Grid />
+					</ItemsPanelTemplate>
+				</ItemsControl.ItemsPanel>
+				<ItemsControl.ItemTemplate>
+					<DataTemplate x:DataType="vm:BibtexViewModel">
+						<ContentPresenter Content="{Binding .}">
+							<ContentPresenter.IsVisible>
+								<MultiBinding Converter="{StaticResource MultiObjectEqualConverter}">
+									<Binding Path="#LitbibMainWindow.DataContext.SelectedFile"/>
+									<Binding Path="."/>
+								</MultiBinding>
+							</ContentPresenter.IsVisible>
+						</ContentPresenter>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</Grid>
     </Grid>
 </Window>

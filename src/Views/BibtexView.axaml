@@ -51,7 +51,6 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="300" MaxWidth="300" MinWidth="300"/>
             <ColumnDefinition Width="0" MaxWidth="0" MinWidth="0"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -142,14 +141,15 @@
 							</DataTemplate>
 						</DataGridTemplateColumn.CellTemplate>
 					</DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Journal/Booktitle" Width="1*">
+                    <DataGridTemplateColumn Header="Journal/Booktitle/Publisher" Width="1*">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate x:DataType="m:BibtexEntry">
                                 <TextBlock>
                                     <TextBlock.Text>
                                         <MultiBinding Converter="{StaticResource MultiStringConverter}" Mode="OneWay">
                                             <Binding Path="Journal"/>
-                                            <Binding Path="Booktitle"/>
+											<Binding Path="Booktitle"/>
+											<Binding Path="Publisher"/>
                                         </MultiBinding>
                                     </TextBlock.Text>
                                 </TextBlock>
@@ -194,7 +194,7 @@
             </StackPanel>
         </Grid>
 
-        <GridSplitter Name="Splitter" Grid.Column="1"
+        <GridSplitter Name="Splitter" Grid.Column="1" Margin="0 24 4 24"
                       DragDelta="GridSplitter_DragDelta"/>
         
         <!--entry详细数据-->

@@ -23,12 +23,16 @@ namespace Litenbib.ViewModels
     public partial class MainWindowViewModel : ViewModelBase
     {
         // 添加静态只读 JsonSerializerOptions 实例以供重用
-        private static readonly JsonSerializerOptions CachedJsonOptions = new() { WriteIndented = true };
+        private static readonly JsonSerializerOptions CachedJsonOptions = new()
+        {
+            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+            WriteIndented = true
+        };
         private readonly string localConfig = "localconfig.json";
 
         public List<BibtexEntry> CopiedBibtex = [];
 
-        public ObservableCollection<BibtexViewModel> BibtexViewers { get; set; }
+        public ObservableCollection<BibtexViewModel> BibtexTabs { get; set; }
 
         [ObservableProperty]
         private BibtexViewModel? _selectedFile;
@@ -49,7 +53,7 @@ namespace Litenbib.ViewModels
         {
             get
             {
-                foreach (var item in BibtexViewers)
+                foreach (var item in BibtexTabs)
                 { if (item.Edited) { return true; } }
                 return false;
             }
@@ -57,7 +61,7 @@ namespace Litenbib.ViewModels
 
         public MainWindowViewModel()
         {
-            BibtexViewers = [];
+            BibtexTabs = [];
         }
 
         public async Task CopyBibtexEntries(IEnumerable<BibtexEntry> list)
@@ -99,7 +103,7 @@ namespace Litenbib.ViewModels
                         {
                             string fileContent = await File.ReadAllTextAsync(filePath);
                             var newBVM = new BibtexViewModel(Path.GetFileName(filePath), filePath, fileContent, 0);
-                            BibtexViewers.Add(newBVM);
+                            BibtexTabs.Add(newBVM);
                             SelectedFile = newBVM;
                         }
                     }
@@ -119,8 +123,7 @@ namespace Litenbib.ViewModels
 
         public void SaveLocalConfig()
         {
-            var config = new LocalConfig { RecentFiles = [.. BibtexViewers.Select(b => b.FullPath)] };
-            Debug.WriteLine($"Saving {config.RecentFiles.Count} recent files to local config.");
+            var config = new LocalConfig { RecentFiles = [.. BibtexTabs.Select(b => b.FullPath)] };
             try
             {
                 // 使用缓存的 JsonSerializerOptions 实例
@@ -174,7 +177,7 @@ namespace Litenbib.ViewModels
             await writer.WriteAsync(string.Empty);
             int newMode = SelectedFile == null ? 0 : SelectedFile.FilterMode;
             var newBVM = new BibtexViewModel(file.Name, file.Path.AbsolutePath, string.Empty, newMode);
-            BibtexViewers.Add(newBVM);
+            BibtexTabs.Add(newBVM);
             SelectedFile = newBVM;
         }
 
@@ -206,7 +209,7 @@ namespace Litenbib.ViewModels
                 var fileContent = await streamReader.ReadToEndAsync();
                 int newMode = SelectedFile == null ? 0 : SelectedFile.FilterMode;
                 var newBVM = new BibtexViewModel(file.Name, file.Path.AbsolutePath, fileContent, newMode);
-                BibtexViewers.Add(newBVM);
+                BibtexTabs.Add(newBVM);
                 SelectedFile = newBVM;
             }
         }
@@ -214,8 +217,7 @@ namespace Litenbib.ViewModels
         [RelayCommand]
         private async Task CloseTab(BibtexViewModel? tab)
         {
-            if (BibtexViewers == null) { return; }
-            if (tab != null && BibtexViewers.Contains(tab))
+            if (tab != null && BibtexTabs.Contains(tab))
             {
                 if (tab.Edited)
                 {
@@ -228,7 +230,7 @@ namespace Litenbib.ViewModels
                     else if (result == ButtonResult.Yes)
                     { await Task.Run(() => tab.SaveBibtexCommand); }
                 }
-                BibtexViewers.Remove(tab);
+                BibtexTabs.Remove(tab);
             }
         }
 
@@ -248,7 +250,7 @@ namespace Litenbib.ViewModels
         private async Task SaveAll()
         {
             List<Task> tasks = [];
-            foreach (var item in BibtexViewers)
+            foreach (var item in BibtexTabs)
             {
                 if (item.Edited)
                 { tasks.Add(Task.Run(() => item.SaveBibtexCommand)); }

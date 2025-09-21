@@ -58,6 +58,12 @@ namespace Litenbib.Models
         { return (value is bool b && b) ? parameter : AvaloniaProperty.UnsetValue; }
     }
 
+    public class MultiObjectEqualConverter : IMultiValueConverter
+    {
+        public object? Convert(IList<object?> values, Type targetType, object? parameter, CultureInfo culture)
+        { return values[0] == values[1]; }
+    }
+
     public class MultiStringConverter : IMultiValueConverter
     {
         public object? Convert(IList<object?> values, Type targetType, object? parameter, CultureInfo culture)

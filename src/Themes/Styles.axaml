@@ -9,7 +9,8 @@
                 <ResourceInclude Source="/Themes/Expander.axaml"/>
                 <ResourceInclude Source="/Themes/MenuItem.axaml"/>
                 <ResourceInclude Source="/Themes/ListBox.axaml"/>
-                <ResourceInclude Source="/Themes/Tab.axaml"/>
+				<ResourceInclude Source="/Themes/ScrollViewer.axaml"/>
+				<ResourceInclude Source="/Themes/Tab.axaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Styles.Resources>
@@ -39,7 +40,8 @@
     <Style Selector="Button.tab_button">
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
-        <Setter Property="Height" Value="20"/>
+		<Setter Property="Padding" Value="0"/>
+		<Setter Property="Height" Value="20"/>
         <Setter Property="Width" Value="20"/>
         <Setter Property="CornerRadius" Value="10"/>
         <Setter Property="Transitions"></Setter>
@@ -123,8 +125,22 @@
 			</Transitions>
 		</Setter>
     </Style>
-    
-    <Style Selector="Window">
+
+	<!--<Style Selector="TabItem">
+		<Setter Property="Transitions">
+			<Transitions>
+				<TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.1"/>
+			</Transitions>
+		</Setter>
+	</Style>
+	<Style Selector="TabItem:pressed">
+		<Setter Property="Transitions">
+			<Transitions>
+			</Transitions>
+		</Setter>
+	</Style>-->
+
+	<Style Selector="Window">
         <Setter Property="Background" Value="{DynamicResource MainBackground}"/>
         <Setter Property="Foreground" Value="{DynamicResource MainForeground}"/>
         <Setter Property="ExtendClientAreaToDecorationsHint" Value="True"/>

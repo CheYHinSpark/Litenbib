@@ -6,11 +6,11 @@
 	<Color x:Key="HighlightBackgroundColor">#4d4d4d</Color>
 	<Color x:Key="HighlightBorderColor">#999999</Color>
 	<Color x:Key="HighlightForegroundColor">#ffffff</Color>
-	<Color x:Key="MainBackgroundColor">#1a1a1a</Color>
+	<Color x:Key="MainBackgroundColor">#232733</Color>
 	<Color x:Key="MainBorderColor">#000000</Color>
 	<Color x:Key="MainForegroundColor">#e6e6e6</Color>
 
-	<Color x:Key="TabBackgroundColor">#2b2933</Color>
+	<Color x:Key="TabBackgroundColor">#1a1a1a</Color>
 	<Color x:Key="ThemeBackgroundColor">#553ba3</Color>
     <Color x:Key="ThemeBorderColor">#3b55a3</Color>
     <Color x:Key="ThemeHighlightColor">#214d5c</Color>
