@@ -1,10 +1,7 @@
 ﻿using Avalonia.Controls;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Litenbib.Models
@@ -38,11 +35,11 @@ namespace Litenbib.Models
         public void AddAction(IUndoableAction action)
         {
             // 检查新编辑动作是否与最后的一样
-            if (action is EntryChangeAction entrychange 
-                && _undoList.Last != null 
+            if (action is EntryChangeAction entrychange
+                && _undoList.Last != null
                 && _undoList.Last.Value is EntryChangeAction lastchange)
             {
-                if (EntryChangeAction.IsSameField(lastchange, entrychange) 
+                if (EntryChangeAction.IsSameField(lastchange, entrychange)
                     && (DateTime.Now - lastTime).TotalSeconds < 0.2)
                 {
                     lastchange.NewValue = entrychange.NewValue;
@@ -123,10 +120,10 @@ namespace Litenbib.Models
 
         public static bool IsSameField(EntryChangeAction oldAction, EntryChangeAction newAction)
         {
-            if (oldAction._entry == newAction._entry 
+            if (oldAction._entry == newAction._entry
                 && oldAction._propertyName != "Type")
             {
-                return oldAction._propertyName == newAction._propertyName 
+                return oldAction._propertyName == newAction._propertyName
                     && oldAction._oldValue != newAction.NewValue;
             }
             return false;

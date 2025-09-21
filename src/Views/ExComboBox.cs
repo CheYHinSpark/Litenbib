@@ -4,12 +4,6 @@ using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Templates;
 using Avalonia.Input;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Litenbib.Views
 {
@@ -124,7 +118,7 @@ namespace Litenbib.Views
             base.OnPointerReleased(e);
 
             // If an item inside the popup was clicked, select it.
-            if ( e.Source is Visual visual && _popup?.IsInsidePopup(visual) == true)
+            if (e.Source is Visual visual && _popup?.IsInsidePopup(visual) == true)
             {
                 if (UpdateSelectionFromEventSource(visual))
                 {

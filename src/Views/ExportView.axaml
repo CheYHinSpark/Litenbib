@@ -8,6 +8,7 @@
         x:Class="Litenbib.Views.ExportView"
         x:DataType="vm:ExportViewModel"
 		WindowStartupLocation="CenterScreen"
+        Icon="/Assets/logo.ico"
         Title="ExportView">
 	<Window.Resources>
 		<m:FilterModeConverter x:Key="FilterModeConverter"/>

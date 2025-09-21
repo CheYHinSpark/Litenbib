@@ -1,6 +1,3 @@
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using Litenbib.Models;
 using Litenbib.ViewModels;
 using System.Collections.Generic;

@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Litenbib.Models
 {
@@ -158,7 +156,7 @@ namespace Litenbib.Models
                     else
                     { return false; }
                 }
-                
+
                 entry.Fields[fieldName] = fieldValue;
             }
             return true;

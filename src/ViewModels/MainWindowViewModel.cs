@@ -7,7 +7,6 @@ using Litenbib.Views;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -16,7 +15,6 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace Litenbib.ViewModels
 {
@@ -259,6 +257,10 @@ namespace Litenbib.ViewModels
         }
 
         private bool CanSaveAll() => SelectedFile != null;
+
+        [RelayCommand]
+        private static void OpenWebsite(string url)
+        { UriProcessor.StartProcess(url); }
         #endregion Command
     }
 }

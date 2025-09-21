@@ -13,12 +13,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Litenbib.ViewModels
 {
-    public partial class BibtexViewModel: ViewModelBase
+    public partial class BibtexViewModel : ViewModelBase
     {
         [ObservableProperty]
         private string _header;
@@ -44,7 +43,7 @@ namespace Litenbib.ViewModels
         public EventHandler? CheckingEvent;
 
         public ObservableRangeCollection<BibtexEntry> BibtexEntries { get; set; }
-        
+
         public DataGridCollectionView BibtexView { get; }
 
         private bool _suppressShowingEntry = false;

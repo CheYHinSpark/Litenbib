@@ -1,12 +1,6 @@
-﻿using Avalonia;
-using MsBox.Avalonia.Base;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -124,7 +118,7 @@ namespace Litenbib.Models
                     if (match.Success && match.Groups.Count > 1)
                     {
                         string dblp = match.Groups[1].Value;
-                    
+
                         Debug.WriteLine(dblp);
                         response = await client.GetAsync($"https://dblp.org/rec/{dblp}.bib");
                         if (response.IsSuccessStatusCode)

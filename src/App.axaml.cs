@@ -1,11 +1,10 @@
-using System.Linq;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using Litenbib.ViewModels;
 using Litenbib.Views;
+using System.Linq;
 
 namespace Litenbib
 {

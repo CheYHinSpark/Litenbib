@@ -4,25 +4,15 @@ using Avalonia.Animation.Easings;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
-using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
 using Avalonia.Media;
-using Avalonia.Platform;
-using Avalonia.Platform.Storage;
 using Avalonia.Styling;
 using Avalonia.VisualTree;
-using Litenbib.Models;
 using Litenbib.ViewModels;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using System.IO.Pipes;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Litenbib.Views

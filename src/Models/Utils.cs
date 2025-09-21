@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Litenbib.Models
 {
@@ -62,19 +58,6 @@ namespace Litenbib.Models
 
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(
                 NotifyCollectionChangedAction.Remove, items.ToList(), 0)); // Avalonia 会自己更新索引
-        }
-    }
-
-    internal class BibFile
-    {
-        public static string Read(string path)
-        {
-            return File.ReadAllText(path);
-        }
-
-        public static void Write(string path, string content)
-        {
-
         }
     }
 

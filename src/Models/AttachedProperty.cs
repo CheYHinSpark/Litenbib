@@ -1,19 +1,6 @@
 ﻿using Avalonia;
-using Avalonia.Animation;
-using Avalonia.Animation.Easings;
 using Avalonia.Controls;
-using Avalonia.Controls.Primitives;
 using Avalonia.Data;
-using Avalonia.Input;
-using Avalonia.Interactivity;
-using Avalonia.Media;
-using Avalonia.Styling;
-using System;
-using System.Collections;
-using System.Collections.Specialized;
-using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Litenbib.Models
 {
@@ -35,7 +22,7 @@ namespace Litenbib.Models
         public static readonly AttachedProperty<object?> BindToProperty =
             AvaloniaProperty.RegisterAttached<Control, object?>(
                 "BindTo", typeof(FocusEx), defaultBindingMode: BindingMode.OneWayToSource);
-        
+
         public static object? GetBindTo(Control element) =>
             element.GetValue(BindToProperty);
 

@@ -13,8 +13,8 @@
         Title="Litenbib">
     <Window.Resources>
         <m:FilterModeConverter x:Key="FilterModeConverter"/>
-		<m:MultiObjectEqualConverter x:Key="MultiObjectEqualConverter"/>
-		<m:WindowStateToPathConverter x:Key="WindowStateToPathConverter"/>
+        <m:MultiObjectEqualConverter x:Key="MultiObjectEqualConverter"/>
+        <m:WindowStateToPathConverter x:Key="WindowStateToPathConverter"/>
     </Window.Resources>
 
     <Window.KeyBindings>
@@ -46,6 +46,7 @@
         <Grid Name="TitleBarGrid" ColumnDefinitions="*,*,*"
               RowDefinitions="Auto,Auto">
             <Border Grid.Column="1" Grid.RowSpan="2" CornerRadius="0 0 12 12"
+                    Margin="0 0 0 2"
                     Background="{DynamicResource TabBackground}" Classes="hide_show">
                 <Border.IsEnabled>
                     <MultiBinding Converter="{x:Static BoolConverters.And}">
@@ -53,7 +54,7 @@
                         <Binding Path="SelectedFile" Converter="{x:Static ObjectConverters.IsNotNull}" />
                     </MultiBinding>
                 </Border.IsEnabled>
-                <Grid ColumnDefinitions="*,*,*,2*" Margin="4 2"
+                <Grid ColumnDefinitions="*,*,*,2*" Margin="4"
                       Height="{DynamicResource ToolBarHeight}"
                       VerticalAlignment="Bottom">
                     <RadioButton IsChecked="{CompiledBinding SelectedFile.FilterMode,
@@ -91,9 +92,9 @@
                         <MenuItem Header="_Open..."
                                   Command="{CompiledBinding OpenFileCommand}"
                                   CommandParameter="{CompiledBinding $parent[Window]}"/>
-						<MenuItem Header="_Export"
+                        <MenuItem Header="_Export"
                                   Command="{CompiledBinding ExportFileCommand}"
-								  CommandParameter="{CompiledBinding $parent[Window]}"/>
+                                  CommandParameter="{CompiledBinding $parent[Window]}"/>
                         <MenuItem Header="_Save All"
                                   Command="{CompiledBinding SaveAllCommand}"/>
                     </MenuItem>
@@ -128,7 +129,8 @@
 
             <!--tool-->
             <Grid Grid.Row="1" Height="{StaticResource TitleBarHeight}"
-                  Opacity="{Binding ShowToolBar}">
+                  Grid.ColumnSpan="3"
+                  Opacity="{CompiledBinding ShowToolBar}">
                 <Grid.Styles>
                     <Style Selector="Button">
                         <Setter Property="Background" Value="{DynamicResource InputBackground}"/>
@@ -168,65 +170,107 @@
                         </Button>
                     </StackPanel>
                 </Border>
+                <Border Margin="8 0" Background="{DynamicResource InputBackground}"
+                        HorizontalAlignment="Right" VerticalAlignment="Center"
+                        CornerRadius="8">
+                    <StackPanel Orientation="Horizontal" Margin="6 2">
+                        <Button Command="{CompiledBinding OpenWebsiteCommand}"
+                                CommandParameter="https://dblp.org/">
+                            <Viewbox Margin="2">
+                                <Svg Path="/Assets/dblp.svg"/>
+                            </Viewbox>
+                        </Button>
+                        <Button Command="{CompiledBinding OpenWebsiteCommand}"
+                                CommandParameter="https://arxiv.org/">
+                            <Viewbox Margin="2">
+                                <Svg Path="/Assets/arxiv.svg"/>
+                            </Viewbox>
+                        </Button>
+                        <Button Command="{CompiledBinding OpenWebsiteCommand}"
+                                CommandParameter="https://www.semanticscholar.org/">
+                            <Viewbox Margin="1">
+                                <Svg Path="/Assets/semantic_scholar.svg"/>
+                            </Viewbox>
+                        </Button>
+                        <Button Command="{CompiledBinding OpenWebsiteCommand}"
+                                CommandParameter="https://www.researchgate.net/">
+                            <Viewbox Margin="2">
+                                <Svg Path="/Assets/researchgate.svg"/>
+                            </Viewbox>
+                        </Button>
+                        <Button Command="{CompiledBinding OpenWebsiteCommand}"
+                                CommandParameter="https://scholar.google.com/">
+                            <Viewbox Margin="3">
+                                <Svg Path="/Assets/google_scholar.svg"/>
+                            </Viewbox>
+                        </Button>
+                        <Button Command="{CompiledBinding OpenWebsiteCommand}"
+                                CommandParameter="https://openreview.net/">
+                            <Viewbox Margin="0">
+                                <Svg Path="/Assets/openreview.svg"/>
+                            </Viewbox>
+                        </Button>
+                    </StackPanel>
+                </Border>
             </Grid>
         </Grid>
         
         
         <!--welcome-->
         <StackPanel Grid.RowSpan="2" VerticalAlignment="Center">
-            <Image Source="/Assets/logo.ico" Width="100"/>
+            <Svg Path="/Assets/logo.svg" Width="100"/>
             <TextBlock Text="Welcome to LitenBib"
                        HorizontalAlignment="Center"
                        FontSize="24"/>
         </StackPanel>
 
         <!--content-->
-		<Grid x:Name="MainTabControl" Grid.Row="1" RowDefinitions="Auto,*"
-			  PointerMoved="TabControl_PointerMoved">
-			<TabStrip x:Name="MainTabStrip" ItemsSource="{CompiledBinding BibtexTabs}"
-					  SelectedItem="{CompiledBinding SelectedFile}">
-				<TabStrip.ItemTemplate>
-					<DataTemplate>
-						<StackPanel Grid.Column="1" Orientation="Horizontal"
-								PointerPressed="TabItem_PointerPressed"
-								PointerReleased="TabItem_PointerReleased">
-							<TextBlock Text="*" FontSize="{CompiledBinding $parent[Window].FontSize}"
-									   IsVisible="{CompiledBinding Edited}" Margin="4 0 0 0"/>
-							<TextBlock Text="{CompiledBinding Header}" Margin="4 0"
-									   VerticalAlignment="Center"
-									   FontSize="{CompiledBinding $parent[Window].FontSize}"/>
-							<Button Classes="tab_button warning"
-									FontSize="{CompiledBinding $parent[Window].FontSize}"
-									Command="{CompiledBinding #LitbibMainWindow.DataContext.CloseTabCommand}"
-									CommandParameter="{CompiledBinding}">
-								<Path Data="{StaticResource xPath}" StrokeThickness="1"
-									  HorizontalAlignment="Stretch"
-									  VerticalAlignment="Stretch"
-									  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
-							</Button>
-						</StackPanel>
-					</DataTemplate>
-				</TabStrip.ItemTemplate>
-			</TabStrip>
-			<ItemsControl Grid.Row="1" ItemsSource="{CompiledBinding BibtexTabs}">
-				<ItemsControl.ItemsPanel>
-					<ItemsPanelTemplate>
-						<Grid />
-					</ItemsPanelTemplate>
-				</ItemsControl.ItemsPanel>
-				<ItemsControl.ItemTemplate>
-					<DataTemplate x:DataType="vm:BibtexViewModel">
-						<ContentPresenter Content="{Binding .}">
-							<ContentPresenter.IsVisible>
-								<MultiBinding Converter="{StaticResource MultiObjectEqualConverter}">
-									<Binding Path="#LitbibMainWindow.DataContext.SelectedFile"/>
-									<Binding Path="."/>
-								</MultiBinding>
-							</ContentPresenter.IsVisible>
-						</ContentPresenter>
-					</DataTemplate>
-				</ItemsControl.ItemTemplate>
-			</ItemsControl>
-		</Grid>
+        <Grid x:Name="MainTabControl" Grid.Row="1" RowDefinitions="Auto,*"
+              PointerMoved="TabControl_PointerMoved">
+            <TabStrip x:Name="MainTabStrip" ItemsSource="{CompiledBinding BibtexTabs}"
+                      SelectedItem="{CompiledBinding SelectedFile}">
+                <TabStrip.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal"
+                                PointerPressed="TabItem_PointerPressed"
+                                PointerReleased="TabItem_PointerReleased">
+                            <TextBlock Text="*" FontSize="{CompiledBinding $parent[Window].FontSize}"
+                                       IsVisible="{CompiledBinding Edited}" Margin="4 0 0 0"/>
+                            <TextBlock Text="{CompiledBinding Header}" Margin="4 0"
+                                       VerticalAlignment="Center"
+                                       FontSize="{CompiledBinding $parent[Window].FontSize}"/>
+                            <Button Classes="tab_button warning"
+                                    FontSize="{CompiledBinding $parent[Window].FontSize}"
+                                    Command="{CompiledBinding #LitbibMainWindow.DataContext.CloseTabCommand}"
+                                    CommandParameter="{CompiledBinding}">
+                                <Path Data="{StaticResource xPath}" StrokeThickness="1"
+                                      HorizontalAlignment="Stretch"
+                                      VerticalAlignment="Stretch"
+                                      Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+                            </Button>
+                        </StackPanel>
+                    </DataTemplate>
+                </TabStrip.ItemTemplate>
+            </TabStrip>
+            <ItemsControl Grid.Row="1" ItemsSource="{CompiledBinding BibtexTabs}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Grid />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="vm:BibtexViewModel">
+                        <ContentPresenter Content="{Binding .}">
+                            <ContentPresenter.IsVisible>
+                                <MultiBinding Converter="{StaticResource MultiObjectEqualConverter}">
+                                    <Binding Path="#LitbibMainWindow.DataContext.SelectedFile"/>
+                                    <Binding Path="."/>
+                                </MultiBinding>
+                            </ContentPresenter.IsVisible>
+                        </ContentPresenter>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Grid>
     </Grid>
 </Window>

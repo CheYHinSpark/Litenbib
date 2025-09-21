@@ -1,13 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using Litenbib.Models;
 using Litenbib.Views;
-using ShimSkiaSharp;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Litenbib.ViewModels
 {

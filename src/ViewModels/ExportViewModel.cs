@@ -2,12 +2,8 @@
 using CommunityToolkit.Mvvm.Input;
 using Litenbib.Models;
 using Litenbib.Views;
-using ShimSkiaSharp;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -70,7 +66,7 @@ namespace Litenbib.ViewModels
                 foreach (var entry in Entries)
                 { await writer.WriteAsync(entry.ExportBibtex(authorFormat) + "\n"); }
             }
-            else 
+            else
             {
                 foreach (var entry in Entries)
                 { await writer.WriteAsync(entry.ExportBibtex(authorFormat, MaxAuthors, Ending) + "\n"); }
