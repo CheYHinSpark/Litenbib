@@ -106,11 +106,14 @@
                     <DataGridTemplateColumn Header="Entry Type" Width="Auto" CanUserResize="False">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate x:DataType="m:BibtexEntry">
-                                <Border Margin="0 4" HorizontalAlignment="Stretch" CornerRadius="12"
-                                        Background="{CompiledBinding #TypeText.Text, Converter={StaticResource TextToBackgroundConverter}}">
-                                    <TextBlock Name="TypeText" HorizontalAlignment="Center"
-                                               Text="{CompiledBinding EntryType, Converter={StaticResource EntryTypeConverter}}"/>
-                                </Border>
+								<Panel Margin="0 4">
+								    <Border HorizontalAlignment="Stretch" CornerRadius="12"
+										    Background="{CompiledBinding #TypeText.Text, Converter={StaticResource TextToBackgroundConverter}}"/>
+									<Border HorizontalAlignment="Stretch" CornerRadius="12" Opacity="0.75"
+										    Background="{DynamicResource InputBackground}"/>
+									<TextBlock Name="TypeText" HorizontalAlignment="Center"
+											   Text="{CompiledBinding EntryType, Converter={StaticResource EntryTypeConverter}}"/>
+								</Panel>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>

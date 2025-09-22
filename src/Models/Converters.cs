@@ -96,20 +96,20 @@ namespace Litenbib.Models
                 // 这里根据你的逻辑返回不同的颜色
                 return text.ToLower() switch
                 {
-                    "article" => SolidColorBrush.Parse("#3d6666"),
-                    "book" => SolidColorBrush.Parse("#3d5266"),
-                    "booklet" => SolidColorBrush.Parse("#3d3d66"),
-                    "conference" => SolidColorBrush.Parse("#523d66"),
-                    "inbook" => SolidColorBrush.Parse("#663d66"),
-                    "incollection" => SolidColorBrush.Parse("#663d52"),
-                    "inproceedings" => SolidColorBrush.Parse("#663d3d"),
-                    "manual" => SolidColorBrush.Parse("#66523d"),
-                    "mastersthesis" => SolidColorBrush.Parse("#66663d"),
-                    "misc" => SolidColorBrush.Parse("#52663d"),
-                    "phdthesis" => SolidColorBrush.Parse("#3d663d"),
-                    "proceedings" => SolidColorBrush.Parse("#3d6652"),
-                    "techreport" => SolidColorBrush.Parse("#525252"),
-                    "unpublished" => SolidColorBrush.Parse("#3d3d3d"),
+                    "article" => SolidColorBrush.Parse("#008080"),
+                    "book" => SolidColorBrush.Parse("#004080"),
+                    "booklet" => SolidColorBrush.Parse("#000080"),
+                    "conference" => SolidColorBrush.Parse("#400080"),
+                    "inbook" => SolidColorBrush.Parse("#800080"),
+                    "incollection" => SolidColorBrush.Parse("#800040"),
+                    "inproceedings" => SolidColorBrush.Parse("#800000"),
+                    "manual" => SolidColorBrush.Parse("#804000"),
+                    "mastersthesis" => SolidColorBrush.Parse("#808000"),
+                    "misc" => SolidColorBrush.Parse("#408000"),
+                    "phdthesis" => SolidColorBrush.Parse("#008000"),
+                    "proceedings" => SolidColorBrush.Parse("#008040"),
+                    "techreport" => SolidColorBrush.Parse("#c0c0c0"),
+                    "unpublished" => SolidColorBrush.Parse("#404040"),
                     _ => Brushes.Transparent, // 默认背景
                 };
             }

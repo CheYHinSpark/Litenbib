@@ -5,11 +5,11 @@
         <Grid Width="28" Height="28">
 			<Path Stroke="Red" Fill="Red" StrokeThickness="1"
 				  HorizontalAlignment="Center" VerticalAlignment="Center"
-                  Data="M 6,4 A 2,2 0 0 0 6,8 A 2,2 0 0 0 6,4 M 6,0 L 6,2 M 6,12 L 6,10 M 0,6 L 2,6 M 12,6 L 10,6
+                  Data="M 6,3 A 3,3 0 0 0 6,9 A 3,3 0 0 0 6,3 M 6,0 L 6,2 M 6,12 L 6,10 M 0,6 L 2,6 M 12,6 L 10,6
 				  M 1.7574,1.7574 L 3.1716,3.1716 M 10.2426,10.2426 L 8.8284,8.8284 M 10.2426,1.7574 L 8.8284,3.1716 M 1.7574,10.2426 L 3.1716,8.8284"/>
 			<Path Fill="White" Opacity="0.5"
 				  HorizontalAlignment="Center" VerticalAlignment="Center"
-                  Data="M 6,1 A 5,5 0 1 1 3,10 A 5,5 0 0 0 6,1"/>
+                  Data="M 6,0 A 6,6 0 1 1 1.2,9.6 A 6,6 0 0 0 6,0"/>
         </Grid>
     </Design.PreviewWith>
     
@@ -37,9 +37,9 @@
 	<PathGeometry x:Key="AddPath" Figures="M 5,0 L 5,5 0,5 0,7 5,7 5,12 7,12 7,7 12,7 12,5 7,5 7,0 Z"/>
 	<PathGeometry x:Key="MergePath" Figures="M 5.5,2.5 L 3,0 0,0 0,11 5.5,11 5.5,9 M 7.5,9 L 7.5,11 13,11 13,2.5 10.5,0 7.5,0 7.5,3
 				  M 1.5,6 L 5.5,6 M 3.5,4 L 5.5,6 3.5,8 M 11.5,6 L 7.5,6 M 9.5,4 L 7.5,6 9.5,8"/>
-	<PathGeometry x:Key="SunPath" Figures="M 6,4 A 2,2 0 0 0 6,8 A 2,2 0 0 0 6,4 M 6,0 L 6,2 M 6,12 L 6,10 M 0,6 L 2,6 M 12,6 L 10,6
+	<PathGeometry x:Key="SunPath" Figures="M 6,3 A 3,3 0 0 0 6,9 A 3,3 0 0 0 6,3 M 6,0 L 6,2 M 6,12 L 6,10 M 0,6 L 2,6 M 12,6 L 10,6
 				  M 1.7574,1.7574 L 3.1716,3.1716 M 10.2426,10.2426 L 8.8284,8.8284 M 10.2426,1.7574 L 8.8284,3.1716 M 1.7574,10.2426 L 3.1716,8.8284"/>
-	<PathGeometry x:Key="MoonPath" Figures="M 6,1 A 5,5 0 1 1 3,10 A 5,5 0 0 0 6,1"/>
+	<PathGeometry x:Key="MoonPath" Figures="M 6,0 A 6,6 0 1 1 1.2,9.6 A 6,6 0 0 0 6,0"/>
     
     <SolidColorBrush x:Key="DisabledForeground" Color="{DynamicResource DisabledForegroundColor}"/>
     <SolidColorBrush x:Key="HighlightBackground" Color="{DynamicResource HighlightBackgroundColor}"/>
