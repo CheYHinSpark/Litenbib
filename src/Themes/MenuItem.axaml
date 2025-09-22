@@ -56,7 +56,7 @@
 							   IsLightDismissEnabled="False"
 							   IsOpenEx="{TemplateBinding IsSubMenuOpen, Mode=OneWay}">
 						<v:ExPopup.OpenAnimation>
-							<Animation Duration="0:0:0.15" FillMode="Both">
+							<Animation Duration="0:0:0.15" FillMode="Both" Easing="SineEaseOut">
 								<KeyFrame Cue="0%">
 									<Setter Property="Opacity" Value="0.0"/>
 									<Setter Property="TranslateTransform.X" Value="-40.0"/>
@@ -70,7 +70,7 @@
 							</Animation>
 						</v:ExPopup.OpenAnimation>
 						<v:ExPopup.CloseAnimation>
-							<Animation Duration="0:0:0.15" FillMode="Both">
+							<Animation Duration="0:0:0.15" FillMode="Both" Easing="SineEaseOut">
 								<KeyFrame Cue="0%">
 									<Setter Property="Opacity" Value="1.0"/>
 									<Setter Property="TranslateTransform.X" Value="0.0"/>

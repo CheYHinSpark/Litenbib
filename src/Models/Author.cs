@@ -64,7 +64,7 @@ namespace Litenbib.Models
         public static List<Author> Authors(string authors)
         { return [.. authors.Split(" and ", StringSplitOptions.RemoveEmptyEntries).Select(a => new Author(a.Trim()))]; }
 
-        public static (string, string) GetFamilyGiven(string fullname)
+        public static (string, string) GetFamilyGiven(string fullname, int abbreviation)
         {
             string family, given;
             if (fullname.LastIndexOf(',') is int i && i > -1)
@@ -82,7 +82,19 @@ namespace Litenbib.Models
                 family = fullname;
                 given = "";
             }
-            return (family.Trim(), given.Trim());
+            if (abbreviation == 1)
+            {
+                var parts = given.Trim().Replace("{", "").Replace("}", "").Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                for (int j = 0; j < parts.Length; j++)
+                {
+                    var sub_parts = parts[j].Split('-', StringSplitOptions.RemoveEmptyEntries);
+                    for (int k = 0; k < sub_parts.Length; k++)
+                    { sub_parts[k] = sub_parts[k][0] + "."; }
+                    parts[j] = string.Join("{-}", sub_parts);
+                }
+                given = string.Join(" ", parts);
+            }
+            return (family.Trim(), given);
         }
     }
 }

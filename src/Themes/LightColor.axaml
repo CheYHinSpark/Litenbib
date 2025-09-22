@@ -1,0 +1,18 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=System.Runtime">
+    <Color x:Key="DisabledForegroundColor">#7f7f7f</Color>
+    <Color x:Key="InputBackgroundColor">#cccccc</Color>
+    <Color x:Key="HighlightBackgroundColor">#b2b2b2</Color>
+    <Color x:Key="HighlightBorderColor">#666666</Color>
+    <Color x:Key="HighlightForegroundColor">#000000</Color>
+    <Color x:Key="MainBackgroundColor">#dcd8cc</Color>
+    <Color x:Key="MainBorderColor">#ffffff</Color>
+    <Color x:Key="MainForegroundColor">#191919</Color>
+
+    <Color x:Key="TabBackgroundColor">#e5e5e5</Color>
+    <Color x:Key="ThemeBackgroundColor">#aac45c</Color>
+    <Color x:Key="ThemeBorderColor">#c4aa5c</Color>
+    <Color x:Key="ThemeHighlightColor">#deb2a3</Color>
+    <Color x:Key="WarningBackgroundColor">#cc2929</Color>
+</ResourceDictionary>

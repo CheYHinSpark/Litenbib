@@ -189,6 +189,8 @@ namespace Litenbib.Models
         {
             int maxFieldLength = MaxFieldLength();
             string s = $"@{entryType}{{{citationKey},\n";
+            int abbreviation = author_format / 2;
+            author_format = author_format % 2;
             foreach (KeyValuePair<string, string> kvp in Fields)
             {
                 if (kvp.Key == "author")
@@ -197,7 +199,7 @@ namespace Litenbib.Models
                     max_authors = max_authors == -1 ? authors.Length : max_authors;
                     for (int i = int.Min(max_authors, authors.Length) - 1; i >= 0; --i)
                     {
-                        var a = Models.Author.GetFamilyGiven(authors[i]);
+                        var a = Models.Author.GetFamilyGiven(authors[i], abbreviation);
                         authors[i] = author_format == 0 ? $"{a.Item2} {a.Item1}" : $"{a.Item1}, {a.Item2}";
                     }
                     string author = string.Join(" and ", authors[0..int.Min(max_authors, authors.Length)])

@@ -1,5 +1,8 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Markup.Xaml.Styling;
 using Avalonia.Platform.Storage;
+using Avalonia.Styling;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Litenbib.Models;
@@ -27,6 +30,10 @@ namespace Litenbib.ViewModels
             WriteIndented = true
         };
         private readonly string localConfig = "localconfig.json";
+
+        // 主题色
+        [ObservableProperty]
+        private bool _themeIndex = false;
 
         public List<BibtexEntry> CopiedBibtex = [];
 
@@ -123,22 +130,21 @@ namespace Litenbib.ViewModels
         {
             var config = new LocalConfig { RecentFiles = [.. BibtexTabs.Select(b => b.FullPath)] };
             try
-            {
-                // 使用缓存的 JsonSerializerOptions 实例
-                string jsonString = JsonSerializer.Serialize(config, CachedJsonOptions);
-                File.WriteAllText(localConfig, jsonString);
-            }
+            { File.WriteAllText(localConfig, JsonSerializer.Serialize(config, CachedJsonOptions)); }
             catch (JsonException ex)
-            {
-                Debug.WriteLine($"Error serializing to JSON: {ex.Message}");
-            }
+            { Debug.WriteLine($"Error serializing to JSON: {ex.Message}"); }
             catch (Exception ex)
-            {
-                Debug.WriteLine($"An unexpected error occurred: {ex.Message}");
-            }
+            { Debug.WriteLine($"An unexpected error occurred: {ex.Message}"); }
         }
 
         #region Command
+        [RelayCommand]
+        private void ChangeTheme()
+        {
+            ThemeIndex = !ThemeIndex;
+            Application.Current!.RequestedThemeVariant = ThemeIndex? ThemeVariant.Light : ThemeVariant.Dark;
+        }
+
         [RelayCommand]
         private async Task ExportFile(Window? window)
         {

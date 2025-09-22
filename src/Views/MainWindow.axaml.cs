@@ -43,15 +43,6 @@ namespace Litenbib.Views
             }
         }
 
-        private void TitleBar_PointerPressed(object? sender, PointerPressedEventArgs e)
-        {
-            TitleBarGrid.IsHitTestVisible = false;
-            this.BeginMoveDrag(e);
-        }
-
-        private void TitleBar_PointerReleased(object? sender, PointerReleasedEventArgs e)
-        { TitleBarGrid.IsHitTestVisible = true; }
-
         protected override async Task<bool> OnCloseButtonClicked()
         {
             // 检查是否需要保存
@@ -71,9 +62,22 @@ namespace Litenbib.Views
             return true;
         }
 
+
+
+        #region Title Bar Drag Move
+        private void TitleBar_PointerPressed(object? sender, PointerPressedEventArgs e)
+        {
+            TitleBarGrid.IsHitTestVisible = false;
+            this.BeginMoveDrag(e);
+        }
+
+        private void TitleBar_PointerReleased(object? sender, PointerReleasedEventArgs e)
+        { TitleBarGrid.IsHitTestVisible = true; }
+        #endregion Title Bar Drag Move
+
+        #region Tab Control Drag
         private void TabItem_PointerPressed(object? sender, PointerPressedEventArgs e)
         {
-            //Debug.WriteLine("Start drag TabItem");
             if (sender is not Control c || c.DataContext is not BibtexViewModel bvm) { return; }
             _draggedItem = c.FindAncestorOfType<TabStripItem>()!;
             _initialPoint = e.GetPosition(MainTabControl);
@@ -129,7 +133,7 @@ namespace Litenbib.Views
                     Animation animation = new()
                     {
                         Duration = TimeSpan.FromMilliseconds(150),
-                        Easing = new SineEaseInOut(),
+                        Easing = new SineEaseOut(),
                         FillMode = FillMode.Forward,
                         Children =
                         {
@@ -163,26 +167,19 @@ namespace Litenbib.Views
 
             if (_draggedId < _tabWidths.Length - 1 // not the last one
                 && _initialPoint.X + _tabWidths[_draggedId + 1] / 2 + 1.0 < position.X)
-            {
-                //Debug.WriteLine("To Right");
-                SwitchTabItems(1);
-            }
+            { SwitchTabItems(1); }
             else if (_draggedId > 0
                 && _initialPoint.X - _tabWidths[_draggedId - 1] / 2 - 1.0 > position.X)
-            {
-                //Debug.WriteLine("To Left");
-                SwitchTabItems(-1);
-            }
+            { SwitchTabItems(-1); }
             DragTabItem(position.X);
         }
 
         private void TabItem_PointerReleased(object? sender, PointerReleasedEventArgs e)
         {
-            //Debug.WriteLine("Stop drag TabItem");
             Animation animation = new()
             {
                 Duration = TimeSpan.FromMilliseconds(200),
-                Easing = new SineEaseInOut(),
+                Easing = new SineEaseOut(),
                 FillMode = FillMode.Forward,
                 Children =
                 {
@@ -196,8 +193,8 @@ namespace Litenbib.Views
             animation.RunAsync(_draggedItem);
 
             _draggedItem = null!;
-            //Debug.WriteLine(e.Pointer.Captured);
             e.Pointer.Capture(null); // Release the pointer capture
         }
+        #endregion Tab Control Drag
     }
 }

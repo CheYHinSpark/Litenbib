@@ -79,7 +79,7 @@
             <TextBox x:Name="FilterTextBox" Grid.Column="1" Grid.RowSpan="2" UndoLimit="200"
                      m:FocusEx.IsFocused="{CompiledBinding SelectedFile.IsFiltering, Mode=OneWayToSource}"
                      Text="{CompiledBinding SelectedFile.FilterText, Mode=OneWayToSource}"
-                     Watermark="Search or add..."
+                     Watermark="Search..."
                      VerticalAlignment="Top" Margin="8 6"/>
 
             <!--title-->
@@ -113,6 +113,17 @@
             </StackPanel>
             
             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Grid.Column="2">
+				<Button Classes="window" Command="{CompiledBinding ChangeThemeCommand}">
+					<Grid>
+						<Path Data="{StaticResource SunPath}" StrokeThickness="1"
+                              Stroke="{CompiledBinding $parent[Button].Foreground}"
+                              Fill="{CompiledBinding $parent[Button].Foreground}"
+							  IsVisible="{CompiledBinding ThemeIndex}"/>
+						<Path Data="{StaticResource MoonPath}"
+                              Fill="{CompiledBinding $parent[Button].Foreground}"
+							  IsVisible="{CompiledBinding ThemeIndex, Converter={x:Static BoolConverters.Not}}"/>
+					</Grid>
+				</Button>
                 <Button Name="MinButton" Click="TitleButton_Click" Classes="window">
                     <Path Data="{StaticResource -Path}" StrokeThickness="1"
                           Stroke="{CompiledBinding $parent[Button].Foreground}"/>
@@ -135,13 +146,16 @@
                     <Style Selector="Button">
                         <Setter Property="Background" Value="{DynamicResource InputBackground}"/>
                         <Setter Property="Width" Value="28"/>
-                        <Setter Property="Height" Value="28"/>
+						<Setter Property="Height" Value="28"/>
+						<Setter Property="Margin" Value="0 2"/>
                     </Style>
                 </Grid.Styles>
                 <Border Margin="8 0" Background="{DynamicResource InputBackground}"
                         HorizontalAlignment="Left" VerticalAlignment="Center"
+						BorderBrush="{DynamicResource MainBorder}"
+						BorderThickness="1"
                         CornerRadius="8">
-                    <StackPanel Orientation="Horizontal" Margin="6 2">
+                    <StackPanel Orientation="Horizontal" Margin="6 0" VerticalAlignment="Center">
                         <Button Command="{CompiledBinding SelectedFile.UndoBibtexCommand}">
                             <Path Data="{StaticResource UndoPath}" StrokeThickness="1"
                                   Stroke="{CompiledBinding $parent[Button].Foreground}"/>
@@ -172,8 +186,10 @@
                 </Border>
                 <Border Margin="8 0" Background="{DynamicResource InputBackground}"
                         HorizontalAlignment="Right" VerticalAlignment="Center"
+						BorderBrush="{DynamicResource MainBorder}"
+						BorderThickness="1"
                         CornerRadius="8">
-                    <StackPanel Orientation="Horizontal" Margin="6 2">
+                    <StackPanel Orientation="Horizontal" Margin="6 0" VerticalAlignment="Center">
                         <Button Command="{CompiledBinding OpenWebsiteCommand}"
                                 CommandParameter="https://dblp.org/">
                             <Viewbox Margin="2">

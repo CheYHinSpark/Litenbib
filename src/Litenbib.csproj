@@ -26,9 +26,11 @@
     <AvaloniaXaml Remove="Assets\DarkColor.axaml" />
     <AvaloniaXaml Remove="Assets\GrexTheme.axaml" />
     <AvaloniaXaml Remove="Assets\Styles.axaml" />
+    <AvaloniaXaml Remove="Themes\LightColor.axaml" />
   </ItemGroup>
 
   <ItemGroup>
+    <AvaloniaResource Include="Themes\LightColor.axaml" />
     <AvaloniaResource Include="Themes\DarkColor.axaml">
       <SubType>Designer</SubType>
     </AvaloniaResource>
