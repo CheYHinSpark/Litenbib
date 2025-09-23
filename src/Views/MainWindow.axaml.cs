@@ -39,12 +39,14 @@ namespace Litenbib.Views
             if (DataContext is MainWindowViewModel mwvm)
             {
                 _viewModel = mwvm;
-                await _viewModel.OpenFileInit();
+                await _viewModel.LoadLocalConfig();
             }
         }
 
         protected override async Task<bool> OnCloseButtonClicked()
         {
+            // 保存本地配置文件
+            await _viewModel.SaveLocalConfig();
             // 检查是否需要保存
             if (_viewModel.NeedSave)
             {
@@ -57,8 +59,6 @@ namespace Litenbib.Views
                 else if (result == ButtonResult.Yes)
                 { await Task.Run(() => _viewModel.SaveAllCommand); }
             }
-            // 保存最近打开的文件列表到本地配置文件
-            _viewModel.SaveLocalConfig();
             return true;
         }
 

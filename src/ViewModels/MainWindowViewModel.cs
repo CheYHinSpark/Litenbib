@@ -85,12 +85,11 @@ namespace Litenbib.ViewModels
             });
         }
 
-        public async Task OpenFileInit()
+        public async Task LoadLocalConfig()
         {
             // 读取局部配置文件
             if (!File.Exists(localConfig))
             { return; }
-
             try
             {
                 // 读取 JSON 文件的所有内容
@@ -98,7 +97,9 @@ namespace Litenbib.ViewModels
 
                 // 反序列化 JSON 字符串到 Config 对象
                 var config = JsonSerializer.Deserialize<LocalConfig>(jsonString);
-
+                // 设置主题
+                this.ThemeIndex = config?.ThemeIndex ?? false;
+                Application.Current!.RequestedThemeVariant = ThemeIndex? ThemeVariant.Light : ThemeVariant.Dark;
                 // 如果反序列化成功且列表不为空，返回它
                 if (config?.RecentFiles != null && config?.RecentFiles.Count > 0)
                 {
@@ -115,22 +116,20 @@ namespace Litenbib.ViewModels
                 }
             }
             catch (JsonException ex)
-            {
-                Debug.WriteLine($"Error deserializing JSON: {ex.Message}");
-                return;
-            }
+            { Debug.WriteLine($"Error deserializing JSON: {ex.Message}"); }
             catch (Exception ex)
-            {
-                Debug.WriteLine($"An unexpected error occurred: {ex.Message}");
-                return;
-            }
+            { Debug.WriteLine($"An unexpected error occurred: {ex.Message}"); }
         }
 
-        public void SaveLocalConfig()
+        public async Task SaveLocalConfig()
         {
-            var config = new LocalConfig { RecentFiles = [.. BibtexTabs.Select(b => b.FullPath)] };
+            var config = new LocalConfig
+            {
+                ThemeIndex = this.ThemeIndex,
+                RecentFiles = [.. BibtexTabs.Select(b => b.FullPath)]
+            };
             try
-            { File.WriteAllText(localConfig, JsonSerializer.Serialize(config, CachedJsonOptions)); }
+            { await File.WriteAllTextAsync(localConfig, JsonSerializer.Serialize(config, CachedJsonOptions)); }
             catch (JsonException ex)
             { Debug.WriteLine($"Error serializing to JSON: {ex.Message}"); }
             catch (Exception ex)
