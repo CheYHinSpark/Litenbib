@@ -389,14 +389,14 @@ namespace Litenbib.ViewModels
             IsChecking = false;
         }
 
-        [RelayCommand(CanExecute = nameof(CanCopyPasteBibtex))]
+        [RelayCommand(CanExecute = nameof(CanCopyPasteCutBibtex))]
         private async Task CopyBibtex(object? sender)
         {
             if (SelectedIndexItems != null && sender is MainWindowViewModel mwvm)
             { await mwvm.CopyBibtexEntries(SelectedIndexItems.Select(t => t.Item2)); }
         }
 
-        [RelayCommand(CanExecute = nameof(CanCopyPasteBibtex))]
+        [RelayCommand(CanExecute = nameof(CanCopyPasteCutBibtex))]
         private void PasteBibtex(object? sender)
         {
             if (sender is not MainWindowViewModel mwvm)
@@ -414,7 +414,17 @@ namespace Litenbib.ViewModels
             NotifyCanUndoRedo();
         }
 
-        private bool CanCopyPasteBibtex() => !(IsFiltering || UndoRedoManager.NewEditedBox != null);
+        [RelayCommand(CanExecute = nameof(CanCopyPasteCutBibtex))]
+        private void CutBibtex(object? sender)
+        {
+            if (SelectedIndexItems != null && sender is MainWindowViewModel mwvm)
+            {
+                mwvm.CopiedBibtex = [.. SelectedIndexItems.Select(t => BibtexEntry.CopyFrom(t.Item2))];
+                Delete();
+            }
+        }
+
+        private bool CanCopyPasteCutBibtex() => !(IsFiltering || UndoRedoManager.NewEditedBox != null);
 
         [RelayCommand]
         private async Task GetDblpFromDoi(object? sender)

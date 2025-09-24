@@ -24,7 +24,9 @@
                     CommandParameter="{CompiledBinding #LitbibMainWindow}"/>
         <KeyBinding Command="{CompiledBinding SelectedFile.CopyBibtexCommand}" Gesture="Ctrl+C"
                     CommandParameter="{CompiledBinding #LitbibMainWindow.DataContext}"/>
-        <KeyBinding Command="{CompiledBinding SelectedFile.PasteBibtexCommand}" Gesture="Ctrl+V"
+		<KeyBinding Command="{CompiledBinding SelectedFile.PasteBibtexCommand}" Gesture="Ctrl+V"
+                    CommandParameter="{CompiledBinding #LitbibMainWindow.DataContext}"/>
+		<KeyBinding Command="{CompiledBinding SelectedFile.CutBibtexCommand}" Gesture="Ctrl+X"
                     CommandParameter="{CompiledBinding #LitbibMainWindow.DataContext}"/>
         <KeyBinding Command="{CompiledBinding SelectedFile.UndoBibtexCommand}" Gesture="Ctrl+Z"/>
         <KeyBinding Command="{CompiledBinding SelectedFile.RedoBibtexCommand}" Gesture="Ctrl+Y"/>
@@ -105,8 +107,11 @@
                         <MenuItem Header="_Copy"
                                   Command="{CompiledBinding SelectedFile.CopyBibtexCommand}"
                                   CommandParameter="{CompiledBinding $parent[Window].DataContext}"/>
-                        <MenuItem Header="_Paste"
+						<MenuItem Header="_Paste"
                                   Command="{CompiledBinding SelectedFile.PasteBibtexCommand}"
+                                  CommandParameter="{CompiledBinding $parent[Window].DataContext}"/>
+						<MenuItem Header="_Cut"
+                                  Command="{CompiledBinding SelectedFile.CutBibtexCommand}"
                                   CommandParameter="{CompiledBinding $parent[Window].DataContext}"/>
                     </MenuItem>
                 </Menu>
