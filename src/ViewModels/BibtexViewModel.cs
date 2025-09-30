@@ -192,6 +192,14 @@ namespace Litenbib.ViewModels
         #endregion Event
 
         #region Method
+        public async Task ExtractPdf(string pdfFile)
+        {
+            var x = PdfMetadataExtractor.Extract(pdfFile);
+            await Task.Delay(1000);
+            Debug.WriteLine(x.Doi);
+            Debug.WriteLine(x.ArxivId);
+        }
+
         public async Task AddBibtexEntry(Window window)
         {
             AddEntryView dialog = new();

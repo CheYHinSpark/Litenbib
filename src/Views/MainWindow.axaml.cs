@@ -6,12 +6,15 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.LogicalTree;
 using Avalonia.Media;
+using Avalonia.Platform.Storage;
 using Avalonia.Styling;
 using Avalonia.VisualTree;
 using Litenbib.ViewModels;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -29,6 +32,9 @@ namespace Litenbib.Views
         public MainWindow()
         {
             InitializeComponent();
+            MainTabControl.AddHandler(DragDrop.DropEvent, OnDrop);
+            MainTabControl.AddHandler(DragDrop.DragEnterEvent, OnDragOver);
+            MainTabControl.AddHandler(DragDrop.DragLeaveEvent, OnDragLeave);
         }
 
         protected async override void OnInitialized()
@@ -63,6 +69,44 @@ namespace Litenbib.Views
         }
 
 
+
+        #region drag drop events
+        private void OnDragOver(object? sender, DragEventArgs e)
+        {
+            //// 检查拖拽的数据中是否包含文件
+            if (e.Data.GetFiles() is IEnumerable<IStorageItem> files && files.Any())
+            {
+                // 这表明可以在此处放置文件
+                e.DragEffects = DragDropEffects.Copy;
+                DragBorder.Opacity = 0.5;
+            }
+            else
+            {
+                // 如果不包含文件，则显示不能放置的效果
+                e.DragEffects = DragDropEffects.None;
+                DragBorder.Opacity = 0.0;
+            }
+            e.Handled = true;
+        }
+        private void OnDragLeave(object? sender, DragEventArgs e)
+        {
+            //// 检查拖拽的数据中是否包含文件
+            DragBorder.Opacity = 0.0;
+        }
+
+
+        private void OnDrop(object? sender, DragEventArgs e)
+        {
+            var filePaths = e.Data.GetFiles()?.ToList();
+
+            if (filePaths != null)
+            {
+                _viewModel.DropProcess(filePaths);
+            }
+            DragBorder.Opacity = 0.0;
+            e.Handled = true;
+        }
+        #endregion drag drop events
 
         #region Title Bar Drag Move
         private void TitleBar_PointerPressed(object? sender, PointerPressedEventArgs e)

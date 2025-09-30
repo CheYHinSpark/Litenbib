@@ -98,7 +98,6 @@
         <Setter Property="CornerRadius" Value="0"/>
         <Style Selector="^ /template/ Border#PART_LayoutRoot">
             <Setter Property="Background" Value="{DynamicResource MainBackground}"/>
-        
         </Style>
         <Style Selector="^:pointerover /template/ Border#PART_LayoutRoot">
             <Setter Property="Background" Value="{DynamicResource HighlightBackground}"/>
@@ -108,6 +107,12 @@
             <Setter Property="RenderTransform" Value="scale(0.98)" />
         </Style>
     </Style>
+
+	<Style Selector="Path">
+		<Setter Property="HorizontalAlignment" Value="Center"/>
+		<Setter Property="VerticalAlignment" Value="Center"/>
+		<Setter Property="StrokeLineCap" Value="Round"/>
+	</Style>
 
     <Style Selector="TextBox">
         <Setter Property="Transitions">

@@ -67,6 +67,8 @@ namespace Litenbib.ViewModels
         public MainWindowViewModel()
         {
             BibtexTabs = [];
+            ExtractPdf("E:\\bh-博士后\\GUI Agent\\文献\\2025_TrustWorthy_GUI_Agent_Survey.pdf");
+            ExtractPdf("E:/bh-博士后/GUI Agent/文献/2025_TrustWorthy_GUI_Agent_Survey.pdf");
         }
 
         public async Task CopyBibtexEntries(IEnumerable<BibtexEntry> list)
@@ -134,6 +136,55 @@ namespace Litenbib.ViewModels
             { Debug.WriteLine($"Error serializing to JSON: {ex.Message}"); }
             catch (Exception ex)
             { Debug.WriteLine($"An unexpected error occurred: {ex.Message}"); }
+        }
+
+        private async void ExtractPdf(string pdfFile)
+        {
+            var x = PdfMetadataExtractor.Extract(pdfFile);
+            await Task.Delay(1000);
+            Debug.WriteLine(x.Doi);
+            Debug.WriteLine(x.ArxivId);
+        }
+
+        public async void DropProcess(List<IStorageItem> files)
+        {
+            // 如果没有Tab打开，
+            if (SelectedFile == null)
+            {
+                // 打开文件中的所有bib文件
+                foreach (var file in files)
+                {
+                    if (file is IStorageFile f && f.Name.EndsWith(".bib"))
+                    {
+                        await OpenFile(f);
+                    }
+                }
+            }
+            // 如果有文件打开，调用到文件里面去
+            else
+            {
+                foreach (var file in files)
+                {
+                    if (file is IStorageFile f && f.Name.EndsWith(".pdf"))
+                    {
+                        await SelectedFile.ExtractPdf(Uri.UnescapeDataString(file.Path.AbsolutePath));
+                    }
+                }
+            }
+            
+        }
+
+        private async Task OpenFile(IStorageFile file)
+        {
+            // 打开文件的读取流。
+            await using var stream = await file.OpenReadAsync();
+            using var streamReader = new StreamReader(stream);
+            //// 将文件的所有内容作为文本读取。
+            var fileContent = await streamReader.ReadToEndAsync();
+            int newMode = SelectedFile == null ? 0 : SelectedFile.FilterMode;
+            var newBVM = new BibtexViewModel(file.Name, file.Path.AbsolutePath, fileContent, newMode);
+            BibtexTabs.Add(newBVM);
+            SelectedFile = newBVM;
         }
 
         #region Command

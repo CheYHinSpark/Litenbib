@@ -234,21 +234,23 @@
                     </StackPanel>
                 </Border>
             </Grid>
-        </Grid>
+        </Grid>  
         
-        
-        <!--welcome-->
-        <StackPanel Grid.RowSpan="2" VerticalAlignment="Center">
-            <Svg Path="/Assets/logo.svg" Width="100"/>
-            <TextBlock Text="Welcome to LitenBib"
-                       HorizontalAlignment="Center"
-                       FontSize="24"/>
-        </StackPanel>
-
         <!--content-->
         <Grid x:Name="MainTabControl" Grid.Row="1" RowDefinitions="Auto,*"
-              PointerMoved="TabControl_PointerMoved">
-            <TabStrip x:Name="MainTabStrip" ItemsSource="{CompiledBinding BibtexTabs}"
+			  Background="{DynamicResource MainBackground}"
+              PointerMoved="TabControl_PointerMoved"
+			  DragDrop.AllowDrop="True">
+			<!--welcome-->
+			<StackPanel Grid.RowSpan="2" VerticalAlignment="Center">
+				<Svg Path="/Assets/logo.svg" Width="100"/>
+				<TextBlock Text="Welcome to LitenBib"
+						   HorizontalAlignment="Center"
+						   FontSize="24"/>
+			</StackPanel>
+
+            <!--tabcontrol-->
+			<TabStrip x:Name="MainTabStrip" ItemsSource="{CompiledBinding BibtexTabs}"
                       SelectedItem="{CompiledBinding SelectedFile}">
                 <TabStrip.ItemTemplate>
                     <DataTemplate>
@@ -292,6 +294,15 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
+
+			<!--dragdrop-->
+			<Border Name="DragBorder" Grid.RowSpan="2"
+					IsHitTestVisible="False"
+					BorderBrush="{DynamicResource ThemeBorder}"
+					Background="{DynamicResource InputBackground}"
+					BorderThickness="4" CornerRadius="8" Margin="2"
+					Opacity="0"/>
         </Grid>
-    </Grid>
+    
+	</Grid>
 </Window>

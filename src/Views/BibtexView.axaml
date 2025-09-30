@@ -65,8 +65,7 @@
                       CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True"
                       IsReadOnly="True"
                       SelectedItem="{CompiledBinding ShowingEntry}"
-                      SelectionChanged="DataGrid_SelectionChanged"
-                      DragDrop.AllowDrop="True">
+                      SelectionChanged="DataGrid_SelectionChanged">
                 <DataGrid.Columns>
                     <DataGridTemplateColumn Header="File" Width="Auto" CanUserResize="False" CanUserSort="False">
                         <DataGridTemplateColumn.CellTemplate>
@@ -164,7 +163,8 @@
                                         CanUserResize="False"/>
                 </DataGrid.Columns>
             </DataGrid>
-            <StackPanel Orientation="Horizontal" Height="{DynamicResource HintBarHeight}"
+
+			<StackPanel Orientation="Horizontal" Height="{DynamicResource HintBarHeight}"
                         VerticalAlignment="Bottom" Grid.Row="1">
 				<TextBlock Margin="8 0 0 0" Text="{CompiledBinding BibtexView.Count}"/>
                 <TextBlock Margin="0 0 8 0" Text=" Entry(ies)"/>
@@ -450,7 +450,6 @@
                                      Text="{CompiledBinding ShowingEntry.BibTeX}"/>
                         </Grid>
                     </StackPanel>
-                    
                 </ScrollViewer>
             </Grid>
         </Border>

@@ -4,10 +4,13 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using Avalonia.Platform.Storage;
 using Avalonia.Styling;
 using Litenbib.Models;
 using Litenbib.ViewModels;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Litenbib.Views;
@@ -37,6 +40,7 @@ public partial class BibtexView : UserControl
             viewModel.CheckingEvent += (_, e) => { SetSelectionAndScroll(); };
         }
     }
+
 
     private void SetSelectionAndScroll()
     {
