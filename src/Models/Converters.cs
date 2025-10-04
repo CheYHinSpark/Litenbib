@@ -8,6 +8,16 @@ using System.Globalization;
 
 namespace Litenbib.Models
 {
+    /// <summary> 这是为了单选按钮绑定而写的转换器 </summary>
+    public class DictionaryContentConverter : IValueConverter
+    {
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        { return AvaloniaProperty.UnsetValue; }
+
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        { return (value is bool b && b) ? parameter : AvaloniaProperty.UnsetValue; }
+    }
+
     public class EntryTypeConverter : IValueConverter
     {
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
@@ -41,18 +51,49 @@ namespace Litenbib.Models
         { return value is string text ? text.ToLower() : value; }
     }
 
-    /// <summary>
-    /// 这是为了单选按钮绑定而写的转换器
-    /// </summary>
-    public class DictionaryContentConverter : IValueConverter
+    public class EntryTypeToVisibleConverter : IValueConverter
     {
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
-        { return AvaloniaProperty.UnsetValue; }
+        {
+            if (parameter is not string list || value is not string s) { return false; }
+            var items = list.Split(',');
+            if (items[0] == "_")
+            {
+                foreach (var item in items)
+                { if (s.Equals(item, StringComparison.CurrentCultureIgnoreCase)) { return false; } }
+                return true;
+            }
+            else
+            {
+                foreach (var item in items)
+                { if (s.Equals(item, StringComparison.CurrentCultureIgnoreCase)) { return true; } }
+                return false;
+            }
+        }
 
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
-        { return (value is bool b && b) ? parameter : AvaloniaProperty.UnsetValue; }
+        {
+            // 双向绑定可能需要实现，这里不需要，直接抛出异常或返回null
+            throw new NotSupportedException();
+        }
     }
+    
+    public class FilterModeConverter : IValueConverter
+    {
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            if (parameter is string s)
+            { return s == "0"; }
+            return false;
+        }
 
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            if (value is not bool b || parameter is not string s) { return -1; }
+            return b ? s : -1;
+        }
+    }
+    
     public class MultiObjectEqualConverter : IMultiValueConverter
     {
         public object? Convert(IList<object?> values, Type targetType, object? parameter, CultureInfo culture)
@@ -67,22 +108,6 @@ namespace Litenbib.Models
             foreach (var v in values)
             { if (v is string s && !string.IsNullOrWhiteSpace(s)) { return s.Replace("{", "").Replace("}", ""); } }
             return AvaloniaProperty.UnsetValue;
-        }
-    }
-
-    public class FilterModeConverter : IValueConverter
-    {
-        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
-        {
-            if (parameter is string s)
-            { return s == "0"; }
-            return false;
-        }
-
-        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
-        {
-            if (value is not bool b || parameter is not string s) { return -1; }
-            return b ? s : -1;
         }
     }
 
@@ -141,33 +166,6 @@ namespace Litenbib.Models
             }
             // 如果value不是字符串，返回默认颜色
             return Brushes.Transparent;
-        }
-
-        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
-        {
-            // 双向绑定可能需要实现，这里不需要，直接抛出异常或返回null
-            throw new NotSupportedException();
-        }
-    }
-
-    public class EntryTypeToVisibleConverter : IValueConverter
-    {
-        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
-        {
-            if (parameter is not string list || value is not string s) { return false; }
-            var items = list.Split(',');
-            if (items[0] == "_")
-            {
-                foreach (var item in items)
-                { if (s.Equals(item, StringComparison.CurrentCultureIgnoreCase)) { return false; } }
-                return true;
-            }
-            else
-            {
-                foreach (var item in items)
-                { if (s.Equals(item, StringComparison.CurrentCultureIgnoreCase)) { return true; } }
-                return false;
-            }
         }
 
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

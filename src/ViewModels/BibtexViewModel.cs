@@ -486,6 +486,14 @@ namespace Litenbib.ViewModels
                 NotifyCanUndoRedo();
             }
         }
+
+
+        [RelayCommand]
+        private void OpenInFileManager()
+        {
+            int i = FullPath.LastIndexOf('/');
+            if (i >= 0) { UriProcessor.StartProcess(FullPath[..i]); }
+        }
         #endregion Command
     }
 }

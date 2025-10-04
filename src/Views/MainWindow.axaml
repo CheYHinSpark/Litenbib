@@ -160,30 +160,36 @@
 						BorderBrush="{DynamicResource MainBorder}"
 						BorderThickness="1"
                         CornerRadius="8">
-                    <StackPanel Orientation="Horizontal" Margin="6 0" VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" Margin="6 0" VerticalAlignment="Center"
+								ToolTip.Tip="Undo">
                         <Button Command="{CompiledBinding SelectedFile.UndoBibtexCommand}">
                             <Path Data="{StaticResource UndoPath}" StrokeThickness="1"
                                   Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                         </Button>
-                        <Button Command="{CompiledBinding SelectedFile.RedoBibtexCommand}">
+                        <Button Command="{CompiledBinding SelectedFile.RedoBibtexCommand}"
+								ToolTip.Tip="Redo">
                             <Path Data="{StaticResource RedoPath}" StrokeThickness="1"
                                   Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                         </Button>
-                        <Button Command="{CompiledBinding SelectedFile.DeleteBibtexCommand}">
+                        <Button Command="{CompiledBinding SelectedFile.DeleteBibtexCommand}"
+								ToolTip.Tip="Delete Entry">
                             <Path Data="{StaticResource DeletePath}"
                                   Fill="{CompiledBinding $parent[Button].Foreground}"/>
                         </Button>
-                        <Button Command="{CompiledBinding SelectedFile.SaveBibtexCommand}">
+                        <Button Command="{CompiledBinding SelectedFile.SaveBibtexCommand}"
+								ToolTip.Tip="Save">
                             <Path Data="{StaticResource SavePath}" StrokeThickness="1"
                                   Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                         </Button>
                         <Button Command="{CompiledBinding AddBibtexEntryCommand}"
-                                CommandParameter="{CompiledBinding $parent[Window]}">
+                                CommandParameter="{CompiledBinding $parent[Window]}"
+								ToolTip.Tip="Add Entry">
                             <Path Data="{StaticResource AddPath}"
                                   Fill="{CompiledBinding $parent[Button].Foreground}"/>
                         </Button>
                         <Button Command="{CompiledBinding SelectedFile.MergeEntriesCommand}"
-                                CommandParameter="{CompiledBinding $parent[Window]}">
+                                CommandParameter="{CompiledBinding $parent[Window]}"
+								ToolTip.Tip="Merge Entries">
                             <Path Data="{StaticResource MergePath}" StrokeThickness="1"
                                   Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                         </Button>
@@ -196,37 +202,43 @@
                         CornerRadius="8">
                     <StackPanel Orientation="Horizontal" Margin="6 0" VerticalAlignment="Center">
                         <Button Command="{CompiledBinding OpenWebsiteCommand}"
-                                CommandParameter="https://dblp.org/">
+                                CommandParameter="https://dblp.org/"
+								ToolTip.Tip="Go to https://dblp.org/">
                             <Viewbox Margin="2">
                                 <Svg Path="/Assets/dblp.svg"/>
                             </Viewbox>
                         </Button>
                         <Button Command="{CompiledBinding OpenWebsiteCommand}"
-                                CommandParameter="https://arxiv.org/">
+                                CommandParameter="https://arxiv.org/"
+								ToolTip.Tip="Go to https://arxiv.org/">
                             <Viewbox Margin="2">
                                 <Svg Path="/Assets/arxiv.svg"/>
                             </Viewbox>
                         </Button>
                         <Button Command="{CompiledBinding OpenWebsiteCommand}"
-                                CommandParameter="https://www.semanticscholar.org/">
+                                CommandParameter="https://www.semanticscholar.org/"
+								ToolTip.Tip="Go to https://www.semanticscholar.org/">
                             <Viewbox Margin="1">
                                 <Svg Path="/Assets/semantic_scholar.svg"/>
                             </Viewbox>
                         </Button>
                         <Button Command="{CompiledBinding OpenWebsiteCommand}"
-                                CommandParameter="https://www.researchgate.net/">
+                                CommandParameter="https://www.researchgate.net/"
+								ToolTip.Tip="Go to https://www.researchgate.net/">
                             <Viewbox Margin="2">
                                 <Svg Path="/Assets/researchgate.svg"/>
                             </Viewbox>
                         </Button>
                         <Button Command="{CompiledBinding OpenWebsiteCommand}"
-                                CommandParameter="https://scholar.google.com/">
+                                CommandParameter="https://scholar.google.com/"
+								ToolTip.Tip="Go to https://scholar.google.com/">
                             <Viewbox Margin="3">
                                 <Svg Path="/Assets/google_scholar.svg"/>
                             </Viewbox>
                         </Button>
                         <Button Command="{CompiledBinding OpenWebsiteCommand}"
-                                CommandParameter="https://openreview.net/">
+                                CommandParameter="https://openreview.net/"
+								ToolTip.Tip="Go to https://openreview.net/">
                             <Viewbox Margin="0">
                                 <Svg Path="/Assets/openreview.svg"/>
                             </Viewbox>
@@ -255,8 +267,15 @@
                 <TabStrip.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Grid.Column="1" Orientation="Horizontal"
-                                PointerPressed="TabItem_PointerPressed"
-                                PointerReleased="TabItem_PointerReleased">
+                                    PointerPressed="TabItem_PointerPressed"
+                                    PointerReleased="TabItem_PointerReleased">
+							<StackPanel.ContextMenu>
+								<ContextMenu>
+									<MenuItem Header="Save"/>
+									<MenuItem Header="Open in File Manager"
+											  Command="{CompiledBinding OpenInFileManagerCommand}"/>
+								</ContextMenu>
+							</StackPanel.ContextMenu>
                             <TextBlock Text="*" FontSize="{CompiledBinding $parent[Window].FontSize}"
                                        IsVisible="{CompiledBinding Edited}" Margin="4 0 0 0"/>
                             <TextBlock Text="{CompiledBinding Header}" Margin="4 0"

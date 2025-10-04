@@ -73,11 +73,8 @@
                                 <Button Command="{CompiledBinding ToFileCommand}"
                                         Classes="link_in_row"
                                         IsVisible="{CompiledBinding File, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
-                                    <Viewbox Width="14" Height="14">
-                                        <Path Data="{DynamicResource FilePath}" StrokeThickness="1"
-                                              Stretch="UniformToFill" Margin="1"
-                                              Stroke="{CompiledBinding $parent[Button].Foreground}"/>
-                                    </Viewbox>
+                                    <Path Data="{DynamicResource FilePath}" StrokeThickness="1"
+                                          Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                                 </Button>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>

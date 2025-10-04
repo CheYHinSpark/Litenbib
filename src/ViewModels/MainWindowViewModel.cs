@@ -317,6 +317,7 @@ namespace Litenbib.ViewModels
         [RelayCommand]
         private static void OpenWebsite(string url)
         { UriProcessor.StartProcess(url); }
+
         #endregion Command
     }
 }

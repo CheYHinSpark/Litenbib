@@ -82,10 +82,11 @@
                                     ColumnDefinitions="Auto,*"
 									Background="{TemplateBinding Background}"
                                     RowDefinitions="*,Auto">
-                    <Rectangle Name="BackgroundRectangle"
-							   MinHeight="32"
-                               Grid.RowSpan="2"
-                               Grid.ColumnSpan="2" />
+                    <Border Name="BackgroundBorder"
+							MinHeight="32"
+							CornerRadius="8"
+                            Grid.RowSpan="2"
+                            Grid.ColumnSpan="2" />
                     <DataGridRowHeader Name="PART_RowHeader"
                                        Grid.RowSpan="2"
                                        DataGridFrozenGrid.IsFrozen="True" />
@@ -113,16 +114,16 @@
 			</Style.Animations>
 		</Style>-->
 
-		<Style Selector="^:pointerover /template/ Rectangle#BackgroundRectangle">
-			<Setter Property="Fill" Value="{DynamicResource ThemeHighlight}" />
+		<Style Selector="^:pointerover /template/ Border#BackgroundBorder">
+			<Setter Property="Background" Value="{DynamicResource ThemeHighlight}" />
 		</Style>
 
         <Style Selector="^:selected">
-            <Style Selector="^ /template/ Rectangle#BackgroundRectangle">
-				<Setter Property="Fill" Value="{DynamicResource ThemeBackground}" />
+            <Style Selector="^ /template/ Border#BackgroundBorder">
+				<Setter Property="Background" Value="{DynamicResource ThemeBackground}" />
             </Style>
-            <Style Selector="^:pointerover /template/ Rectangle#BackgroundRectangle">
-				<Setter Property="Fill" Value="{DynamicResource ThemeBackground}" />
+            <Style Selector="^:pointerover /template/ Border#BackgroundBorder">
+				<Setter Property="Background" Value="{DynamicResource ThemeBackground}" />
             </Style>
         </Style>
     </ControlTheme>

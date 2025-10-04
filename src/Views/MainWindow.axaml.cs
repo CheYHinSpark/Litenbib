@@ -122,7 +122,8 @@ namespace Litenbib.Views
         #region Tab Control Drag
         private void TabItem_PointerPressed(object? sender, PointerPressedEventArgs e)
         {
-            if (sender is not Control c || c.DataContext is not BibtexViewModel bvm) { return; }
+            if (sender is not Control c || c.DataContext is not BibtexViewModel) { return; }
+            if (e.GetCurrentPoint(c).Properties.IsRightButtonPressed) { return; }
             _draggedItem = c.FindAncestorOfType<TabStripItem>()!;
             _initialPoint = e.GetPosition(MainTabControl);
             // Capture the pointer to ensure we get events even when outside the control
