@@ -99,7 +99,8 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Entry Type" Width="Auto" CanUserResize="False">
+                    <DataGridTemplateColumn Header="Entry Type" Width="Auto" CanUserResize="False"
+											SortMemberPath="EntryType">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate x:DataType="m:BibtexEntry">
 								<Panel Margin="0 4">
@@ -113,7 +114,8 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Author/Editor" Width="1*">
+                    <DataGridTemplateColumn Header="Author/Editor" Width="1*"
+											SortMemberPath="AuthorAndEditor">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate x:DataType="m:BibtexEntry">
                                 <TextBlock>
@@ -127,20 +129,10 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-					<DataGridTemplateColumn Header="Title" Width="2*">
-						<DataGridTemplateColumn.CellTemplate>
-							<DataTemplate x:DataType="m:BibtexEntry">
-								<TextBlock>
-									<TextBlock.Text>
-										<MultiBinding Converter="{StaticResource MultiStringConverter}" Mode="OneWay">
-											<Binding Path="Title"/>
-										</MultiBinding>
-									</TextBlock.Text>
-								</TextBlock>
-							</DataTemplate>
-						</DataGridTemplateColumn.CellTemplate>
-					</DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Journal/Booktitle/Publisher" Width="1*">
+					<DataGridTextColumn Header="Title" Binding="{CompiledBinding Title}"
+                                        x:DataType="m:BibtexEntry" Width="2*"/>
+                    <DataGridTemplateColumn Header="Journal/Booktitle/Publisher" Width="1*"
+											SortMemberPath="JournalAndBooktitleAndPublisher">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate x:DataType="m:BibtexEntry">
                                 <TextBlock>

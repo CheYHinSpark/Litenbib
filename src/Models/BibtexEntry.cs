@@ -13,10 +13,15 @@ namespace Litenbib.Models
 {
     public partial class BibtexEntry(string entryType = "", string citationKey = "") : INotifyPropertyChanged
     {
+        private static List<string> NonFieldsProperties = ["Fields", "EntryType", "CitationKey", "BibTeX"];
         private string entryType = entryType;
         private string citationKey = citationKey;
         private string bibtex = "";
         public Dictionary<string, string> Fields = new(StringComparer.OrdinalIgnoreCase);
+
+        public string AuthorAndEditor => $"{Author}{Editor}";
+        public string JournalAndBooktitleAndPublisher => $"{Journal}{Booktitle}{Publisher}";
+
 
         #region Fields
         public string EntryType
@@ -45,6 +50,7 @@ namespace Litenbib.Models
                 }
             }
         }
+
 
         #region important fields
         public string Author { get => GetValue("author"); set => SetValue(nameof(Author), value); }
@@ -233,8 +239,8 @@ namespace Litenbib.Models
 
             foreach (var propertyName in properties)
             {
-                if (propertyName == "EntryType" || propertyName == "CitationKey" || propertyName == "BibTeX")
-                { continue; }
+                if (BibtexEntry.NonFieldsProperties.Contains(propertyName)) { continue; }
+
                 string property = propertyName.ToLower();
                 entry.Fields.TryGetValue(property, out string? value);
                 Fields.TryGetValue(property, out string? oldValue);
