@@ -129,8 +129,20 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-					<DataGridTextColumn Header="Title" Binding="{CompiledBinding Title}"
-                                        x:DataType="m:BibtexEntry" Width="2*"/>
+					<DataGridTemplateColumn Header="Title" Width="2*"
+											SortMemberPath="Title">
+						<DataGridTemplateColumn.CellTemplate>
+							<DataTemplate x:DataType="m:BibtexEntry">
+								<TextBlock>
+									<TextBlock.Text>
+										<MultiBinding Converter="{StaticResource MultiStringConverter}" Mode="OneWay">
+											<Binding Path="Title"/>
+										</MultiBinding>
+									</TextBlock.Text>
+								</TextBlock>
+							</DataTemplate>
+						</DataGridTemplateColumn.CellTemplate>
+					</DataGridTemplateColumn>
                     <DataGridTemplateColumn Header="Journal/Booktitle/Publisher" Width="1*"
 											SortMemberPath="JournalAndBooktitleAndPublisher">
                         <DataGridTemplateColumn.CellTemplate>
@@ -151,7 +163,19 @@
                                         x:DataType="m:BibtexEntry" Width="Auto"
                                         CanUserResize="False"/>
                 </DataGrid.Columns>
-            </DataGrid>
+				<DataGrid.Styles>
+					<Style Selector="DataGridRow">
+						<Setter Property="ContextMenu">
+							<Setter.Value>
+								<ContextMenu>
+									<MenuItem Header="Delete"
+											  Command="{CompiledBinding #BibtexViewRoot.DataContext.DeleteBibtexCommand}"/>
+								</ContextMenu>
+							</Setter.Value>
+						</Setter>
+					</Style>
+				</DataGrid.Styles>
+			</DataGrid>
 
 			<StackPanel Orientation="Horizontal" Height="{DynamicResource HintBarHeight}"
                         VerticalAlignment="Bottom" Grid.Row="1">
