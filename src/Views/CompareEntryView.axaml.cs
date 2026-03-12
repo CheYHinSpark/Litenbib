@@ -36,20 +36,16 @@ public partial class CompareEntryView : StyledWindow
 
         if (DataContext is not CompareEntryViewModel vm) { return; }
 
-        // EntryType行、CitationKey行
         MainGrid.RowDefinitions.Add(new RowDefinition(GridLength.Auto));
         AddTextBlock("Entry Type", 0);
         MainGrid.RowDefinitions.Add(new RowDefinition(GridLength.Auto));
         AddTextBlock("Citation Key", 1);
-        // 字段名列
         HeaderGrid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Auto) { SharedSizeGroup = "field" });
         MainGrid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Auto) { SharedSizeGroup = "field" });
 
-        // 字段=>行号
         Dictionary<string, int> fieldDict = [];
         int row = 2;
         int column = 1;
-        // 获取所有字段数量，顺便添加列
         foreach (var entry in vm.Entries)
         {
             HeaderGrid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
@@ -71,7 +67,7 @@ public partial class CompareEntryView : StyledWindow
             foreach (var key in fieldDict.Keys)
             {
                 if (!entry.Fields.ContainsKey(key))
-                { AddRadioButton("", key, fieldDict[key], column); }
+                { AddRadioButton(string.Empty, key, fieldDict[key], column); }
             }
             foreach (var key in entry.Fields.Keys)
             {
@@ -82,7 +78,7 @@ public partial class CompareEntryView : StyledWindow
                     MainGrid.RowDefinitions.Add(new RowDefinition(GridLength.Auto));
                     AddTextBlock(key, row);
                     for (int j = 1; j < column; ++j)
-                    { AddRadioButton("", key, row, j); }
+                    { AddRadioButton(string.Empty, key, row, j); }
                     row++;
                     AddRadioButton(entry.Fields[key], key, value, column, true);
                 }
@@ -90,6 +86,25 @@ public partial class CompareEntryView : StyledWindow
                 { AddRadioButton(entry.Fields[key], key, value, column); }
             }
             column++;
+        }
+
+        HeaderGrid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Auto));
+        MainGrid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Auto));
+        Button clearButton = new()
+        {
+            Content = "Clear",
+            Tag = "center",
+        };
+        clearButton.SetValue(Grid.ColumnProperty, column);
+        clearButton.Click += ChoosingButton_Click;
+        HeaderGrid.Children.Add(clearButton);
+        radioButtons.Add([]);
+
+        AddRadioButton(string.Empty, "Entry Type", 0, column);
+        AddRadioButton(string.Empty, "Citation Key", 1, column);
+        foreach (var key in fieldDict.Keys)
+        {
+            AddRadioButton(string.Empty, key, fieldDict[key], column);
         }
     }
 
@@ -109,15 +124,15 @@ public partial class CompareEntryView : StyledWindow
         MainGrid.Children.Add(tb);
     }
 
-    private void AddRadioButton(string s, string g, int r, int c, bool isChecked = false)
+    private void AddRadioButton(string? s, string g, int r, int c, bool isChecked = false)
     {
+        string display = string.IsNullOrWhiteSpace(s) ? "(empty)" : s;
         RadioButton rb = new()
         {
-            Content = s,
+            Content = display,
             GroupName = g,
             IsChecked = isChecked,
         };
-        // 设置绑定
         Binding binding = new()
         {
             Path = "SetField",
@@ -126,7 +141,6 @@ public partial class CompareEntryView : StyledWindow
             ConverterParameter = (g, s)
         };
         rb.Bind(RadioButton.IsCheckedProperty, binding);
-        // 设置RadioButton为MainGrid的子控件，并放置在指定行列
         rb.SetValue(Grid.RowProperty, r);
         rb.SetValue(Grid.ColumnProperty, c);
         MainGrid.Children.Add(rb);

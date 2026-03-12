@@ -3,9 +3,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:vm="using:Litenbib.ViewModels"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        Width="600" Height="600" CanResize="False"
+        Width="760" Height="760" CanResize="False"
         WindowStartupLocation="CenterScreen"
         x:Class="Litenbib.Views.AddEntryView"
+        x:Name="AddEntryRoot"
         x:DataType="vm:AddEntryViewModel"
         Icon="/Assets/logo.ico"
         Title="Add Entry">
@@ -16,13 +17,17 @@
 			<Setter Property="TextWrapping" Value="Wrap"/>
 			<Setter Property="FontFamily" Value="Consolas"/>
 		</Style>
+        <Style Selector="CheckBox">
+            <Setter Property="Margin" Value="4 2"/>
+            <Setter Property="VerticalAlignment" Value="Top"/>
+        </Style>
     </Window.Styles>
     
     <Design.DataContext>
         <vm:AddEntryViewModel/>
     </Design.DataContext>
 
-    <Grid RowDefinitions="Auto,*,2*,Auto">
+    <Grid RowDefinitions="Auto,Auto,2*,2*,Auto">
 		<TextBlock HorizontalAlignment="Center"
 				   VerticalAlignment="Center">Add BibTeX Entry</TextBlock>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
@@ -38,7 +43,7 @@
 		
         <Grid Grid.Row="1" Margin="4" ColumnDefinitions="*,Auto">
             <TextBox Text="{Binding DoiText}" Margin="4 0"
-					 Watermark="Input DOI or arXiv links one per line."/>
+					 Watermark="Input DOI / arXiv / OpenReview / title / URL, one per line."/>
 			<Grid Grid.Column="1" >
 				<TextBlock Text="Resolve Bib" Margin="8"/>
 				<Button VerticalAlignment="Bottom" Content="Resolve"
@@ -46,14 +51,54 @@
 						Command="{Binding ParseDoiCommand}"/>
 			</Grid>
         </Grid>
-        <TextBox Grid.Row="2" Margin="8 4"
-				 Watermark="Output BibTeX entries."
+
+        <Grid Grid.Row="2" Margin="8 4" RowDefinitions="Auto,*">
+            <Grid ColumnDefinitions="*,Auto,Auto">
+                <TextBlock Text="Candidates" VerticalAlignment="Center"/>
+                <Button Grid.Column="1" Content="Select All" Margin="4 0"
+                        Command="{Binding SelectAllCandidatesCommand}"/>
+                <Button Grid.Column="2" Content="Clear" Margin="4 0"
+                        Command="{Binding ClearCandidateSelectionCommand}"/>
+            </Grid>
+            <Border Grid.Row="1" BorderThickness="1" BorderBrush="{DynamicResource ThemeBorder}"
+                    CornerRadius="8" Padding="4" Margin="0 4 0 0">
+                <ScrollViewer>
+                    <ItemsControl ItemsSource="{Binding Candidates}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="vm:AddEntryCandidateViewModel">
+                                <Border Margin="0 2" Padding="6" CornerRadius="6"
+                                        Background="{DynamicResource InputBackground}">
+                                    <Grid ColumnDefinitions="Auto,*">
+                                        <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                                  Command="{CompiledBinding $parent[Window].DataContext.RefreshSelectedBibtexCommand}"
+                                                  CommandParameter="{Binding .}"/>
+                                        <StackPanel Grid.Column="1" Margin="8 0 0 0">
+                                            <TextBlock Text="{Binding Title}" FontWeight="Bold"/>
+                                            <TextBlock Text="{Binding CitationKey}" IsVisible="{Binding CitationKey, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                                            <TextBlock>
+                                                <Run Text="Source: "/>
+                                                <Run Text="{Binding Source}"/>
+                                                <Run Text=" | Query: "/>
+                                                <Run Text="{Binding Query}"/>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+
+        <TextBox Grid.Row="3" Margin="8 4"
+				 Watermark="Selected BibTeX entries to import. You can still edit manually."
 				 Text="{Binding BibtexText}"/>
-		<TextBlock Grid.Row="3" Margin="8 0"
+		<TextBlock Grid.Row="4" Margin="8 0"
 					HorizontalAlignment="Left"
 					VerticalAlignment="Center"
 					Text="{Binding HintText}"/>
-        <StackPanel Grid.Row="3" Orientation="Horizontal"
+        <StackPanel Grid.Row="4" Orientation="Horizontal"
 					Margin="0 4 8 8"
                     HorizontalAlignment="Right">
 			<Button Content="Cancel" Width="64" Click="CancelButton_Click"/>

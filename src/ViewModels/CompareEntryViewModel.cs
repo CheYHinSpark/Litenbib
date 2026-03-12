@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Input;
 using Litenbib.Models;
 using Litenbib.Views;
 using System.Collections.Generic;
@@ -9,24 +9,30 @@ namespace Litenbib.ViewModels
     {
         public List<BibtexEntry> Entries = list ?? [];
 
-        public Dictionary<string, string> SelectedField = [];
+        public Dictionary<string, string?> SelectedField = [];
 
         public BibtexEntry MergedEntry = new();
 
-        public (string, string) SetField
-        { set { if (value is (string, string)) { SelectedField[value.Item1] = value.Item2; } } }
+        public (string, string?) SetField
+        { set { SelectedField[value.Item1] = value.Item2; } }
 
         [RelayCommand]
         private void Merge(object? sender)
         {
             if (sender is not CompareEntryView window || Entries.Count == 0) { return; }
-            MergedEntry.EntryType = SelectedField.GetValueOrDefault("Entry Type", Entries[0].EntryType);
-            MergedEntry.CitationKey = SelectedField.GetValueOrDefault("Citation Key", Entries[0].CitationKey);
+            MergedEntry.EntryType = SelectedField.GetValueOrDefault("Entry Type", Entries[0].EntryType) ?? string.Empty;
+            MergedEntry.CitationKey = SelectedField.GetValueOrDefault("Citation Key", Entries[0].CitationKey) ?? string.Empty;
             foreach (var field in SelectedField)
             {
                 if (field.Key == "Entry Type" || field.Key == "Citation Key") { continue; }
-                if (string.IsNullOrWhiteSpace(field.Value)) { continue; }
-                MergedEntry.Fields[field.Key] = field.Value;
+                if (!string.IsNullOrWhiteSpace(field.Value))
+                {
+                    MergedEntry.Fields[field.Key] = field.Value!;
+                }
+                else
+                {
+                    MergedEntry.Fields.Remove(field.Key);
+                }
             }
             MergedEntry.UpdateBibtex();
             window.Close(true);
