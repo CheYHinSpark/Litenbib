@@ -46,7 +46,9 @@
 					<TextBlock Text="Path"
 							   HorizontalAlignment="Right" VerticalAlignment="Center"/>
 					<TextBox Grid.Column="1"  Margin="4" Text="{CompiledBinding Path}"/>
-					<Button Grid.Column="2" Margin="0 4 4 4">Browser</Button>
+					<Button Grid.Column="2" Margin="0 4 4 4"
+					Command="{CompiledBinding BrowsePathCommand}"
+					CommandParameter="{CompiledBinding $parent[Window]}">Browse</Button>
 				</Grid>
 				<Grid RowDefinitions="Auto,Auto">
 					<Grid.ColumnDefinitions>
@@ -109,7 +111,7 @@
 
 		<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right"
                     Margin=" 8 8">
-			<Button Content="Cancel" Width="64"/>
+			<Button Content="Cancel" Width="64" Click="CancelButton_Click"/>
 			<Button Content="Export" Width="64"
 					Command="{CompiledBinding ExportCommand}"
 					CommandParameter="{CompiledBinding $parent[Window]}"/>

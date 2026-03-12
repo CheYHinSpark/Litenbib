@@ -242,7 +242,7 @@ namespace Litenbib.ViewModels
         {
             if (window == null || SelectedFile == null) { return; }
             ExportView dialog = new([.. SelectedFile.BibtexEntries], SelectedFile.FullPath);
-            await dialog.ShowDialog(window);
+            await dialog.ShowDialog<bool>(window);
         }
 
         [RelayCommand]
@@ -269,10 +269,21 @@ namespace Litenbib.ViewModels
 
             if (file == null) { return; }
 
-            using var writer = new StreamWriter(file.Path.AbsolutePath, append: false, encoding: Encoding.UTF8, bufferSize: 65536); // 缓冲区大小设置为64KB
-            await writer.WriteAsync(string.Empty);
+            string fullPath = Uri.UnescapeDataString(file.Path.AbsolutePath);
+            try
+            {
+                using var writer = new StreamWriter(fullPath, append: false, encoding: new UTF8Encoding(false), bufferSize: 65536);
+                await writer.WriteAsync(string.Empty);
+            }
+            catch (Exception ex)
+            {
+                var box = MessageBoxManager.GetMessageBoxStandard(
+                    "Create File Failed", $"Could not create file.\n{ex.Message}", ButtonEnum.Ok);
+                await box.ShowAsync();
+                return;
+            }
             int newMode = SelectedFile == null ? 0 : SelectedFile.FilterMode;
-            var newBVM = new BibtexViewModel(file.Name, file.Path.AbsolutePath, string.Empty, newMode);
+            var newBVM = new BibtexViewModel(file.Name, fullPath, string.Empty, newMode);
             BibtexTabs.Add(newBVM);
             SelectedFile = newBVM;
         }
@@ -298,15 +309,7 @@ namespace Litenbib.ViewModels
 
             foreach (var file in files)
             {
-                // 打开文件的读取流。
-                await using var stream = await file.OpenReadAsync();
-                using var streamReader = new StreamReader(stream);
-                //// 将文件的所有内容作为文本读取。
-                var fileContent = await streamReader.ReadToEndAsync();
-                int newMode = SelectedFile == null ? 0 : SelectedFile.FilterMode;
-                var newBVM = new BibtexViewModel(file.Name, file.Path.AbsolutePath, fileContent, newMode);
-                BibtexTabs.Add(newBVM);
-                SelectedFile = newBVM;
+                await OpenFile(file);
             }
         }
 
@@ -324,7 +327,7 @@ namespace Litenbib.ViewModels
                     if (result == ButtonResult.Cancel)
                     { return; }
                     else if (result == ButtonResult.Yes)
-                    { await Task.Run(() => tab.SaveBibtexCommand); }
+                    { await tab.SaveBibtexCommand.ExecuteAsync(null); }
                 }
                 BibtexTabs.Remove(tab);
             }
@@ -345,13 +348,13 @@ namespace Litenbib.ViewModels
         [RelayCommand(CanExecute = nameof(CanSaveAll))]
         private async Task SaveAll()
         {
-            List<Task> tasks = [];
             foreach (var item in BibtexTabs)
             {
                 if (item.Edited)
-                { tasks.Add(Task.Run(() => item.SaveBibtexCommand)); }
+                {
+                    await item.SaveBibtexCommand.ExecuteAsync(null);
+                }
             }
-            await Task.WhenAll(tasks);
         }
 
         private bool CanSaveAll() => SelectedFile != null;

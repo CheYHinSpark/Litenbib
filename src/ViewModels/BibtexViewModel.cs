@@ -5,6 +5,8 @@ using CommunityToolkit.Mvvm.Input;
 using ExCSS;
 using Litenbib.Models;
 using Litenbib.Views;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Enums;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -204,12 +206,9 @@ namespace Litenbib.ViewModels
         {
             AddEntryView dialog = new();
 
-            // 显示对话框并等待结果 (ShowDialog 需要传入父窗口引用)
-            var result = await dialog.ShowDialog<bool>(window); // 等待对话框关闭并获取 DialogResult
-            // 如果用户点击了 OK
+            var result = await dialog.ShowDialog<bool>(window);
             if (result == true && dialog.DataContext is AddEntryViewModel aevm)
             {
-                // 通过对话框的公共属性获取返回值
                 string bibtex = aevm.BibtexText;
                 List<(int, BibtexEntry)> index_entries = [];
                 int c = BibtexEntries.Count;
@@ -223,6 +222,49 @@ namespace Litenbib.ViewModels
                 UndoRedoManager.AddAction(new AddEntriesAction(BibtexEntries, index_entries));
                 NotifyCanUndoRedo();
             }
+        }
+
+        private static async Task ShowMessage(string title, string message)
+        {
+            var box = MessageBoxManager.GetMessageBoxStandard(title, message, ButtonEnum.Ok);
+            await box.ShowAsync();
+        }
+
+        private static bool TryGetValidatedSavePath(string? path, out string validatedPath, out string errorMessage)
+        {
+            validatedPath = string.Empty;
+            errorMessage = string.Empty;
+
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                errorMessage = "The file path is empty.";
+                return false;
+            }
+
+            try
+            {
+                validatedPath = Path.GetFullPath(path.Trim());
+            }
+            catch (Exception)
+            {
+                errorMessage = "The file path is invalid.";
+                return false;
+            }
+
+            string? directory = Path.GetDirectoryName(validatedPath);
+            if (string.IsNullOrWhiteSpace(directory))
+            {
+                errorMessage = "The target directory is invalid.";
+                return false;
+            }
+
+            if (!string.Equals(Path.GetExtension(validatedPath), ".bib", StringComparison.OrdinalIgnoreCase))
+            {
+                errorMessage = "Only .bib files can be saved.";
+                return false;
+            }
+
+            return true;
         }
 
         private void RefreshFilter()
@@ -308,12 +350,35 @@ namespace Litenbib.ViewModels
         [RelayCommand(CanExecute = nameof(Edited))]
         private async Task SaveBibtex()
         {
-            Debug.WriteLine($"Saving...{FullPath}");
-            using var writer = new StreamWriter(FullPath, append: false, new UTF8Encoding(false), bufferSize: 65536); // 缓冲区大小设置为64KB
-            foreach (var entry in BibtexEntries)
-            { await writer.WriteAsync(entry.BibTeX + "\n"); }
-            UndoRedoManager.Edited = false;
-            OnPropertyChanged(nameof(Edited));
+            if (!TryGetValidatedSavePath(FullPath, out string validatedPath, out string errorMessage))
+            {
+                await ShowMessage("Save Failed", errorMessage);
+                return;
+            }
+
+            Debug.WriteLine($"Saving...{validatedPath}");
+            try
+            {
+                string? directory = Path.GetDirectoryName(validatedPath);
+                if (!string.IsNullOrWhiteSpace(directory))
+                {
+                    Directory.CreateDirectory(directory);
+                }
+
+                using var writer = new StreamWriter(validatedPath, append: false, new UTF8Encoding(false), bufferSize: 65536);
+                foreach (var entry in BibtexEntries)
+                {
+                    await writer.WriteAsync(entry.BibTeX + "\n");
+                }
+                FullPath = validatedPath;
+                UndoRedoManager.Edited = false;
+                OnPropertyChanged(nameof(Edited));
+                await ShowMessage("Save Succeeded", $"Saved to:\n{validatedPath}");
+            }
+            catch (Exception ex)
+            {
+                await ShowMessage("Save Failed", $"Could not save file.\n{ex.Message}");
+            }
         }
 
         [RelayCommand(CanExecute = nameof(CanUndo))]

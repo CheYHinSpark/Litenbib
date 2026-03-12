@@ -63,7 +63,7 @@ namespace Litenbib.Views
                 if (result == ButtonResult.Cancel)
                 { return false; }
                 else if (result == ButtonResult.Yes)
-                { await Task.Run(() => _viewModel.SaveAllCommand); }
+                { await _viewModel.SaveAllCommand.ExecuteAsync(null); }
             }
             await _viewModel.SaveLocalConfig(this);
             return true;
