@@ -152,6 +152,10 @@
         <Setter Property="ExtendClientAreaChromeHints" Value="NoChrome"/>
         <Setter Property="ExtendClientAreaTitleBarHeightHint" Value="-1"/>
         <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource MainBorder}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="14"/>
         <Setter Property="Template">
             <ControlTemplate>
                 <Border Margin="{Binding $parent[Window].OffScreenMargin}"

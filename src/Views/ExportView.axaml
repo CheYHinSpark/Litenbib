@@ -21,8 +21,12 @@
 		</Style>
 	</Window.Styles>
 	
-	<Grid RowDefinitions="Auto,*,Auto" Grid.IsSharedSizeScope="True">
-		<TextBlock Text="Export Options" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+	<Grid RowDefinitions="Auto,*,Auto" Grid.IsSharedSizeScope="True" Margin="0 0 0 8">
+		<StackPanel Margin="24 12 24 0" Spacing="4">
+            <TextBlock Text="Export bibliography" FontSize="22" FontWeight="SemiBold"/>
+            <TextBlock Text="Choose a destination and keep only the formatting rules you actually need."
+                       Opacity="0.7"/>
+        </StackPanel>
 		<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
 			<Button Name="MinButton" Click="TitleButton_Click" Classes="window">
 				<Path Data="{StaticResource -Path}" StrokeThickness="1"

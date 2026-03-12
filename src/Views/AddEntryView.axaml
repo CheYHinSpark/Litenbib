@@ -27,9 +27,12 @@
         <vm:AddEntryViewModel/>
     </Design.DataContext>
 
-    <Grid RowDefinitions="Auto,Auto,2*,2*,Auto">
-		<TextBlock HorizontalAlignment="Center"
-				   VerticalAlignment="Center">Add BibTeX Entry</TextBlock>
+    <Grid RowDefinitions="Auto,Auto,2*,2*,Auto" Margin="0 0 0 8">
+		<StackPanel Margin="24 12 24 0" Spacing="4">
+            <TextBlock Text="Add bibliography entries" FontSize="22" FontWeight="SemiBold"/>
+            <TextBlock Text="Resolve from DOI, arXiv, OpenReview, title, or URL. Then import only the candidates you want."
+                       Opacity="0.7" TextWrapping="Wrap"/>
+        </StackPanel>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
 			<Button Name="MinButton" Click="TitleButton_Click" Classes="window">
 				<Path Data="{StaticResource -Path}" StrokeThickness="1"

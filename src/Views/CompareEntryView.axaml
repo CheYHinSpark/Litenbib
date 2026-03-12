@@ -35,7 +35,7 @@
 			<Setter Property="HorizontalAlignment" Value="Right"/>
 		</Style>
     </Window.Styles>
-    <Grid RowDefinitions="Auto,Auto,*,Auto" Grid.IsSharedSizeScope="True">
+    <Grid RowDefinitions="Auto,Auto,*,Auto" Grid.IsSharedSizeScope="True" Margin="0 0 0 8">
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Name="MinButton" Click="TitleButton_Click" Classes="window">
                 <Path Data="{StaticResource -Path}" StrokeThickness="1"
@@ -47,7 +47,12 @@
             </Button>
         </StackPanel>
 
-		<Grid x:Name="HeaderGrid" Margin="8 4" Grid.Row="1"/>
+        <StackPanel Margin="24 8 24 0" Grid.Row="1" Spacing="4">
+            <TextBlock Text="Merge entries" FontSize="22" FontWeight="SemiBold"/>
+            <TextBlock Text="Pick the best value for each field. Use Clear when you want a field removed in the merged result."
+                       Opacity="0.7" TextWrapping="Wrap"/>
+            <Grid x:Name="HeaderGrid" Margin="0 8 0 0"/>
+        </StackPanel>
         
         <ScrollViewer Grid.Row="2" Margin="4">
             <Grid x:Name="MainGrid" Margin="4"/>
