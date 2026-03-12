@@ -503,8 +503,7 @@ namespace Litenbib.ViewModels
         private async Task GetDblpFromDoi(object? sender)
         {
             if (ShowingEntry == null || sender is not MainWindow window) { return; }
-            //await LinkResolver.GetDblpFromDoi(ShowingEntry.DOI);
-            var list = await LinkResolver.GetDblpFromTitle(ShowingEntry.Title);
+            var list = await LinkResolver.SearchMergeCandidatesAsync(ShowingEntry);
             if (list.Count == 0) { return; }
             Debug.WriteLine("accepted");
             list.Insert(0, ShowingEntry);

@@ -1,165 +1,491 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Litenbib.Models
 {
-    internal class LinkResolver
+    public class BibliographyCandidate
     {
-        private static readonly HttpClient client = new();
+        public string Source { get; set; } = string.Empty;
+        public string Query { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
+        public string BibTeX { get; set; } = string.Empty;
+        public BibtexEntry? Entry { get; set; }
+    }
 
-        ///// <summary> TODO：使用CrossRef查询 https://www.crossref.org/documentation/retrieve-metadata/rest-api/ </summary>
-        //public static async Task<string?> ResolveDoiCrossRefAsync(string doi)
-        //{
-        //    try
-        //    {
-        //        // CrossRef API 端点
-        //        var url = $"https://api.crossref.org/works/{doi}";
-        //        return await client.GetStringAsync(url);
-        //    }
-        //    catch (HttpRequestException)
-        //    {
-        //        return null;
-        //    }
-        //}
+    public class BibliographyResolveResult
+    {
+        public List<BibliographyCandidate> Candidates { get; set; } = [];
+        public string Hint { get; set; } = string.Empty;
+        public bool Success => Candidates.Count > 0;
+    }
 
-        /// <summary> 使用DOI官方路径 https://citation.doi.org/docs.html </summary>
-        public static async Task<string> GetFromDoiAsync(string doi)
+    internal static class LinkResolver
+    {
+        private static readonly HttpClient client = CreateHttpClient();
+
+        private static HttpClient CreateHttpClient()
         {
-            var url = $"https://doi.org/{doi}";
-            client.DefaultRequestHeaders.Add("Accept", "application/x-bibtex");
-            var response = await client.GetAsync(url);
-            if (response.IsSuccessStatusCode)
+            HttpClient httpClient = new()
             {
-                return await response.Content.ReadAsStringAsync();
-            }
-            return string.Empty;
+                Timeout = TimeSpan.FromSeconds(15)
+            };
+            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Litenbib/0.0.1 (+https://github.com/CheYHinSpark/Litenbib)");
+            return httpClient;
         }
 
-        ///// <summary> TODO：使用DataCite路径 https://support.datacite.org/docs/api </summary>
-        //public static async Task<string> ResolveDoiDataCiteAsync(string doi)
-        //{
-        //    var url = $"https://api.datacite.org/dois/{doi}";
-        //    return await client.GetStringAsync(url);
-        //}
-
-        /// <summary> 将输入的DOI或arXiv链接转换成bibtex </summary>
-        /// <param name="link"></param>
-        /// <returns></returns>
-        public static async Task<string> GetBibTeXAsync(string link)
+        public static async Task<string> GetBibTeXAsync(string input)
         {
-            string result;
+            var result = await ResolveAsync(input, maxCandidates: 1);
+            return result.Candidates.FirstOrDefault()?.BibTeX ?? string.Empty;
+        }
 
-            // 首先，尝试使用DOI直接解析
-            result = await GetFromDoiAsync(link);
-            if (!string.IsNullOrWhiteSpace(result)) { return result; }
-
-            // 接着，假设这是一个arxiv链接，提取id
-            string pattern = @"(?<=\/| |^)(\w+\/\d{7}|\d{4}\.\d{4,5})(v\d+)?(?=\.|\s|$)";
-            Match match = Regex.Match(link, pattern);
-            if (match.Success)
+        public static async Task<BibliographyResolveResult> ResolveAsync(string input, int maxCandidates = 5)
+        {
+            BibliographyResolveResult result = new();
+            string query = input?.Trim() ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(query))
             {
-                string arxivId = match.Groups[1].Value;
+                result.Hint = "Input is empty.";
+                return result;
+            }
 
-                // arxiv链接但是通过DOI解析
-                result = await GetFromDoiAsync($"10.48550/ARXIV.{arxivId}");
-                if (!string.IsNullOrWhiteSpace(result)) { return result; }
+            try
+            {
+                if (TryExtractDoi(query, out string doi))
+                {
+                    await AddIfResolved(result.Candidates, await ResolveDoiCandidatesAsync(doi), maxCandidates);
+                }
 
-                // 通过arxiv解析
-                var response = await client.GetAsync($"http://arxiv.org/bibtex/{arxivId}");
+                if (result.Candidates.Count < maxCandidates && TryExtractArxivId(query, out string arxivId))
+                {
+                    await AddIfResolved(result.Candidates, await ResolveArxivCandidatesAsync(arxivId), maxCandidates);
+                }
+
+                if (result.Candidates.Count < maxCandidates && TryExtractOpenReviewId(query, out string openReviewId))
+                {
+                    await AddIfResolved(result.Candidates, await ResolveOpenReviewCandidatesAsync(openReviewId), maxCandidates);
+                }
+
+                if (result.Candidates.Count < maxCandidates)
+                {
+                    await AddIfResolved(result.Candidates, await SearchDblpCandidatesAsync(query), maxCandidates);
+                }
+
+                if (result.Candidates.Count < maxCandidates)
+                {
+                    await AddIfResolved(result.Candidates, await SearchCrossrefCandidatesAsync(query), maxCandidates);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+
+            result.Hint = result.Candidates.Count == 0
+                ? "No bibliographic result found from DOI / arXiv / OpenReview / DBLP / Crossref."
+                : $"Resolved {result.Candidates.Count} candidate(s).";
+            return result;
+        }
+
+        public static async Task<List<BibtexEntry>> ResolveEntriesAsync(string input, int maxCandidates = 5)
+        {
+            var result = await ResolveAsync(input, maxCandidates);
+            return result.Candidates
+                .Where(c => c.Entry != null)
+                .Select(c => BibtexEntry.CopyFrom(c.Entry!))
+                .ToList();
+        }
+
+        public static async Task<List<BibtexEntry>> SearchMergeCandidatesAsync(BibtexEntry entry, int maxCandidates = 8)
+        {
+            string[] parts = [entry.Title, entry.DOI, entry.Url, entry.CitationKey];
+            List<BibtexEntry> merged = [];
+            HashSet<string> seen = new(StringComparer.OrdinalIgnoreCase);
+
+            foreach (string part in parts)
+            {
+                if (string.IsNullOrWhiteSpace(part))
+                {
+                    continue;
+                }
+
+                var result = await ResolveEntriesAsync(part, maxCandidates);
+                foreach (var candidate in result)
+                {
+                    string key = candidate.CitationKey + "|" + candidate.Title;
+                    if (seen.Add(key))
+                    {
+                        merged.Add(candidate);
+                        if (merged.Count >= maxCandidates)
+                        {
+                            return merged;
+                        }
+                    }
+                }
+            }
+
+            return merged;
+        }
+
+        private static async Task AddIfResolved(List<BibliographyCandidate> target, List<BibliographyCandidate> source, int maxCandidates)
+        {
+            foreach (var candidate in source)
+            {
+                if (target.Count >= maxCandidates)
+                {
+                    return;
+                }
+
+                string key = (candidate.Entry?.CitationKey ?? string.Empty) + "|" + candidate.Title;
+                bool exists = target.Any(t =>
+                    string.Equals((t.Entry?.CitationKey ?? string.Empty) + "|" + t.Title, key, StringComparison.OrdinalIgnoreCase)
+                    || (!string.IsNullOrWhiteSpace(candidate.BibTeX) && string.Equals(t.BibTeX, candidate.BibTeX, StringComparison.Ordinal)));
+                if (!exists)
+                {
+                    target.Add(candidate);
+                }
+            }
+
+            await Task.CompletedTask;
+        }
+
+        private static async Task<List<BibliographyCandidate>> ResolveDoiCandidatesAsync(string doi)
+        {
+            List<BibliographyCandidate> result = [];
+
+            string bibtex = await GetFromDoiAsync(doi);
+            AddCandidateIfPossible(result, "DOI", doi, bibtex);
+
+            if (result.Count == 0)
+            {
+                bibtex = await GetCrossrefBibtexByDoiAsync(doi);
+                AddCandidateIfPossible(result, "Crossref DOI", doi, bibtex);
+            }
+
+            if (result.Count == 0)
+            {
+                var dblp = await SearchDblpCandidatesAsync(doi);
+                result.AddRange(dblp);
+            }
+
+            return result;
+        }
+
+        private static async Task<List<BibliographyCandidate>> ResolveArxivCandidatesAsync(string arxivId)
+        {
+            List<BibliographyCandidate> result = [];
+
+            string bibtex = await GetFromDoiAsync($"10.48550/ARXIV.{arxivId}");
+            AddCandidateIfPossible(result, "arXiv DOI", arxivId, bibtex);
+
+            if (result.Count == 0)
+            {
+                try
+                {
+                    using var request = new HttpRequestMessage(HttpMethod.Get, $"https://arxiv.org/bibtex/{arxivId}");
+                    var response = await client.SendAsync(request);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        bibtex = await response.Content.ReadAsStringAsync();
+                        AddCandidateIfPossible(result, "arXiv", arxivId, bibtex);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex);
+                }
+            }
+
+            return result;
+        }
+
+        private static async Task<List<BibliographyCandidate>> ResolveOpenReviewCandidatesAsync(string openReviewId)
+        {
+            List<BibliographyCandidate> result = [];
+            try
+            {
+                using var request = new HttpRequestMessage(HttpMethod.Get, $"https://api.openreview.net/notes?id={Uri.EscapeDataString(openReviewId)}");
+                var response = await client.SendAsync(request);
+                if (!response.IsSuccessStatusCode)
+                {
+                    return result;
+                }
+
+                string json = await response.Content.ReadAsStringAsync();
+                using JsonDocument document = JsonDocument.Parse(json);
+                if (!document.RootElement.TryGetProperty("notes", out JsonElement notes)
+                    || notes.GetArrayLength() == 0)
+                {
+                    return result;
+                }
+
+                JsonElement note = notes[0];
+                string title = TryGetNestedString(note, "content", "title", "value")
+                    ?? TryGetNestedString(note, "content", "title")
+                    ?? string.Empty;
+                string[] authors = TryGetNestedStringArray(note, "content", "authors", "value")
+                    ?? TryGetNestedStringArray(note, "content", "authors")
+                    ?? [];
+                string year = TryGetNestedString(note, "tcdate") is string tcdate && long.TryParse(tcdate, out long ms)
+                    ? DateTimeOffset.FromUnixTimeMilliseconds(ms).Year.ToString()
+                    : DateTime.UtcNow.Year.ToString();
+
+                if (string.IsNullOrWhiteSpace(title))
+                {
+                    return result;
+                }
+
+                BibtexEntry entry = new("misc", openReviewId)
+                {
+                    Title = title,
+                    Year = year,
+                    Author = string.Join(" and ", authors),
+                    Url = $"https://openreview.net/forum?id={openReviewId}",
+                    Note = "OpenReview"
+                };
+                entry.UpdateBibtex();
+                result.Add(new BibliographyCandidate
+                {
+                    Source = "OpenReview",
+                    Query = openReviewId,
+                    Title = entry.Title,
+                    BibTeX = entry.BibTeX,
+                    Entry = entry,
+                });
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+            return result;
+        }
+
+        private static async Task<List<BibliographyCandidate>> SearchCrossrefCandidatesAsync(string query)
+        {
+            List<BibliographyCandidate> result = [];
+            try
+            {
+                string url = $"https://api.crossref.org/works?rows=5&query.bibliographic={Uri.EscapeDataString(query)}";
+                using var request = new HttpRequestMessage(HttpMethod.Get, url);
+                var response = await client.SendAsync(request);
+                if (!response.IsSuccessStatusCode)
+                {
+                    return result;
+                }
+
+                string json = await response.Content.ReadAsStringAsync();
+                using JsonDocument document = JsonDocument.Parse(json);
+                if (!document.RootElement.TryGetProperty("message", out JsonElement message)
+                    || !message.TryGetProperty("items", out JsonElement items))
+                {
+                    return result;
+                }
+
+                foreach (JsonElement item in items.EnumerateArray())
+                {
+                    string doi = TryGetString(item, "DOI") ?? string.Empty;
+                    if (string.IsNullOrWhiteSpace(doi))
+                    {
+                        continue;
+                    }
+
+                    string bibtex = await GetCrossrefBibtexByDoiAsync(doi);
+                    if (string.IsNullOrWhiteSpace(bibtex))
+                    {
+                        bibtex = await GetFromDoiAsync(doi);
+                    }
+                    AddCandidateIfPossible(result, "Crossref", query, bibtex);
+                    if (result.Count >= 5)
+                    {
+                        break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+            return result;
+        }
+
+        private static async Task<List<BibliographyCandidate>> SearchDblpCandidatesAsync(string query)
+        {
+            List<BibliographyCandidate> result = [];
+            try
+            {
+                string normalized = query.Replace("{", "").Replace("}", "").Replace(":", " ");
+                var response = await client.GetAsync($"https://dblp.org/search/publ/api?q={Uri.EscapeDataString(normalized)}&format=json");
+                if (!response.IsSuccessStatusCode)
+                {
+                    return result;
+                }
+
+                string json = await response.Content.ReadAsStringAsync();
+                MatchCollection matches = Regex.Matches(json, @"""key""\s*:\s*""(.*?)""");
+                foreach (Match match in matches)
+                {
+                    if (!match.Success)
+                    {
+                        continue;
+                    }
+
+                    var bibResponse = await client.GetAsync($"https://dblp.org/rec/{match.Groups[1].Value}.bib");
+                    if (!bibResponse.IsSuccessStatusCode)
+                    {
+                        continue;
+                    }
+
+                    string bibtex = await bibResponse.Content.ReadAsStringAsync();
+                    AddCandidateIfPossible(result, "DBLP", query, bibtex);
+                    if (result.Count >= 5)
+                    {
+                        break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+            return result;
+        }
+
+        public static async Task<string> GetFromDoiAsync(string doi)
+        {
+            try
+            {
+                using var request = new HttpRequestMessage(HttpMethod.Get, $"https://doi.org/{doi}");
+                request.Headers.Accept.Clear();
+                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-bibtex"));
+                var response = await client.SendAsync(request);
                 if (response.IsSuccessStatusCode)
                 {
                     return await response.Content.ReadAsStringAsync();
                 }
             }
-
-            // TODO更多的链接，从链接提取
-            // 尝试从常见学术URL中提取DOI
-            //var patterns = new[]
-            //{
-            //    @"doi\.org/(?<doi>10\.\d+/[^\s/]+)",
-            //    @"dx\.doi\.org/(?<doi>10\.\d+/[^\s/]+)",
-            //    @"onlinelibrary\.wiley\.com/doi/(?<doi>10\.\d+/[^\s/]+)",
-            //    @"link\.springer\.com/article/(?<doi>10\.\d+/[^\s/]+)",
-            //    @"tandfonline\.com/doi/(?<doi>10\.\d+/[^\s/]+)",
-            //    @"sciencedirect\.com/science/article/pii/[^\?]+\?.*doi=(?<doi>10\.\d+/[^\s/&]+)"
-            //};
-
-            //foreach (var pattern in patterns)
-            //{
-            //    var match = Regex.Match(url, pattern, RegexOptions.IgnoreCase);
-            //    if (match.Success)
-            //    {
-            //        return match.Groups["doi"].Value;
-            //    }
-            //}
-
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
             return string.Empty;
         }
 
-        public static async Task GetDblpFromDoi(string doi)
-        {
-            // Construct the API URL. We need to specify the fields we want.
-            string requestUrl = $"https://api.semanticscholar.org/graph/v1/paper/DOI:{doi}?fields=externalIds";
-            var response = await client.GetAsync(requestUrl);
-            if (response.IsSuccessStatusCode)
-            {
-                string jsonString = await response.Content.ReadAsStringAsync();
-                Debug.WriteLine(jsonString);
-                try
-                {
-                    string pattern = @"""DBLP""\s*:\s*""(.*?)""";
-
-                    Match match = Regex.Match(jsonString, pattern);
-
-                    // 检查是否找到匹配项，并返回捕获的组（即括号内的内容）
-                    if (match.Success && match.Groups.Count > 1)
-                    {
-                        string dblp = match.Groups[1].Value;
-
-                        Debug.WriteLine(dblp);
-                        response = await client.GetAsync($"https://dblp.org/rec/{dblp}.bib");
-                        if (response.IsSuccessStatusCode)
-                        {
-                            Debug.WriteLine(await response.Content.ReadAsStringAsync());
-                        }
-                        //return paperData.ExternalIds["DBLP"];https://dblp.org/rec/{your_dblp_key}.bib
-                    }
-                }
-                catch { }
-            }
-        }
-
-        public static async Task<List<BibtexEntry>> GetDblpFromTitle(string title)
+        private static async Task<string> GetCrossrefBibtexByDoiAsync(string doi)
         {
             try
             {
-                // 将文章名中的空格替换为 '+'，以符合 URL 编码规范
-                string query = title.Replace("{", "").Replace("}", "").Replace(":", "").Replace(' ', '+').Replace('-', '+');
-                // 发送 GET 请求
-                var response = await client.GetAsync($"https://dblp.org/search/publ/api?q=title:{query}&format=json");
+                using var request = new HttpRequestMessage(HttpMethod.Get, $"https://api.crossref.org/works/{Uri.EscapeDataString(doi)}/transform/application/x-bibtex");
+                request.Headers.Accept.Clear();
+                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-bibtex"));
+                var response = await client.SendAsync(request);
                 if (response.IsSuccessStatusCode)
                 {
-                    MatchCollection matches = Regex.Matches(await response.Content.ReadAsStringAsync(), @"""key""\s*:\s*""(.*?)""");
-                    string bibtex_s = "";
-
-                    foreach (Match match in matches)
-                    {
-                        if (match.Success)
-                        {
-                            response = await client.GetAsync($"https://dblp.org/rec/{match.Groups[1].Value}.bib");
-                            if (response.IsSuccessStatusCode)
-                            { bibtex_s += await response.Content.ReadAsStringAsync() + "\n\n"; }
-                        }
-                    }
-                    return BibtexParser.Parse(bibtex_s);
+                    return await response.Content.ReadAsStringAsync();
                 }
             }
-            catch (HttpRequestException) { }
-            return [];
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+            return string.Empty;
+        }
+
+        private static void AddCandidateIfPossible(List<BibliographyCandidate> list, string source, string query, string bibtex)
+        {
+            if (string.IsNullOrWhiteSpace(bibtex))
+            {
+                return;
+            }
+
+            BibtexEntry? entry = BibtexParser.ParseBibTeX(bibtex);
+            if (entry == null)
+            {
+                var parsed = BibtexParser.Parse(bibtex);
+                entry = parsed.FirstOrDefault();
+            }
+            if (entry == null)
+            {
+                return;
+            }
+
+            list.Add(new BibliographyCandidate
+            {
+                Source = source,
+                Query = query,
+                Title = entry.Title,
+                BibTeX = entry.BibTeX,
+                Entry = entry,
+            });
+        }
+
+        private static bool TryExtractDoi(string input, out string doi)
+        {
+            Match match = Regex.Match(input, @"10\.\d{4,9}/[-._;()/:A-Z0-9]+", RegexOptions.IgnoreCase);
+            doi = match.Success ? match.Value.Trim().TrimEnd('.', ',', ';') : string.Empty;
+            return match.Success;
+        }
+
+        private static bool TryExtractArxivId(string input, out string arxivId)
+        {
+            Match match = Regex.Match(input, @"(?<=/|\b)(\d{4}\.\d{4,5}|[a-z\-]+(?:\.[A-Z]{2})?/\d{7})(v\d+)?(?=\b|$)", RegexOptions.IgnoreCase);
+            arxivId = match.Success ? match.Groups[1].Value : string.Empty;
+            return match.Success;
+        }
+
+        private static bool TryExtractOpenReviewId(string input, out string openReviewId)
+        {
+            Match match = Regex.Match(input, @"(?:openreview\.net/(?:forum|pdf)\?id=|\bid=)([A-Za-z0-9_-]+)", RegexOptions.IgnoreCase);
+            openReviewId = match.Success ? match.Groups[1].Value : string.Empty;
+            return match.Success;
+        }
+
+        private static string? TryGetString(JsonElement element, string propertyName)
+        {
+            return element.TryGetProperty(propertyName, out JsonElement value) ? value.GetString() : null;
+        }
+
+        private static string? TryGetNestedString(JsonElement element, params string[] path)
+        {
+            JsonElement current = element;
+            foreach (string part in path)
+            {
+                if (!current.TryGetProperty(part, out current))
+                {
+                    return null;
+                }
+            }
+
+            return current.ValueKind == JsonValueKind.String ? current.GetString() : null;
+        }
+
+        private static string[]? TryGetNestedStringArray(JsonElement element, params string[] path)
+        {
+            JsonElement current = element;
+            foreach (string part in path)
+            {
+                if (!current.TryGetProperty(part, out current))
+                {
+                    return null;
+                }
+            }
+
+            if (current.ValueKind != JsonValueKind.Array)
+            {
+                return null;
+            }
+
+            return current.EnumerateArray()
+                .Where(x => x.ValueKind == JsonValueKind.String)
+                .Select(x => x.GetString() ?? string.Empty)
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .ToArray();
         }
     }
-
 }

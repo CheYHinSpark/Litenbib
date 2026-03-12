@@ -40,8 +40,8 @@
             <TextBox Text="{Binding DoiText}" Margin="4 0"
 					 Watermark="Input DOI or arXiv links one per line."/>
 			<Grid Grid.Column="1" >
-				<TextBlock Text="Add from DOI" Margin="8"/>
-				<Button VerticalAlignment="Bottom" Content="Parse"
+				<TextBlock Text="Resolve Bib" Margin="8"/>
+				<Button VerticalAlignment="Bottom" Content="Resolve"
 						Margin="4 0"
 						Command="{Binding ParseDoiCommand}"/>
 			</Grid>
