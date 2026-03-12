@@ -4,10 +4,10 @@
     <SolidColorBrush x:Key="DataGridGridLinesBrush" Color="Transparent"/>
 	
     <ControlTheme x:Key="{x:Type DataGridColumnHeader}" TargetType="DataGridColumnHeader">
-		<Setter Property="Background" Value="{DynamicResource ThemeBorder}"/>
+		<Setter Property="Background" Value="{DynamicResource InputBackground}"/>
 		<Setter Property="Foreground" Value="{DynamicResource MainForeground}"/>
-        <Setter Property="Padding" Value="0 6"/>
-		<Setter Property="AreSeparatorsVisible" Value="True"/>
+        <Setter Property="Padding" Value="12 10"/>
+		<Setter Property="AreSeparatorsVisible" Value="False"/>
 		<Setter Property="SeparatorBrush" Value="{DynamicResource MainBorder}"/>
 		<Setter Property="Template">
             <ControlTemplate>
@@ -15,7 +15,7 @@
 					<Border Name="PART_Border"
 							Grid.ColumnSpan="2"
 							Background="{TemplateBinding Background}"
-							Opacity="0.5"
+							Opacity="0.95"
 							BorderBrush="{TemplateBinding BorderBrush}"
 							BorderThickness="{TemplateBinding BorderThickness}"
 							CornerRadius="{TemplateBinding CornerRadius}"/>
@@ -58,11 +58,11 @@
             <ControlTemplate>
 				<Grid>
 					<Border x:Name="CellBorder"
-                            Background="{DynamicResource TabBackground}"
+                            Background="Transparent"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="{TemplateBinding CornerRadius}"
-							Opacity="0.5">
+							Opacity="1">
 					</Border>
 					<ContentPresenter Margin="{TemplateBinding Padding}"
 										  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
@@ -83,8 +83,9 @@
 									Background="{TemplateBinding Background}"
                                     RowDefinitions="*,Auto">
                     <Border Name="BackgroundBorder"
-							MinHeight="32"
-							CornerRadius="8"
+							MinHeight="38"
+							CornerRadius="10"
+                            Margin="0 2"
                             Grid.RowSpan="2"
                             Grid.ColumnSpan="2" />
                     <DataGridRowHeader Name="PART_RowHeader"
@@ -115,12 +116,14 @@
 		</Style>-->
 
 		<Style Selector="^:pointerover /template/ Border#BackgroundBorder">
-			<Setter Property="Background" Value="{DynamicResource ThemeHighlight}" />
+			<Setter Property="Background" Value="{DynamicResource HighlightBackground}" />
 		</Style>
 
         <Style Selector="^:selected">
             <Style Selector="^ /template/ Border#BackgroundBorder">
 				<Setter Property="Background" Value="{DynamicResource ThemeBackground}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorder}" />
+                <Setter Property="BorderThickness" Value="1" />
             </Style>
             <Style Selector="^:pointerover /template/ Border#BackgroundBorder">
 				<Setter Property="Background" Value="{DynamicResource ThemeBackground}" />
