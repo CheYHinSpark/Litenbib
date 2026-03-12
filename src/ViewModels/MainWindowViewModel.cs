@@ -29,7 +29,9 @@ namespace Litenbib.ViewModels
             Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
             WriteIndented = true
         };
-        private readonly string localConfig = "localconfig.json";
+        private static readonly string ConfigDirectory = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Litenbib");
+        private static readonly string LocalConfigPath = Path.Combine(ConfigDirectory, "localconfig.json");
 
         // 主题色
         [ObservableProperty]
@@ -67,8 +69,6 @@ namespace Litenbib.ViewModels
         public MainWindowViewModel()
         {
             BibtexTabs = [];
-            ExtractPdf("E:\\bh-博士后\\GUI Agent\\文献\\2025_TrustWorthy_GUI_Agent_Survey.pdf");
-            ExtractPdf("E:/bh-博士后/GUI Agent/文献/2025_TrustWorthy_GUI_Agent_Survey.pdf");
         }
 
         public async Task CopyBibtexEntries(IEnumerable<BibtexEntry> list)
@@ -87,51 +87,88 @@ namespace Litenbib.ViewModels
             });
         }
 
-        public async Task LoadLocalConfig()
+        public async Task<LocalConfig?> LoadLocalConfig()
         {
-            // 读取局部配置文件
-            if (!File.Exists(localConfig))
-            { return; }
+            if (!File.Exists(LocalConfigPath))
+            {
+                Application.Current!.RequestedThemeVariant = ThemeIndex ? ThemeVariant.Light : ThemeVariant.Dark;
+                return null;
+            }
             try
             {
-                // 读取 JSON 文件的所有内容
-                string jsonString = await File.ReadAllTextAsync(localConfig);
-
-                // 反序列化 JSON 字符串到 Config 对象
+                string jsonString = await File.ReadAllTextAsync(LocalConfigPath);
                 var config = JsonSerializer.Deserialize<LocalConfig>(jsonString);
-                // 设置主题
-                this.ThemeIndex = config?.ThemeIndex ?? false;
-                Application.Current!.RequestedThemeVariant = ThemeIndex? ThemeVariant.Light : ThemeVariant.Dark;
-                // 如果反序列化成功且列表不为空，返回它
-                if (config?.RecentFiles != null && config?.RecentFiles.Count > 0)
+                ThemeIndex = config?.ThemeIndex ?? false;
+                Application.Current!.RequestedThemeVariant = ThemeIndex ? ThemeVariant.Light : ThemeVariant.Dark;
+                if (config?.RecentFiles != null && config.RecentFiles.Count > 0)
                 {
-                    foreach (var filePath in config.RecentFiles)
+                    foreach (var fileState in config.RecentFiles)
                     {
-                        if (File.Exists(filePath))
+                        if (!File.Exists(fileState.FilePath))
                         {
-                            string fileContent = await File.ReadAllTextAsync(filePath);
-                            var newBVM = new BibtexViewModel(Path.GetFileName(filePath), filePath, fileContent, 0);
-                            BibtexTabs.Add(newBVM);
-                            SelectedFile = newBVM;
+                            continue;
                         }
+                        string fileContent = await File.ReadAllTextAsync(fileState.FilePath);
+                        var newBVM = new BibtexViewModel(
+                            Path.GetFileName(fileState.FilePath),
+                            fileState.FilePath,
+                            fileContent,
+                            fileState.FilterMode)
+                        {
+                            FilterField = string.IsNullOrWhiteSpace(fileState.FilterField) ? "Whole" : fileState.FilterField,
+                            FilterText = fileState.FilterText ?? string.Empty,
+                        };
+                        BibtexTabs.Add(newBVM);
+                    }
+                    if (BibtexTabs.Count > 0)
+                    {
+                        int selectedIndex = config.SelectedTabIndex;
+                        if (selectedIndex < 0 || selectedIndex >= BibtexTabs.Count)
+                        {
+                            selectedIndex = BibtexTabs.Count - 1;
+                        }
+                        SelectedFile = BibtexTabs[selectedIndex];
                     }
                 }
+                return config;
             }
             catch (JsonException ex)
             { Debug.WriteLine($"Error deserializing JSON: {ex.Message}"); }
             catch (Exception ex)
             { Debug.WriteLine($"An unexpected error occurred: {ex.Message}"); }
+            return null;
         }
 
-        public async Task SaveLocalConfig()
+        public async Task SaveLocalConfig(Window? window = null)
         {
             var config = new LocalConfig
             {
-                ThemeIndex = this.ThemeIndex,
-                RecentFiles = [.. BibtexTabs.Select(b => b.FullPath)]
+                ThemeIndex = ThemeIndex,
+                SelectedTabIndex = SelectedFile == null ? -1 : BibtexTabs.IndexOf(SelectedFile),
+                RecentFiles = [.. BibtexTabs.Select(b => new RecentFileState
+                {
+                    FilePath = b.FullPath,
+                    FilterMode = b.FilterMode,
+                    FilterField = b.FilterField,
+                    FilterText = b.FilterText,
+                })]
             };
+            if (window != null)
+            {
+                config.WindowState = window.WindowState;
+                if (window.WindowState == WindowState.Normal)
+                {
+                    config.WindowWidth = window.Width;
+                    config.WindowHeight = window.Height;
+                    config.WindowPositionX = window.Position.X;
+                    config.WindowPositionY = window.Position.Y;
+                }
+            }
             try
-            { await File.WriteAllTextAsync(localConfig, JsonSerializer.Serialize(config, CachedJsonOptions)); }
+            {
+                Directory.CreateDirectory(ConfigDirectory);
+                await File.WriteAllTextAsync(LocalConfigPath, JsonSerializer.Serialize(config, CachedJsonOptions));
+            }
             catch (JsonException ex)
             { Debug.WriteLine($"Error serializing to JSON: {ex.Message}"); }
             catch (Exception ex)
@@ -176,13 +213,18 @@ namespace Litenbib.ViewModels
 
         private async Task OpenFile(IStorageFile file)
         {
-            // 打开文件的读取流。
             await using var stream = await file.OpenReadAsync();
             using var streamReader = new StreamReader(stream);
-            //// 将文件的所有内容作为文本读取。
             var fileContent = await streamReader.ReadToEndAsync();
             int newMode = SelectedFile == null ? 0 : SelectedFile.FilterMode;
-            var newBVM = new BibtexViewModel(file.Name, file.Path.AbsolutePath, fileContent, newMode);
+            string fullPath = Uri.UnescapeDataString(file.Path.AbsolutePath);
+            var existed = BibtexTabs.FirstOrDefault(b => string.Equals(b.FullPath, fullPath, StringComparison.OrdinalIgnoreCase));
+            if (existed != null)
+            {
+                SelectedFile = existed;
+                return;
+            }
+            var newBVM = new BibtexViewModel(file.Name, fullPath, fileContent, newMode);
             BibtexTabs.Add(newBVM);
             SelectedFile = newBVM;
         }
