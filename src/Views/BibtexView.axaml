@@ -197,6 +197,28 @@
                             VerticalAlignment="Bottom">
 				    <TextBlock Margin="8 0 0 0" Text="{CompiledBinding BibtexView.Count}"/>
                     <TextBlock Margin="0 0 8 0" Text="entries" Opacity="0.65"/>
+                    <TextBlock Margin="0 0 12 0" Text="{CompiledBinding StatusMessage}"
+                               Opacity="0.72"
+                               IsVisible="{CompiledBinding StatusMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                    <Button Margin="0 0 8 0"
+                            ToolTip.Tip="Reload current file from disk"
+                            IsVisible="{CompiledBinding HasExternalChanges}"
+                            Command="{CompiledBinding ReloadFromDiskCommand}">
+                        <Path Data="{StaticResource RedoPath}" StrokeThickness="1"
+                              Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+                    </Button>
+                    <Button Margin="0 0 8 0"
+                            ToolTip.Tip="Batch edit selected entries"
+                            Command="{CompiledBinding ApplyBatchFieldEditCommand}"
+                            CommandParameter="{CompiledBinding $parent[Window]}">
+                        <Path Data="{StaticResource AddPath}" Fill="{CompiledBinding $parent[Button].Foreground}"/>
+                    </Button>
+                    <Button Margin="0 0 8 0"
+                            ToolTip.Tip="Clean selected entries"
+                            Command="{CompiledBinding CleanupSelectedEntriesCommand}">
+                        <Path Data="{StaticResource brPath}" StrokeThickness="1"
+                              Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+                    </Button>
                     <ToggleButton x:Name="WarningToggle" Content="{CompiledBinding WarningHint}"
                                   IsChecked="{CompiledBinding IsChecking}"
                                   IsVisible="{CompiledBinding WarningHint, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"

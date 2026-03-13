@@ -1,6 +1,7 @@
 ﻿using Avalonia.Collections;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ExCSS;
@@ -27,6 +28,14 @@ namespace Litenbib.ViewModels
 
         [ObservableProperty]
         private string _fullPath;
+
+        [ObservableProperty]
+        private string _statusMessage = string.Empty;
+
+        [ObservableProperty]
+        private bool _hasExternalChanges;
+
+        public DateTime? LastDiskWriteTimeUtc { get; private set; }
 
         public bool Edited { get => UndoRedoManager.Edited; }
 
@@ -152,6 +161,7 @@ namespace Litenbib.ViewModels
         {
             Header = Uri.UnescapeDataString(header);
             FullPath = Uri.UnescapeDataString(fullPath);
+            LastDiskWriteTimeUtc = File.Exists(FullPath) ? File.GetLastWriteTimeUtc(FullPath) : null;
             BibtexEntries = new ObservableRangeCollection<BibtexEntry>(BibtexParser.Parse(filecontent));
             Warnings = [];
             foreach (var entry in BibtexEntries)
@@ -225,6 +235,24 @@ namespace Litenbib.ViewModels
             }
         }
 
+        private void PushStatus(string message)
+        {
+            StatusMessage = message;
+            _ = ClearStatusLaterAsync();
+        }
+
+        private async Task ClearStatusLaterAsync()
+        {
+            await Task.Delay(3000);
+            if (!string.IsNullOrWhiteSpace(StatusMessage))
+            {
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    StatusMessage = string.Empty;
+                });
+            }
+        }
+
         private static async Task ShowMessage(string title, string message)
         {
             var box = MessageBoxManager.GetMessageBoxStandard(title, message, ButtonEnum.Ok);
@@ -266,6 +294,53 @@ namespace Litenbib.ViewModels
             }
 
             return true;
+        }
+
+        public bool DetectExternalModification()
+        {
+            if (string.IsNullOrWhiteSpace(FullPath) || !File.Exists(FullPath) || LastDiskWriteTimeUtc == null)
+            {
+                HasExternalChanges = false;
+                return false;
+            }
+
+            var currentWriteTime = File.GetLastWriteTimeUtc(FullPath);
+            HasExternalChanges = currentWriteTime > LastDiskWriteTimeUtc.Value.AddMilliseconds(1);
+            return HasExternalChanges;
+        }
+
+        public async Task ReloadFromDiskAsync()
+        {
+            if (string.IsNullOrWhiteSpace(FullPath) || !File.Exists(FullPath))
+            {
+                await ShowMessage("Reload Failed", "The source file no longer exists.");
+                return;
+            }
+
+            string fileContent = await File.ReadAllTextAsync(FullPath);
+            var parsed = BibtexParser.Parse(fileContent);
+            foreach (var entry in BibtexEntries)
+            {
+                entry.UndoRedoPropertyChanged -= OnEntryPropertyChanged;
+            }
+            BibtexEntries.Clear();
+            foreach (var entry in parsed)
+            {
+                BibtexEntries.Add(entry);
+                entry.UndoRedoPropertyChanged += OnEntryPropertyChanged;
+            }
+            UndoRedoManager = new();
+            HasExternalChanges = false;
+            LastDiskWriteTimeUtc = File.GetLastWriteTimeUtc(FullPath);
+            ShowingEntry = BibtexEntries.FirstOrDefault();
+            NotifyCanUndoRedo();
+            PushStatus("Reloaded from disk");
+        }
+
+        [RelayCommand]
+        private async Task ReloadFromDisk()
+        {
+            await ReloadFromDiskAsync();
         }
 
         private void RefreshFilter()
@@ -372,8 +447,11 @@ namespace Litenbib.ViewModels
                 }
                 FullPath = validatedPath;
                 Header = Path.GetFileName(validatedPath);
+                LastDiskWriteTimeUtc = File.GetLastWriteTimeUtc(validatedPath);
+                HasExternalChanges = false;
                 UndoRedoManager.Edited = false;
                 OnPropertyChanged(nameof(Edited));
+                PushStatus($"Saved {Header}");
             }
             catch (Exception ex)
             {
@@ -583,6 +661,59 @@ namespace Litenbib.ViewModels
             }
         }
 
+        [RelayCommand]
+        private async Task ApplyBatchFieldEdit(object? sender)
+        {
+            if (sender is not MainWindow window || SelectedIndexItems == null || SelectedIndexItems.Count == 0) { return; }
+            BatchFieldEditView dialog = new();
+            var result = await dialog.ShowDialog<bool>(window);
+            if (result != true || dialog.DataContext is not BatchFieldEditViewModel vm) { return; }
+
+            foreach (var (_, entry) in SelectedIndexItems)
+            {
+                vm.ApplyTo(entry);
+            }
+            NotifyCanUndoRedo();
+            PushStatus($"Updated {SelectedIndexItems.Count} selected entries");
+        }
+
+        [RelayCommand]
+        private void CleanupSelectedEntries()
+        {
+            if (SelectedIndexItems == null || SelectedIndexItems.Count == 0) { return; }
+            foreach (var (_, entry) in SelectedIndexItems)
+            {
+                CleanupEntry(entry);
+            }
+            NotifyCanUndoRedo();
+            PushStatus($"Cleaned {SelectedIndexItems.Count} selected entries");
+        }
+
+        private static void CleanupEntry(BibtexEntry entry)
+        {
+            var keys = entry.Fields.Keys.ToList();
+            foreach (var key in keys)
+            {
+                var value = entry.Fields[key];
+                value = value.Replace("\r", " ").Replace("\n", " ").Trim();
+                while (value.Contains("  "))
+                {
+                    value = value.Replace("  ", " ");
+                }
+
+                if (key.Equals("doi", StringComparison.OrdinalIgnoreCase))
+                {
+                    value = BibtexDiagnostics.NormalizeDoi(value);
+                }
+                if (key.Equals("url", StringComparison.OrdinalIgnoreCase))
+                {
+                    value = value.Trim();
+                }
+
+                entry.SetValueSilent(key, string.IsNullOrWhiteSpace(value) ? null : value);
+            }
+            entry.UpdateBibtex(isSilent: true);
+        }
 
         [RelayCommand]
         private void OpenInFileManager()

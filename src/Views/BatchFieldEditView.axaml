@@ -1,0 +1,35 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:vm="using:Litenbib.ViewModels"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Width="420" Height="280"
+        WindowStartupLocation="CenterOwner"
+        x:Class="Litenbib.Views.BatchFieldEditView"
+        x:DataType="vm:BatchFieldEditViewModel"
+        Title="Batch Field Edit">
+    <Design.DataContext>
+        <vm:BatchFieldEditViewModel/>
+    </Design.DataContext>
+    <Grid RowDefinitions="Auto,*,Auto" Margin="16">
+        <StackPanel Spacing="4">
+            <TextBlock Text="Batch edit selected entries" FontSize="20" FontWeight="SemiBold"/>
+            <TextBlock Text="Append text, replace text, or remove one field across the current selection."
+                       Opacity="0.7" TextWrapping="Wrap"/>
+        </StackPanel>
+        <StackPanel Grid.Row="1" Margin="0 12 0 12" Spacing="8">
+            <TextBlock Text="Field"/>
+            <ComboBox ItemsSource="{CompiledBinding SupportedFields}"
+                      SelectedItem="{CompiledBinding SelectedField}"/>
+            <CheckBox Content="Append to existing value" IsChecked="{CompiledBinding AppendMode}"/>
+            <CheckBox Content="Remove field instead of writing text" IsChecked="{CompiledBinding RemoveField}"/>
+            <TextBlock Text="Value"/>
+            <TextBox Text="{CompiledBinding FieldValue}" AcceptsReturn="True" Height="72"/>
+        </StackPanel>
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+            <Button Click="CancelButton_Click">Cancel</Button>
+            <Button Click="ApplyButton_Click">Apply</Button>
+        </StackPanel>
+    </Grid>
+</Window>

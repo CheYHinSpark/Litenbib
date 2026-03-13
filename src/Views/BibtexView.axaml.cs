@@ -11,6 +11,7 @@ using Litenbib.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 
 namespace Litenbib.Views;
@@ -29,6 +30,7 @@ public partial class BibtexView : UserControl
     {
         InitializeComponent();
         SetPopup();
+        AttachedToVisualTree += (_, _) => CheckExternalChanges();
     }
 
     protected override void OnInitialized()
@@ -110,7 +112,7 @@ public partial class BibtexView : UserControl
         };
     }
 
-    // 选中事件
+    // 选锟斤拷锟铰硷拷
     private void DataGrid_SelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
         if (sender is DataGrid grid && !changingInside)
@@ -122,6 +124,19 @@ public partial class BibtexView : UserControl
             }
             ShowDetail();
             viewModel.SetSelectedItems(grid.SelectedItems.Cast<BibtexEntry>());
+        }
+    }
+
+    private void CheckExternalChanges()
+    {
+        if (viewModel == null || string.IsNullOrWhiteSpace(viewModel.FullPath) || !File.Exists(viewModel.FullPath))
+        {
+            return;
+        }
+        viewModel.DetectExternalModification();
+        if (viewModel.HasExternalChanges)
+        {
+            viewModel.StatusMessage = "File changed on disk";
         }
     }
 

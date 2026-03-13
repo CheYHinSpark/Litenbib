@@ -60,7 +60,7 @@
                         ToolTip.Tip="Resolve bibliography candidates"
 						Margin="4 0"
 						Command="{Binding ParseDoiCommand}">
-                    <Path Data="{StaticResource SearchPath}"/>
+                    <Path Data="{StaticResource ToLinkPath}"/>
                 </Button>
 			</Grid>
         </Grid>
@@ -71,7 +71,7 @@
                 <Button Grid.Column="1" Classes="icon" Margin="4 0"
                         ToolTip.Tip="Select all candidates"
                         Command="{Binding SelectAllCandidatesCommand}">
-                    <Path Data="{StaticResource CheckPath}"/>
+                    <Path Data="{StaticResource AddPath}"/>
                 </Button>
                 <Button Grid.Column="2" Classes="icon" Margin="4 0"
                         ToolTip.Tip="Clear candidate selection"

@@ -129,6 +129,13 @@
 						<MenuItem Header="_Cut"
                                   Command="{CompiledBinding SelectedFile.CutBibtexCommand}"
                                   CommandParameter="{CompiledBinding $parent[Window].DataContext}"/>
+                        <MenuItem Header="Batch _Edit..."
+                                  Command="{CompiledBinding SelectedFile.ApplyBatchFieldEditCommand}"
+                                  CommandParameter="{CompiledBinding $parent[Window]}"/>
+                        <MenuItem Header="_Clean Selected"
+                                  Command="{CompiledBinding SelectedFile.CleanupSelectedEntriesCommand}"/>
+                        <MenuItem Header="_Reload From Disk"
+                                  Command="{CompiledBinding SelectedFile.ReloadFromDiskCommand}"/>
                     </MenuItem>
                 </Menu>
             </StackPanel>
@@ -205,8 +212,19 @@
                         </Button>
                         <Button Command="{CompiledBinding SelectedFile.MergeEntriesCommand}"
                                 CommandParameter="{CompiledBinding $parent[Window]}"
-								ToolTip.Tip="Merge Entries">
+								ToolTip.Tip="Merge selected entries">
                             <Path Data="{StaticResource MergePath}" StrokeThickness="1"
+                                  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+                        </Button>
+                        <Button Command="{CompiledBinding SelectedFile.ApplyBatchFieldEditCommand}"
+                                CommandParameter="{CompiledBinding $parent[Window]}"
+                                ToolTip.Tip="Batch edit selected entries">
+                            <Path Data="{StaticResource AddPath}"
+                                  Fill="{CompiledBinding $parent[Button].Foreground}"/>
+                        </Button>
+                        <Button Command="{CompiledBinding SelectedFile.CleanupSelectedEntriesCommand}"
+                                ToolTip.Tip="Clean selected entries">
+                            <Path Data="{StaticResource brPath}" StrokeThickness="1"
                                   Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                         </Button>
                     </StackPanel>

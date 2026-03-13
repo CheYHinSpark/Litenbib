@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Litenbib.Models
@@ -17,7 +18,13 @@ namespace Litenbib.Models
         /// <summary> 警告：缺少要求字段如Author、Title、Year </summary>
         MissingRequiredField = -1,
         /// <summary> 警告：缺少重要字段如 </summary>
-        MissingNecessaryField = -2
+        MissingNecessaryField = -2,
+        /// <summary> 错误：相同 DOI </summary>
+        SameDoi = 4,
+        /// <summary> 警告：标题和年份重复 </summary>
+        SameTitleYear = -3,
+        /// <summary> 警告：标题可能重复 </summary>
+        SimilarTitle = -4
     }
 
     /// <summary>
@@ -39,6 +46,18 @@ namespace Litenbib.Models
                 {
                     return $"{SourceEntries.Count} entries have the same CitationKey {FieldName}";
                 }
+                if (Class == WarningErrorClass.SameDoi)
+                {
+                    return $"{SourceEntries.Count} entries have the same DOI {FieldName}";
+                }
+                if (Class == WarningErrorClass.SameTitleYear)
+                {
+                    return $"{SourceEntries.Count} entries share the same title and year";
+                }
+                if (Class == WarningErrorClass.SimilarTitle)
+                {
+                    return $"{SourceEntries.Count} entries have very similar titles";
+                }
                 return $"1 entry missing {FieldName}";
             }
         }
@@ -51,27 +70,18 @@ namespace Litenbib.Models
     {
         public static async Task<(IList<WarningError>, int)> CheckBibtex(IEnumerable<BibtexEntry> entries)
         {
-            Dictionary<string, List<BibtexEntry>> keysCount = [];
             IList<WarningError> result = [];
             int _error = -1;
             await Task.Run(() =>
             {
-                foreach (BibtexEntry entry in entries)
+                var entryList = entries.ToList();
+                foreach (BibtexEntry entry in entryList)
                 {
                     if (string.IsNullOrWhiteSpace(entry.CitationKey))
                     {
                         result.Add(new WarningError([entry], WarningErrorClass.MissingCitationKey, "citationKey"));
                         _error = 1;
                         continue;
-                    }
-
-                    if (keysCount.TryGetValue(entry.CitationKey, out List<BibtexEntry>? value))
-                    {
-                        value.Add(entry);
-                    }
-                    else
-                    {
-                        keysCount[entry.CitationKey] = [entry];
                     }
 
                     if (string.IsNullOrWhiteSpace(entry.EntryType))
@@ -93,16 +103,26 @@ namespace Litenbib.Models
                     {
                         result.Add(new WarningError([entry], WarningErrorClass.MissingNecessaryField, "author or editor"));
                     }
-
-
                 }
 
-                foreach (var kv in keysCount)
+                foreach (var duplicate in BibtexDiagnostics.FindDuplicates(entryList))
                 {
-                    if (kv.Value.Count > 1)
+                    switch (duplicate.Kind)
                     {
-                        result.Add(new WarningError(kv.Value, WarningErrorClass.SameCitationKey, kv.Key));
-                        _error = 1;
+                        case DuplicateKind.CitationKey:
+                            result.Add(new WarningError(duplicate.Entries, WarningErrorClass.SameCitationKey, duplicate.Token));
+                            _error = 1;
+                            break;
+                        case DuplicateKind.Doi:
+                            result.Add(new WarningError(duplicate.Entries, WarningErrorClass.SameDoi, duplicate.Token));
+                            _error = 1;
+                            break;
+                        case DuplicateKind.TitleYear:
+                            result.Add(new WarningError(duplicate.Entries, WarningErrorClass.SameTitleYear, duplicate.Token));
+                            break;
+                        case DuplicateKind.SimilarTitle:
+                            result.Add(new WarningError(duplicate.Entries, WarningErrorClass.SimilarTitle, duplicate.Token));
+                            break;
                     }
                 }
             });
