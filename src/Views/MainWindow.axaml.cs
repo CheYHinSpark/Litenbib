@@ -139,12 +139,13 @@ namespace Litenbib.Views
         #region Title Bar Drag Move
         private void TitleBar_PointerPressed(object? sender, PointerPressedEventArgs e)
         {
-            TitleBarGrid.IsHitTestVisible = false;
             this.BeginMoveDrag(e);
+            e.Handled = true;
         }
 
         private void TitleBar_PointerReleased(object? sender, PointerReleasedEventArgs e)
-        { TitleBarGrid.IsHitTestVisible = true; }
+        {
+        }
         #endregion Title Bar Drag Move
 
         #region Tab Control Drag
