@@ -1,5 +1,6 @@
 ﻿using Avalonia.Collections;
 using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ExCSS;
@@ -347,10 +348,9 @@ namespace Litenbib.ViewModels
         #endregion Method
 
         #region Command
-        [RelayCommand(CanExecute = nameof(Edited))]
-        private async Task SaveBibtex()
+        private async Task SaveBibtexToPath(string targetPath)
         {
-            if (!TryGetValidatedSavePath(FullPath, out string validatedPath, out string errorMessage))
+            if (!TryGetValidatedSavePath(targetPath, out string validatedPath, out string errorMessage))
             {
                 await ShowMessage("Save Failed", errorMessage);
                 return;
@@ -371,14 +371,46 @@ namespace Litenbib.ViewModels
                     await writer.WriteAsync(entry.BibTeX + "\n");
                 }
                 FullPath = validatedPath;
+                Header = Path.GetFileName(validatedPath);
                 UndoRedoManager.Edited = false;
                 OnPropertyChanged(nameof(Edited));
-                await ShowMessage("Save Succeeded", $"Saved to:\n{validatedPath}");
             }
             catch (Exception ex)
             {
                 await ShowMessage("Save Failed", $"Could not save file.\n{ex.Message}");
             }
+        }
+
+        public async Task SaveBibtexAs(Window window)
+        {
+            string suggestedFileName = string.IsNullOrWhiteSpace(FullPath)
+                ? "library.bib"
+                : Path.GetFileName(FullPath);
+
+            var file = await window.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+            {
+                Title = "Save BibTeX File As",
+                SuggestedFileName = suggestedFileName,
+                DefaultExtension = "bib",
+                ShowOverwritePrompt = true,
+                FileTypeChoices =
+                [
+                    new FilePickerFileType("BibTeX Files")
+                    {
+                        Patterns = ["*.bib"]
+                    },
+                    FilePickerFileTypes.All
+                ]
+            });
+
+            if (file == null) { return; }
+            await SaveBibtexToPath(Uri.UnescapeDataString(file.Path.AbsolutePath));
+        }
+
+        [RelayCommand(CanExecute = nameof(Edited))]
+        private async Task SaveBibtex()
+        {
+            await SaveBibtexToPath(FullPath);
         }
 
         [RelayCommand(CanExecute = nameof(CanUndo))]

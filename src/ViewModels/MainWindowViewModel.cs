@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Markup.Xaml.Styling;
 using Avalonia.Platform.Storage;
 using Avalonia.Styling;
@@ -43,6 +44,8 @@ namespace Litenbib.ViewModels
 
         [ObservableProperty]
         private BibtexViewModel? _selectedFile;
+
+        public ObservableCollection<RecentFileState> RecentFiles { get; } = [];
         partial void OnSelectedFileChanged(BibtexViewModel? value)
         {
             // inform Commands to update
@@ -69,6 +72,23 @@ namespace Litenbib.ViewModels
         public MainWindowViewModel()
         {
             BibtexTabs = [];
+        }
+
+        private void RefreshRecentFiles()
+        {
+            RecentFiles.Clear();
+            foreach (var tab in BibtexTabs)
+            {
+                RecentFiles.Add(new RecentFileState
+                {
+                    FilePath = tab.FullPath,
+                    FileName = tab.Header,
+                    FilterMode = tab.FilterMode,
+                    FilterField = tab.FilterField,
+                    FilterText = tab.FilterText,
+                });
+            }
+            OnPropertyChanged(nameof(RecentFiles));
         }
 
         public async Task CopyBibtexEntries(IEnumerable<BibtexEntry> list)
@@ -120,6 +140,7 @@ namespace Litenbib.ViewModels
                         };
                         BibtexTabs.Add(newBVM);
                     }
+                    RefreshRecentFiles();
                     if (BibtexTabs.Count > 0)
                     {
                         int selectedIndex = config.SelectedTabIndex;
@@ -148,6 +169,7 @@ namespace Litenbib.ViewModels
                 RecentFiles = [.. BibtexTabs.Select(b => new RecentFileState
                 {
                     FilePath = b.FullPath,
+                    FileName = b.Header,
                     FilterMode = b.FilterMode,
                     FilterField = b.FilterField,
                     FilterText = b.FilterText,
@@ -213,20 +235,25 @@ namespace Litenbib.ViewModels
 
         private async Task OpenFile(IStorageFile file)
         {
-            await using var stream = await file.OpenReadAsync();
-            using var streamReader = new StreamReader(stream);
-            var fileContent = await streamReader.ReadToEndAsync();
-            int newMode = SelectedFile == null ? 0 : SelectedFile.FilterMode;
             string fullPath = Uri.UnescapeDataString(file.Path.AbsolutePath);
+            await OpenFile(fullPath, file.Name);
+        }
+
+        private async Task OpenFile(string fullPath, string? fileName = null)
+        {
             var existed = BibtexTabs.FirstOrDefault(b => string.Equals(b.FullPath, fullPath, StringComparison.OrdinalIgnoreCase));
             if (existed != null)
             {
                 SelectedFile = existed;
                 return;
             }
-            var newBVM = new BibtexViewModel(file.Name, fullPath, fileContent, newMode);
+
+            var fileContent = await File.ReadAllTextAsync(fullPath);
+            int newMode = SelectedFile == null ? 0 : SelectedFile.FilterMode;
+            var newBVM = new BibtexViewModel(fileName ?? Path.GetFileName(fullPath), fullPath, fileContent, newMode);
             BibtexTabs.Add(newBVM);
             SelectedFile = newBVM;
+            RefreshRecentFiles();
         }
 
         #region Command
@@ -286,6 +313,7 @@ namespace Litenbib.ViewModels
             var newBVM = new BibtexViewModel(file.Name, fullPath, string.Empty, newMode);
             BibtexTabs.Add(newBVM);
             SelectedFile = newBVM;
+            RefreshRecentFiles();
         }
 
         [RelayCommand]
@@ -314,6 +342,26 @@ namespace Litenbib.ViewModels
         }
 
         [RelayCommand]
+        private async Task OpenRecentFile(RecentFileState? recent)
+        {
+            if (recent == null || string.IsNullOrWhiteSpace(recent.FilePath)) { return; }
+            if (!File.Exists(recent.FilePath))
+            {
+                RecentFiles.Remove(recent);
+                return;
+            }
+
+            var existed = BibtexTabs.FirstOrDefault(b => string.Equals(b.FullPath, recent.FilePath, StringComparison.OrdinalIgnoreCase));
+            if (existed != null)
+            {
+                SelectedFile = existed;
+                return;
+            }
+
+            await OpenFile(recent.FilePath, string.IsNullOrWhiteSpace(recent.FileName) ? null : recent.FileName);
+        }
+
+        [RelayCommand]
         private async Task CloseTab(BibtexViewModel? tab)
         {
             if (tab != null && BibtexTabs.Contains(tab))
@@ -330,6 +378,7 @@ namespace Litenbib.ViewModels
                     { await tab.SaveBibtexCommand.ExecuteAsync(null); }
                 }
                 BibtexTabs.Remove(tab);
+                RefreshRecentFiles();
             }
         }
 
@@ -341,6 +390,14 @@ namespace Litenbib.ViewModels
                 // 创建对话框实例，并传入参数
                 await SelectedFile.AddBibtexEntry(window);
             }
+        }
+
+        [RelayCommand]
+        private async Task SaveFileAs(Window? window)
+        {
+            if (window == null || SelectedFile == null) { return; }
+            await SelectedFile.SaveBibtexAs(window);
+            RefreshRecentFiles();
         }
 
         private bool CanAddBibtexEntry() => SelectedFile != null;

@@ -19,6 +19,13 @@
 			<Setter Property="Margin" Value="4"/>
 			<Setter Property="Padding" Value="4"/>
 		</Style>
+        <Style Selector="Button.icon">
+            <Setter Property="Width" Value="32"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
 	</Window.Styles>
 	
 	<Grid RowDefinitions="Auto,*,Auto" Grid.IsSharedSizeScope="True" Margin="0 0 0 8">
@@ -50,9 +57,12 @@
 					<TextBlock Text="Path"
 							   HorizontalAlignment="Right" VerticalAlignment="Center"/>
 					<TextBox Grid.Column="1"  Margin="4" Text="{CompiledBinding Path}"/>
-					<Button Grid.Column="2" Margin="0 4 4 4"
+					<Button Grid.Column="2" Classes="icon" Margin="0 4 4 4"
 					Command="{CompiledBinding BrowsePathCommand}"
-					CommandParameter="{CompiledBinding $parent[Window]}">Browse</Button>
+					ToolTip.Tip="Choose export path"
+					CommandParameter="{CompiledBinding $parent[Window]}">
+                        <Path Data="{StaticResource FilePath}" Stroke="{CompiledBinding $parent[Button].Foreground}" StrokeThickness="1"/>
+                    </Button>
 				</Grid>
 				<Grid RowDefinitions="Auto,Auto">
 					<Grid.ColumnDefinitions>
@@ -115,10 +125,14 @@
 
 		<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right"
                     Margin=" 8 8">
-			<Button Content="Cancel" Width="64" Click="CancelButton_Click"/>
-			<Button Content="Export" Width="64"
+			<Button Classes="icon" ToolTip.Tip="Cancel export" Click="CancelButton_Click">
+                <Path Data="{StaticResource xPath}" Stroke="{CompiledBinding $parent[Button].Foreground}" StrokeThickness="1"/>
+            </Button>
+			<Button Classes="icon" ToolTip.Tip="Export bibliography"
 					Command="{CompiledBinding ExportCommand}"
-					CommandParameter="{CompiledBinding $parent[Window]}"/>
+					CommandParameter="{CompiledBinding $parent[Window]}">
+                <Path Data="{StaticResource ToLinkPath}" Stroke="{CompiledBinding $parent[Button].Foreground}" StrokeThickness="1"/>
+            </Button>
 		</StackPanel>
 	</Grid>
 </Window>

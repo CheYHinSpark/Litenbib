@@ -21,6 +21,13 @@
             <Setter Property="Margin" Value="4 2"/>
             <Setter Property="VerticalAlignment" Value="Top"/>
         </Style>
+        <Style Selector="Button.icon">
+            <Setter Property="Width" Value="32"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
     </Window.Styles>
     
     <Design.DataContext>
@@ -49,19 +56,28 @@
 					 Watermark="Input DOI / arXiv / OpenReview / title / URL, one per line."/>
 			<Grid Grid.Column="1" >
 				<TextBlock Text="Resolve Bib" Margin="8"/>
-				<Button VerticalAlignment="Bottom" Content="Resolve"
+				<Button VerticalAlignment="Bottom" Classes="icon"
+                        ToolTip.Tip="Resolve bibliography candidates"
 						Margin="4 0"
-						Command="{Binding ParseDoiCommand}"/>
+						Command="{Binding ParseDoiCommand}">
+                    <Path Data="{StaticResource SearchPath}"/>
+                </Button>
 			</Grid>
         </Grid>
 
         <Grid Grid.Row="2" Margin="8 4" RowDefinitions="Auto,*">
             <Grid ColumnDefinitions="*,Auto,Auto">
                 <TextBlock Text="Candidates" VerticalAlignment="Center"/>
-                <Button Grid.Column="1" Content="Select All" Margin="4 0"
-                        Command="{Binding SelectAllCandidatesCommand}"/>
-                <Button Grid.Column="2" Content="Clear" Margin="4 0"
-                        Command="{Binding ClearCandidateSelectionCommand}"/>
+                <Button Grid.Column="1" Classes="icon" Margin="4 0"
+                        ToolTip.Tip="Select all candidates"
+                        Command="{Binding SelectAllCandidatesCommand}">
+                    <Path Data="{StaticResource CheckPath}"/>
+                </Button>
+                <Button Grid.Column="2" Classes="icon" Margin="4 0"
+                        ToolTip.Tip="Clear candidate selection"
+                        Command="{Binding ClearCandidateSelectionCommand}">
+                    <Path Data="{StaticResource DeletePath}" Fill="{CompiledBinding $parent[Button].Foreground}"/>
+                </Button>
             </Grid>
             <Border Grid.Row="1" BorderThickness="1" BorderBrush="{DynamicResource ThemeBorder}"
                     CornerRadius="8" Padding="4" Margin="0 4 0 0">
@@ -104,8 +120,12 @@
         <StackPanel Grid.Row="4" Orientation="Horizontal"
 					Margin="0 4 8 8"
                     HorizontalAlignment="Right">
-			<Button Content="Cancel" Width="64" Click="CancelButton_Click"/>
-			<Button Content="Add" Width="64" Click="AddButton_Click"/>
+			<Button Classes="icon" ToolTip.Tip="Cancel" Click="CancelButton_Click">
+                <Path Data="{StaticResource xPath}" Stroke="{CompiledBinding $parent[Button].Foreground}" StrokeThickness="1"/>
+            </Button>
+			<Button Classes="icon" ToolTip.Tip="Add selected entries" Click="AddButton_Click">
+                <Path Data="{StaticResource AddPath}" Fill="{CompiledBinding $parent[Button].Foreground}"/>
+            </Button>
         </StackPanel>
     </Grid>
 </Window>

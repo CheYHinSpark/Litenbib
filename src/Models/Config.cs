@@ -27,6 +27,8 @@ namespace Litenbib.Models
     {
         public string FilePath { get; set; } = string.Empty;
 
+        public string FileName { get; set; } = string.Empty;
+
         public int FilterMode { get; set; }
 
         public string FilterField { get; set; } = "Whole";

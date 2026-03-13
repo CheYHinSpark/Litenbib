@@ -94,6 +94,22 @@
                         <MenuItem Header="_Open..."
                                   Command="{CompiledBinding OpenFileCommand}"
                                   CommandParameter="{CompiledBinding $parent[Window]}"/>
+                        <MenuItem Header="Open _Recent">
+                            <MenuItem.ItemsSource>
+                                <CompiledBinding Path="RecentFiles"/>
+                            </MenuItem.ItemsSource>
+                            <MenuItem.ItemTemplate>
+                                <DataTemplate x:DataType="m:RecentFileState">
+                                    <MenuItem Header="{CompiledBinding FileName}"
+                                              ToolTip.Tip="{CompiledBinding FilePath}"
+                                              Command="{CompiledBinding #LitbibMainWindow.DataContext.OpenRecentFileCommand}"
+                                              CommandParameter="{CompiledBinding .}"/>
+                                </DataTemplate>
+                            </MenuItem.ItemTemplate>
+                        </MenuItem>
+                        <MenuItem Header="Save _As..."
+                                  Command="{CompiledBinding SaveFileAsCommand}"
+                                  CommandParameter="{CompiledBinding $parent[Window]}"/>
                         <MenuItem Header="_Export"
                                   Command="{CompiledBinding ExportFileCommand}"
                                   CommandParameter="{CompiledBinding $parent[Window]}"/>
@@ -118,7 +134,7 @@
             </StackPanel>
             
             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Grid.Column="2">
-				<Button Classes="window" Command="{CompiledBinding ChangeThemeCommand}">
+				<Button Classes="window" Command="{CompiledBinding ChangeThemeCommand}" ToolTip.Tip="Toggle theme">
 					<Grid>
 						<Path Data="{StaticResource SunPath}" StrokeThickness="1"
                               Stroke="{CompiledBinding $parent[Button].Foreground}"
@@ -129,15 +145,15 @@
 							  IsVisible="{CompiledBinding ThemeIndex, Converter={x:Static BoolConverters.Not}}"/>
 					</Grid>
 				</Button>
-                <Button Name="MinButton" Click="TitleButton_Click" Classes="window">
+                <Button Name="MinButton" Click="TitleButton_Click" Classes="window" ToolTip.Tip="Minimize window">
                     <Path Data="{StaticResource -Path}" StrokeThickness="1"
                           Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                 </Button>
-                <Button Name="MaxButton" Click="TitleButton_Click" Classes="window">
+                <Button Name="MaxButton" Click="TitleButton_Click" Classes="window" ToolTip.Tip="Maximize or restore window">
                     <Path Data="{CompiledBinding $parent[Window].WindowState, Converter={StaticResource WindowStateToPathConverter}}"
                           StrokeThickness="1" Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                 </Button>
-                <Button Name="CloseButton" Click="TitleButton_Click" Classes="warning window">
+                <Button Name="CloseButton" Click="TitleButton_Click" Classes="warning window" ToolTip.Tip="Close window">
                     <Path Data="{StaticResource xPath}" StrokeThickness="1"
                           Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                 </Button>
@@ -162,7 +178,7 @@
                         CornerRadius="8">
                     <StackPanel Orientation="Horizontal" Margin="6 0" VerticalAlignment="Center"
 								ToolTip.Tip="Undo">
-                        <Button Command="{CompiledBinding SelectedFile.UndoBibtexCommand}">
+                        <Button Command="{CompiledBinding SelectedFile.UndoBibtexCommand}" ToolTip.Tip="Undo">
                             <Path Data="{StaticResource UndoPath}" StrokeThickness="1"
                                   Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                         </Button>
@@ -177,7 +193,7 @@
                                   Fill="{CompiledBinding $parent[Button].Foreground}"/>
                         </Button>
                         <Button Command="{CompiledBinding SelectedFile.SaveBibtexCommand}"
-								ToolTip.Tip="Save">
+								ToolTip.Tip="Save current file">
                             <Path Data="{StaticResource SavePath}" StrokeThickness="1"
                                   Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                         </Button>
