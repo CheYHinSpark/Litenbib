@@ -26,6 +26,17 @@ namespace Litenbib.Models
         public bool Success => Candidates.Count > 0;
     }
 
+    internal enum MergeSearchSource
+    {
+        Super,
+        Doi,
+        Dblp,
+        Crossref,
+        Url,
+        Title,
+        CitationKey
+    }
+
     internal static class LinkResolver
     {
         private static readonly HttpClient client = CreateHttpClient();
@@ -105,19 +116,17 @@ namespace Litenbib.Models
 
         public static async Task<List<BibtexEntry>> SearchMergeCandidatesAsync(BibtexEntry entry, int maxCandidates = 8)
         {
-            string[] parts = [entry.Title, entry.DOI, entry.Url, entry.CitationKey];
+            return await SearchMergeCandidatesAsync(entry, MergeSearchSource.Super, maxCandidates);
+        }
+
+        public static async Task<List<BibtexEntry>> SearchMergeCandidatesAsync(BibtexEntry entry, MergeSearchSource source, int maxCandidates = 8)
+        {
             List<BibtexEntry> merged = [];
             HashSet<string> seen = new(StringComparer.OrdinalIgnoreCase);
 
-            foreach (string part in parts)
+            async Task AddCandidatesAsync(IEnumerable<BibtexEntry> candidates)
             {
-                if (string.IsNullOrWhiteSpace(part))
-                {
-                    continue;
-                }
-
-                var result = await ResolveEntriesAsync(part, maxCandidates);
-                foreach (var candidate in result)
+                foreach (var candidate in candidates)
                 {
                     string key = candidate.CitationKey + "|" + candidate.Title;
                     if (seen.Add(key))
@@ -125,10 +134,71 @@ namespace Litenbib.Models
                         merged.Add(candidate);
                         if (merged.Count >= maxCandidates)
                         {
-                            return merged;
+                            return;
                         }
                     }
                 }
+
+                await Task.CompletedTask;
+            }
+
+            async Task AddFromQueryAsync(string? query)
+            {
+                if (merged.Count >= maxCandidates || string.IsNullOrWhiteSpace(query))
+                {
+                    return;
+                }
+
+                var result = await ResolveEntriesAsync(query, maxCandidates);
+                await AddCandidatesAsync(result);
+            }
+
+            async Task AddFromResolverAsync(Func<string, Task<List<BibliographyCandidate>>> resolver, string? query)
+            {
+                if (merged.Count >= maxCandidates || string.IsNullOrWhiteSpace(query))
+                {
+                    return;
+                }
+
+                var result = await resolver(query);
+                await AddCandidatesAsync(result
+                    .Where(c => c.Entry != null)
+                    .Select(c => BibtexEntry.CopyFrom(c.Entry!)));
+            }
+
+            switch (source)
+            {
+                case MergeSearchSource.Doi:
+                    await AddFromResolverAsync(ResolveDoiCandidatesAsync, entry.DOI);
+                    break;
+                case MergeSearchSource.Dblp:
+                    await AddFromResolverAsync(SearchDblpCandidatesAsync, !string.IsNullOrWhiteSpace(entry.Title) ? entry.Title : entry.DOI);
+                    break;
+                case MergeSearchSource.Crossref:
+                    await AddFromResolverAsync(SearchCrossrefCandidatesAsync, !string.IsNullOrWhiteSpace(entry.Title) ? entry.Title : entry.DOI);
+                    break;
+                case MergeSearchSource.Url:
+                    await AddFromQueryAsync(entry.Url);
+                    break;
+                case MergeSearchSource.Title:
+                    await AddFromQueryAsync(entry.Title);
+                    break;
+                case MergeSearchSource.CitationKey:
+                    await AddFromQueryAsync(entry.CitationKey);
+                    break;
+                case MergeSearchSource.Super:
+                default:
+                    string[] parts = [entry.Title, entry.DOI, entry.Url, entry.CitationKey];
+                    foreach (string part in parts)
+                    {
+                        if (merged.Count >= maxCandidates)
+                        {
+                            break;
+                        }
+
+                        await AddFromQueryAsync(part);
+                    }
+                    break;
             }
 
             return merged;

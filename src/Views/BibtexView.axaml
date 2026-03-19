@@ -419,19 +419,48 @@
                                 </Style>
                             </Expander.Styles>
                             <StackPanel>
-                                <StackPanel Orientation="Horizontal" Margin="2"
-                                            HorizontalAlignment="Center">
-                                    <Button Command="{CompiledBinding GetDblpFromDoiCommand}"
+                                <WrapPanel Margin="2" HorizontalAlignment="Center">
+                                    <Button Command="{CompiledBinding FindMergeByDoiCommand}"
                                             CommandParameter="{CompiledBinding $parent[Window]}"
-                                            Width="120" HorizontalContentAlignment="Center">
+                                            Margin="2" Padding="10,4">
+                                        <TextBlock Text="DOI"/>
+                                    </Button>
+                                    <Button Command="{CompiledBinding FindMergeByDblpCommand}"
+                                            CommandParameter="{CompiledBinding $parent[Window]}"
+                                            Margin="2" Padding="10,4">
                                         <StackPanel Orientation="Horizontal" Spacing="6">
                                             <Viewbox Margin="2">
                                                 <Svg Path="/Assets/dblp.svg"/>
                                             </Viewbox>
-                                            <TextBlock Text="Find merge candidates" Margin="0"/>
+                                            <TextBlock Text="DBLP" Margin="0"/>
                                         </StackPanel>
                                     </Button>
-                                </StackPanel>
+                                    <Button Command="{CompiledBinding FindMergeByCrossrefCommand}"
+                                            CommandParameter="{CompiledBinding $parent[Window]}"
+                                            Margin="2" Padding="10,4">
+                                        <TextBlock Text="Crossref"/>
+                                    </Button>
+                                    <Button Command="{CompiledBinding FindMergeByTitleCommand}"
+                                            CommandParameter="{CompiledBinding $parent[Window]}"
+                                            Margin="2" Padding="10,4">
+                                        <TextBlock Text="Title"/>
+                                    </Button>
+                                    <Button Command="{CompiledBinding FindMergeByUrlCommand}"
+                                            CommandParameter="{CompiledBinding $parent[Window]}"
+                                            Margin="2" Padding="10,4">
+                                        <TextBlock Text="URL"/>
+                                    </Button>
+                                    <Button Command="{CompiledBinding FindMergeByCitationKeyCommand}"
+                                            CommandParameter="{CompiledBinding $parent[Window]}"
+                                            Margin="2" Padding="10,4">
+                                        <TextBlock Text="CitationKey"/>
+                                    </Button>
+                                    <Button Command="{CompiledBinding GetDblpFromDoiCommand}"
+                                            CommandParameter="{CompiledBinding $parent[Window]}"
+                                            Margin="2" Padding="10,4">
+                                        <TextBlock Text="Super search"/>
+                                    </Button>
+                                </WrapPanel>
                                 <Grid ColumnDefinitions="100,*,Auto">
 									<Button Width="100" HorizontalContentAlignment="Stretch" Padding="0"
                                                 Command="{CompiledBinding ShowingEntry.ToShowingLinkCommand}"

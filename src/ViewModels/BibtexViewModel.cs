@@ -612,14 +612,53 @@ namespace Litenbib.ViewModels
         [RelayCommand]
         private async Task GetDblpFromDoi(object? sender)
         {
+            await OpenMergeCandidatesDialog(sender, MergeSearchSource.Super);
+        }
+
+        [RelayCommand]
+        private async Task FindMergeByDoi(object? sender)
+        {
+            await OpenMergeCandidatesDialog(sender, MergeSearchSource.Doi);
+        }
+
+        [RelayCommand]
+        private async Task FindMergeByDblp(object? sender)
+        {
+            await OpenMergeCandidatesDialog(sender, MergeSearchSource.Dblp);
+        }
+
+        [RelayCommand]
+        private async Task FindMergeByCrossref(object? sender)
+        {
+            await OpenMergeCandidatesDialog(sender, MergeSearchSource.Crossref);
+        }
+
+        [RelayCommand]
+        private async Task FindMergeByTitle(object? sender)
+        {
+            await OpenMergeCandidatesDialog(sender, MergeSearchSource.Title);
+        }
+
+        [RelayCommand]
+        private async Task FindMergeByUrl(object? sender)
+        {
+            await OpenMergeCandidatesDialog(sender, MergeSearchSource.Url);
+        }
+
+        [RelayCommand]
+        private async Task FindMergeByCitationKey(object? sender)
+        {
+            await OpenMergeCandidatesDialog(sender, MergeSearchSource.CitationKey);
+        }
+
+        private async Task OpenMergeCandidatesDialog(object? sender, MergeSearchSource source)
+        {
             if (ShowingEntry == null || sender is not MainWindow window) { return; }
-            var list = await LinkResolver.SearchMergeCandidatesAsync(ShowingEntry);
+            var list = await LinkResolver.SearchMergeCandidatesAsync(ShowingEntry, source);
             if (list.Count == 0) { return; }
-            Debug.WriteLine("accepted");
             list.Insert(0, ShowingEntry);
             CompareEntryView dialog = new(list);
-            // 显示对话框并等待结果 (ShowDialog 需要传入父窗口引用)
-            var result = await dialog.ShowDialog<bool>(window); // 等待对话框关闭并获取 DialogResult
+            var result = await dialog.ShowDialog<bool>(window);
             if (result == true)
             {
                 if (dialog.DataContext is not CompareEntryViewModel cevm) { return; }
