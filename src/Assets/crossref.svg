@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   version="1.1"
+   id="Layer_1"
+   x="0px"
+   y="0px"
+   viewBox="0 0 65.400002 95.200007"
+   xml:space="preserve"
+   sodipodi:docname="crossref.svg"
+   inkscape:version="1.4 (86a8ad7, 2024-10-11)"
+   width="65.400002"
+   height="95.200005"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs16" /><sodipodi:namedview
+   id="namedview16"
+   pagecolor="#ffffff"
+   bordercolor="#000000"
+   borderopacity="0.25"
+   inkscape:showpageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="0"
+   inkscape:deskcolor="#d1d1d1"
+   inkscape:zoom="3.2872505"
+   inkscape:cx="-59.320092"
+   inkscape:cy="52.627569"
+   inkscape:window-width="1920"
+   inkscape:window-height="1058"
+   inkscape:window-x="-6"
+   inkscape:window-y="-6"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="Layer_1"><inkscape:page
+     x="0"
+     y="0"
+     width="65.400002"
+     height="95.200005"
+     id="page1"
+     margin="0"
+     bleed="0" /></sodipodi:namedview>
+<style
+   type="text/css"
+   id="style1">
+	.st0{fill:#3EB1C8;}
+	.st1{fill:#D8D2C4;}
+	.st2{fill:#4F5858;}
+	.st3{fill:#FFC72C;}
+	.st4{fill:#EF3340;}
+</style>
+<g
+   id="g16"
+   transform="translate(-111.8,-0.30000002)">
+	<polygon
+   class="st0"
+   points="111.8,66.8 135.4,59 177.2,73.3 111.8,95.5 "
+   id="polygon1" />
+	<polygon
+   class="st1"
+   points="111.8,51.2 135.4,59 177.2,44.6 153.6,36.8 "
+   id="polygon2" />
+	<polygon
+   class="st2"
+   points="135.4,59 177.2,44.6 177.2,73.3 "
+   id="polygon3" />
+	<polygon
+   class="st3"
+   points="177.2,29 153.6,36.8 111.8,22.5 177.2,0.3 "
+   id="polygon4" />
+	<polygon
+   class="st4"
+   points="153.6,36.8 111.8,51.2 111.8,22.5 "
+   id="polygon5" />
+	
+</g>
+</svg>

@@ -32,9 +32,7 @@ namespace Litenbib.Models
         Doi,
         Dblp,
         Crossref,
-        Url,
         Title,
-        CitationKey
     }
 
     internal static class LinkResolver
@@ -177,14 +175,8 @@ namespace Litenbib.Models
                 case MergeSearchSource.Crossref:
                     await AddFromResolverAsync(SearchCrossrefCandidatesAsync, !string.IsNullOrWhiteSpace(entry.Title) ? entry.Title : entry.DOI);
                     break;
-                case MergeSearchSource.Url:
-                    await AddFromQueryAsync(entry.Url);
-                    break;
                 case MergeSearchSource.Title:
                     await AddFromQueryAsync(entry.Title);
-                    break;
-                case MergeSearchSource.CitationKey:
-                    await AddFromQueryAsync(entry.CitationKey);
                     break;
                 case MergeSearchSource.Super:
                 default:

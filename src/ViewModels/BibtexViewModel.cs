@@ -639,18 +639,6 @@ namespace Litenbib.ViewModels
             await OpenMergeCandidatesDialog(sender, MergeSearchSource.Title);
         }
 
-        [RelayCommand]
-        private async Task FindMergeByUrl(object? sender)
-        {
-            await OpenMergeCandidatesDialog(sender, MergeSearchSource.Url);
-        }
-
-        [RelayCommand]
-        private async Task FindMergeByCitationKey(object? sender)
-        {
-            await OpenMergeCandidatesDialog(sender, MergeSearchSource.CitationKey);
-        }
-
         private async Task OpenMergeCandidatesDialog(object? sender, MergeSearchSource source)
         {
             if (ShowingEntry == null || sender is not MainWindow window) { return; }
