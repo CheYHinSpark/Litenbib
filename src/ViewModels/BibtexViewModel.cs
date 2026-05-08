@@ -259,6 +259,48 @@ namespace Litenbib.ViewModels
             await box.ShowAsync();
         }
 
+        private async Task<bool> ConfirmOverwriteExternalChangesAsync(string validatedPath)
+        {
+            if (!IsCurrentFilePath(validatedPath) || !DetectExternalModification())
+            {
+                return true;
+            }
+
+            var box = MessageBoxManager.GetMessageBoxStandard(
+                "File Changed On Disk",
+                "This file has changed on disk since it was opened or last saved. Saving now will overwrite those external changes.\n\nDo you want to overwrite the disk file?",
+                ButtonEnum.YesNo);
+            var result = await box.ShowAsync();
+            if (result == ButtonResult.Yes)
+            {
+                return true;
+            }
+
+            PushStatus("Save canceled: file changed on disk");
+            NotificationCenter.Info("Save canceled: file changed on disk");
+            return false;
+        }
+
+        private bool IsCurrentFilePath(string path)
+        {
+            if (string.IsNullOrWhiteSpace(FullPath))
+            {
+                return false;
+            }
+
+            try
+            {
+                return string.Equals(
+                    Path.GetFullPath(path),
+                    Path.GetFullPath(FullPath),
+                    StringComparison.OrdinalIgnoreCase);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         private static bool TryGetValidatedSavePath(string? path, out string validatedPath, out string errorMessage)
         {
             validatedPath = string.Empty;
@@ -420,15 +462,43 @@ namespace Litenbib.ViewModels
                 { isTailSelected = tb.Text.Length == selectionEnd || tb.Text.Length == selectionStart; }
             }
         }
+
+        private static string GetPropertyNameForField(string fieldName)
+        {
+            if (string.IsNullOrWhiteSpace(fieldName))
+            {
+                return fieldName;
+            }
+
+            return fieldName.ToLowerInvariant() switch
+            {
+                "doi" => "DOI",
+                "isbn" => "ISBN",
+                "issn" => "ISSN",
+                "url" => "Url",
+                _ => char.ToUpperInvariant(fieldName[0]) + fieldName[1..]
+            };
+        }
         #endregion Method
 
         #region Command
-        private async Task SaveBibtexToPath(string targetPath)
+        public async Task<bool> SaveCurrentAsync()
+        {
+            return await SaveBibtexToPath(FullPath);
+        }
+
+        private async Task<bool> SaveBibtexToPath(string targetPath)
         {
             if (!TryGetValidatedSavePath(targetPath, out string validatedPath, out string errorMessage))
             {
+                NotificationCenter.Error(errorMessage);
                 await ShowMessage("Save Failed", errorMessage);
-                return;
+                return false;
+            }
+
+            if (!await ConfirmOverwriteExternalChangesAsync(validatedPath))
+            {
+                return false;
             }
 
             Debug.WriteLine($"Saving...{validatedPath}");
@@ -451,15 +521,20 @@ namespace Litenbib.ViewModels
                 HasExternalChanges = false;
                 UndoRedoManager.Edited = false;
                 OnPropertyChanged(nameof(Edited));
+                SaveBibtexCommand.NotifyCanExecuteChanged();
                 PushStatus($"Saved {Header}");
+                NotificationCenter.Info($"Saved {Header}");
+                return true;
             }
             catch (Exception ex)
             {
+                NotificationCenter.Error($"Could not save {Path.GetFileName(validatedPath)}: {ex.Message}");
                 await ShowMessage("Save Failed", $"Could not save file.\n{ex.Message}");
+                return false;
             }
         }
 
-        public async Task SaveBibtexAs(Window window)
+        public async Task<bool> SaveBibtexAs(Window window)
         {
             string suggestedFileName = string.IsNullOrWhiteSpace(FullPath)
                 ? "library.bib"
@@ -481,14 +556,14 @@ namespace Litenbib.ViewModels
                 ]
             });
 
-            if (file == null) { return; }
-            await SaveBibtexToPath(Uri.UnescapeDataString(file.Path.AbsolutePath));
+            if (file == null) { return false; }
+            return await SaveBibtexToPath(Uri.UnescapeDataString(file.Path.AbsolutePath));
         }
 
         [RelayCommand(CanExecute = nameof(Edited))]
         private async Task SaveBibtex()
         {
-            await SaveBibtexToPath(FullPath);
+            await SaveCurrentAsync();
         }
 
         [RelayCommand(CanExecute = nameof(CanUndo))]
@@ -642,8 +717,15 @@ namespace Litenbib.ViewModels
         private async Task OpenMergeCandidatesDialog(object? sender, MergeSearchSource source)
         {
             if (ShowingEntry == null || sender is not MainWindow window) { return; }
+            string sourceName = GetMergeSearchSourceName(source);
+            NotificationCenter.Info($"Searching {sourceName}...");
             var list = await LinkResolver.SearchMergeCandidatesAsync(ShowingEntry, source);
-            if (list.Count == 0) { return; }
+            if (list.Count == 0)
+            {
+                NotificationCenter.Info($"No {sourceName} candidates found");
+                return;
+            }
+            NotificationCenter.Info($"Found {list.Count} {sourceName} candidate(s)");
             list.Insert(0, ShowingEntry);
             CompareEntryView dialog = new(list);
             var result = await dialog.ShowDialog<bool>(window);
@@ -659,6 +741,18 @@ namespace Litenbib.ViewModels
                 ShowingEntry = cevm.MergedEntry;
                 NotifyCanUndoRedo();
             }
+        }
+
+        private static string GetMergeSearchSourceName(MergeSearchSource source)
+        {
+            return source switch
+            {
+                MergeSearchSource.Doi => "DOI",
+                MergeSearchSource.Dblp => "DBLP",
+                MergeSearchSource.Crossref => "Crossref",
+                MergeSearchSource.Title => "title",
+                _ => "bibliography"
+            };
         }
 
         [RelayCommand]
@@ -696,10 +790,26 @@ namespace Litenbib.ViewModels
             var result = await dialog.ShowDialog<bool>(window);
             if (result != true || dialog.DataContext is not BatchFieldEditViewModel vm) { return; }
 
+            List<EntryFieldChange> changes = [];
             foreach (var (_, entry) in SelectedIndexItems)
             {
-                vm.ApplyTo(entry);
+                var change = vm.CreateChange(entry);
+                if (change == null)
+                {
+                    continue;
+                }
+
+                changes.Add(change.Value);
+                entry.SetValueSilent(change.Value.PropertyName, change.Value.NewValue);
             }
+
+            EntryFieldsChangeAction action = new(changes);
+            if (!action.HasChanges)
+            {
+                PushStatus("No selected entries changed");
+                return;
+            }
+            UndoRedoManager.AddAction(action);
             NotifyCanUndoRedo();
             PushStatus($"Updated {SelectedIndexItems.Count} selected entries");
         }
@@ -708,20 +818,31 @@ namespace Litenbib.ViewModels
         private void CleanupSelectedEntries()
         {
             if (SelectedIndexItems == null || SelectedIndexItems.Count == 0) { return; }
+            List<EntryFieldChange> changes = [];
             foreach (var (_, entry) in SelectedIndexItems)
             {
-                CleanupEntry(entry);
+                changes.AddRange(CleanupEntry(entry));
             }
+
+            EntryFieldsChangeAction action = new(changes);
+            if (!action.HasChanges)
+            {
+                PushStatus("No selected entries needed cleanup");
+                return;
+            }
+            UndoRedoManager.AddAction(action);
             NotifyCanUndoRedo();
             PushStatus($"Cleaned {SelectedIndexItems.Count} selected entries");
         }
 
-        private static void CleanupEntry(BibtexEntry entry)
+        private static List<EntryFieldChange> CleanupEntry(BibtexEntry entry)
         {
+            List<EntryFieldChange> changes = [];
             var keys = entry.Fields.Keys.ToList();
             foreach (var key in keys)
             {
-                var value = entry.Fields[key];
+                var oldValue = entry.Fields[key];
+                var value = oldValue;
                 value = value.Replace("\r", " ").Replace("\n", " ").Trim();
                 while (value.Contains("  "))
                 {
@@ -737,9 +858,17 @@ namespace Litenbib.ViewModels
                     value = value.Trim();
                 }
 
-                entry.SetValueSilent(key, string.IsNullOrWhiteSpace(value) ? null : value);
+                string? newValue = string.IsNullOrWhiteSpace(value) ? null : value;
+                if (string.Equals(oldValue, newValue, StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                string propertyName = GetPropertyNameForField(key);
+                changes.Add(new EntryFieldChange(entry, propertyName, oldValue, newValue));
+                entry.SetValueSilent(propertyName, newValue);
             }
-            entry.UpdateBibtex(isSilent: true);
+            return changes;
         }
 
         [RelayCommand]

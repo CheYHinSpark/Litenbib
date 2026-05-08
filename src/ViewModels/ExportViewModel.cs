@@ -140,12 +140,14 @@ namespace Litenbib.ViewModels
 
             if (!TryGetValidatedPath(Path, out string validatedPath, out string errorMessage))
             {
+                NotificationCenter.Error(errorMessage);
                 await ShowMessage("Export Failed", errorMessage);
                 return;
             }
 
             if (authorClip != 0 && MaxAuthors <= 0)
             {
+                NotificationCenter.Error("Max authors must be greater than 0.");
                 await ShowMessage("Export Failed", "Max authors must be greater than 0.");
                 return;
             }
@@ -175,11 +177,13 @@ namespace Litenbib.ViewModels
                     }
                 }
 
+                NotificationCenter.Info($"Exported {Entries.Count} entries");
                 await ShowMessage("Export Succeeded", $"Exported {Entries.Count} entries to:\n{validatedPath}");
                 window.Close(true);
             }
             catch (Exception ex)
             {
+                NotificationCenter.Error($"Could not export {System.IO.Path.GetFileName(validatedPath)}: {ex.Message}");
                 await ShowMessage("Export Failed", $"Could not export file.\n{ex.Message}");
             }
         }

@@ -62,12 +62,14 @@ namespace Litenbib.ViewModels
             if (inputs.Count == 0)
             {
                 HintText = "Please input DOI / arXiv / OpenReview / title / URL, one per line.";
+                NotificationCenter.Info(HintText);
                 return;
             }
 
             Candidates.Clear();
             List<string> hints = [];
             HashSet<string> seen = new();
+            NotificationCenter.Info($"Searching {inputs.Count} bibliography query(s)...");
 
             foreach (string input in inputs)
             {
@@ -105,6 +107,14 @@ namespace Litenbib.ViewModels
             HintText = Candidates.Count == 0
                 ? string.Join(" | ", hints)
                 : $"{Candidates.Count} candidate(s) ready. Select what to import.";
+            if (Candidates.Count == 0)
+            {
+                NotificationCenter.Info("No bibliography candidates found");
+            }
+            else
+            {
+                NotificationCenter.Info($"Found {Candidates.Count} bibliography candidate(s)");
+            }
         }
 
         [RelayCommand]

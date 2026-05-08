@@ -42,6 +42,8 @@ namespace Litenbib.ViewModels
 
         public ObservableCollection<BibtexViewModel> BibtexTabs { get; set; }
 
+        public ObservableCollection<ToastNotification> Notifications => NotificationCenter.Messages;
+
         [ObservableProperty]
         private BibtexViewModel? _selectedFile;
 
@@ -154,9 +156,15 @@ namespace Litenbib.ViewModels
                 return config;
             }
             catch (JsonException ex)
-            { Debug.WriteLine($"Error deserializing JSON: {ex.Message}"); }
+            {
+                NotificationCenter.Error($"Could not read local config: {ex.Message}");
+                Debug.WriteLine($"Error deserializing JSON: {ex.Message}");
+            }
             catch (Exception ex)
-            { Debug.WriteLine($"An unexpected error occurred: {ex.Message}"); }
+            {
+                NotificationCenter.Error($"Could not restore recent files: {ex.Message}");
+                Debug.WriteLine($"An unexpected error occurred: {ex.Message}");
+            }
             return null;
         }
 
@@ -192,9 +200,15 @@ namespace Litenbib.ViewModels
                 await File.WriteAllTextAsync(LocalConfigPath, JsonSerializer.Serialize(config, CachedJsonOptions));
             }
             catch (JsonException ex)
-            { Debug.WriteLine($"Error serializing to JSON: {ex.Message}"); }
+            {
+                NotificationCenter.Error($"Could not save local config: {ex.Message}");
+                Debug.WriteLine($"Error serializing to JSON: {ex.Message}");
+            }
             catch (Exception ex)
-            { Debug.WriteLine($"An unexpected error occurred: {ex.Message}"); }
+            {
+                NotificationCenter.Error($"Could not save local config: {ex.Message}");
+                Debug.WriteLine($"An unexpected error occurred: {ex.Message}");
+            }
         }
 
         private async void ExtractPdf(string pdfFile)
@@ -248,12 +262,20 @@ namespace Litenbib.ViewModels
                 return;
             }
 
-            var fileContent = await File.ReadAllTextAsync(fullPath);
-            int newMode = SelectedFile == null ? 0 : SelectedFile.FilterMode;
-            var newBVM = new BibtexViewModel(fileName ?? Path.GetFileName(fullPath), fullPath, fileContent, newMode);
-            BibtexTabs.Add(newBVM);
-            SelectedFile = newBVM;
-            RefreshRecentFiles();
+            try
+            {
+                var fileContent = await File.ReadAllTextAsync(fullPath);
+                int newMode = SelectedFile == null ? 0 : SelectedFile.FilterMode;
+                var newBVM = new BibtexViewModel(fileName ?? Path.GetFileName(fullPath), fullPath, fileContent, newMode);
+                BibtexTabs.Add(newBVM);
+                SelectedFile = newBVM;
+                RefreshRecentFiles();
+                NotificationCenter.Info($"Opened {newBVM.Header}");
+            }
+            catch (Exception ex)
+            {
+                NotificationCenter.Error($"Could not open {Path.GetFileName(fullPath)}: {ex.Message}");
+            }
         }
 
         #region Command
@@ -304,6 +326,7 @@ namespace Litenbib.ViewModels
             }
             catch (Exception ex)
             {
+                NotificationCenter.Error($"Could not create {file.Name}: {ex.Message}");
                 var box = MessageBoxManager.GetMessageBoxStandard(
                     "Create File Failed", $"Could not create file.\n{ex.Message}", ButtonEnum.Ok);
                 await box.ShowAsync();
@@ -314,6 +337,7 @@ namespace Litenbib.ViewModels
             BibtexTabs.Add(newBVM);
             SelectedFile = newBVM;
             RefreshRecentFiles();
+            NotificationCenter.Info($"Created {newBVM.Header}");
         }
 
         [RelayCommand]
@@ -348,6 +372,7 @@ namespace Litenbib.ViewModels
             if (!File.Exists(recent.FilePath))
             {
                 RecentFiles.Remove(recent);
+                NotificationCenter.Error($"Recent file not found: {recent.FileName}");
                 return;
             }
 
@@ -375,7 +400,12 @@ namespace Litenbib.ViewModels
                     if (result == ButtonResult.Cancel)
                     { return; }
                     else if (result == ButtonResult.Yes)
-                    { await tab.SaveBibtexCommand.ExecuteAsync(null); }
+                    {
+                        if (!await tab.SaveCurrentAsync())
+                        {
+                            return;
+                        }
+                    }
                 }
                 BibtexTabs.Remove(tab);
                 RefreshRecentFiles();
@@ -405,13 +435,26 @@ namespace Litenbib.ViewModels
         [RelayCommand(CanExecute = nameof(CanSaveAll))]
         private async Task SaveAll()
         {
+            if (await SaveAllFilesAsync())
+            {
+                NotificationCenter.Info("All edited files saved");
+            }
+        }
+
+        public async Task<bool> SaveAllFilesAsync()
+        {
             foreach (var item in BibtexTabs)
             {
                 if (item.Edited)
                 {
-                    await item.SaveBibtexCommand.ExecuteAsync(null);
+                    if (!await item.SaveCurrentAsync())
+                    {
+                        return false;
+                    }
                 }
             }
+
+            return true;
         }
 
         private bool CanSaveAll() => SelectedFile != null;
@@ -419,6 +462,10 @@ namespace Litenbib.ViewModels
         [RelayCommand]
         private static void OpenWebsite(string url)
         { UriProcessor.StartProcess(url); }
+
+        [RelayCommand]
+        private static void DismissNotification(ToastNotification? notification)
+        { NotificationCenter.Dismiss(notification); }
 
         #endregion Command
     }

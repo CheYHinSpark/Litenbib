@@ -23,13 +23,19 @@ namespace Litenbib.ViewModels
         [ObservableProperty]
         private bool _removeField;
 
-        public void ApplyTo(BibtexEntry entry)
+        public EntryFieldChange? CreateChange(BibtexEntry entry)
         {
-            if (entry == null || string.IsNullOrWhiteSpace(SelectedField)) return;
+            if (entry == null || string.IsNullOrWhiteSpace(SelectedField)) return null;
+
+            string? oldValue = entry.Fields.TryGetValue(SelectedField, out string? existingValue)
+                ? existingValue
+                : null;
+
             if (RemoveField)
             {
-                entry.SetValueSilent(SelectedField, null);
-                return;
+                return string.Equals(oldValue, null, StringComparison.Ordinal)
+                    ? null
+                    : new EntryFieldChange(entry, SelectedField, oldValue, null);
             }
 
             var current = SelectedField switch
@@ -49,7 +55,11 @@ namespace Litenbib.ViewModels
             string nextValue = AppendMode && !string.IsNullOrWhiteSpace(current)
                 ? $"{current}; {FieldValue.Trim()}"
                 : FieldValue.Trim();
-            entry.SetValueSilent(SelectedField, nextValue);
+
+            string? newValue = string.IsNullOrWhiteSpace(nextValue) ? null : nextValue;
+            return string.Equals(oldValue, newValue, StringComparison.Ordinal)
+                ? null
+                : new EntryFieldChange(entry, SelectedField, oldValue, newValue);
         }
     }
 }

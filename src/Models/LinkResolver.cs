@@ -94,6 +94,7 @@ namespace Litenbib.Models
             }
             catch (Exception ex)
             {
+                NotifyLookupException("Bibliography search", ex);
                 Debug.WriteLine(ex);
             }
 
@@ -261,6 +262,7 @@ namespace Litenbib.Models
                 }
                 catch (Exception ex)
                 {
+                    NotifyLookupException("arXiv", ex);
                     Debug.WriteLine(ex);
                 }
             }
@@ -324,6 +326,7 @@ namespace Litenbib.Models
             }
             catch (Exception ex)
             {
+                NotifyLookupException("OpenReview", ex);
                 Debug.WriteLine(ex);
             }
             return result;
@@ -372,6 +375,7 @@ namespace Litenbib.Models
             }
             catch (Exception ex)
             {
+                NotifyLookupException("Crossref", ex);
                 Debug.WriteLine(ex);
             }
             return result;
@@ -414,6 +418,7 @@ namespace Litenbib.Models
             }
             catch (Exception ex)
             {
+                NotifyLookupException("DBLP", ex);
                 Debug.WriteLine(ex);
             }
             return result;
@@ -434,6 +439,7 @@ namespace Litenbib.Models
             }
             catch (Exception ex)
             {
+                NotifyLookupException("DOI", ex);
                 Debug.WriteLine(ex);
             }
             return string.Empty;
@@ -454,9 +460,18 @@ namespace Litenbib.Models
             }
             catch (Exception ex)
             {
+                NotifyLookupException("Crossref DOI", ex);
                 Debug.WriteLine(ex);
             }
             return string.Empty;
+        }
+
+        private static void NotifyLookupException(string source, Exception ex)
+        {
+            string message = ex is TaskCanceledException or TimeoutException
+                ? $"{source} search timed out"
+                : $"{source} search failed: {ex.Message}";
+            NotificationCenter.Error(message);
         }
 
         private static void AddCandidateIfPossible(List<BibliographyCandidate> list, string source, string query, string bibtex)

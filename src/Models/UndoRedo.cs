@@ -130,6 +130,37 @@ namespace Litenbib.Models
         }
     }
 
+    public readonly record struct EntryFieldChange(
+        BibtexEntry Entry,
+        string PropertyName,
+        string? OldValue,
+        string? NewValue);
+
+    public class EntryFieldsChangeAction(IEnumerable<EntryFieldChange> changes) : IUndoableAction
+    {
+        private readonly List<EntryFieldChange> _changes = changes
+            .Where(c => !string.Equals(c.OldValue, c.NewValue, StringComparison.Ordinal))
+            .ToList();
+
+        public bool HasChanges => _changes.Count > 0;
+
+        public override void Undo()
+        {
+            foreach (var change in _changes.AsEnumerable().Reverse())
+            {
+                change.Entry.SetValueSilent(change.PropertyName, change.OldValue);
+            }
+        }
+
+        public override void Redo()
+        {
+            foreach (var change in _changes)
+            {
+                change.Entry.SetValueSilent(change.PropertyName, change.NewValue);
+            }
+        }
+    }
+
     public class AddEntriesAction(ObservableRangeCollection<BibtexEntry> holder,
         List<(int, BibtexEntry)> index_entries) : IUndoableAction
     {
