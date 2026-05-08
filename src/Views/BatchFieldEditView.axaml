@@ -4,7 +4,7 @@
         xmlns:vm="using:Litenbib.ViewModels"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Width="420" Height="280"
+        Width="600" Height="400"
         WindowStartupLocation="CenterOwner"
         x:Class="Litenbib.Views.BatchFieldEditView"
         x:DataType="vm:BatchFieldEditViewModel"
