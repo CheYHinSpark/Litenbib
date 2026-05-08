@@ -8,9 +8,10 @@
     <Color x:Key="HighlightForegroundColor">#0F1728</Color>
     <Color x:Key="MainBackgroundColor">#EEF2F7</Color>
     <Color x:Key="MainBorderColor">#D7DFEA</Color>
-    <Color x:Key="MainForegroundColor">#111827</Color>
+	<Color x:Key="MainForegroundColor">#111827</Color>
+	<Color x:Key="TextSelectionHighlightColor">#BAFEDC</Color>
 
-    <Color x:Key="TabBackgroundColor">#E3EAF3</Color>
+	<Color x:Key="TabBackgroundColor">#E3EAF3</Color>
     <Color x:Key="ThemeBackgroundColor">#DCEBFF</Color>
     <Color x:Key="ThemeBorderColor">#4D89D8</Color>
     <Color x:Key="ThemeHighlightColor">#CFE3FF</Color>

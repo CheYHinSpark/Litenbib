@@ -9,6 +9,7 @@
 	<Color x:Key="MainBackgroundColor">#0B1020</Color>
 	<Color x:Key="MainBorderColor">#243043</Color>
 	<Color x:Key="MainForegroundColor">#E8ECF3</Color>
+	<Color x:Key="TextSelectionHighlightColor">#105432</Color>
 
 	<Color x:Key="TabBackgroundColor">#101726</Color>
 	<Color x:Key="ThemeBackgroundColor">#16324F</Color>

@@ -58,9 +58,10 @@
     <SolidColorBrush x:Key="InputBackground" Color="{DynamicResource InputBackgroundColor}"/>
     <SolidColorBrush x:Key="MainBackground" Color="{DynamicResource MainBackgroundColor}"/>
     <SolidColorBrush x:Key="MainBorder" Color="{DynamicResource MainBorderColor}"/>
-    <SolidColorBrush x:Key="MainForeground" Color="{DynamicResource MainForegroundColor}"/>
+	<SolidColorBrush x:Key="MainForeground" Color="{DynamicResource MainForegroundColor}"/>
+	<SolidColorBrush x:Key="TextSelectionHighlight" Color="{DynamicResource TextSelectionHighlightColor}"/>
 
-    <SolidColorBrush x:Key="TabBackground" Color="{DynamicResource TabBackgroundColor}"/>
+	<SolidColorBrush x:Key="TabBackground" Color="{DynamicResource TabBackgroundColor}"/>
     <SolidColorBrush x:Key="ThemeBackground" Color="{DynamicResource ThemeBackgroundColor}"/>
     <SolidColorBrush x:Key="ThemeBorder" Color="{DynamicResource ThemeBorderColor}"/>
     <SolidColorBrush x:Key="ThemeHighlight" Color="{DynamicResource ThemeHighlightColor}"/>
@@ -123,7 +124,8 @@
             <Setter Property="Background" Value="{DynamicResource HighlightBackground}"/>
             <Setter Property="Foreground" Value="{DynamicResource HighlightForeground}"/>
             <Setter Property="CornerRadius" Value="8"/>
-        </Style>
+			<Setter Property="RenderTransform" Value="scale(1.03)" />
+		</Style>
 
         <Style Selector="^.warning:pointerover">
             <Setter Property="Background" Value="{DynamicResource WarningBackground}"/>
@@ -360,7 +362,7 @@
         <Setter Property="Background" Value="{DynamicResource InputBackground}" />
         <Setter Property="CaretBrush" Value="{DynamicResource MainForeground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource MainBorder}" />
-        <Setter Property="SelectionBrush" Value="{DynamicResource TextControlSelectionHighlightColor}" />
+        <Setter Property="SelectionBrush" Value="{DynamicResource TextSelectionHighlight}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="8" />
         <Setter Property="Padding" Value="8 6" />
@@ -440,7 +442,7 @@
         <Setter Property="Background" Value="{DynamicResource InputBackground}" />
         <Setter Property="CaretBrush" Value="{DynamicResource MainForeground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource MainBorder}" />
-        <Setter Property="SelectionBrush" Value="{DynamicResource TextControlSelectionHighlightColor}" />
+        <Setter Property="SelectionBrush" Value="{DynamicResource TextSelectionHighlight}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="8" />
         <Setter Property="Padding" Value="8 6" />
