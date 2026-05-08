@@ -37,6 +37,19 @@
         </Setter>
     </Style>
 
+	<Style Selector="Button.in_section">
+		<Setter Property="Background" Value="{DynamicResource InputBackground}"/>
+		<Setter Property="Transitions">
+			<Transitions>
+				<BrushTransition Property="Background" Duration="0:0:0.1"/>
+				<CornerRadiusTransition Property="CornerRadius" Duration="0:0:0.15"/>
+			</Transitions>
+		</Setter>
+		<Style Selector="^:pointerover">
+			<Setter Property="Background" Value="{DynamicResource HighlightBackground}"/>
+		</Style>
+	</Style>
+
     <Style Selector="Button.tab_button">
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
@@ -154,8 +167,8 @@
         <Setter Property="FontSize" Value="14"/>
         <Setter Property="Padding" Value="0"/>
         <Setter Property="BorderBrush" Value="{DynamicResource MainBorder}"/>
-        <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="CornerRadius" Value="14"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="CornerRadius" Value="0"/>
         <Setter Property="Template">
             <ControlTemplate>
                 <Border Margin="{Binding $parent[Window].OffScreenMargin}"

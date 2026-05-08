@@ -153,7 +153,7 @@ public partial class BibtexView : UserControl
             Grid.SetColumn(Splitter, 1);
             Grid.SetColumn(DetailPanel, 2);
             Splitter.Margin = Thickness.Parse("0 24 4 24");
-            DetailPanel.CornerRadius = CornerRadius.Parse("24 0 0 24");
+            DetailPanel.CornerRadius = CornerRadius.Parse("24 0 0 0");
             DetailPanel.Margin = Thickness.Parse("4 8 0 0");
             DetailPanel.Padding = Thickness.Parse("8 8 4 8");
         }

@@ -276,16 +276,17 @@
                                           ItemsSource="{CompiledBinding TypeList}"
                                           SelectedItem="{CompiledBinding ShowingEntry.EntryType, Converter={StaticResource EntryTypeConverter}}"/>
                             <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                <Button Click="ChangeButton_Click" ToolTip.Tip="Switch detail layout">
+                                <Button Click="ChangeButton_Click" Classes="in_section" ToolTip.Tip="Switch detail layout">
                                     <Path Data="{StaticResource brPath}"/>
                                 </Button>
-                                <Button Click="CloseButton_Click" ToolTip.Tip="Hide detail panel">
+                                <Button Click="CloseButton_Click" Classes="in_section" ToolTip.Tip="Hide detail panel">
                                     <Path Data="{StaticResource xPath}"/>
                                 </Button>
                             </StackPanel>
                         </Grid>
 
                         <Button Grid.Row="1" Width="96" HorizontalContentAlignment="Stretch" Padding="0"
+								Classes="in_section"
                                 Command="{CompiledBinding ShowingEntry.CopyCitationKeyCommand}"
                                 CommandParameter="{CompiledBinding $parent[Window]}">
                             <Grid ColumnDefinitions="32,*">
@@ -293,12 +294,12 @@
                                       Stroke="{CompiledBinding $parent[Button].Foreground}"
                                       HorizontalAlignment="Center"
                                       VerticalAlignment="Center"/>
-							<TextBlock Grid.Column="1" Text="Citekey" Classes="right"/>
+							    <TextBlock Grid.Column="1" Text="Citekey" Classes="right"/>
                             </Grid>
                         </Button>
                         <Grid ColumnDefinitions="*,Auto" Grid.Row="1" Grid.Column="1">
                             <TextBox Text="{CompiledBinding ShowingEntry.CitationKey}"/>
-                            <Button Grid.Column="1"
+                            <Button Grid.Column="1" Classes="in_section"
                                     Command="{CompiledBinding ShowingEntry.GenerateCitationKeyCommand}"
                                     ToolTip.Tip="Generate citation key">
                                 <Path Data="{StaticResource KeyPath}" StrokeThickness="0"
@@ -464,8 +465,8 @@
                                 </WrapPanel>
                                 <Grid ColumnDefinitions="100,*,Auto">
 									<Button Width="100" HorizontalContentAlignment="Stretch" Padding="0"
-                                                Command="{CompiledBinding ShowingEntry.ToShowingLinkCommand}"
-                                                CommandParameter="DOI">
+                                            Command="{CompiledBinding ShowingEntry.ToShowingLinkCommand}"
+                                            CommandParameter="DOI">
 										<Grid ColumnDefinitions="32,*">
 											<Path Data="{StaticResource ToLinkPath}"
 												  HorizontalAlignment="Center"
@@ -483,8 +484,8 @@
                                 </Grid>
                                 <Grid ColumnDefinitions="100,*">
 									<Button Width="100" HorizontalContentAlignment="Stretch" Padding="0"
-                                                Command="{CompiledBinding ShowingEntry.ToShowingLinkCommand}"
-                                                CommandParameter="Url">
+                                            Command="{CompiledBinding ShowingEntry.ToShowingLinkCommand}"
+                                            CommandParameter="Url">
 										<Grid ColumnDefinitions="32,*">
 											<Path Data="{StaticResource ToLinkPath}"
 												  HorizontalAlignment="Center"
@@ -522,8 +523,9 @@
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
 							<Button Width="96" HorizontalContentAlignment="Stretch" Padding="0"
-                                        Command="{CompiledBinding ShowingEntry.CopyBibtexTextCommand}"
-                                        CommandParameter="{CompiledBinding $parent[Window]}">
+									Classes="in_section"
+                                    Command="{CompiledBinding ShowingEntry.CopyBibtexTextCommand}"
+                                    CommandParameter="{CompiledBinding $parent[Window]}">
 								<Grid ColumnDefinitions="32,*">
 									<Path Data="{StaticResource CopyPath}" StrokeThickness="1"
 										  Stroke="{CompiledBinding $parent[Button].Foreground}"
