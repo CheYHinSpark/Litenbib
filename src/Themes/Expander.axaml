@@ -40,7 +40,7 @@
 					<ContentPresenter x:Name="PART_ContentPresenter"
                                       IsVisible="{TemplateBinding IsExpanded}"
                                       Grid.Row="1"
-                                      Margin="4 0 4 8"
+                                      Margin="0 0 0 4"
                                       Padding="{TemplateBinding Padding}"
                                       Content="{TemplateBinding Content}"
                                       ContentTemplate="{TemplateBinding ContentTemplate}"

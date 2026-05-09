@@ -47,10 +47,8 @@
         </Style>
         <Style Selector="Border.section-card">
             <Setter Property="Background" Value="{DynamicResource InputBackground}"/>
-            <Setter Property="BorderBrush" Value="{DynamicResource MainBorder}"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="14"/>
-            <Setter Property="Padding" Value="12"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="8"/>
             <Setter Property="Margin" Value="0 0 0 8"/>
         </Style>
     </UserControl.Styles>
@@ -263,9 +261,9 @@
                     <Setter Property="VerticalAlignment" Value="Center"/>
                 </Style>
             </Border.Styles>
-            <Grid RowDefinitions="Auto,*">
-                <Border Classes="section-card" Margin="12 12 12 8">
-                    <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="96,*">
+            <Grid RowDefinitions="Auto,*,Auto">
+                <Border Classes="section-card" Margin="0 0 12 0">
+                    <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="92,*">
                         <TextBlock Text="Type" Classes="right"/>
                         <Grid Grid.Column="1">
                             <Grid.ColumnDefinitions>
@@ -285,7 +283,7 @@
                             </StackPanel>
                         </Grid>
 
-                        <Button Grid.Row="1" Width="96" HorizontalContentAlignment="Stretch" Padding="0"
+                        <Button Grid.Row="1" Width="92" HorizontalContentAlignment="Stretch" Padding="0"
 								Classes="in_section"
                                 Command="{CompiledBinding ShowingEntry.CopyCitationKeyCommand}"
                                 CommandParameter="{CompiledBinding $parent[Window]}">
@@ -312,7 +310,7 @@
                 <ScrollViewer Grid.Row="1"
                               IsVisible="{CompiledBinding ShowingEntry,
                               Converter={x:Static ObjectConverters.IsNotNull}}">
-                    <StackPanel Margin="12 0 12 12">
+                    <StackPanel Margin="0 0 12 0">
                         <Expander Header="Required" IsExpanded="True">
                             <Expander.Styles>
                                 <Style Selector="TextBox">
@@ -516,7 +514,7 @@
                             </StackPanel>
                         </Expander>
                         
-                        <Border Classes="section-card" Margin="0 8 0 0">
+                        <!--<Border Classes="section-card" Margin="0 8 0 0">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="96"/>
@@ -538,9 +536,34 @@
                                          Text="{CompiledBinding ShowingEntry.BibTeX}"
                                          MinHeight="180"/>
                             </Grid>
-                        </Border>
+                        </Border>-->
                     </StackPanel>
                 </ScrollViewer>
+
+				<Border Classes="section-card" Margin="0 0 12 0"
+						Grid.Row="2" MaxHeight="480">
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="92"/>
+							<ColumnDefinition Width="*"/>
+						</Grid.ColumnDefinitions>
+						<Button Width="92" HorizontalContentAlignment="Stretch" Padding="0"
+								Classes="in_section"
+								Command="{CompiledBinding ShowingEntry.CopyBibtexTextCommand}"
+								CommandParameter="{CompiledBinding $parent[Window]}">
+							<Grid ColumnDefinitions="32,*">
+								<Path Data="{StaticResource CopyPath}" StrokeThickness="1"
+									  Stroke="{CompiledBinding $parent[Button].Foreground}"
+									  HorizontalAlignment="Center"
+									  VerticalAlignment="Center"/>
+								<TextBlock Grid.Column="1" Text="BibTeX" Grid.Row="1" Classes="right"/>
+							</Grid>
+						</Button>
+						<TextBox FontFamily="Consolas" Grid.Column="1"
+								 Text="{CompiledBinding ShowingEntry.BibTeX}"
+								 MinHeight="180"/>
+					</Grid>
+				</Border>
             </Grid>
         </Border>
     </Grid>
