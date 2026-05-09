@@ -1,12 +1,15 @@
+using Avalonia.Controls.Notifications;
 using Avalonia.Media;
 using Avalonia.Threading;
 using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace Litenbib.Models
 {
-    public sealed class ToastNotification(string message, IBrush background, IBrush foreground, TimeSpan displayTime)
+    public sealed class ToastNotification(string message, IBrush background, IBrush foreground, TimeSpan displayTime) : INotifyPropertyChanged
     {
         public string Message { get; } = message;
 
@@ -15,6 +18,17 @@ namespace Litenbib.Models
         public IBrush Foreground { get; } = foreground;
 
         public TimeSpan DisplayTime { get; } = displayTime;
+
+        private double _opacity = 1;
+        public double Opacity
+        {
+            get => _opacity;
+            set { _opacity = value; OnPropertyChanged(); }
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+        private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
     public static class NotificationCenter
@@ -58,6 +72,10 @@ namespace Litenbib.Models
         private static async Task DismissLaterAsync(ToastNotification notification)
         {
             await Task.Delay(notification.DisplayTime);
+
+            await Dispatcher.UIThread.InvokeAsync(() => notification.Opacity = 0);
+            await Task.Delay(400);
+
             await Dispatcher.UIThread.InvokeAsync(() => Messages.Remove(notification));
         }
     }

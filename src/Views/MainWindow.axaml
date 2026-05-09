@@ -381,6 +381,7 @@
                             Padding="16 8"
                             CornerRadius="8"
                             BorderThickness="1"
+							Opacity="{CompiledBinding Opacity}"
                             BorderBrush="{DynamicResource MainBorder}"
                             Background="{CompiledBinding Background}"
                             Foreground="{CompiledBinding Foreground}"
@@ -389,6 +390,13 @@
                         <TextBlock Text="{CompiledBinding Message}"
                                    Foreground="{CompiledBinding Foreground}"
                                    TextWrapping="Wrap"/>
+						<Button.Transitions>
+							<Transitions>
+								<DoubleTransition Property="Opacity"
+												  Duration="0:0:0.4"
+												  Easing="QuadraticEaseOut"/>
+							</Transitions>
+						</Button.Transitions>
                     </Button>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
