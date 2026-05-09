@@ -196,10 +196,7 @@
                 <StackPanel Orientation="Horizontal" Height="{DynamicResource HintBarHeight}"
                             VerticalAlignment="Bottom">
 				    <TextBlock Margin="8 0 0 0" Text="{CompiledBinding BibtexView.Count}"/>
-                    <TextBlock Margin="0 0 8 0" Text="entries" Opacity="0.65"/>
-                    <TextBlock Margin="0 0 12 0" Text="{CompiledBinding StatusMessage}"
-                               Opacity="0.72"
-                               IsVisible="{CompiledBinding StatusMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                    <TextBlock Margin="0 0 8 0" Text="entries" Opacity="0.8"/>
                     <Button Margin="0 0 8 0"
                             ToolTip.Tip="Reload current file from disk"
                             IsVisible="{CompiledBinding HasExternalChanges}"
@@ -220,6 +217,9 @@
                         <Path Data="{StaticResource CleanupPath}" StrokeThickness="1"
                               Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                     </Button>
+					<TextBlock Margin="0 0 12 0" Text="{CompiledBinding StatusMessage}"
+							   Opacity="0.8"
+                               IsVisible="{CompiledBinding StatusMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
                     <ToggleButton x:Name="WarningToggle" Content="{CompiledBinding WarningHint}"
                                   IsChecked="{CompiledBinding IsChecking}"
                                   IsVisible="{CompiledBinding WarningHint, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
