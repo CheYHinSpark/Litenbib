@@ -381,14 +381,12 @@
                             Padding="16 8"
                             CornerRadius="8"
                             BorderThickness="1"
+							Tag="{CompiledBinding Type}"
 							Opacity="{CompiledBinding Opacity}"
                             BorderBrush="{DynamicResource MainBorder}"
-                            Background="{CompiledBinding Background}"
-                            Foreground="{CompiledBinding Foreground}"
                             Command="{CompiledBinding #LitbibMainWindow.DataContext.DismissNotificationCommand}"
                             CommandParameter="{CompiledBinding .}">
                         <TextBlock Text="{CompiledBinding Message}"
-                                   Foreground="{CompiledBinding Foreground}"
                                    TextWrapping="Wrap"/>
 						<Button.Transitions>
 							<Transitions>
@@ -397,6 +395,14 @@
 												  Easing="QuadraticEaseOut"/>
 							</Transitions>
 						</Button.Transitions>
+						<Button.Styles>
+							<Style Selector="Button[Tag=info]">
+								<Setter Property="Background" Value="{DynamicResource MainBackground}"/>
+							</Style>
+							<Style Selector="Button[Tag=error]">
+								<Setter Property="Background" Value="{DynamicResource WarningBackground}"/>
+							</Style>
+						</Button.Styles>
                     </Button>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>

@@ -15,5 +15,5 @@
     <Color x:Key="ThemeBackgroundColor">#DCEBFF</Color>
     <Color x:Key="ThemeBorderColor">#4D89D8</Color>
     <Color x:Key="ThemeHighlightColor">#CFE3FF</Color>
-    <Color x:Key="WarningBackgroundColor">#C94B4B</Color>
+    <Color x:Key="WarningBackgroundColor">#F54B4B</Color>
 </ResourceDictionary>
