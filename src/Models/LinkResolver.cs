@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Litenbib.Models
@@ -43,10 +44,27 @@ namespace Litenbib.Models
         {
             HttpClient httpClient = new()
             {
-                Timeout = TimeSpan.FromSeconds(15)
+                Timeout = System.Threading.Timeout.InfiniteTimeSpan
             };
             httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Litenbib/0.0.1 (+https://github.com/CheYHinSpark/Litenbib)");
             return httpClient;
+        }
+
+        private static CancellationTokenSource CreateRequestTimeout()
+        {
+            return new CancellationTokenSource(TimeSpan.FromSeconds(AppSettingsState.Current.OnlineLookupTimeoutSeconds));
+        }
+
+        private static async Task<HttpResponseMessage> SendRequestAsync(HttpRequestMessage request)
+        {
+            using var cts = CreateRequestTimeout();
+            return await client.SendAsync(request, cts.Token);
+        }
+
+        private static async Task<HttpResponseMessage> GetRequestAsync(string url)
+        {
+            using var cts = CreateRequestTimeout();
+            return await client.GetAsync(url, cts.Token);
         }
 
         public static async Task<string> GetBibTeXAsync(string input)
@@ -253,7 +271,7 @@ namespace Litenbib.Models
                 try
                 {
                     using var request = new HttpRequestMessage(HttpMethod.Get, $"https://arxiv.org/bibtex/{arxivId}");
-                    var response = await client.SendAsync(request);
+                    var response = await SendRequestAsync(request);
                     if (response.IsSuccessStatusCode)
                     {
                         bibtex = await response.Content.ReadAsStringAsync();
@@ -276,7 +294,7 @@ namespace Litenbib.Models
             try
             {
                 using var request = new HttpRequestMessage(HttpMethod.Get, $"https://api.openreview.net/notes?id={Uri.EscapeDataString(openReviewId)}");
-                var response = await client.SendAsync(request);
+                var response = await SendRequestAsync(request);
                 if (!response.IsSuccessStatusCode)
                 {
                     return result;
@@ -339,7 +357,7 @@ namespace Litenbib.Models
             {
                 string url = $"https://api.crossref.org/works?rows=5&query.bibliographic={Uri.EscapeDataString(query)}";
                 using var request = new HttpRequestMessage(HttpMethod.Get, url);
-                var response = await client.SendAsync(request);
+                var response = await SendRequestAsync(request);
                 if (!response.IsSuccessStatusCode)
                 {
                     return result;
@@ -387,7 +405,7 @@ namespace Litenbib.Models
             try
             {
                 string normalized = query.Replace("{", "").Replace("}", "").Replace(":", " ");
-                var response = await client.GetAsync($"https://dblp.org/search/publ/api?q={Uri.EscapeDataString(normalized)}&format=json");
+                var response = await GetRequestAsync($"https://dblp.org/search/publ/api?q={Uri.EscapeDataString(normalized)}&format=json");
                 if (!response.IsSuccessStatusCode)
                 {
                     return result;
@@ -402,7 +420,7 @@ namespace Litenbib.Models
                         continue;
                     }
 
-                    var bibResponse = await client.GetAsync($"https://dblp.org/rec/{match.Groups[1].Value}.bib");
+                    var bibResponse = await GetRequestAsync($"https://dblp.org/rec/{match.Groups[1].Value}.bib");
                     if (!bibResponse.IsSuccessStatusCode)
                     {
                         continue;
@@ -431,7 +449,7 @@ namespace Litenbib.Models
                 using var request = new HttpRequestMessage(HttpMethod.Get, $"https://doi.org/{doi}");
                 request.Headers.Accept.Clear();
                 request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-bibtex"));
-                var response = await client.SendAsync(request);
+                var response = await SendRequestAsync(request);
                 if (response.IsSuccessStatusCode)
                 {
                     return await response.Content.ReadAsStringAsync();
@@ -452,7 +470,7 @@ namespace Litenbib.Models
                 using var request = new HttpRequestMessage(HttpMethod.Get, $"https://api.crossref.org/works/{Uri.EscapeDataString(doi)}/transform/application/x-bibtex");
                 request.Headers.Accept.Clear();
                 request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-bibtex"));
-                var response = await client.SendAsync(request);
+                var response = await SendRequestAsync(request);
                 if (response.IsSuccessStatusCode)
                 {
                     return await response.Content.ReadAsStringAsync();

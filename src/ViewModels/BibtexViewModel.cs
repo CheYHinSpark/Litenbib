@@ -62,6 +62,8 @@ namespace Litenbib.ViewModels
 
         private int _statusVersion = 0;
 
+        private int _diagnosticsVersion = 0;
+
         private bool _suppressShowingEntry = false;
         private BibtexEntry _holdShowingEntry;
 
@@ -177,7 +179,7 @@ namespace Litenbib.ViewModels
             _holdShowingEntry = null!;
             UndoRedoManager = new();
             FilterMode = filterMode;
-            CheckErrors();
+            CheckErrorsNow();
         }
 
         #region Event
@@ -203,7 +205,7 @@ namespace Litenbib.ViewModels
                         (string?)extendedArgs.OldValue, (string?)extendedArgs.NewValue,
                         oldEnd, selectionStart));
                 }
-                NotifyCanUndoRedo();
+                NotifyCanUndoRedo(debounceDiagnostics: true);
             }
         }
         #endregion Event
@@ -258,6 +260,28 @@ namespace Litenbib.ViewModels
 
             ShowingEntry = entryToFocus;
             FocusEntryRequested?.Invoke(this, entryToFocus);
+        }
+
+        public bool RefreshGeneratedBibtex()
+        {
+            bool changed = false;
+            foreach (var entry in BibtexEntries)
+            {
+                string oldBibtex = entry.BibTeX;
+                entry.UpdateBibtex(isSilent: true);
+                if (!string.Equals(oldBibtex, entry.BibTeX, StringComparison.Ordinal))
+                {
+                    changed = true;
+                }
+            }
+
+            if (changed)
+            {
+                UndoRedoManager.Edited = true;
+                NotifyCanUndoRedo();
+            }
+
+            return changed;
         }
 
         public void ShowStatus(string message)
@@ -450,9 +474,37 @@ namespace Litenbib.ViewModels
             }
         }
 
-        private async void CheckErrors()
+        private void ScheduleCheckErrors()
+        {
+            int version = ++_diagnosticsVersion;
+            _ = CheckErrorsLaterAsync(version);
+        }
+
+        private void CheckErrorsNow()
+        {
+            int version = ++_diagnosticsVersion;
+            _ = CheckErrorsAsync(version);
+        }
+
+        private async Task CheckErrorsLaterAsync(int version)
+        {
+            await Task.Delay(500);
+            if (version != _diagnosticsVersion)
+            {
+                return;
+            }
+
+            await CheckErrorsAsync(version);
+        }
+
+        private async Task CheckErrorsAsync(int version)
         {
             var result = await WarningErrorChecker.CheckBibtex(BibtexEntries);
+            if (version != _diagnosticsVersion)
+            {
+                return;
+            }
+
             Warnings = new ObservableCollection<WarningError>(result.Item1);
             HasError = result.Item2;
             OnPropertyChanged(nameof(Warnings));
@@ -471,13 +523,20 @@ namespace Litenbib.ViewModels
             NotifyCanUndoRedo();
         }
 
-        private void NotifyCanUndoRedo()
+        private void NotifyCanUndoRedo(bool debounceDiagnostics = false)
         {
             UndoBibtexCommand.NotifyCanExecuteChanged();
             RedoBibtexCommand.NotifyCanExecuteChanged();
             SaveBibtexCommand.NotifyCanExecuteChanged();
             OnPropertyChanged(nameof(Edited));
-            CheckErrors();
+            if (debounceDiagnostics)
+            {
+                ScheduleCheckErrors();
+            }
+            else
+            {
+                CheckErrorsNow();
+            }
         }
 
         private void SetIsTailSelected()
@@ -916,8 +975,11 @@ namespace Litenbib.ViewModels
         [RelayCommand]
         private void OpenInFileManager()
         {
-            int i = FullPath.LastIndexOf('/');
-            if (i >= 0) { UriProcessor.StartProcess(FullPath[..i]); }
+            string? directory = Path.GetDirectoryName(FullPath);
+            if (!string.IsNullOrWhiteSpace(directory))
+            {
+                UriProcessor.StartProcess(directory);
+            }
         }
         #endregion Command
     }

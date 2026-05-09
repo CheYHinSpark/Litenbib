@@ -17,7 +17,7 @@ namespace Litenbib.Models
     public class UndoRedoManager
     {
         private int savedStep = 0;
-        public bool Edited { get => _undoList.Count != savedStep; set => savedStep = _undoList.Count; }
+        public bool Edited { get => _undoList.Count != savedStep; set => savedStep = value ? -1 : _undoList.Count; }
         private DateTime lastTime = DateTime.Now;
         private readonly LinkedList<IUndoableAction> _undoList = new();
         private readonly LinkedList<IUndoableAction> _redoList = new();

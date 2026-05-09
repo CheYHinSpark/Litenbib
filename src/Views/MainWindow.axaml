@@ -113,6 +113,9 @@
                         <MenuItem Header="_Export"
                                   Command="{CompiledBinding ExportFileCommand}"
                                   CommandParameter="{CompiledBinding $parent[Window]}"/>
+                        <MenuItem Header="_Settings..."
+                                  Command="{CompiledBinding OpenSettingsCommand}"
+                                  CommandParameter="{CompiledBinding $parent[Window]}"/>
                         <MenuItem Header="_Save All"
                                   Command="{CompiledBinding SaveAllCommand}"/>
                     </MenuItem>

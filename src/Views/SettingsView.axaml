@@ -1,0 +1,75 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:vm="using:Litenbib.ViewModels"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Width="560" Height="420"
+        WindowStartupLocation="CenterOwner"
+        x:Class="Litenbib.Views.SettingsView"
+        x:DataType="vm:SettingsViewModel"
+        Title="Settings">
+    <Design.DataContext>
+        <vm:SettingsViewModel/>
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto,*,Auto" Margin="18">
+        <StackPanel Spacing="4">
+            <TextBlock Text="Settings" FontSize="22" FontWeight="SemiBold"/>
+            <TextBlock Text="Tune lookup behavior and BibTeX output formatting."
+                       Opacity="0.7" TextWrapping="Wrap"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Margin="0 18 0 18" Spacing="14">
+            <Grid ColumnDefinitions="180,*">
+                <TextBlock Text="Lookup timeout"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Right"
+                           Margin="0 0 12 0"/>
+                <TextBox Grid.Column="1"
+                         Text="{CompiledBinding OnlineLookupTimeoutSeconds}"
+                         Watermark="15"/>
+            </Grid>
+
+            <Grid ColumnDefinitions="180,*">
+                <TextBlock Text="Field indent spaces"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Right"
+                           Margin="0 0 12 0"/>
+                <TextBox Grid.Column="1"
+                         Text="{CompiledBinding FieldIndentSpaces}"
+                         Watermark="4"/>
+            </Grid>
+
+            <Grid ColumnDefinitions="180,*">
+                <TextBlock Text="Entry type case"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Right"
+                           Margin="0 0 12 0"/>
+                <ComboBox Grid.Column="1"
+                          ItemsSource="{CompiledBinding EntryTypeCaseStyleList}"
+                          SelectedItem="{CompiledBinding EntryTypeCaseStyle}"/>
+            </Grid>
+
+            <Grid ColumnDefinitions="180,*">
+                <TextBlock Text="Citation key template"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Right"
+                           Margin="0 0 12 0"/>
+                <TextBox Grid.Column="1"
+                         Text="{CompiledBinding CitationKeyTemplate}"
+                         Watermark="{}{firstauthor}_{giveninitials}_{year}"/>
+            </Grid>
+
+            <TextBlock Margin="180 2 0 0"
+                       Text="{}Available tokens: {firstauthor}, {giveninitials}, {year}, {shorttitle}"
+                       Opacity="0.65"
+                       TextWrapping="Wrap"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+            <Button Click="CancelButton_Click">Cancel</Button>
+            <Button Click="ApplyButton_Click">Apply</Button>
+        </StackPanel>
+    </Grid>
+</Window>

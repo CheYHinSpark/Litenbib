@@ -113,6 +113,7 @@ namespace Litenbib.ViewModels
         {
             if (!File.Exists(LocalConfigPath))
             {
+                AppSettingsState.Apply(new AppSettings());
                 Application.Current!.RequestedThemeVariant = ThemeIndex ? ThemeVariant.Light : ThemeVariant.Dark;
                 return null;
             }
@@ -120,6 +121,7 @@ namespace Litenbib.ViewModels
             {
                 string jsonString = await File.ReadAllTextAsync(LocalConfigPath);
                 var config = JsonSerializer.Deserialize<LocalConfig>(jsonString);
+                AppSettingsState.Apply(config?.Settings);
                 ThemeIndex = config?.ThemeIndex ?? false;
                 Application.Current!.RequestedThemeVariant = ThemeIndex ? ThemeVariant.Light : ThemeVariant.Dark;
                 if (config?.RecentFiles != null && config.RecentFiles.Count > 0)
@@ -173,6 +175,7 @@ namespace Litenbib.ViewModels
             var config = new LocalConfig
             {
                 ThemeIndex = ThemeIndex,
+                Settings = AppSettingsState.Current.Copy(),
                 SelectedTabIndex = SelectedFile == null ? -1 : BibtexTabs.IndexOf(SelectedFile),
                 RecentFiles = [.. BibtexTabs.Select(b => new RecentFileState
                 {
@@ -292,6 +295,23 @@ namespace Litenbib.ViewModels
             if (window == null || SelectedFile == null) { return; }
             ExportView dialog = new([.. SelectedFile.BibtexEntries], SelectedFile.FullPath);
             await dialog.ShowDialog<bool>(window);
+        }
+
+        [RelayCommand]
+        private async Task OpenSettings(Window? window)
+        {
+            if (window == null) { return; }
+            SettingsView dialog = new(AppSettingsState.Current);
+            var result = await dialog.ShowDialog<bool>(window);
+            if (result != true || dialog.DataContext is not SettingsViewModel vm) { return; }
+
+            AppSettingsState.Apply(vm.ToSettings());
+            foreach (var tab in BibtexTabs)
+            {
+                tab.RefreshGeneratedBibtex();
+            }
+            await SaveLocalConfig(window);
+            NotificationCenter.Info("Settings saved");
         }
 
         [RelayCommand]

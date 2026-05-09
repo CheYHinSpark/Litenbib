@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using System;
 using System.Collections.Generic;
 
 namespace Litenbib.Models
@@ -21,6 +22,8 @@ namespace Litenbib.Models
         public int SelectedTabIndex { get; set; } = -1;
 
         public List<RecentFileState> RecentFiles { get; set; } = [];
+
+        public AppSettings Settings { get; set; } = new();
     }
 
     public class RecentFileState
@@ -34,5 +37,67 @@ namespace Litenbib.Models
         public string FilterField { get; set; } = "Whole";
 
         public string FilterText { get; set; } = string.Empty;
+    }
+
+    public class AppSettings
+    {
+        public int OnlineLookupTimeoutSeconds { get; set; } = 15;
+
+        public int FieldIndentSpaces { get; set; } = 4;
+
+        public string EntryTypeCaseStyle { get; set; } = EntryTypeCaseStyles.Lowercase;
+
+        public string CitationKeyTemplate { get; set; } = "{firstauthor}_{giveninitials}_{year}";
+
+        public AppSettings Copy()
+        {
+            return new AppSettings
+            {
+                OnlineLookupTimeoutSeconds = OnlineLookupTimeoutSeconds,
+                FieldIndentSpaces = FieldIndentSpaces,
+                EntryTypeCaseStyle = EntryTypeCaseStyle,
+                CitationKeyTemplate = CitationKeyTemplate,
+            };
+        }
+
+        public static AppSettings Normalize(AppSettings? settings)
+        {
+            settings ??= new AppSettings();
+            string caseStyle = EntryTypeCaseStyles.IsSupported(settings.EntryTypeCaseStyle)
+                ? settings.EntryTypeCaseStyle
+                : EntryTypeCaseStyles.Lowercase;
+
+            return new AppSettings
+            {
+                OnlineLookupTimeoutSeconds = Math.Clamp(settings.OnlineLookupTimeoutSeconds, 3, 120),
+                FieldIndentSpaces = Math.Clamp(settings.FieldIndentSpaces, 0, 12),
+                EntryTypeCaseStyle = caseStyle,
+                CitationKeyTemplate = string.IsNullOrWhiteSpace(settings.CitationKeyTemplate)
+                    ? "{firstauthor}_{giveninitials}_{year}"
+                    : settings.CitationKeyTemplate.Trim(),
+            };
+        }
+    }
+
+    public static class EntryTypeCaseStyles
+    {
+        public const string Lowercase = "lowercase";
+        public const string TitleCase = "TitleCase";
+        public const string Uppercase = "UPPERCASE";
+
+        public static bool IsSupported(string? value)
+        {
+            return value == Lowercase || value == TitleCase || value == Uppercase;
+        }
+    }
+
+    public static class AppSettingsState
+    {
+        public static AppSettings Current { get; private set; } = new();
+
+        public static void Apply(AppSettings? settings)
+        {
+            Current = AppSettings.Normalize(settings);
+        }
     }
 }
