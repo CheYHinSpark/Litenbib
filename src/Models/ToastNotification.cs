@@ -27,48 +27,30 @@ namespace Litenbib.Models
         public static ObservableCollection<ToastNotification> Messages { get; } = [];
 
         public static void Info(string message)
-        {
-            Show(message, InfoBackground, InfoForeground, TimeSpan.FromSeconds(3));
-        }
+        { Show(message, InfoBackground, InfoForeground, TimeSpan.FromSeconds(3)); }
 
         public static void Error(string message)
-        {
-            Show(message, ErrorBackground, ErrorForeground, TimeSpan.FromSeconds(6));
-        }
+        { Show(message, ErrorBackground, ErrorForeground, TimeSpan.FromSeconds(6)); }
 
         public static void Dismiss(ToastNotification? notification)
         {
-            if (notification == null)
-            {
-                return;
-            }
+            if (notification == null) { return; }
 
             if (Dispatcher.UIThread.CheckAccess())
-            {
-                Messages.Remove(notification);
-            }
+            { Messages.Remove(notification); }
             else
-            {
-                Dispatcher.UIThread.Post(() => Messages.Remove(notification));
-            }
+            { Dispatcher.UIThread.Post(() => Messages.Remove(notification)); }
         }
 
         private static void Show(string message, IBrush background, IBrush foreground, TimeSpan displayTime)
         {
-            if (string.IsNullOrWhiteSpace(message))
-            {
-                return;
-            }
+            if (string.IsNullOrWhiteSpace(message)) { return; }
 
             ToastNotification notification = new(message.Trim(), background, foreground, displayTime);
             if (Dispatcher.UIThread.CheckAccess())
-            {
-                Messages.Add(notification);
-            }
+            { Messages.Add(notification); }
             else
-            {
-                Dispatcher.UIThread.Post(() => Messages.Add(notification));
-            }
+            { Dispatcher.UIThread.Post(() => Messages.Add(notification)); }
 
             _ = DismissLaterAsync(notification);
         }

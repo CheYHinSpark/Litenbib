@@ -42,7 +42,7 @@ namespace Litenbib.ViewModels
 
         public ObservableCollection<BibtexViewModel> BibtexTabs { get; set; }
 
-        public ObservableCollection<ToastNotification> Notifications => NotificationCenter.Messages;
+        public static ObservableCollection<ToastNotification> Notifications => NotificationCenter.Messages;
 
         [ObservableProperty]
         private BibtexViewModel? _selectedFile;

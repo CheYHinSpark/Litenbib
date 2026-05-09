@@ -363,12 +363,13 @@
 					Opacity="0"/>
         </Grid>
 
+		<!--Notifications-->
         <ItemsControl Grid.RowSpan="2"
                       ItemsSource="{CompiledBinding Notifications}"
                       HorizontalAlignment="Center"
                       VerticalAlignment="Bottom"
-                      Margin="0 0 0 48"
-                      ZIndex="1000">
+                      Margin="0 0 0 64"
+                      ZIndex="100">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Spacing="8"/>
@@ -376,21 +377,18 @@
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate x:DataType="m:ToastNotification">
-                    <Button MinWidth="280"
-                            MaxWidth="560"
-                            Padding="18 10"
-                            CornerRadius="10"
+                    <Button Width="240"
+                            Padding="16 8"
+                            CornerRadius="8"
                             BorderThickness="1"
                             BorderBrush="{DynamicResource MainBorder}"
                             Background="{CompiledBinding Background}"
                             Foreground="{CompiledBinding Foreground}"
-                            HorizontalContentAlignment="Center"
                             Command="{CompiledBinding #LitbibMainWindow.DataContext.DismissNotificationCommand}"
                             CommandParameter="{CompiledBinding .}">
                         <TextBlock Text="{CompiledBinding Message}"
                                    Foreground="{CompiledBinding Foreground}"
-                                   TextWrapping="Wrap"
-                                   TextAlignment="Center"/>
+                                   TextWrapping="Wrap"/>
                     </Button>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
