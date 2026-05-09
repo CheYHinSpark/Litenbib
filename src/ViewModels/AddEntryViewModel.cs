@@ -62,7 +62,6 @@ namespace Litenbib.ViewModels
             if (inputs.Count == 0)
             {
                 HintText = "Please input DOI / arXiv / OpenReview / title / URL, one per line.";
-                NotificationCenter.Info(HintText);
                 return;
             }
 

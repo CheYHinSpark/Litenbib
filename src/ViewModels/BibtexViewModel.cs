@@ -54,9 +54,13 @@ namespace Litenbib.ViewModels
 
         public EventHandler? CheckingEvent;
 
+        public event EventHandler<BibtexEntry>? FocusEntryRequested;
+
         public ObservableRangeCollection<BibtexEntry> BibtexEntries { get; set; }
 
         public DataGridCollectionView BibtexView { get; }
+
+        private int _statusVersion = 0;
 
         private bool _suppressShowingEntry = false;
         private BibtexEntry _holdShowingEntry;
@@ -222,33 +226,58 @@ namespace Litenbib.ViewModels
             {
                 string bibtex = aevm.BibtexText;
                 List<(int, BibtexEntry)> index_entries = [];
+                List<BibtexEntry> addedEntries = [];
                 int c = BibtexEntries.Count;
                 foreach (BibtexEntry entry in BibtexParser.Parse(bibtex))
                 {
                     index_entries.Add((c, entry));
+                    addedEntries.Add(entry);
                     BibtexEntries.Add(entry);
                     entry.UndoRedoPropertyChanged += OnEntryPropertyChanged;
                     c++;
                 }
+                if (addedEntries.Count == 0)
+                {
+                    NotificationCenter.Info("No BibTeX entries were added");
+                    return;
+                }
                 UndoRedoManager.AddAction(new AddEntriesAction(BibtexEntries, index_entries));
                 NotifyCanUndoRedo();
+                FocusFirstVisibleAddedEntry(addedEntries);
             }
         }
 
-        private void PushStatus(string message)
+        private void FocusFirstVisibleAddedEntry(IReadOnlyList<BibtexEntry> addedEntries)
         {
-            StatusMessage = message;
-            _ = ClearStatusLaterAsync();
+            BibtexEntry? entryToFocus = addedEntries.FirstOrDefault(FilterBibtex);
+            if (entryToFocus == null)
+            {
+                NotificationCenter.Info("Added entry, but it is hidden by the current filter");
+                return;
+            }
+
+            ShowingEntry = entryToFocus;
+            FocusEntryRequested?.Invoke(this, entryToFocus);
         }
 
-        private async Task ClearStatusLaterAsync()
+        public void ShowStatus(string message)
+        {
+            int version = ++_statusVersion;
+            StatusMessage = message;
+            _ = ClearStatusLaterAsync(version);
+        }
+
+        private async Task ClearStatusLaterAsync(int version)
         {
             await Task.Delay(3000);
-            if (!string.IsNullOrWhiteSpace(StatusMessage))
+            if (version == _statusVersion && !string.IsNullOrWhiteSpace(StatusMessage))
             {
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    StatusMessage = string.Empty;
+                    if (version == _statusVersion)
+                    {
+                        StatusMessage = string.Empty;
+                    }
                 });
             }
         }
@@ -276,7 +305,6 @@ namespace Litenbib.ViewModels
                 return true;
             }
 
-            PushStatus("Save canceled: file changed on disk");
             NotificationCenter.Info("Save canceled: file changed on disk");
             return false;
         }
@@ -376,7 +404,7 @@ namespace Litenbib.ViewModels
             LastDiskWriteTimeUtc = File.GetLastWriteTimeUtc(FullPath);
             ShowingEntry = BibtexEntries.FirstOrDefault();
             NotifyCanUndoRedo();
-            PushStatus("Reloaded from disk");
+            ShowStatus("Reloaded from disk");
         }
 
         [RelayCommand]
@@ -522,8 +550,7 @@ namespace Litenbib.ViewModels
                 UndoRedoManager.Edited = false;
                 OnPropertyChanged(nameof(Edited));
                 SaveBibtexCommand.NotifyCanExecuteChanged();
-                PushStatus($"Saved {Header}");
-                NotificationCenter.Info($"Saved {Header}");
+                ShowStatus($"Saved {Header}");
                 return true;
             }
             catch (Exception ex)
@@ -717,27 +744,42 @@ namespace Litenbib.ViewModels
         private async Task OpenMergeCandidatesDialog(object? sender, MergeSearchSource source)
         {
             if (ShowingEntry == null || sender is not MainWindow window) { return; }
+            var targetEntry = ShowingEntry;
             string sourceName = GetMergeSearchSourceName(source);
             NotificationCenter.Info($"Searching {sourceName}...");
-            var list = await LinkResolver.SearchMergeCandidatesAsync(ShowingEntry, source);
+            var list = await LinkResolver.SearchMergeCandidatesAsync(targetEntry, source);
             if (list.Count == 0)
             {
                 NotificationCenter.Info($"No {sourceName} candidates found");
                 return;
             }
+
+            int targetIndex = BibtexEntries.IndexOf(targetEntry);
+            if (targetIndex < 0)
+            {
+                NotificationCenter.Error("Search result ignored: the original entry was removed");
+                return;
+            }
+
             NotificationCenter.Info($"Found {list.Count} {sourceName} candidate(s)");
-            list.Insert(0, ShowingEntry);
+            list.Insert(0, targetEntry);
             CompareEntryView dialog = new(list);
             var result = await dialog.ShowDialog<bool>(window);
             if (result == true)
             {
                 if (dialog.DataContext is not CompareEntryViewModel cevm) { return; }
-                int i = BibtexEntries.IndexOf(ShowingEntry);
-                var oldEntry = ShowingEntry;
-                BibtexEntries.Insert(i, cevm.MergedEntry);
+                targetIndex = BibtexEntries.IndexOf(targetEntry);
+                if (targetIndex < 0)
+                {
+                    NotificationCenter.Error("Merge canceled: the original entry was removed");
+                    return;
+                }
+
+                var oldEntry = targetEntry;
+                BibtexEntries.Insert(targetIndex, cevm.MergedEntry);
                 cevm.MergedEntry.UndoRedoPropertyChanged += OnEntryPropertyChanged;
                 BibtexEntries.Remove(oldEntry);
-                UndoRedoManager.AddAction(new ReplaceEntriesAction(BibtexEntries, [(i, oldEntry)], [(i, cevm.MergedEntry)]));
+                UndoRedoManager.AddAction(new ReplaceEntriesAction(BibtexEntries, [(targetIndex, oldEntry)], [(targetIndex, cevm.MergedEntry)]));
                 ShowingEntry = cevm.MergedEntry;
                 NotifyCanUndoRedo();
             }
@@ -806,12 +848,12 @@ namespace Litenbib.ViewModels
             EntryFieldsChangeAction action = new(changes);
             if (!action.HasChanges)
             {
-                PushStatus("No selected entries changed");
+                ShowStatus("No selected entries changed");
                 return;
             }
             UndoRedoManager.AddAction(action);
             NotifyCanUndoRedo();
-            PushStatus($"Updated {SelectedIndexItems.Count} selected entries");
+            ShowStatus($"Updated {SelectedIndexItems.Count} selected entries");
         }
 
         [RelayCommand]
@@ -827,12 +869,12 @@ namespace Litenbib.ViewModels
             EntryFieldsChangeAction action = new(changes);
             if (!action.HasChanges)
             {
-                PushStatus("No selected entries needed cleanup");
+                ShowStatus("No selected entries needed cleanup");
                 return;
             }
             UndoRedoManager.AddAction(action);
             NotifyCanUndoRedo();
-            PushStatus($"Cleaned {SelectedIndexItems.Count} selected entries");
+            ShowStatus($"Cleaned {SelectedIndexItems.Count} selected entries");
         }
 
         private static List<EntryFieldChange> CleanupEntry(BibtexEntry entry)

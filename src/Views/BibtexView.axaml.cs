@@ -6,6 +6,7 @@ using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using Avalonia.Styling;
+using Avalonia.Threading;
 using Litenbib.Models;
 using Litenbib.ViewModels;
 using System;
@@ -40,6 +41,7 @@ public partial class BibtexView : UserControl
         {
             viewModel = vm;
             viewModel.CheckingEvent += (_, e) => { SetSelectionAndScroll(); };
+            viewModel.FocusEntryRequested += (_, entry) => { FocusEntry(entry); };
         }
     }
 
@@ -49,6 +51,19 @@ public partial class BibtexView : UserControl
         changingInside = true;
         DataGridView.SelectAll();
         changingInside = false;
+    }
+
+    private void FocusEntry(BibtexEntry entry)
+    {
+        Dispatcher.UIThread.Post(() =>
+        {
+            changingInside = true;
+            DataGridView.SelectedItem = entry;
+            changingInside = false;
+            viewModel.SetSelectedItems([entry]);
+            ShowDetail();
+            DataGridView.ScrollIntoView(entry, null);
+        });
     }
 
 
@@ -136,7 +151,7 @@ public partial class BibtexView : UserControl
         viewModel.DetectExternalModification();
         if (viewModel.HasExternalChanges)
         {
-            viewModel.StatusMessage = "File changed on disk";
+            viewModel.ShowStatus("File changed on disk");
         }
     }
 
