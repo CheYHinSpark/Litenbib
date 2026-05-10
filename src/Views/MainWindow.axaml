@@ -52,7 +52,7 @@
                     Background="{DynamicResource TabBackground}" Classes="hide_show">
                 <Border.IsEnabled>
                     <MultiBinding Converter="{x:Static BoolConverters.And}">
-                        <Binding Path="#FilterTextBox.Text" Converter="{x:Static StringConverters.IsNotNullOrEmpty}}" />
+                        <Binding Path="#FilterTextBox.Text" Converter="{x:Static StringConverters.IsNotNullOrEmpty}" />
                         <Binding Path="SelectedFile" Converter="{x:Static ObjectConverters.IsNotNull}" />
                     </MultiBinding>
                 </Border.IsEnabled>

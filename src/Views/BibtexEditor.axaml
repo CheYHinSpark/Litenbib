@@ -1,16 +1,26 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:ae="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
+             xmlns:aee="clr-namespace:AvaloniaEdit.Editing;assembly=AvaloniaEdit"
              x:Class="Litenbib.Views.BibtexEditor"
              Focusable="False">
+    <UserControl.Styles>
+        <Style Selector="aee|TextArea">
+            <Setter Property="SelectionBrush" Value="{DynamicResource TextSelectionHighlight}"/>
+            <Setter Property="SelectionForeground" Value="{x:Null}"/>
+        </Style>
+        <Style Selector="ae|TextEditor">
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="BorderBrush" Duration="0:0:0.1"/>
+                    <ThicknessTransition Property="BorderThickness" Duration="0:0:0.1"/>
+                </Transitions>
+            </Setter>
+        </Style>
+    </UserControl.Styles>
+
     <ae:TextEditor x:Name="Editor"
                    FontFamily="Consolas"
-                   Background="{DynamicResource InputBackground}"
-                   Foreground="{DynamicResource MainForeground}"
-                   BorderBrush="{DynamicResource MainBorder}"
-                   BorderThickness="1"
-                   CornerRadius="8"
-                   Padding="8 6"
                    WordWrap="True"
                    ShowLineNumbers="False"
                    HorizontalScrollBarVisibility="Disabled"

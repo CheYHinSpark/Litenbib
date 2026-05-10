@@ -1,6 +1,7 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:v="using:Litenbib.Views" >
+                    xmlns:v="using:Litenbib.Views"
+                    xmlns:ae="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit">
     <Design.PreviewWith>
         <Grid Width="28" Height="28">
 			<Grid.Styles>
@@ -441,6 +442,46 @@
             <Setter Property="BorderThickness" Value="2"/>
         </Style>
     </ControlTheme>
+
+    <ControlTheme x:Key="{x:Type ae:TextEditor}" TargetType="ae:TextEditor">
+        <Setter Property="Background" Value="{DynamicResource InputBackground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource MainBorder}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Padding" Value="8 6" />
+        <Setter Property="FocusAdorner" Value="{x:Null}" />
+        <Setter Property="ScrollViewer.IsScrollChainingEnabled" Value="True" />
+        <Setter Property="ContextFlyout" Value="{OnFormFactor Desktop={StaticResource DefaultTextBoxContextFlyout}, Mobile={StaticResource HorizontalTextBoxContextFlyout}}"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Panel>
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}"/>
+                    <ScrollViewer Focusable="True"
+                                  Name="PART_ScrollViewer"
+                                  VerticalScrollBarVisibility="{TemplateBinding VerticalScrollBarVisibility}"
+                                  HorizontalScrollBarVisibility="{TemplateBinding HorizontalScrollBarVisibility}"
+                                  VerticalContentAlignment="Top"
+                                  HorizontalContentAlignment="Left"
+                                  Margin="{TemplateBinding Padding}"
+                                  AllowAutoHide="{TemplateBinding (ScrollViewer.AllowAutoHide)}"
+                                  BringIntoViewOnFocusChange="{TemplateBinding (ScrollViewer.BringIntoViewOnFocusChange)}"/>
+                </Panel>
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^:pointerover">
+            <Setter Property="BorderBrush" Value="{DynamicResource HighlightBorder}"/>
+        </Style>
+
+        <Style Selector="^:focus-within">
+            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorder}"/>
+            <Setter Property="BorderThickness" Value="2"/>
+        </Style>
+  </ControlTheme>
+
 
     <ControlTheme x:Key="DetailTextBox" TargetType="TextBox">
         <Setter Property="Foreground" Value="{DynamicResource MainForeground}" />

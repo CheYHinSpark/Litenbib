@@ -73,8 +73,15 @@ public partial class BibtexEditor : UserControl, IUndoRedoTextHost
         InitializeComponent();
         BindPaletteResources();
         ConfigureEditor(Editor);
-        ActualThemeVariantChanged += (_, _) => ApplyPalette();
-        ResourcesChanged += (_, _) => ApplyPalette();
+        ApplyTextAreaChrome();
+        ActualThemeVariantChanged += (_, _) =>
+        {
+            ApplyPalette();
+        };
+        ResourcesChanged += (_, _) =>
+        {
+            ApplyPalette();
+        };
     }
 
     public string? Text
@@ -155,7 +162,7 @@ public partial class BibtexEditor : UserControl, IUndoRedoTextHost
             AcceptsTab = true,
             ConvertTabsToSpaces = false,
             IndentationSize = 4,
-            HighlightCurrentLine = true,
+            HighlightCurrentLine = false,
             EnableHyperlinks = false,
             EnableEmailHyperlinks = false,
         };
@@ -165,8 +172,14 @@ public partial class BibtexEditor : UserControl, IUndoRedoTextHost
         editor.TextArea.SelectionChanged += (_, _) => UpdateSelectionProperties();
         editor.TextArea.Caret.PositionChanged += (_, _) => UpdateSelectionProperties();
         editor.TextChanged += (_, _) => ApplyTextFromEditor();
-        editor.GotFocus += (_, _) => SetValue(FocusEx.BindToProperty, this);
-        editor.LostFocus += (_, _) => SetValue(FocusEx.BindToProperty, null);
+        editor.GotFocus += (_, _) =>
+        {
+            SetValue(FocusEx.BindToProperty, this);
+        };
+        editor.LostFocus += (_, _) =>
+        {
+            SetValue(FocusEx.BindToProperty, null);
+        };
         editor.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
         editor.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
     }
@@ -192,8 +205,36 @@ public partial class BibtexEditor : UserControl, IUndoRedoTextHost
 
         if (redraw && Editor != null)
         {
+            ApplyTextAreaChrome();
             Editor.TextArea.TextView.Redraw();
         }
+    }
+
+    private void ApplyTextAreaChrome()
+    {
+        if (TryGetBrush("TextSelectionHighlight", out IBrush? selectionBrush))
+        {
+            Editor.TextArea.SelectionBrush = selectionBrush;
+        }
+
+        if (TryGetBrush("MainForeground", out IBrush? caretBrush))
+        {
+            Editor.TextArea.CaretBrush = caretBrush;
+        }
+
+        Editor.TextArea.SelectionForeground = null;
+    }
+
+    private bool TryGetBrush(string resourceKey, out IBrush? brush)
+    {
+        if (TryGetResource(resourceKey, ActualThemeVariant, out object? value) && value is IBrush resourceBrush)
+        {
+            brush = resourceBrush;
+            return true;
+        }
+
+        brush = null;
+        return false;
     }
 
     private void ApplyTextFromProperty(string? value)

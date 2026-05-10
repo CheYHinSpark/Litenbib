@@ -112,12 +112,12 @@
         </Grid>
 
         <v:BibtexEditor Grid.Row="3" Margin="8 4"
-						 PlaceholderText="Selected BibTeX entries to import. You can still edit manually."
-						 Text="{Binding BibtexText, Mode=TwoWay}"/>
+                        PlaceholderText="Selected BibTeX entries to import. You can still edit manually."
+						Text="{Binding BibtexText, Mode=TwoWay}"/>
 		<TextBlock Grid.Row="4" Margin="8 0"
-					HorizontalAlignment="Left"
-					VerticalAlignment="Center"
-					Text="{Binding HintText}"/>
+				   HorizontalAlignment="Left"
+				   VerticalAlignment="Center"
+				   Text="{Binding HintText}"/>
         <StackPanel Grid.Row="4" Orientation="Horizontal"
 					Margin="0 4 8 8"
                     HorizontalAlignment="Right">
