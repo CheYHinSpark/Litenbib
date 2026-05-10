@@ -8,12 +8,12 @@ namespace Litenbib.Views;
 
 public sealed partial class BibtexColorizer : DocumentColorizingTransformer
 {
-    private static readonly IBrush EntryTypeBrush = Brush.Parse("#7DD3FC");
-    private static readonly IBrush CitationKeyBrush = Brush.Parse("#FBBF24");
-    private static readonly IBrush FieldBrush = Brush.Parse("#C084FC");
-    private static readonly IBrush ValueBrush = Brush.Parse("#86EFAC");
-    private static readonly IBrush PunctuationBrush = Brush.Parse("#94A3B8");
-    private static readonly IBrush CommentBrush = Brush.Parse("#64748B");
+    public IBrush EntryTypeBrush { get; set; } = Brush.Parse("#7DD3FC");
+    public IBrush CitationKeyBrush { get; set; } = Brush.Parse("#FBBF24");
+    public IBrush FieldBrush { get; set; } = Brush.Parse("#C084FC");
+    public IBrush ValueBrush { get; set; } = Brush.Parse("#86EFAC");
+    public IBrush PunctuationBrush { get; set; } = Brush.Parse("#94A3B8");
+    public IBrush CommentBrush { get; set; } = Brush.Parse("#64748B");
 
     protected override void ColorizeLine(DocumentLine line)
     {

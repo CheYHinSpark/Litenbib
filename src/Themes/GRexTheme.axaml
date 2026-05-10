@@ -60,6 +60,12 @@
     <SolidColorBrush x:Key="MainBorder" Color="{DynamicResource MainBorderColor}"/>
 	<SolidColorBrush x:Key="MainForeground" Color="{DynamicResource MainForegroundColor}"/>
 	<SolidColorBrush x:Key="TextSelectionHighlight" Color="{DynamicResource TextSelectionHighlightColor}"/>
+	<SolidColorBrush x:Key="BibtexEntryTypeBrush" Color="{DynamicResource BibtexEntryTypeColor}"/>
+	<SolidColorBrush x:Key="BibtexCitationKeyBrush" Color="{DynamicResource BibtexCitationKeyColor}"/>
+	<SolidColorBrush x:Key="BibtexFieldBrush" Color="{DynamicResource BibtexFieldColor}"/>
+	<SolidColorBrush x:Key="BibtexValueBrush" Color="{DynamicResource BibtexValueColor}"/>
+	<SolidColorBrush x:Key="BibtexPunctuationBrush" Color="{DynamicResource BibtexPunctuationColor}"/>
+	<SolidColorBrush x:Key="BibtexCommentBrush" Color="{DynamicResource BibtexCommentColor}"/>
 
 	<SolidColorBrush x:Key="TabBackground" Color="{DynamicResource TabBackgroundColor}"/>
     <SolidColorBrush x:Key="ThemeBackground" Color="{DynamicResource ThemeBackgroundColor}"/>

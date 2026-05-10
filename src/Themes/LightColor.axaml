@@ -15,4 +15,11 @@
     <Color x:Key="ThemeBorderColor">#4D89D8</Color>
     <Color x:Key="ThemeHighlightColor">#C1D0E4</Color>
     <Color x:Key="WarningBackgroundColor">#F54B4B</Color>
+
+    <Color x:Key="BibtexEntryTypeColor">#0369A1</Color>
+    <Color x:Key="BibtexCitationKeyColor">#A16207</Color>
+    <Color x:Key="BibtexFieldColor">#7E22CE</Color>
+    <Color x:Key="BibtexValueColor">#15803D</Color>
+    <Color x:Key="BibtexPunctuationColor">#64748B</Color>
+	<Color x:Key="BibtexCommentColor">#6B7280</Color>
 </ResourceDictionary>

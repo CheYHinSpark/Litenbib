@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Data;
+using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Media;
 using AvaloniaEdit;
 using Litenbib.Models;
@@ -31,6 +32,25 @@ public partial class BibtexEditor : UserControl, IUndoRedoTextHost
             nameof(PlaceholderText),
             string.Empty);
 
+    public static readonly StyledProperty<IBrush?> EntryTypeBrushProperty =
+        AvaloniaProperty.Register<BibtexEditor, IBrush?>(nameof(EntryTypeBrush));
+
+    public static readonly StyledProperty<IBrush?> CitationKeyBrushProperty =
+        AvaloniaProperty.Register<BibtexEditor, IBrush?>(nameof(CitationKeyBrush));
+
+    public static readonly StyledProperty<IBrush?> FieldBrushProperty =
+        AvaloniaProperty.Register<BibtexEditor, IBrush?>(nameof(FieldBrush));
+
+    public static readonly StyledProperty<IBrush?> ValueBrushProperty =
+        AvaloniaProperty.Register<BibtexEditor, IBrush?>(nameof(ValueBrush));
+
+    public static readonly StyledProperty<IBrush?> PunctuationBrushProperty =
+        AvaloniaProperty.Register<BibtexEditor, IBrush?>(nameof(PunctuationBrush));
+
+    public static readonly StyledProperty<IBrush?> CommentBrushProperty =
+        AvaloniaProperty.Register<BibtexEditor, IBrush?>(nameof(CommentBrush));
+
+    private readonly BibtexColorizer _colorizer = new();
     private bool _updatingFromEditor;
     private bool _updatingFromProperty;
 
@@ -40,12 +60,21 @@ public partial class BibtexEditor : UserControl, IUndoRedoTextHost
             editor.ApplyTextFromProperty(e.NewValue as string));
         PlaceholderTextProperty.Changed.AddClassHandler<BibtexEditor>((editor, e) =>
             editor.Editor.Watermark = e.NewValue as string);
+        EntryTypeBrushProperty.Changed.AddClassHandler<BibtexEditor>((editor, _) => editor.ApplyPalette());
+        CitationKeyBrushProperty.Changed.AddClassHandler<BibtexEditor>((editor, _) => editor.ApplyPalette());
+        FieldBrushProperty.Changed.AddClassHandler<BibtexEditor>((editor, _) => editor.ApplyPalette());
+        ValueBrushProperty.Changed.AddClassHandler<BibtexEditor>((editor, _) => editor.ApplyPalette());
+        PunctuationBrushProperty.Changed.AddClassHandler<BibtexEditor>((editor, _) => editor.ApplyPalette());
+        CommentBrushProperty.Changed.AddClassHandler<BibtexEditor>((editor, _) => editor.ApplyPalette());
     }
 
     public BibtexEditor()
     {
         InitializeComponent();
+        BindPaletteResources();
         ConfigureEditor(Editor);
+        ActualThemeVariantChanged += (_, _) => ApplyPalette();
+        ResourcesChanged += (_, _) => ApplyPalette();
     }
 
     public string? Text
@@ -72,6 +101,42 @@ public partial class BibtexEditor : UserControl, IUndoRedoTextHost
         set => SetValue(PlaceholderTextProperty, value);
     }
 
+    public IBrush? EntryTypeBrush
+    {
+        get => GetValue(EntryTypeBrushProperty);
+        set => SetValue(EntryTypeBrushProperty, value);
+    }
+
+    public IBrush? CitationKeyBrush
+    {
+        get => GetValue(CitationKeyBrushProperty);
+        set => SetValue(CitationKeyBrushProperty, value);
+    }
+
+    public IBrush? FieldBrush
+    {
+        get => GetValue(FieldBrushProperty);
+        set => SetValue(FieldBrushProperty, value);
+    }
+
+    public IBrush? ValueBrush
+    {
+        get => GetValue(ValueBrushProperty);
+        set => SetValue(ValueBrushProperty, value);
+    }
+
+    public IBrush? PunctuationBrush
+    {
+        get => GetValue(PunctuationBrushProperty);
+        set => SetValue(PunctuationBrushProperty, value);
+    }
+
+    public IBrush? CommentBrush
+    {
+        get => GetValue(CommentBrushProperty);
+        set => SetValue(CommentBrushProperty, value);
+    }
+
     public int TextLength => Editor.Text?.Length ?? 0;
 
     public void SetCaretOffset(int offset)
@@ -95,7 +160,8 @@ public partial class BibtexEditor : UserControl, IUndoRedoTextHost
             EnableEmailHyperlinks = false,
         };
         editor.Document.UndoStack.SizeLimit = 0;
-        editor.TextArea.TextView.LineTransformers.Add(new BibtexColorizer());
+        ApplyPalette(redraw: false);
+        editor.TextArea.TextView.LineTransformers.Add(_colorizer);
         editor.TextArea.SelectionChanged += (_, _) => UpdateSelectionProperties();
         editor.TextArea.Caret.PositionChanged += (_, _) => UpdateSelectionProperties();
         editor.TextChanged += (_, _) => ApplyTextFromEditor();
@@ -103,6 +169,31 @@ public partial class BibtexEditor : UserControl, IUndoRedoTextHost
         editor.LostFocus += (_, _) => SetValue(FocusEx.BindToProperty, null);
         editor.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
         editor.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
+    }
+
+    private void BindPaletteResources()
+    {
+        Bind(EntryTypeBrushProperty, new DynamicResourceExtension("BibtexEntryTypeBrush"));
+        Bind(CitationKeyBrushProperty, new DynamicResourceExtension("BibtexCitationKeyBrush"));
+        Bind(FieldBrushProperty, new DynamicResourceExtension("BibtexFieldBrush"));
+        Bind(ValueBrushProperty, new DynamicResourceExtension("BibtexValueBrush"));
+        Bind(PunctuationBrushProperty, new DynamicResourceExtension("BibtexPunctuationBrush"));
+        Bind(CommentBrushProperty, new DynamicResourceExtension("BibtexCommentBrush"));
+    }
+
+    private void ApplyPalette(bool redraw = true)
+    {
+        if (EntryTypeBrush != null) { _colorizer.EntryTypeBrush = EntryTypeBrush; }
+        if (CitationKeyBrush != null) { _colorizer.CitationKeyBrush = CitationKeyBrush; }
+        if (FieldBrush != null) { _colorizer.FieldBrush = FieldBrush; }
+        if (ValueBrush != null) { _colorizer.ValueBrush = ValueBrush; }
+        if (PunctuationBrush != null) { _colorizer.PunctuationBrush = PunctuationBrush; }
+        if (CommentBrush != null) { _colorizer.CommentBrush = CommentBrush; }
+
+        if (redraw && Editor != null)
+        {
+            Editor.TextArea.TextView.Redraw();
+        }
     }
 
     private void ApplyTextFromProperty(string? value)

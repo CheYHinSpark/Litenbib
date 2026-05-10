@@ -1,4 +1,5 @@
 src/.vs
 src/bin
 src/obj
+.nuget/packages/
 *.bib
