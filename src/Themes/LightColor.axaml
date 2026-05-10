@@ -1,19 +1,18 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:system="clr-namespace:System;assembly=System.Runtime">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Color x:Key="DisabledForegroundColor">#7A8496</Color>
-    <Color x:Key="InputBackgroundColor">#F5F7FA</Color>
-    <Color x:Key="HighlightBackgroundColor">#EAF0F7</Color>
-    <Color x:Key="HighlightBorderColor">#8BA3BF</Color>
-    <Color x:Key="HighlightForegroundColor">#0F1728</Color>
+    <Color x:Key="InputBackgroundColor">#F4F7FA</Color>
+    <Color x:Key="HighlightBackgroundColor">#DFE9F7</Color>
+    <Color x:Key="HighlightBorderColor">#7B93BF</Color>
+    <Color x:Key="HighlightForegroundColor">#000000</Color>
     <Color x:Key="MainBackgroundColor">#EEF2F7</Color>
     <Color x:Key="MainBorderColor">#D7DFEA</Color>
-	<Color x:Key="MainForegroundColor">#111827</Color>
+	<Color x:Key="MainForegroundColor">#222222</Color>
 	<Color x:Key="TextSelectionHighlightColor">#BAFEDC</Color>
 
-	<Color x:Key="TabBackgroundColor">#E3EAF3</Color>
+	<Color x:Key="TabBackgroundColor">#D1E0F4</Color>
     <Color x:Key="ThemeBackgroundColor">#DCEBFF</Color>
     <Color x:Key="ThemeBorderColor">#4D89D8</Color>
-    <Color x:Key="ThemeHighlightColor">#CFE3FF</Color>
+    <Color x:Key="ThemeHighlightColor">#C1D0E4</Color>
     <Color x:Key="WarningBackgroundColor">#F54B4B</Color>
 </ResourceDictionary>

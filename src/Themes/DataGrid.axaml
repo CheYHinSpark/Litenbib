@@ -9,6 +9,8 @@
         <Setter Property="Padding" Value="0 8 10 8"/>
 		<Setter Property="AreSeparatorsVisible" Value="False"/>
 		<Setter Property="SeparatorBrush" Value="{DynamicResource MainBorder}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource MainBorder}"/>
+        <Setter Property="BorderThickness" Value="0 1"/>
 		<Setter Property="Template">
             <ControlTemplate>
                 <Grid Name="PART_ColumnHeaderRoot" ColumnDefinitions="*,Auto">
@@ -35,10 +37,12 @@
 
 		<Style Selector="^:nth-child(1)">
 			<Setter Property="CornerRadius" Value="12,0,0,12"/>
+            <Setter Property="BorderThickness" Value="1 1 0 1"/>
 		</Style>
 
 		<Style Selector="^:nth-last-child(1)">
 			<Setter Property="CornerRadius" Value="0,12,12,0"/>
+            <Setter Property="BorderThickness" Value="0 1 1 1"/>
 		</Style>
 
 		<Style Selector="^:sortascending /template/ Path#SortIcon">
@@ -83,7 +87,7 @@
 									Background="{TemplateBinding Background}"
                                     RowDefinitions="*,Auto">
                     <Border Name="BackgroundBorder"
-							MinHeight="38"
+							MinHeight="36"
 							CornerRadius="10"
                             Margin="0 2"
                             Grid.RowSpan="2"

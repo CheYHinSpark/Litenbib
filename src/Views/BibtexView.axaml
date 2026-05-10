@@ -46,11 +46,23 @@
             <Setter Property="m:FocusEx.BindTo" Value="{CompiledBinding UndoRedoManager.NewEditedBox, Mode=OneWayToSource}"/>
         </Style>
         <Style Selector="Border.section-card">
-            <Setter Property="Background" Value="{DynamicResource InputBackground}"/>
+            <Setter Property="Background" Value="{DynamicResource TabBackground}"/>
             <Setter Property="CornerRadius" Value="12"/>
             <Setter Property="Padding" Value="8"/>
             <Setter Property="Margin" Value="0 0 0 8"/>
         </Style>
+		<Style Selector="Button.in_section">
+			<Setter Property="Background" Value="{DynamicResource TabBackground}"/>
+			<Setter Property="Transitions">
+				<Transitions>
+					<BrushTransition Property="Background" Duration="0:0:0.1"/>
+					<CornerRadiusTransition Property="CornerRadius" Duration="0:0:0.15"/>
+				</Transitions>
+			</Setter>
+			<Style Selector="^:pointerover">
+				<Setter Property="Background" Value="{DynamicResource HighlightBackground}"/>
+			</Style>
+		</Style>
     </UserControl.Styles>
 
     <Grid Name="RootGrid" Background="{DynamicResource TabBackground}">
