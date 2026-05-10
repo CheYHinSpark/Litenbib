@@ -442,7 +442,6 @@
         </Style>
     </ControlTheme>
 
-
     <ControlTheme x:Key="DetailTextBox" TargetType="TextBox">
         <Setter Property="Foreground" Value="{DynamicResource MainForeground}" />
         <Setter Property="Background" Value="{DynamicResource InputBackground}" />
@@ -640,5 +639,43 @@
         </Style>
     </ControlTheme>
     
-    
+    <ControlTheme x:Key="{x:Type WindowDrawnDecorations}" TargetType="WindowDrawnDecorations">
+        <Setter Property="DefaultTitleBarHeight" Value="76"/>
+        <Setter Property="DefaultFrameThickness" Value="0"/>
+        <Setter Property="DefaultShadowThickness" Value="16"/>
+        <Setter Property="Template">
+            <WindowDrawnDecorationsTemplate>
+                <WindowDrawnDecorationsContent>
+
+                    <WindowDrawnDecorationsContent.Underlay>
+                        <!-- Full-size: covers shadow area + frame + behind client area -->
+                        <Panel>
+                        </Panel>
+                    </WindowDrawnDecorationsContent.Underlay>
+
+                    <WindowDrawnDecorationsContent.Overlay>
+                        <!-- Positioned over the titlebar area -->
+                        <DockPanel Height="{TemplateBinding TitleBarHeight}">
+                        </DockPanel>
+                    </WindowDrawnDecorationsContent.Overlay>
+
+                    <WindowDrawnDecorationsContent.FullscreenPopover>
+                        <!-- Shown on hover at top edge in fullscreen -->
+                        <DockPanel Height="{TemplateBinding TitleBarHeight}">
+                        </DockPanel>
+                    </WindowDrawnDecorationsContent.FullscreenPopover>
+
+                </WindowDrawnDecorationsContent>
+            </WindowDrawnDecorationsTemplate>
+        </Setter>
+
+        <!-- Pseudoclass styling -->
+        <Style Selector="^:maximized /template/ Border">
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+        <Style Selector="^:fullscreen /template/ DockPanel">
+            <Setter Property="IsVisible" Value="False"/>
+        </Style>
+    </ControlTheme>
+
 </ResourceDictionary>

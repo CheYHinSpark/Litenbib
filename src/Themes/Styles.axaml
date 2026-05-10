@@ -149,30 +149,8 @@
         <Setter Property="Background" Value="{DynamicResource MainBackground}"/>
         <Setter Property="Foreground" Value="{DynamicResource MainForeground}"/>
         <Setter Property="ExtendClientAreaToDecorationsHint" Value="True"/>
-        <Setter Property="WindowDecorations" Value="None"/>
         <Setter Property="ExtendClientAreaTitleBarHeightHint" Value="76"/>
         <Setter Property="FontSize" Value="14"/>
         <Setter Property="Padding" Value="0"/>
-        <Setter Property="BorderBrush" Value="{DynamicResource MainBorder}"/>
-        <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="CornerRadius" Value="0"/>
-        <Setter Property="Template">
-            <ControlTemplate>
-                <Border Margin="{Binding $parent[Window].OffScreenMargin}"
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{TemplateBinding CornerRadius}">
-                    <VisualLayerManager Margin="{TemplateBinding BorderThickness}">
-                        <ContentPresenter Name="PART_ContentPresenter"
-                                          ContentTemplate="{TemplateBinding ContentTemplate}"
-                                          Content="{TemplateBinding Content}"
-                                          Margin="{TemplateBinding Padding}"
-                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                    </VisualLayerManager>
-                </Border>
-            </ControlTemplate>
-        </Setter>
     </Style>
 </Styles>
