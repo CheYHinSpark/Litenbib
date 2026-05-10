@@ -261,8 +261,8 @@
                     <Setter Property="VerticalAlignment" Value="Center"/>
                 </Style>
             </Border.Styles>
-            <Grid RowDefinitions="Auto,*,Auto">
-                <Border Classes="section-card" Margin="0 0 12 0">
+            <Grid Name="DetailGrid" ColumnDefinitions="Auto,*" RowDefinitions="Auto,*,Auto">
+                <Border Classes="section-card" Margin="0 0 12 0" Grid.Column="1">
                     <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="92,*">
                         <TextBlock Text="Type" Classes="right"/>
                         <Grid Grid.Column="1">
@@ -307,7 +307,7 @@
                     </Grid>
                 </Border>
 
-                <ScrollViewer Grid.Row="1"
+                <ScrollViewer Grid.Row="1" Grid.Column="1"
                               IsVisible="{CompiledBinding ShowingEntry,
                               Converter={x:Static ObjectConverters.IsNotNull}}">
                     <StackPanel Margin="0 0 12 0">
@@ -419,48 +419,6 @@
                                 </Style>
                             </Expander.Styles>
                             <StackPanel>
-                                <WrapPanel Margin="2" HorizontalAlignment="Center">
-									<WrapPanel.Styles>
-										<Style Selector="Button">
-											<Setter Property="MinHeight" Value="30"/>
-										</Style>
-									</WrapPanel.Styles>
-                                    <Button Command="{CompiledBinding FindMergeByDoiCommand}"
-                                            CommandParameter="{CompiledBinding $parent[Window]}"
-                                            Margin="2" ToolTip.Tip="Search from DOI">
-										<Viewbox Margin="2">
-											<Svg Path="/Assets/doi.svg"/>
-										</Viewbox>
-                                    </Button>
-                                    <Button Command="{CompiledBinding FindMergeByDblpCommand}"
-                                            CommandParameter="{CompiledBinding $parent[Window]}"
-                                            Margin="2" ToolTip.Tip="Search from DBLP">
-                                        <Viewbox Margin="2">
-                                            <Svg Path="/Assets/dblp.svg"/>
-                                        </Viewbox>
-                                    </Button>
-                                    <Button Command="{CompiledBinding FindMergeByCrossrefCommand}"
-                                            CommandParameter="{CompiledBinding $parent[Window]}"
-                                            Margin="2" ToolTip.Tip="Search from Crossref">
-										<Viewbox Margin="2">
-											<Svg Path="/Assets/crossref.svg"/>
-										</Viewbox>
-                                    </Button>
-                                    <Button Command="{CompiledBinding FindMergeByTitleCommand}"
-                                            CommandParameter="{CompiledBinding $parent[Window]}"
-                                            Margin="2" ToolTip.Tip="Search by title">
-										<Viewbox Margin="0">
-											<TextBlock Text="T"/>
-										</Viewbox>
-									</Button>
-                                    <Button Command="{CompiledBinding GetDblpFromDoiCommand}"
-                                            CommandParameter="{CompiledBinding $parent[Window]}"
-                                            Margin="2" ToolTip.Tip="Super search">
-										<Viewbox Margin="0">
-											<TextBlock Text="S"/>
-										</Viewbox>
-                                    </Button>
-                                </WrapPanel>
                                 <Grid ColumnDefinitions="100,*,Auto">
 									<Button Width="100" HorizontalContentAlignment="Stretch" Padding="0"
                                             Command="{CompiledBinding ShowingEntry.ToShowingLinkCommand}"
@@ -513,42 +471,67 @@
                                 <TextBox Watermark="Comment" Text="{CompiledBinding ShowingEntry.Comment}"/>
                             </StackPanel>
                         </Expander>
-                        
-                        <!--<Border Classes="section-card" Margin="0 8 0 0">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="96"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-							<Button Width="96" HorizontalContentAlignment="Stretch" Padding="0"
-									Classes="in_section"
-                                    Command="{CompiledBinding ShowingEntry.CopyBibtexTextCommand}"
-                                    CommandParameter="{CompiledBinding $parent[Window]}">
-								<Grid ColumnDefinitions="32,*">
-									<Path Data="{StaticResource CopyPath}" StrokeThickness="1"
-										  Stroke="{CompiledBinding $parent[Button].Foreground}"
-										  HorizontalAlignment="Center"
-										  VerticalAlignment="Center"/>
-									<TextBlock Grid.Column="1" Text="BibTeX" Grid.Row="1" Classes="right"/>
-								</Grid>
-							</Button>
-                                <TextBox FontFamily="Consolas" Grid.Column="1"
-                                         Text="{CompiledBinding ShowingEntry.BibTeX}"
-                                         MinHeight="180"/>
-                            </Grid>
-                        </Border>-->
                     </StackPanel>
                 </ScrollViewer>
 
-				<Border Classes="section-card" Margin="0 0 12 0"
-						Grid.Row="2" MaxHeight="480">
-					<Grid>
+				<Border Name="BibtexSection" Classes="section-card"
+						Margin="0 0 12 0" MaxHeight="480" MaxWidth="800">
+					<Grid RowDefinitions="Auto,*">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="92"/>
 							<ColumnDefinition Width="*"/>
 						</Grid.ColumnDefinitions>
+
+						<Border Grid.ColumnSpan="2"
+								Margin="4" HorizontalAlignment="Center"
+								CornerRadius="8"
+								Background="{DynamicResource MainBackground}">
+							<WrapPanel HorizontalAlignment="Center">
+								<WrapPanel.Styles>
+									<Style Selector="Button">
+										<Setter Property="MinHeight" Value="30"/>
+									</Style>
+								</WrapPanel.Styles>
+								<Button Command="{CompiledBinding FindMergeByDoiCommand}"
+										CommandParameter="{CompiledBinding $parent[Window]}"
+										Margin="2" ToolTip.Tip="Search from DOI">
+									<Viewbox Margin="2">
+										<Svg Path="/Assets/doi.svg"/>
+									</Viewbox>
+								</Button>
+								<Button Command="{CompiledBinding FindMergeByDblpCommand}"
+										CommandParameter="{CompiledBinding $parent[Window]}"
+										Margin="2" ToolTip.Tip="Search from DBLP">
+									<Viewbox Margin="2">
+										<Svg Path="/Assets/dblp.svg"/>
+									</Viewbox>
+								</Button>
+								<Button Command="{CompiledBinding FindMergeByCrossrefCommand}"
+										CommandParameter="{CompiledBinding $parent[Window]}"
+										Margin="2" ToolTip.Tip="Search from Crossref">
+									<Viewbox Margin="2">
+										<Svg Path="/Assets/crossref.svg"/>
+									</Viewbox>
+								</Button>
+								<Button Command="{CompiledBinding FindMergeByTitleCommand}"
+										CommandParameter="{CompiledBinding $parent[Window]}"
+										Margin="2" ToolTip.Tip="Search by title">
+									<Viewbox Margin="0">
+										<TextBlock Text="T"/>
+									</Viewbox>
+								</Button>
+								<Button Command="{CompiledBinding GetDblpFromDoiCommand}"
+										CommandParameter="{CompiledBinding $parent[Window]}"
+										Margin="2" ToolTip.Tip="Super search">
+									<Viewbox Margin="0">
+										<TextBlock Text="S"/>
+									</Viewbox>
+								</Button>
+							</WrapPanel>
+						</Border>
+						
 						<Button Width="92" HorizontalContentAlignment="Stretch" Padding="0"
-								Classes="in_section"
+								Classes="in_section" Grid.Row="1"
 								Command="{CompiledBinding ShowingEntry.CopyBibtexTextCommand}"
 								CommandParameter="{CompiledBinding $parent[Window]}">
 							<Grid ColumnDefinitions="32,*">
@@ -559,7 +542,7 @@
 								<TextBlock Grid.Column="1" Text="BibTeX" Grid.Row="1" Classes="right"/>
 							</Grid>
 						</Button>
-						<TextBox FontFamily="Consolas" Grid.Column="1"
+						<TextBox FontFamily="Consolas" Grid.Column="1" Grid.Row="1"
 								 Text="{CompiledBinding ShowingEntry.BibTeX}"
 								 MinHeight="180"/>
 					</Grid>

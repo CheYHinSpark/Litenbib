@@ -171,11 +171,14 @@ public partial class BibtexView : UserControl
             DetailPanel.CornerRadius = CornerRadius.Parse("24 0 0 0");
             DetailPanel.Margin = Thickness.Parse("4 8 0 0");
             DetailPanel.Padding = Thickness.Parse("8 8 4 8");
+            Grid.SetRow(BibtexSection, 2);
+            Grid.SetRowSpan(BibtexSection, 1);
+            Grid.SetColumn(BibtexSection, 1);
         }
         else
         {
-            RootGrid.RowDefinitions[2].MinHeight = 250;
-            RootGrid.RowDefinitions[2].MaxHeight = 400;
+            RootGrid.RowDefinitions[2].MinHeight = 300;
+            RootGrid.RowDefinitions[2].MaxHeight = 480;
             RootGrid.ColumnDefinitions[2].MinWidth = 0;
             RootGrid.ColumnDefinitions[2].MaxWidth = 0;
             Grid.SetRow(Splitter, 1);
@@ -186,6 +189,9 @@ public partial class BibtexView : UserControl
             DetailPanel.CornerRadius = CornerRadius.Parse("24 24 0 0");
             DetailPanel.Margin = Thickness.Parse("0 4 0 0");
             DetailPanel.Padding = Thickness.Parse("8 8 8 4");
+            Grid.SetRow(BibtexSection, 0);
+            Grid.SetRowSpan(BibtexSection, 2);
+            Grid.SetColumn(BibtexSection, 0);
         }
         isDetailShowing = true;
     }
