@@ -120,7 +120,8 @@ namespace Litenbib.Views
             // If an item inside the popup was clicked, select it.
             if (e.Source is Visual visual && _popup?.IsInsidePopup(visual) == true)
             {
-                if (UpdateSelectionFromEventSource(visual))
+                if (GetContainerFromEventSource(visual) is { } container &&
+                    UpdateSelectionFromEvent(container, e))
                 {
                     IsDropDownOpen = false;
                     e.Handled = true;

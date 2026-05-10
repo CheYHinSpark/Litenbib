@@ -1,5 +1,6 @@
 ﻿using Avalonia.Controls;
 using CommunityToolkit.Mvvm.Input;
+using Avalonia.Input.Platform;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

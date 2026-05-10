@@ -3,6 +3,8 @@ using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
+using Avalonia.Interactivity;
+using Avalonia.Threading;
 using Avalonia.VisualTree;
 using System;
 using System.Diagnostics;
@@ -38,7 +40,9 @@ namespace Litenbib.Views
             set => SetValue(CloseAnimationProperty, value);
         }
 
-        private LightDismissOverlayLayer? dismissLayer;
+        private TopLevel? _dismissTopLevel;
+        private Window? _dismissWindow;
+        private bool _dismissPending;
         protected bool isAnimating;
 
         static ExPopup()
@@ -52,18 +56,7 @@ namespace Litenbib.Views
         {
             OverlayDismissEventPassThrough = true;
             isAnimating = true;
-            if (TopLevel.GetTopLevel(PlacementTarget) is Visual v)
-            { dismissLayer ??= LightDismissOverlayLayer.GetLightDismissOverlayLayer(v); }
-            if (dismissLayer != null)
-            {
-                dismissLayer.IsVisible = true;
-                dismissLayer.InputPassThroughElement = PlacementTarget;
-                dismissLayer.PointerPressed += PointerPressedDismissOverlay;
-            }
-            if (TopLevel.GetTopLevel(PlacementTarget) is Window window)
-            {
-                window.Deactivated += Window_Deactivated;
-            }
+            AttachDismissHandlers();
 
 
             IsOpen = true;
@@ -77,12 +70,7 @@ namespace Litenbib.Views
         protected async Task OnClose()
         {
             isAnimating = true;
-            if (dismissLayer != null)
-            {
-                dismissLayer.PointerPressed -= PointerPressedDismissOverlay;
-                dismissLayer.InputPassThroughElement = null;
-                dismissLayer.IsVisible = false;
-            }
+            DetachDismissHandlers();
 
             if (CloseAnimation != null)
             {
@@ -96,36 +84,94 @@ namespace Litenbib.Views
             IsOpen = false;
             Debug.Write("From Window ");
             IsOpenEx = false;
-            if (TopLevel.GetTopLevel(PlacementTarget) is Window window)
-            { window.Deactivated -= Window_Deactivated; }
+            DetachDismissHandlers();
         }
 
-        private void PointerPressedDismissOverlay(object? sender, PointerPressedEventArgs e)
+        private void AttachDismissHandlers()
         {
-            if (!isAnimating && IsOpenEx && dismissLayer != null)
+            var target = PlacementTarget ?? Child;
+            if (target == null)
             {
-                if (OverlayDismissEventPassThrough)
-                { PassThroughEvent(e); }
-                Debug.Write("From OverlayDismiss ");
-                IsOpenEx = false;
+                return;
             }
-        }
 
-        private static void PassThroughEvent(PointerPressedEventArgs e)
-        {
-            if (e.Source is LightDismissOverlayLayer layer &&
-                layer.GetVisualRoot() is InputElement root)
+            var topLevel = TopLevel.GetTopLevel(target);
+            if (topLevel == null)
             {
-                var p = e.GetCurrentPoint(root);
-                var hit = root.InputHitTest(p.Position, x => x != layer);
+                return;
+            }
 
-                if (hit != null)
+            if (_dismissTopLevel != topLevel)
+            {
+                _dismissTopLevel?.RemoveHandler(InputElement.PointerPressedEvent, TopLevel_PointerPressed);
+                _dismissTopLevel = topLevel;
+                _dismissTopLevel.AddHandler(
+                    InputElement.PointerPressedEvent,
+                    TopLevel_PointerPressed,
+                    RoutingStrategies.Tunnel,
+                    handledEventsToo: true);
+            }
+
+            if (topLevel is Window window && _dismissWindow != window)
+            {
+                if (_dismissWindow != null)
                 {
-                    e.Pointer.Capture(hit);
-                    hit.RaiseEvent(e);
-                    e.Handled = true;
+                    _dismissWindow.Deactivated -= Window_Deactivated;
                 }
+
+                _dismissWindow = window;
+                _dismissWindow.Deactivated += Window_Deactivated;
             }
+        }
+
+        private void DetachDismissHandlers()
+        {
+            _dismissTopLevel?.RemoveHandler(InputElement.PointerPressedEvent, TopLevel_PointerPressed);
+            _dismissTopLevel = null;
+
+            if (_dismissWindow != null)
+            {
+                _dismissWindow.Deactivated -= Window_Deactivated;
+                _dismissWindow = null;
+            }
+
+            _dismissPending = false;
+        }
+
+        private void TopLevel_PointerPressed(object? sender, PointerPressedEventArgs e)
+        {
+            if (isAnimating || !IsOpenEx || IsInsidePopupChild(e.Source as Visual))
+            {
+                return;
+            }
+
+            DismissAfterCurrentInput();
+        }
+
+        private bool IsInsidePopupChild(Visual? visual)
+        {
+            return visual != null &&
+                   Child is Visual child &&
+                   (visual == child || child.IsVisualAncestorOf(visual));
+        }
+
+        private void DismissAfterCurrentInput()
+        {
+            if (_dismissPending)
+            {
+                return;
+            }
+
+            _dismissPending = true;
+            Dispatcher.UIThread.Post(() =>
+            {
+                _dismissPending = false;
+                if (!isAnimating && IsOpenEx)
+                {
+                    Debug.Write("From TopLevelDismiss ");
+                    IsOpenEx = false;
+                }
+            }, DispatcherPriority.Background);
         }
 
         private static async void OnIsOpenExChanged(ExPopup popup, AvaloniaPropertyChangedEventArgs e)

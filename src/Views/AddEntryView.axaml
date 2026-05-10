@@ -53,7 +53,7 @@
 		
         <Grid Grid.Row="1" Margin="4" ColumnDefinitions="*,Auto">
             <TextBox Text="{Binding DoiText}" Margin="4 0"
-					 Watermark="Input DOI / arXiv / OpenReview / title / URL, one per line."/>
+					 PlaceholderText="Input DOI / arXiv / OpenReview / title / URL, one per line."/>
 			<Grid Grid.Column="1" >
 				<TextBlock Text="Resolve Bib" Margin="8"/>
 				<Button VerticalAlignment="Bottom" Classes="icon"
@@ -111,7 +111,7 @@
         </Grid>
 
         <TextBox Grid.Row="3" Margin="8 4"
-				 Watermark="Selected BibTeX entries to import. You can still edit manually."
+				 PlaceholderText="Selected BibTeX entries to import. You can still edit manually."
 				 Text="{Binding BibtexText}"/>
 		<TextBlock Grid.Row="4" Margin="8 0"
 					HorizontalAlignment="Left"

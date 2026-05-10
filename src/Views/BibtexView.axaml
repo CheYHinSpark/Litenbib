@@ -330,34 +330,34 @@
                                 </Style>
                             </Expander.Styles>
                             <StackPanel>
-                                <TextBox Watermark="Title" Text="{CompiledBinding ShowingEntry.Title}"/>
-                                <TextBox Watermark="Author" Text="{CompiledBinding ShowingEntry.Author}"/>
-                                <TextBox Watermark="Year" Text="{CompiledBinding ShowingEntry.Year}"/>
-                                <TextBox Name="r_editor" Watermark="Editor" Text="{CompiledBinding ShowingEntry.Editor}"
+                                <TextBox PlaceholderText="Title" Text="{CompiledBinding ShowingEntry.Title}"/>
+                                <TextBox PlaceholderText="Author" Text="{CompiledBinding ShowingEntry.Author}"/>
+                                <TextBox PlaceholderText="Year" Text="{CompiledBinding ShowingEntry.Year}"/>
+                                <TextBox Name="r_editor" PlaceholderText="Editor" Text="{CompiledBinding ShowingEntry.Editor}"
                                          IsVisible="{CompiledBinding ShowingEntry.EntryType,
                                          Converter={StaticResource EntryTypeToVisibleConverter},
                                          ConverterParameter='book,inbook'}"/>
-                                <TextBox Name="r_chapter" Watermark="Chapter" Text="{CompiledBinding ShowingEntry.Chapter}"
+                                <TextBox Name="r_chapter" PlaceholderText="Chapter" Text="{CompiledBinding ShowingEntry.Chapter}"
                                          IsVisible="{CompiledBinding ShowingEntry.EntryType,
                                          Converter={StaticResource EntryTypeToVisibleConverter},
                                          ConverterParameter='inbook'}"/>
-                                <TextBox Watermark="Booktitle" Text="{CompiledBinding ShowingEntry.Booktitle}"
+                                <TextBox PlaceholderText="Booktitle" Text="{CompiledBinding ShowingEntry.Booktitle}"
                                          IsVisible="{CompiledBinding ShowingEntry.EntryType,
                                          Converter={StaticResource EntryTypeToVisibleConverter},
                                          ConverterParameter='conference,incollection,inproceedings'}"/>
-                                <TextBox Name="r_school" Watermark="School" Text="{CompiledBinding ShowingEntry.School}"
+                                <TextBox Name="r_school" PlaceholderText="School" Text="{CompiledBinding ShowingEntry.School}"
                                          IsVisible="{CompiledBinding ShowingEntry.EntryType,
                                          Converter={StaticResource EntryTypeToVisibleConverter},
                                          ConverterParameter='mastersthesis,phdthesis'}"/>
-                                <TextBox Name="r_institution" Watermark="Institution" Text="{CompiledBinding ShowingEntry.Institution}"
+                                <TextBox Name="r_institution" PlaceholderText="Institution" Text="{CompiledBinding ShowingEntry.Institution}"
                                          IsVisible="{CompiledBinding ShowingEntry.EntryType,
                                          Converter={StaticResource EntryTypeToVisibleConverter},
                                          ConverterParameter='techreport'}"/>
-                                <TextBox Name="r_journal" Watermark="Journal" Text="{CompiledBinding ShowingEntry.Journal}"
+                                <TextBox Name="r_journal" PlaceholderText="Journal" Text="{CompiledBinding ShowingEntry.Journal}"
                                          IsVisible="{CompiledBinding ShowingEntry.EntryType,
                                          Converter={StaticResource EntryTypeToVisibleConverter},
                                          ConverterParameter='article'}"/>
-                                <TextBox Name="r_publisher" Watermark="Publisher" Text="{CompiledBinding ShowingEntry.Publisher}"
+                                <TextBox Name="r_publisher" PlaceholderText="Publisher" Text="{CompiledBinding ShowingEntry.Publisher}"
                                          IsVisible="{CompiledBinding ShowingEntry.EntryType,
                                          Converter={StaticResource EntryTypeToVisibleConverter},
                                          ConverterParameter='book,inbook,incollection'}"/>
@@ -375,52 +375,52 @@
                                       IsVisible="{CompiledBinding ShowingEntry.EntryType,
                                       Converter={StaticResource EntryTypeToVisibleConverter},
                                       ConverterParameter='article,book,conference,inbook,incollection,inproceedings,proceedings'}">
-                                    <TextBox Watermark="Volume" Text="{CompiledBinding ShowingEntry.Volume}"/>
-                                    <TextBox Grid.Column="1" Watermark="Number" Text="{CompiledBinding ShowingEntry.Number}"/>
+                                    <TextBox PlaceholderText="Volume" Text="{CompiledBinding ShowingEntry.Volume}"/>
+                                    <TextBox Grid.Column="1" PlaceholderText="Number" Text="{CompiledBinding ShowingEntry.Number}"/>
                                 </Grid>
 
                                 <Grid ColumnDefinitions="*,*">
-                                    <TextBox Watermark="Pages" Text="{CompiledBinding ShowingEntry.Pages}"/>
-                                    <TextBox Grid.Column="1" Watermark="Month" Text="{CompiledBinding ShowingEntry.Month}"/>
+                                    <TextBox PlaceholderText="Pages" Text="{CompiledBinding ShowingEntry.Pages}"/>
+                                    <TextBox Grid.Column="1" PlaceholderText="Month" Text="{CompiledBinding ShowingEntry.Month}"/>
                                 </Grid>
                                 <Grid ColumnDefinitions="*,*"
                                       IsVisible="{CompiledBinding ShowingEntry.EntryType,
                                       Converter={StaticResource EntryTypeToVisibleConverter},
                                       ConverterParameter='book,inbook,conference,incollection,inproceedings,manual,proceedings'}">
-                                    <TextBox Watermark="Series" Text="{CompiledBinding ShowingEntry.Series}"/>
-                                    <TextBox Grid.Column="1" Watermark="Edition" Text="{CompiledBinding ShowingEntry.Edition}"/>
+                                    <TextBox PlaceholderText="Series" Text="{CompiledBinding ShowingEntry.Series}"/>
+                                    <TextBox Grid.Column="1" PlaceholderText="Edition" Text="{CompiledBinding ShowingEntry.Edition}"/>
                                 </Grid>
                                 
-                                <TextBox Watermark="Howpublished" Text="{CompiledBinding ShowingEntry.Howpublished}"
+                                <TextBox PlaceholderText="Howpublished" Text="{CompiledBinding ShowingEntry.Howpublished}"
                                          IsVisible="{CompiledBinding ShowingEntry.EntryType,
                                          Converter={StaticResource EntryTypeToVisibleConverter},
                                          ConverterParameter='booklet,misc'}"/>
 
-                                <TextBox Watermark="Type" Text="{CompiledBinding ShowingEntry.Type}"
+                                <TextBox PlaceholderText="Type" Text="{CompiledBinding ShowingEntry.Type}"
                                          IsVisible="{CompiledBinding ShowingEntry.EntryType,
                                          Converter={StaticResource EntryTypeToVisibleConverter},
                                          ConverterParameter='inbook,incollection,mastersthesis,phdthesis,techreport'}"/>
                                 
-                                <TextBox Watermark="Chapter" Text="{CompiledBinding ShowingEntry.Chapter}"
+                                <TextBox PlaceholderText="Chapter" Text="{CompiledBinding ShowingEntry.Chapter}"
                                          IsVisible="{CompiledBinding ShowingEntry.EntryType,
                                          Converter={StaticResource EntryTypeToVisibleConverter},
                                          ConverterParameter='incollection'}"/>
                                 
-                                <TextBox Watermark="Address" Text="{CompiledBinding ShowingEntry.Address}"
+                                <TextBox PlaceholderText="Address" Text="{CompiledBinding ShowingEntry.Address}"
                                          IsVisible="{CompiledBinding ShowingEntry.EntryType,
                                          Converter={StaticResource EntryTypeToVisibleConverter},
                                          ConverterParameter='_,article,misc,unpublished'}"/>
                                 
-                                <TextBox Watermark="Organization" Text="{CompiledBinding ShowingEntry.Organization}"
+                                <TextBox PlaceholderText="Organization" Text="{CompiledBinding ShowingEntry.Organization}"
                                          IsVisible="{CompiledBinding ShowingEntry.EntryType,
                                          Converter={StaticResource EntryTypeToVisibleConverter},
                                          ConverterParameter='conference,inproceedings,proceedings'}"/>
                                 
-                                <TextBox Watermark="Publisher" Text="{CompiledBinding ShowingEntry.Publisher}"
+                                <TextBox PlaceholderText="Publisher" Text="{CompiledBinding ShowingEntry.Publisher}"
                                          IsVisible="{CompiledBinding #r_publisher.IsVisible,
                                          Converter={x:Static BoolConverters.Not}}"/>
                                 
-                                <TextBox Watermark="Note" Text="{CompiledBinding ShowingEntry.Note}"/>
+                                <TextBox PlaceholderText="Note" Text="{CompiledBinding ShowingEntry.Note}"/>
                             </StackPanel>
                         </Expander>
                         
@@ -464,10 +464,10 @@
 									<TextBox Theme="{StaticResource {x:Type TextBox}}" Grid.Column="1"
 											 Text="{CompiledBinding ShowingEntry.Url}"/>
                                 </Grid>
-                                <TextBox Watermark="Crossref" Text="{CompiledBinding ShowingEntry.Crossref}"/>
-                                <TextBox Watermark="File" Text="{CompiledBinding ShowingEntry.File}"/>
-                                <TextBox Watermark="ISSN" Text="{CompiledBinding ShowingEntry.ISSN}"/>
-                                <TextBox Watermark="ISBN" Text="{CompiledBinding ShowingEntry.ISBN}"/>
+                                <TextBox PlaceholderText="Crossref" Text="{CompiledBinding ShowingEntry.Crossref}"/>
+                                <TextBox PlaceholderText="File" Text="{CompiledBinding ShowingEntry.File}"/>
+                                <TextBox PlaceholderText="ISSN" Text="{CompiledBinding ShowingEntry.ISSN}"/>
+                                <TextBox PlaceholderText="ISBN" Text="{CompiledBinding ShowingEntry.ISBN}"/>
                             </StackPanel>
                         </Expander>
                         
@@ -478,9 +478,9 @@
                                 </Style>
                             </Expander.Styles>
                             <StackPanel>
-                                <TextBox Watermark="Abstract" Text="{CompiledBinding ShowingEntry.Abstract}"/>
-                                <TextBox Watermark="Keywords" Text="{CompiledBinding ShowingEntry.Keywords}"/>
-                                <TextBox Watermark="Comment" Text="{CompiledBinding ShowingEntry.Comment}"/>
+                                <TextBox PlaceholderText="Abstract" Text="{CompiledBinding ShowingEntry.Abstract}"/>
+                                <TextBox PlaceholderText="Keywords" Text="{CompiledBinding ShowingEntry.Keywords}"/>
+                                <TextBox PlaceholderText="Comment" Text="{CompiledBinding ShowingEntry.Comment}"/>
                             </StackPanel>
                         </Expander>
                     </StackPanel>

@@ -28,7 +28,7 @@
                            Margin="0 0 12 0"/>
                 <TextBox Grid.Column="1"
                          Text="{CompiledBinding OnlineLookupTimeoutSeconds}"
-                         Watermark="15"/>
+                         PlaceholderText="15"/>
             </Grid>
 
             <Grid ColumnDefinitions="180,*">
@@ -38,7 +38,7 @@
                            Margin="0 0 12 0"/>
                 <TextBox Grid.Column="1"
                          Text="{CompiledBinding FieldIndentSpaces}"
-                         Watermark="4"/>
+                         PlaceholderText="4"/>
             </Grid>
 
             <Grid ColumnDefinitions="180,*">
@@ -58,7 +58,7 @@
                            Margin="0 0 12 0"/>
                 <TextBox Grid.Column="1"
                          Text="{CompiledBinding CitationKeyTemplate}"
-                         Watermark="{}{firstauthor}_{giveninitials}_{year}"/>
+                         PlaceholderText="{}{firstauthor}_{giveninitials}_{year}"/>
             </Grid>
 
             <TextBlock Margin="180 2 0 0"

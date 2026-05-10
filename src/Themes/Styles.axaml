@@ -149,7 +149,7 @@
         <Setter Property="Background" Value="{DynamicResource MainBackground}"/>
         <Setter Property="Foreground" Value="{DynamicResource MainForeground}"/>
         <Setter Property="ExtendClientAreaToDecorationsHint" Value="True"/>
-        <Setter Property="ExtendClientAreaChromeHints" Value="NoChrome"/>
+        <Setter Property="WindowDecorations" Value="None"/>
         <Setter Property="ExtendClientAreaTitleBarHeightHint" Value="76"/>
         <Setter Property="FontSize" Value="14"/>
         <Setter Property="Padding" Value="0"/>

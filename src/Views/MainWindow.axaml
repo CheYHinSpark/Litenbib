@@ -81,7 +81,7 @@
             <TextBox x:Name="FilterTextBox" Grid.Column="1" Grid.RowSpan="2" UndoLimit="200"
                      m:FocusEx.IsFocused="{CompiledBinding SelectedFile.IsFiltering, Mode=OneWayToSource}"
                      Text="{CompiledBinding SelectedFile.FilterText, Mode=OneWayToSource}"
-                     Watermark="Search..."
+                     PlaceholderText="Search..."
                      VerticalAlignment="Top" Margin="8 6"/>
 
             <!--title-->
@@ -94,10 +94,7 @@
                         <MenuItem Header="_Open..."
                                   Command="{CompiledBinding OpenFileCommand}"
                                   CommandParameter="{CompiledBinding $parent[Window]}"/>
-                        <MenuItem Header="Open _Recent">
-                            <MenuItem.ItemsSource>
-                                <CompiledBinding Path="RecentFiles"/>
-                            </MenuItem.ItemsSource>
+                        <MenuItem Header="Open _Recent" ItemsSource="{CompiledBinding RecentFiles}">
                             <MenuItem.ItemTemplate>
                                 <DataTemplate x:DataType="m:RecentFileState">
                                     <MenuItem Header="{CompiledBinding FileName}"
