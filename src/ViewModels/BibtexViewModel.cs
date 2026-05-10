@@ -548,6 +548,13 @@ namespace Litenbib.ViewModels
                 else
                 { isTailSelected = tb.Text.Length == selectionEnd || tb.Text.Length == selectionStart; }
             }
+            else if (UndoRedoManager.NewEditedBox is IUndoRedoTextHost textHost)
+            {
+                if (textHost.TextLength == 0)
+                { isTailSelected = 0 == selectionEnd || 0 == selectionStart; }
+                else
+                { isTailSelected = textHost.TextLength == selectionEnd || textHost.TextLength == selectionStart; }
+            }
         }
 
         private static string GetPropertyNameForField(string fieldName)

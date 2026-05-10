@@ -1,0 +1,18 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ae="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
+             x:Class="Litenbib.Views.BibtexEditor"
+             Focusable="False">
+    <ae:TextEditor x:Name="Editor"
+                   FontFamily="Consolas"
+                   Background="{DynamicResource InputBackground}"
+                   Foreground="{DynamicResource MainForeground}"
+                   BorderBrush="{DynamicResource MainBorder}"
+                   BorderThickness="1"
+                   CornerRadius="8"
+                   Padding="8 6"
+                   WordWrap="True"
+                   ShowLineNumbers="False"
+                   HorizontalScrollBarVisibility="Disabled"
+                   VerticalScrollBarVisibility="Auto"/>
+</UserControl>

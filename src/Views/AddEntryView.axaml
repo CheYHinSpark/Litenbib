@@ -2,6 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:vm="using:Litenbib.ViewModels"
+        xmlns:v="using:Litenbib.Views"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         Width="760" Height="760" CanResize="False"
         WindowStartupLocation="CenterScreen"
@@ -110,9 +111,9 @@
             </Border>
         </Grid>
 
-        <TextBox Grid.Row="3" Margin="8 4"
-				 PlaceholderText="Selected BibTeX entries to import. You can still edit manually."
-				 Text="{Binding BibtexText}"/>
+        <v:BibtexEditor Grid.Row="3" Margin="8 4"
+						 PlaceholderText="Selected BibTeX entries to import. You can still edit manually."
+						 Text="{Binding BibtexText, Mode=TwoWay}"/>
 		<TextBlock Grid.Row="4" Margin="8 0"
 					HorizontalAlignment="Left"
 					VerticalAlignment="Center"

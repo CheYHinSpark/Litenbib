@@ -6,6 +6,13 @@ using System.Threading.Tasks;
 
 namespace Litenbib.Models
 {
+    public interface IUndoRedoTextHost
+    {
+        int TextLength { get; }
+
+        void SetCaretOffset(int offset);
+    }
+
     public abstract class IUndoableAction
     {
         // 撤销操作
@@ -22,9 +29,9 @@ namespace Litenbib.Models
         private readonly LinkedList<IUndoableAction> _undoList = new();
         private readonly LinkedList<IUndoableAction> _redoList = new();
         /// <summary> 上个修改的Box </summary>
-        public TextBox? LastEditedBox { get; set; }
+        public object? LastEditedBox { get; set; }
         /// <summary> 当前修改的Box </summary>
-        public TextBox? NewEditedBox { get; set; }
+        public object? NewEditedBox { get; set; }
 
         // 检查是否可以撤销
         public bool CanUndo => _undoList.Count != 0;
@@ -75,8 +82,7 @@ namespace Litenbib.Models
                     && LastEditedBox == NewEditedBox)
                 {
                     await Task.Delay(1);
-                    LastEditedBox.SelectionStart = entrychange.OldIndex;
-                    LastEditedBox.SelectionEnd = entrychange.OldIndex;
+                    SetCaretOffset(LastEditedBox, entrychange.OldIndex);
                 }
             }
         }
@@ -95,9 +101,22 @@ namespace Litenbib.Models
                     && LastEditedBox == NewEditedBox)
                 {
                     await Task.Delay(1);
-                    LastEditedBox.SelectionStart = entrychange.NewIndex;
-                    LastEditedBox.SelectionEnd = entrychange.NewIndex;
+                    SetCaretOffset(LastEditedBox, entrychange.NewIndex);
                 }
+            }
+        }
+
+        private static void SetCaretOffset(object textHost, int offset)
+        {
+            if (textHost is TextBox textBox)
+            {
+                int safeOffset = int.Clamp(offset, 0, textBox.Text?.Length ?? 0);
+                textBox.SelectionStart = safeOffset;
+                textBox.SelectionEnd = safeOffset;
+            }
+            else if (textHost is IUndoRedoTextHost undoRedoTextHost)
+            {
+                undoRedoTextHost.SetCaretOffset(offset);
             }
         }
     }

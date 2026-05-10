@@ -554,9 +554,12 @@
 								<TextBlock Grid.Column="1" Text="BibTeX" Grid.Row="1" Classes="right"/>
 							</Grid>
 						</Button>
-						<TextBox FontFamily="Consolas" Grid.Column="1" Grid.Row="1"
-								 Text="{CompiledBinding ShowingEntry.BibTeX}"
-								 MinHeight="180"/>
+						<v:BibtexEditor Grid.Column="1" Grid.Row="1"
+										 Text="{CompiledBinding ShowingEntry.BibTeX, Mode=TwoWay}"
+										 SelectionStart="{CompiledBinding SelectionStart, Mode=OneWayToSource}"
+										 SelectionEnd="{CompiledBinding SelectionEnd, Mode=OneWayToSource}"
+										 m:FocusEx.BindTo="{CompiledBinding UndoRedoManager.NewEditedBox, Mode=OneWayToSource}"
+										 MinHeight="180"/>
 					</Grid>
 				</Border>
             </Grid>
