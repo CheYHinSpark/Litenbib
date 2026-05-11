@@ -213,10 +213,193 @@ namespace Litenbib.ViewModels
         #region Method
         public async Task ExtractPdf(string pdfFile)
         {
-            var x = PdfMetadataExtractor.Extract(pdfFile);
-            await Task.Delay(1000);
-            Debug.WriteLine(x.Doi);
-            Debug.WriteLine(x.ArxivId);
+            string fullPath;
+            try
+            {
+                fullPath = Path.GetFullPath(pdfFile);
+            }
+            catch (Exception)
+            {
+                NotificationCenter.Error("Could not import PDF: invalid file path");
+                return;
+            }
+
+            string fileName = Path.GetFileName(fullPath);
+            if (!File.Exists(fullPath))
+            {
+                NotificationCenter.Error($"Could not import {fileName}: file not found");
+                return;
+            }
+
+            ShowStatus($"Reading {fileName}");
+            ExtractedMetadata metadata = await Task.Run(() => PdfMetadataExtractor.Extract(fullPath));
+            string query = CreatePdfLookupQuery(metadata);
+
+            BibtexEntry? entry = null;
+            bool resolvedByAi = false;
+            if (!string.IsNullOrWhiteSpace(query))
+            {
+                ShowStatus($"Resolving {fileName}");
+                var resolvedEntries = await LinkResolver.ResolveEntriesAsync(query, maxCandidates: 1);
+                entry = resolvedEntries.FirstOrDefault();
+            }
+            else
+            {
+                NotificationCenter.Info($"No DOI or arXiv ID found in {fileName}");
+            }
+
+            if (entry == null && AppSettingsState.Current.UseAiPdfImportFallback)
+            {
+                ShowStatus($"Asking AI to read {fileName}");
+                entry = await AiBibtexExtractor.ExtractFromPdfFirstPageAsync(metadata.RawText);
+                if (entry != null)
+                {
+                    resolvedByAi = true;
+                    NotificationCenter.Info($"AI extracted metadata for {fileName}");
+                }
+            }
+
+            if (entry == null)
+            {
+                entry = CreatePdfFallbackEntry(metadata, fullPath);
+                NotificationCenter.Info($"Added placeholder entry for {fileName}");
+            }
+            else
+            {
+                if (!resolvedByAi)
+                {
+                    NotificationCenter.Info($"Resolved metadata for {fileName}");
+                }
+            }
+
+            PrepareImportedPdfEntry(entry, metadata, fullPath);
+            await Dispatcher.UIThread.InvokeAsync(() => AddImportedPdfEntry(entry));
+            ShowStatus($"Imported {fileName}");
+        }
+
+        private static string CreatePdfLookupQuery(ExtractedMetadata metadata)
+        {
+            List<string> parts = [];
+            if (!string.IsNullOrWhiteSpace(metadata.Doi))
+            {
+                parts.Add(CleanIdentifier(metadata.Doi));
+            }
+
+            string arxivId = NormalizeArxivId(metadata.ArxivId);
+            if (!string.IsNullOrWhiteSpace(arxivId))
+            {
+                parts.Add(arxivId);
+            }
+
+            return string.Join('\n', parts.Where(part => !string.IsNullOrWhiteSpace(part)));
+        }
+
+        private static BibtexEntry CreatePdfFallbackEntry(ExtractedMetadata metadata, string pdfFile)
+        {
+            string fileTitle = Path.GetFileNameWithoutExtension(pdfFile);
+            BibtexEntry entry = new("misc", CreateFallbackCitationKey(fileTitle))
+            {
+                Title = fileTitle,
+            };
+
+            string doi = CleanIdentifier(metadata.Doi);
+            if (!string.IsNullOrWhiteSpace(doi))
+            {
+                entry.DOI = doi;
+            }
+
+            string arxivId = NormalizeArxivId(metadata.ArxivId);
+            if (!string.IsNullOrWhiteSpace(arxivId))
+            {
+                entry.Url = $"https://arxiv.org/abs/{arxivId}";
+                entry.Note = $"arXiv:{arxivId}";
+            }
+
+            return entry;
+        }
+
+        private static void PrepareImportedPdfEntry(BibtexEntry entry, ExtractedMetadata metadata, string pdfFile)
+        {
+            if (string.IsNullOrWhiteSpace(entry.EntryType))
+            {
+                entry.EntryType = "misc";
+            }
+
+            if (string.IsNullOrWhiteSpace(entry.CitationKey))
+            {
+                entry.CitationKey = CreateFallbackCitationKey(Path.GetFileNameWithoutExtension(pdfFile));
+            }
+
+            if (string.IsNullOrWhiteSpace(entry.DOI))
+            {
+                string doi = CleanIdentifier(metadata.Doi);
+                if (!string.IsNullOrWhiteSpace(doi))
+                {
+                    entry.DOI = doi;
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(entry.Url))
+            {
+                string arxivId = NormalizeArxivId(metadata.ArxivId);
+                if (!string.IsNullOrWhiteSpace(arxivId))
+                {
+                    entry.Url = $"https://arxiv.org/abs/{arxivId}";
+                }
+            }
+
+            entry.File = pdfFile;
+        }
+
+        private void AddImportedPdfEntry(BibtexEntry entry)
+        {
+            int index = BibtexEntries.Count;
+            BibtexEntries.Add(entry);
+            entry.UndoRedoPropertyChanged += OnEntryPropertyChanged;
+            UndoRedoManager.AddAction(new AddEntriesAction(BibtexEntries, [(index, entry)]));
+            NotifyCanUndoRedo();
+            FocusFirstVisibleAddedEntry([entry]);
+        }
+
+        private static string CreateFallbackCitationKey(string value)
+        {
+            StringBuilder builder = new();
+            foreach (char c in value)
+            {
+                if (char.IsAsciiLetterOrDigit(c) || c == ':' || c == '_' || c == '-')
+                {
+                    builder.Append(c);
+                }
+                else if (builder.Length == 0 || builder[^1] != '_')
+                {
+                    builder.Append('_');
+                }
+            }
+
+            string key = builder.ToString().Trim('_');
+            return string.IsNullOrWhiteSpace(key) ? "pdf_import" : key;
+        }
+
+        private static string CleanIdentifier(string value)
+        {
+            return (value ?? string.Empty).Trim().TrimEnd('.', ',', ';', ':', ')', ']', '}');
+        }
+
+        private static string NormalizeArxivId(string value)
+        {
+            string arxivId = CleanIdentifier(value);
+            if (arxivId.StartsWith("arXiv:", StringComparison.OrdinalIgnoreCase))
+            {
+                arxivId = arxivId[6..].Trim();
+            }
+
+            int categoryIndex = arxivId.IndexOf(' ');
+            if (categoryIndex >= 0)
+            {
+                arxivId = arxivId[..categoryIndex].Trim();
+            }
+
+            return arxivId;
         }
 
         public async Task AddBibtexEntry(Window window)

@@ -117,6 +117,53 @@ namespace Litenbib.ViewModels
         }
 
         [RelayCommand]
+        private async Task GenerateBibtexWithAi()
+        {
+            string input = DoiText.Trim();
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                HintText = "Please paste reference text before using AI.";
+                return;
+            }
+
+            Candidates.Clear();
+            BibtexText = string.Empty;
+            HintText = "Asking AI to generate BibTeX entries...";
+            NotificationCenter.Info("Generating BibTeX with AI...");
+
+            List<BibtexEntry> entries = await AiBibtexExtractor.ExtractEntriesFromReferenceTextAsync(input);
+            HashSet<string> seen = new();
+            foreach (BibtexEntry entry in entries)
+            {
+                if (string.IsNullOrWhiteSpace(entry.BibTeX) || !seen.Add(entry.BibTeX))
+                {
+                    continue;
+                }
+
+                Candidates.Add(new AddEntryCandidateViewModel
+                {
+                    Source = "AI",
+                    Query = "Pasted text",
+                    Title = string.IsNullOrWhiteSpace(entry.Title) ? "(Untitled)" : entry.Title,
+                    CitationKey = entry.CitationKey,
+                    BibTeX = entry.BibTeX,
+                    IsSelected = true,
+                });
+            }
+
+            UpdateSelectedBibtex();
+            if (Candidates.Count == 0)
+            {
+                HintText = "AI did not generate any valid BibTeX entries.";
+                NotificationCenter.Info("No valid AI BibTeX entries generated");
+                return;
+            }
+
+            HintText = $"{Candidates.Count} AI-generated candidate(s) ready. Review before importing.";
+            NotificationCenter.Info($"Generated {Candidates.Count} BibTeX candidate(s)");
+        }
+
+        [RelayCommand]
         private void SelectAllCandidates()
         {
             foreach (var candidate in Candidates)

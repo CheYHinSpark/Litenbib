@@ -25,6 +25,18 @@ namespace Litenbib.ViewModels
         [ObservableProperty]
         private string _citationKeyTemplate;
 
+        [ObservableProperty]
+        private string _aiBaseUrl;
+
+        [ObservableProperty]
+        private string _aiApiKey;
+
+        [ObservableProperty]
+        private string _aiModelName;
+
+        [ObservableProperty]
+        private bool _useAiPdfImportFallback;
+
         public SettingsViewModel() : this(AppSettingsState.Current)
         {
         }
@@ -36,6 +48,10 @@ namespace Litenbib.ViewModels
             FieldIndentSpaces = normalized.FieldIndentSpaces.ToString();
             EntryTypeCaseStyle = normalized.EntryTypeCaseStyle;
             CitationKeyTemplate = normalized.CitationKeyTemplate;
+            AiBaseUrl = normalized.AiBaseUrl;
+            AiApiKey = normalized.AiApiKey;
+            AiModelName = normalized.AiModelName;
+            UseAiPdfImportFallback = normalized.UseAiPdfImportFallback;
         }
 
         public AppSettings ToSettings()
@@ -57,6 +73,10 @@ namespace Litenbib.ViewModels
                 FieldIndentSpaces = indentSpaces,
                 EntryTypeCaseStyle = EntryTypeCaseStyle,
                 CitationKeyTemplate = CitationKeyTemplate,
+                AiBaseUrl = AiBaseUrl,
+                AiApiKey = AiApiKey,
+                AiModelName = AiModelName,
+                UseAiPdfImportFallback = UseAiPdfImportFallback,
             });
         }
     }

@@ -214,46 +214,54 @@ namespace Litenbib.ViewModels
             }
         }
 
-        private async void ExtractPdf(string pdfFile)
+        public async Task DropProcess(List<IStorageItem> files)
         {
-            var x = PdfMetadataExtractor.Extract(pdfFile);
-            await Task.Delay(1000);
-            Debug.WriteLine(x.Doi);
-            Debug.WriteLine(x.ArxivId);
-        }
+            var storageFiles = files.OfType<IStorageFile>().ToList();
 
-        public async void DropProcess(List<IStorageItem> files)
-        {
-            // 如果没有Tab打开，
+            // 如果没有Tab打开，先打开文件中的所有bib文件
             if (SelectedFile == null)
             {
-                // 打开文件中的所有bib文件
-                foreach (var file in files)
+                foreach (var file in storageFiles)
                 {
-                    if (file is IStorageFile f && f.Name.EndsWith(".bib"))
+                    if (Path.GetExtension(file.Name).Equals(".bib", StringComparison.OrdinalIgnoreCase))
                     {
-                        await OpenFile(f);
+                        await OpenFile(file);
                     }
                 }
             }
-            // 如果有文件打开，调用到文件里面去
-            else
+
+            var pdfFiles = storageFiles
+                .Where(file => Path.GetExtension(file.Name).Equals(".pdf", StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            if (pdfFiles.Count == 0)
             {
-                foreach (var file in files)
-                {
-                    if (file is IStorageFile f && f.Name.EndsWith(".pdf"))
-                    {
-                        await SelectedFile.ExtractPdf(Uri.UnescapeDataString(file.Path.AbsolutePath));
-                    }
-                }
+                return;
             }
-            
+
+            if (SelectedFile == null)
+            {
+                NotificationCenter.Info("Open or create a .bib file before importing PDFs");
+                return;
+            }
+
+            foreach (var file in pdfFiles)
+            {
+                await SelectedFile.ExtractPdf(GetStoragePath(file));
+            }
         }
 
         private async Task OpenFile(IStorageFile file)
         {
-            string fullPath = Uri.UnescapeDataString(file.Path.AbsolutePath);
+            string fullPath = GetStoragePath(file);
             await OpenFile(fullPath, file.Name);
+        }
+
+        private static string GetStoragePath(IStorageItem file)
+        {
+            return file.Path.IsFile
+                ? file.Path.LocalPath
+                : Uri.UnescapeDataString(file.Path.AbsolutePath);
         }
 
         private async Task OpenFile(string fullPath, string? fileName = null)

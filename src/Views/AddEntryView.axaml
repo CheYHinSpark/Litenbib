@@ -52,15 +52,21 @@
 			</Button>
         </StackPanel>
 		
-        <Grid Grid.Row="1" Margin="4" ColumnDefinitions="*,Auto">
+        <Grid Grid.Row="1" Margin="4" ColumnDefinitions="*,Auto,Auto">
             <TextBox Text="{Binding DoiText}" Margin="4 0"
-					 PlaceholderText="Input DOI / arXiv / OpenReview / title / URL, one per line."/>
+					 PlaceholderText="Input DOI / arXiv / OpenReview / title / URL, or paste reference text."/>
 			<Button VerticalAlignment="Bottom" Classes="icon"
                     Grid.Column="1" Margin="4 0"
                     ToolTip.Tip="Resolve bibliography candidates"
 					Command="{Binding ParseDoiCommand}">
                 <Path Data="{StaticResource SearchPath}" Stroke="{DynamicResource MainForeground}"
                       StrokeThickness="1"/>
+            </Button>
+            <Button VerticalAlignment="Bottom" Classes="icon"
+                    Grid.Column="2" Margin="0 0 4 0"
+                    ToolTip.Tip="Generate BibTeX entries with AI"
+                    Command="{Binding GenerateBibtexWithAiCommand}">
+                <Path Data="{StaticResource AiPath}" Fill="{DynamicResource MainForeground}"/>
             </Button>
         </Grid>
 

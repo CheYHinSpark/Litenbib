@@ -16,6 +16,7 @@ using MsBox.Avalonia.Enums;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -107,7 +108,7 @@ namespace Litenbib.Views
         private void OnDragOver(object? sender, DragEventArgs e)
         {
             //// �����ק���������Ƿ�����ļ�
-            if (e.DataTransfer.Items.OfType<IStorageItem>().Any())
+            if (e.DataTransfer.Items.OfType<IStorageFile>().Any(IsSupportedDropFile))
             {
                 // ����������ڴ˴������ļ�
                 e.DragEffects = DragDropEffects.Copy;
@@ -128,16 +129,23 @@ namespace Litenbib.Views
         }
 
 
-        private void OnDrop(object? sender, DragEventArgs e)
+        private async void OnDrop(object? sender, DragEventArgs e)
         {
             var filePaths = e.DataTransfer.Items.OfType<IStorageItem>().ToList();
 
             if (filePaths.Count != 0)
             {
-                _viewModel.DropProcess(filePaths);
+                await _viewModel.DropProcess(filePaths);
             }
             DragBorder.Opacity = 0.0;
             e.Handled = true;
+        }
+
+        private static bool IsSupportedDropFile(IStorageFile file)
+        {
+            string extension = Path.GetExtension(file.Name);
+            return extension.Equals(".bib", StringComparison.OrdinalIgnoreCase)
+                || extension.Equals(".pdf", StringComparison.OrdinalIgnoreCase);
         }
         #endregion drag drop events
 

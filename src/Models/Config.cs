@@ -49,6 +49,14 @@ namespace Litenbib.Models
 
         public string CitationKeyTemplate { get; set; } = "{firstauthor}_{giveninitials}_{year}";
 
+        public string AiBaseUrl { get; set; } = string.Empty;
+
+        public string AiApiKey { get; set; } = string.Empty;
+
+        public string AiModelName { get; set; } = string.Empty;
+
+        public bool UseAiPdfImportFallback { get; set; }
+
         public AppSettings Copy()
         {
             return new AppSettings
@@ -57,6 +65,10 @@ namespace Litenbib.Models
                 FieldIndentSpaces = FieldIndentSpaces,
                 EntryTypeCaseStyle = EntryTypeCaseStyle,
                 CitationKeyTemplate = CitationKeyTemplate,
+                AiBaseUrl = AiBaseUrl,
+                AiApiKey = AiApiKey,
+                AiModelName = AiModelName,
+                UseAiPdfImportFallback = UseAiPdfImportFallback,
             };
         }
 
@@ -75,6 +87,10 @@ namespace Litenbib.Models
                 CitationKeyTemplate = string.IsNullOrWhiteSpace(settings.CitationKeyTemplate)
                     ? "{firstauthor}_{giveninitials}_{year}"
                     : settings.CitationKeyTemplate.Trim(),
+                AiBaseUrl = settings.AiBaseUrl?.Trim() ?? string.Empty,
+                AiApiKey = settings.AiApiKey?.Trim() ?? string.Empty,
+                AiModelName = settings.AiModelName?.Trim() ?? string.Empty,
+                UseAiPdfImportFallback = settings.UseAiPdfImportFallback,
             };
         }
     }
