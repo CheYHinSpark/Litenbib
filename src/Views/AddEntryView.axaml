@@ -35,11 +35,11 @@
         <vm:AddEntryViewModel/>
     </Design.DataContext>
 
-    <Grid RowDefinitions="Auto,Auto,2*,2*,Auto" Margin="0 0 0 8">
-		<StackPanel Margin="24 12 24 0" Spacing="4">
-            <TextBlock Text="Add bibliography entries" FontSize="22" FontWeight="SemiBold"/>
+    <Grid RowDefinitions="Auto,Auto,*,*,Auto">
+		<StackPanel Margin="8 12 0 4" Spacing="4">
+            <TextBlock Text="Add bibliography entries" FontSize="18" FontWeight="SemiBold"/>
             <TextBlock Text="Resolve from DOI, arXiv, OpenReview, title, or URL. Then import only the candidates you want."
-                       Opacity="0.7" TextWrapping="Wrap"/>
+                       Opacity="0.8" TextWrapping="Wrap"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
 			<Button Name="MinButton" Click="TitleButton_Click" Classes="window">
@@ -55,15 +55,13 @@
         <Grid Grid.Row="1" Margin="4" ColumnDefinitions="*,Auto">
             <TextBox Text="{Binding DoiText}" Margin="4 0"
 					 PlaceholderText="Input DOI / arXiv / OpenReview / title / URL, one per line."/>
-			<Grid Grid.Column="1" >
-				<TextBlock Text="Resolve Bib" Margin="8"/>
-				<Button VerticalAlignment="Bottom" Classes="icon"
-                        ToolTip.Tip="Resolve bibliography candidates"
-						Margin="4 0"
-						Command="{Binding ParseDoiCommand}">
-                    <Path Data="{StaticResource ToLinkPath}"/>
-                </Button>
-			</Grid>
+			<Button VerticalAlignment="Bottom" Classes="icon"
+                    Grid.Column="1" Margin="4 0"
+                    ToolTip.Tip="Resolve bibliography candidates"
+					Command="{Binding ParseDoiCommand}">
+                <Path Data="{StaticResource SearchPath}" Stroke="{DynamicResource MainForeground}"
+                      StrokeThickness="1"/>
+            </Button>
         </Grid>
 
         <Grid Grid.Row="2" Margin="8 4" RowDefinitions="Auto,*">
@@ -72,16 +70,18 @@
                 <Button Grid.Column="1" Classes="icon" Margin="4 0"
                         ToolTip.Tip="Select all candidates"
                         Command="{Binding SelectAllCandidatesCommand}">
-                    <Path Data="{StaticResource AddPath}"/>
+                    <Path Data="{StaticResource BatchEditPath}" StrokeThickness="1"
+                          Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                 </Button>
-                <Button Grid.Column="2" Classes="icon" Margin="4 0"
+                <Button Grid.Column="2" Classes="icon" Margin="0"
                         ToolTip.Tip="Clear candidate selection"
                         Command="{Binding ClearCandidateSelectionCommand}">
-                    <Path Data="{StaticResource DeletePath}" Fill="{CompiledBinding $parent[Button].Foreground}"/>
+                    <Path Data="{StaticResource CleanupPath}" StrokeThickness="1"
+                          Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                 </Button>
             </Grid>
             <Border Grid.Row="1" BorderThickness="1" BorderBrush="{DynamicResource ThemeBorder}"
-                    CornerRadius="8" Padding="4" Margin="0 4 0 0">
+                    CornerRadius="8" Padding="4">
                 <ScrollViewer>
                     <ItemsControl ItemsSource="{Binding Candidates}">
                         <ItemsControl.ItemTemplate>
@@ -112,7 +112,7 @@
         </Grid>
 
         <v:BibtexEditor Grid.Row="3" Margin="8 4"
-                        PlaceholderText="Selected BibTeX entries to import. You can still edit manually."
+                        PlaceholderText="Selected BibTeX entries to import. You can also edit manually."
 						Text="{Binding BibtexText, Mode=TwoWay}"/>
 		<TextBlock Grid.Row="4" Margin="8 0"
 				   HorizontalAlignment="Left"
