@@ -357,16 +357,10 @@ namespace Litenbib.Models
         private (string FamilyName, string GivenInitials) GetFirstAuthorNameParts()
         {
             string names = !string.IsNullOrWhiteSpace(Author) ? Author : Editor;
-            if (string.IsNullOrWhiteSpace(names))
-            {
-                return (string.Empty, string.Empty);
-            }
+            if (string.IsNullOrWhiteSpace(names)) { return (string.Empty, string.Empty); }
 
             string firstAuthor = names.Split(" and ", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ?? string.Empty;
-            if (string.IsNullOrWhiteSpace(firstAuthor))
-            {
-                return (string.Empty, string.Empty);
-            }
+            if (string.IsNullOrWhiteSpace(firstAuthor)) { return (string.Empty, string.Empty); }
 
             string familyName;
             string[] givenNames;
@@ -389,9 +383,7 @@ namespace Litenbib.Models
                 if (!string.IsNullOrWhiteSpace(name))
                 {
                     if (initials.Length > 0)
-                    {
-                        initials.Append('_');
-                    }
+                    { initials.Append('_'); }
                     initials.Append(name[0]);
                 }
             }

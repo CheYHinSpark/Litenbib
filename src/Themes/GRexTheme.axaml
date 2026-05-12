@@ -194,10 +194,10 @@
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{TemplateBinding CornerRadius}">
                     <Viewbox UseLayoutRounding="False"
-                             Width="12" Height="12">
+                             Width="15" Height="15">
                             <Path x:Name="CheckGlyph"
                                   Opacity="0"
-                                  Fill="{DynamicResource CheckBoxCheckGlyphForegroundUnchecked}"
+                                  Fill="{DynamicResource ThemeBorder}"
                                   Stretch="Uniform"
                                   VerticalAlignment="Center"
                                   FlowDirection="LeftToRight" />

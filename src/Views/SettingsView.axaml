@@ -1,10 +1,11 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="using:Litenbib.Views"
         xmlns:vm="using:Litenbib.ViewModels"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Width="560" Height="560"
+        Width="640" Height="800"
         WindowStartupLocation="CenterOwner"
         x:Class="Litenbib.Views.SettingsView"
         x:DataType="vm:SettingsViewModel"
@@ -13,104 +14,94 @@
         <vm:SettingsViewModel/>
     </Design.DataContext>
 
-    <Grid RowDefinitions="Auto,*,Auto" Margin="18">
-        <StackPanel Spacing="4">
-            <TextBlock Text="Settings" FontSize="22" FontWeight="SemiBold"/>
-            <TextBlock Text="Tune lookup behavior and BibTeX output formatting."
-                       Opacity="0.7" TextWrapping="Wrap"/>
+    <Window.Styles>
+        <Style Selector="TextBlock.right">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="Margin" Value="8 0"/>
+        </Style>
+        <Style Selector="TextBox">
+            <Setter Property="Margin" Value="0 2"/>
+            <Setter Property="FontFamily" Value="Consolas"/>
+        </Style>
+    </Window.Styles>
+
+    <Grid RowDefinitions="Auto,*,Auto" Margin="8">
+        <StackPanel Spacing="4" Orientation="Horizontal">
+            <Viewbox Width="20">
+               <Path Data="{StaticResource SettingPath}" StrokeThickness="1"
+                     Stroke="{DynamicResource MainForeground}" Margin="1"/>
+            </Viewbox>
+            <TextBlock Text="Settings" FontSize="18" FontWeight="SemiBold"/>
         </StackPanel>
 
-        <ScrollViewer Grid.Row="1" Margin="0 18 0 18">
-            <StackPanel Spacing="16">
-                <TextBlock Text="Bibliography"
-                           FontWeight="SemiBold"
-                           Opacity="0.9"/>
+        <ScrollViewer Grid.Row="1" Padding="8">
+            <StackPanel Spacing="4">
+                <Border Classes="section-card">
+                    <Grid ColumnDefinitions="Auto,*" Margin="4"
+                          RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto">
+                        <TextBlock Text="Bibliography" FontWeight="SemiBold" Margin="0 0 0 8"/>
 
-                <Grid ColumnDefinitions="180,*">
-                    <TextBlock Text="Lookup timeout"
-                               VerticalAlignment="Center"
-                               HorizontalAlignment="Right"
-                               Margin="0 0 12 0"/>
-                    <TextBox Grid.Column="1"
-                             Text="{CompiledBinding OnlineLookupTimeoutSeconds}"
-                             PlaceholderText="15"/>
-                </Grid>
+                        <TextBlock Text="Lookup timeout" Classes="right"
+                                   Grid.Row="1"/>
+                        <TextBox Grid.Row="1" Grid.Column="1"
+                                 Text="{CompiledBinding OnlineLookupTimeoutSeconds}"
+                                 PlaceholderText="15"/>
 
-                <Grid ColumnDefinitions="180,*">
-                    <TextBlock Text="Field indent spaces"
-                               VerticalAlignment="Center"
-                               HorizontalAlignment="Right"
-                               Margin="0 0 12 0"/>
-                    <TextBox Grid.Column="1"
-                             Text="{CompiledBinding FieldIndentSpaces}"
-                             PlaceholderText="4"/>
-                </Grid>
+                        <TextBlock Text="Indent spaces" Classes="right"
+                                   Grid.Row="2"/>
+                        <TextBox Grid.Row="2" Grid.Column="1"
+                                 Text="{CompiledBinding FieldIndentSpaces}"
+                                 PlaceholderText="4"/>
 
-                <Grid ColumnDefinitions="180,*">
-                    <TextBlock Text="Entry type case"
-                               VerticalAlignment="Center"
-                               HorizontalAlignment="Right"
-                               Margin="0 0 12 0"/>
-                    <ComboBox Grid.Column="1"
-                              ItemsSource="{CompiledBinding EntryTypeCaseStyleList}"
-                              SelectedItem="{CompiledBinding EntryTypeCaseStyle}"/>
-                </Grid>
+                        <TextBlock Text="Entry type case" Classes="right"
+                                   Grid.Row="3"/>
+                        <local:ExComboBox Grid.Row="3" Grid.Column="1" Margin="0 2"
+                               ItemsSource="{CompiledBinding EntryTypeCaseStyleList}"
+                               SelectedItem="{CompiledBinding EntryTypeCaseStyle}"/>
 
-                <Grid ColumnDefinitions="180,*">
-                    <TextBlock Text="Citation key template"
-                               VerticalAlignment="Center"
-                               HorizontalAlignment="Right"
-                               Margin="0 0 12 0"/>
-                    <TextBox Grid.Column="1"
-                             Text="{CompiledBinding CitationKeyTemplate}"
-                             PlaceholderText="{}{firstauthor}_{giveninitials}_{year}"/>
-                </Grid>
+                        <TextBlock Text="Citation key&#10;     template" Classes="right"
+                                   Grid.Row="4" Grid.RowSpan="2"/>
+                        <TextBox Grid.Row="4" Grid.Column="1"
+                                 Text="{CompiledBinding CitationKeyTemplate}"
+                                 PlaceholderText="{}{firstauthor}_{giveninitials}_{year}"/>
+                        <TextBlock Grid.Row="5" Grid.Column="1"
+                                   Text="{}Available tokens: {firstauthor}, {giveninitials}, {year}, {shorttitle}"
+                                   Opacity="0.65"/>
+                    </Grid>
+                </Border>
+                
+                <Border Classes="section-card">
+                    <Grid ColumnDefinitions="Auto,*" Margin="4"
+                          RowDefinitions="Auto,Auto,Auto,Auto,Auto">
+                        <TextBlock Text="AI" FontWeight="SemiBold" Margin="0 0 0 8"/>
 
-                <TextBlock Margin="180 -10 0 0"
-                           Text="{}Available tokens: {firstauthor}, {giveninitials}, {year}, {shorttitle}"
-                           Opacity="0.65"
-                           TextWrapping="Wrap"/>
+                        <TextBlock Text="Base URL" Classes="right"
+                                   Grid.Row="1"/>
+                        <TextBox Grid.Row="1" Grid.Column="1"
+                                 Text="{CompiledBinding AiBaseUrl}"
+                                 PlaceholderText="https://api.openai.com/v1"/>
+                        
+                        <TextBlock Text="API key" Classes="right"
+                                   Grid.Row="2"/>
+                        <TextBox Grid.Row="2" Grid.Column="1"
+                                 Text="{CompiledBinding AiApiKey}"
+                                 PasswordChar="*"
+                                 PlaceholderText="sk-..."/>
+                        
+                        <TextBlock Text="Model name" Classes="right"
+                                   Grid.Row="3"/>
+                        <TextBox Grid.Row="3" Grid.Column="1"
+                                 Text="{CompiledBinding AiModelName}"
+                                 PlaceholderText="gpt-5.4-mini"/>
 
-                <TextBlock Text="AI"
-                           FontWeight="SemiBold"
-                           Opacity="0.9"
-                           Margin="0 10 0 0"/>
-
-                <Grid ColumnDefinitions="180,*">
-                    <TextBlock Text="Base URL"
-                               VerticalAlignment="Center"
-                               HorizontalAlignment="Right"
-                               Margin="0 0 12 0"/>
-                    <TextBox Grid.Column="1"
-                             Text="{CompiledBinding AiBaseUrl}"
-                             PlaceholderText="https://api.openai.com/v1"/>
-                </Grid>
-
-                <Grid ColumnDefinitions="180,*">
-                    <TextBlock Text="API key"
-                               VerticalAlignment="Center"
-                               HorizontalAlignment="Right"
-                               Margin="0 0 12 0"/>
-                    <TextBox Grid.Column="1"
-                             Text="{CompiledBinding AiApiKey}"
-                             PasswordChar="*"
-                             PlaceholderText="sk-..."/>
-                </Grid>
-
-                <Grid ColumnDefinitions="180,*">
-                    <TextBlock Text="Model name"
-                               VerticalAlignment="Center"
-                               HorizontalAlignment="Right"
-                               Margin="0 0 12 0"/>
-                    <TextBox Grid.Column="1"
-                             Text="{CompiledBinding AiModelName}"
-                             PlaceholderText="gpt-4.1-mini"/>
-                </Grid>
-
-                <CheckBox Margin="180 0 0 0"
-                          IsChecked="{CompiledBinding UseAiPdfImportFallback}">
-                    Use AI when PDF lookup fails
-                </CheckBox>
+                        <CheckBox Margin="4" Grid.Row="4" HorizontalAlignment="Right"
+                                  IsChecked="{CompiledBinding UseAiPdfImportFallback}"/>
+                        <TextBlock Grid.Row="4" Grid.Column="1"
+                                   Text="Use AI when PDF lookup fails"
+                                   Margin="4 0" VerticalAlignment="Center"/>
+                    </Grid>
+                </Border>
             </StackPanel>
         </ScrollViewer>
 

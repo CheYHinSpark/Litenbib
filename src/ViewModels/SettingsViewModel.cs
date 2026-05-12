@@ -37,9 +37,7 @@ namespace Litenbib.ViewModels
         [ObservableProperty]
         private bool _useAiPdfImportFallback;
 
-        public SettingsViewModel() : this(AppSettingsState.Current)
-        {
-        }
+        public SettingsViewModel() : this(AppSettingsState.Current) { }
 
         public SettingsViewModel(AppSettings settings)
         {
@@ -59,13 +57,9 @@ namespace Litenbib.ViewModels
             int timeoutSeconds = AppSettingsState.Current.OnlineLookupTimeoutSeconds;
             int indentSpaces = AppSettingsState.Current.FieldIndentSpaces;
             if (int.TryParse(OnlineLookupTimeoutSeconds, out int parsedTimeoutSeconds))
-            {
-                timeoutSeconds = parsedTimeoutSeconds;
-            }
+            { timeoutSeconds = parsedTimeoutSeconds; }
             if (int.TryParse(FieldIndentSpaces, out int parsedIndentSpaces))
-            {
-                indentSpaces = parsedIndentSpaces;
-            }
+            { indentSpaces = parsedIndentSpaces; }
 
             return AppSettings.Normalize(new AppSettings
             {
