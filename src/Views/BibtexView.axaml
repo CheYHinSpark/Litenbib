@@ -204,6 +204,12 @@
 							  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                     </Button>
                     <Button Margin="0 0 8 0"
+                            ToolTip.Tip="Generate citation keys for selected entries"
+                            Command="{CompiledBinding GenerateSelectedCitationKeysCommand}">
+                        <Path Data="{StaticResource KeyPath}" StrokeThickness="0"
+                              Fill="{CompiledBinding $parent[Button].Foreground}"/>
+                    </Button>
+                    <Button Margin="0 0 8 0"
                             ToolTip.Tip="Clean selected entries"
                             Command="{CompiledBinding CleanupSelectedEntriesCommand}">
                         <Path Data="{StaticResource CleanupPath}" StrokeThickness="1"

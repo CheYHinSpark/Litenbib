@@ -339,66 +339,46 @@ namespace Litenbib.Models
             CitationKey = key;
         }
 
-        private string BuildCitationKey()
+        public string BuildCitationKey()
         {
-            var (familyName, givenInitials) = GetFirstAuthorNameParts();
+            string familyName = GetFirstFamilyName();
             string template = AppSettingsState.Current.CitationKeyTemplate;
             string rawKey = template
-                .Replace("{firstauthor}", familyName, StringComparison.OrdinalIgnoreCase)
-                .Replace("{giveninitials}", givenInitials, StringComparison.OrdinalIgnoreCase)
-                .Replace("{year}", Year, StringComparison.OrdinalIgnoreCase)
-                .Replace("{shorttitle}", GetShortTitleToken(), StringComparison.OrdinalIgnoreCase);
+                .Replace("{family}", familyName.ToLowerInvariant(), StringComparison.Ordinal)
+                .Replace("{Family}", FirstCharToUpper(familyName), StringComparison.Ordinal)
+                .Replace("{year}", Year, StringComparison.Ordinal)
+                .Replace("{title}", GetTitleToken(), StringComparison.Ordinal);
 
             string key = CitationKeyInvalidCharRegex().Replace(rawKey, "_");
             key = MultipleUnderscoreRegex().Replace(key, "_").Trim('_');
             return key;
         }
 
-        private (string FamilyName, string GivenInitials) GetFirstAuthorNameParts()
+        private string GetFirstFamilyName()
         {
             string names = !string.IsNullOrWhiteSpace(Author) ? Author : Editor;
-            if (string.IsNullOrWhiteSpace(names)) { return (string.Empty, string.Empty); }
+            if (string.IsNullOrWhiteSpace(names)) { return string.Empty; }
 
             string firstAuthor = names.Split(" and ", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ?? string.Empty;
-            if (string.IsNullOrWhiteSpace(firstAuthor)) { return (string.Empty, string.Empty); }
+            if (string.IsNullOrWhiteSpace(firstAuthor)) { return string.Empty; }
 
-            string familyName;
-            string[] givenNames;
             if (firstAuthor.Contains(','))
             {
                 var parts = firstAuthor.Split(',', 2);
-                familyName = parts[0].Trim();
-                givenNames = parts.Length > 1 ? parts[1].Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries) : [];
-            }
-            else
-            {
-                var nameParts = firstAuthor.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                familyName = nameParts.Length == 0 ? string.Empty : nameParts[^1];
-                givenNames = nameParts.Length > 1 ? nameParts[..^1] : [];
+                return parts[0].Trim();
             }
 
-            StringBuilder initials = new();
-            foreach (var name in givenNames)
-            {
-                if (!string.IsNullOrWhiteSpace(name))
-                {
-                    if (initials.Length > 0)
-                    { initials.Append('_'); }
-                    initials.Append(name[0]);
-                }
-            }
-
-            return (familyName, initials.ToString());
+            var nameParts = firstAuthor.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            return nameParts.Length == 0 ? string.Empty : nameParts[^1];
         }
 
-        private string GetShortTitleToken()
+        private string GetTitleToken()
         {
             var words = CitationKeyWordRegex().Matches(Title.Replace("{", "").Replace("}", ""))
                 .Cast<Match>()
                 .Select(match => match.Value.ToLowerInvariant())
-                .Where(word => word.Length > 2)
-                .Take(3);
-            return string.Join("_", words);
+                .Take(2);
+            return string.Join(string.Empty, words);
         }
 
         [RelayCommand]

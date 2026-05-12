@@ -1126,6 +1126,107 @@ namespace Litenbib.ViewModels
             ShowStatus($"Cleaned {SelectedIndexItems.Count} selected entries");
         }
 
+        [RelayCommand]
+        private void GenerateSelectedCitationKeys()
+        {
+            if (SelectedIndexItems == null || SelectedIndexItems.Count == 0) { return; }
+
+            List<BibtexEntry> selectedEntries = SelectedIndexItems
+                .OrderBy(item => item.Item1)
+                .Select(item => item.Item2)
+                .ToList();
+            HashSet<BibtexEntry> selectedEntrySet = new(selectedEntries);
+            HashSet<string> occupiedKeys = new(StringComparer.OrdinalIgnoreCase);
+            foreach (var entry in BibtexEntries)
+            {
+                if (!selectedEntrySet.Contains(entry) && !string.IsNullOrWhiteSpace(entry.CitationKey))
+                {
+                    occupiedKeys.Add(entry.CitationKey);
+                }
+            }
+
+            List<EntryFieldChange> changes = [];
+            foreach (var entry in selectedEntries)
+            {
+                string baseKey = entry.BuildCitationKey();
+                string newKey = CreateUniqueCitationKey(baseKey, occupiedKeys);
+                if (string.IsNullOrWhiteSpace(newKey)
+                    || string.Equals(entry.CitationKey, newKey, StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                changes.Add(new EntryFieldChange(
+                    entry,
+                    nameof(BibtexEntry.CitationKey),
+                    entry.CitationKey,
+                    newKey));
+                entry.SetValueSilent(nameof(BibtexEntry.CitationKey), newKey);
+            }
+
+            EntryFieldsChangeAction action = new(changes);
+            if (!action.HasChanges)
+            {
+                ShowStatus("No selected entries changed");
+                return;
+            }
+
+            UndoRedoManager.AddAction(action);
+            NotifyCanUndoRedo();
+            ShowStatus($"Generated citation keys for {changes.Count} selected entries");
+        }
+
+        private static string CreateUniqueCitationKey(string baseKey, HashSet<string> occupiedKeys)
+        {
+            if (string.IsNullOrWhiteSpace(baseKey))
+            {
+                return string.Empty;
+            }
+
+            if (occupiedKeys.Add(baseKey))
+            {
+                return baseKey;
+            }
+
+            for (int index = 1; index < int.MaxValue; index++)
+            {
+                string candidate = baseKey + FormatDuplicateSuffix(AppSettingsState.Current.CitationKeyDuplicateSuffix, index);
+                if (occupiedKeys.Add(candidate))
+                {
+                    return candidate;
+                }
+            }
+
+            return string.Empty;
+        }
+
+        private static string FormatDuplicateSuffix(string suffixRule, int index)
+        {
+            if (string.IsNullOrWhiteSpace(suffixRule))
+            {
+                suffixRule = AppSettings.DefaultCitationKeyDuplicateSuffix;
+            }
+
+            string prefix = suffixRule[..^1];
+            return suffixRule[^1] == '1'
+                ? prefix + index.ToString()
+                : prefix + ToAlphabeticSuffix(index);
+        }
+
+        private static string ToAlphabeticSuffix(int index)
+        {
+            StringBuilder builder = new();
+            int value = index;
+            while (value > 0)
+            {
+                value--;
+                builder.Insert(0, (char)('a' + value % 26));
+                value /= 26;
+            }
+
+            return builder.ToString();
+        }
+
         private static List<EntryFieldChange> CleanupEntry(BibtexEntry entry)
         {
             List<EntryFieldChange> changes = [];

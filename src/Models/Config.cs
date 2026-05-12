@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace Litenbib.Models
 {
@@ -41,13 +42,31 @@ namespace Litenbib.Models
 
     public class AppSettings
     {
+        public const string DefaultCitationKeyTemplate = "{family}{year}{title}";
+
+        public const string DefaultCitationKeyDuplicateSuffix = "a";
+
+        private static readonly Regex CitationKeyTemplateTokenRegex = new(@"\{([^{}]+)\}", RegexOptions.Compiled);
+
+        private static readonly Regex CitationKeyDuplicateSuffixRegex = new(@"^[A-Za-z0-9:_-]*(?:1|a)$", RegexOptions.Compiled);
+
+        private static readonly HashSet<string> SupportedCitationKeyTokens = new(StringComparer.Ordinal)
+        {
+            "family",
+            "Family",
+            "year",
+            "title",
+        };
+
         public int OnlineLookupTimeoutSeconds { get; set; } = 15;
 
         public int FieldIndentSpaces { get; set; } = 4;
 
         public string EntryTypeCaseStyle { get; set; } = EntryTypeCaseStyles.Lowercase;
 
-        public string CitationKeyTemplate { get; set; } = "{firstauthor}_{giveninitials}_{year}";
+        public string CitationKeyTemplate { get; set; } = DefaultCitationKeyTemplate;
+
+        public string CitationKeyDuplicateSuffix { get; set; } = DefaultCitationKeyDuplicateSuffix;
 
         public string AiBaseUrl { get; set; } = string.Empty;
 
@@ -65,6 +84,7 @@ namespace Litenbib.Models
                 FieldIndentSpaces = FieldIndentSpaces,
                 EntryTypeCaseStyle = EntryTypeCaseStyle,
                 CitationKeyTemplate = CitationKeyTemplate,
+                CitationKeyDuplicateSuffix = CitationKeyDuplicateSuffix,
                 AiBaseUrl = AiBaseUrl,
                 AiApiKey = AiApiKey,
                 AiModelName = AiModelName,
@@ -84,14 +104,48 @@ namespace Litenbib.Models
                 OnlineLookupTimeoutSeconds = Math.Clamp(settings.OnlineLookupTimeoutSeconds, 3, 120),
                 FieldIndentSpaces = Math.Clamp(settings.FieldIndentSpaces, 0, 12),
                 EntryTypeCaseStyle = caseStyle,
-                CitationKeyTemplate = string.IsNullOrWhiteSpace(settings.CitationKeyTemplate)
-                    ? "{firstauthor}_{giveninitials}_{year}"
-                    : settings.CitationKeyTemplate.Trim(),
+                CitationKeyTemplate = NormalizeCitationKeyTemplate(settings.CitationKeyTemplate),
+                CitationKeyDuplicateSuffix = NormalizeCitationKeyDuplicateSuffix(settings.CitationKeyDuplicateSuffix),
                 AiBaseUrl = settings.AiBaseUrl?.Trim() ?? string.Empty,
                 AiApiKey = settings.AiApiKey?.Trim() ?? string.Empty,
                 AiModelName = settings.AiModelName?.Trim() ?? string.Empty,
                 UseAiPdfImportFallback = settings.UseAiPdfImportFallback,
             };
+        }
+
+        private static string NormalizeCitationKeyTemplate(string? template)
+        {
+            template = template?.Trim();
+            if (string.IsNullOrWhiteSpace(template))
+            {
+                return DefaultCitationKeyTemplate;
+            }
+
+            foreach (Match match in CitationKeyTemplateTokenRegex.Matches(template))
+            {
+                if (!SupportedCitationKeyTokens.Contains(match.Groups[1].Value))
+                {
+                    return DefaultCitationKeyTemplate;
+                }
+            }
+
+            string literalText = CitationKeyTemplateTokenRegex.Replace(template, string.Empty);
+            return literalText.Contains('{') || literalText.Contains('}')
+                ? DefaultCitationKeyTemplate
+                : template;
+        }
+
+        private static string NormalizeCitationKeyDuplicateSuffix(string? suffix)
+        {
+            suffix = suffix?.Trim();
+            if (string.IsNullOrWhiteSpace(suffix))
+            {
+                return DefaultCitationKeyDuplicateSuffix;
+            }
+
+            return CitationKeyDuplicateSuffixRegex.IsMatch(suffix)
+                ? suffix
+                : DefaultCitationKeyDuplicateSuffix;
         }
     }
 

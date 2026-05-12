@@ -26,6 +26,9 @@ namespace Litenbib.ViewModels
         private string _citationKeyTemplate;
 
         [ObservableProperty]
+        private string _citationKeyDuplicateSuffix;
+
+        [ObservableProperty]
         private string _aiBaseUrl;
 
         [ObservableProperty]
@@ -46,6 +49,7 @@ namespace Litenbib.ViewModels
             FieldIndentSpaces = normalized.FieldIndentSpaces.ToString();
             EntryTypeCaseStyle = normalized.EntryTypeCaseStyle;
             CitationKeyTemplate = normalized.CitationKeyTemplate;
+            CitationKeyDuplicateSuffix = normalized.CitationKeyDuplicateSuffix;
             AiBaseUrl = normalized.AiBaseUrl;
             AiApiKey = normalized.AiApiKey;
             AiModelName = normalized.AiModelName;
@@ -67,6 +71,7 @@ namespace Litenbib.ViewModels
                 FieldIndentSpaces = indentSpaces,
                 EntryTypeCaseStyle = EntryTypeCaseStyle,
                 CitationKeyTemplate = CitationKeyTemplate,
+                CitationKeyDuplicateSuffix = CitationKeyDuplicateSuffix,
                 AiBaseUrl = AiBaseUrl,
                 AiApiKey = AiApiKey,
                 AiModelName = AiModelName,

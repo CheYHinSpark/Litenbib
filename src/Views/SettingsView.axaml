@@ -5,7 +5,7 @@
         xmlns:vm="using:Litenbib.ViewModels"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Width="640" Height="800"
+        Width="800" Height="800"
         WindowStartupLocation="CenterOwner"
         x:Class="Litenbib.Views.SettingsView"
         x:DataType="vm:SettingsViewModel"
@@ -39,7 +39,7 @@
             <StackPanel Spacing="4">
                 <Border Classes="section-card">
                     <Grid ColumnDefinitions="Auto,*" Margin="4"
-                          RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto">
+                          RowDefinitions="Auto,Auto,Auto,Auto,Auto">
                         <TextBlock Text="Bibliography" FontWeight="SemiBold" Margin="0 0 0 8"/>
 
                         <TextBlock Text="Lookup timeout" Classes="right"
@@ -61,13 +61,23 @@
                                SelectedItem="{CompiledBinding EntryTypeCaseStyle}"/>
 
                         <TextBlock Text="Citation key&#10;     template" Classes="right"
-                                   Grid.Row="4" Grid.RowSpan="2"/>
-                        <TextBox Grid.Row="4" Grid.Column="1"
-                                 Text="{CompiledBinding CitationKeyTemplate}"
-                                 PlaceholderText="{}{firstauthor}_{giveninitials}_{year}"/>
-                        <TextBlock Grid.Row="5" Grid.Column="1"
-                                   Text="{}Available tokens: {firstauthor}, {giveninitials}, {year}, {shorttitle}"
-                                   Opacity="0.65"/>
+                                   Grid.Row="4"/>
+                        <Grid Grid.Row="4" Grid.Column="1" ColumnDefinitions="*,Auto,Auto"
+                              RowDefinitions="Auto,Auto">
+                            <TextBox Text="{CompiledBinding CitationKeyTemplate}"
+                                     PlaceholderText="{}{family}{year}{title}"/>
+                            <TextBlock Text="Duplicate suffix" VerticalAlignment="Center"
+                                       Grid.Column="1" Margin="16 0 8 0"/>
+                            <TextBox Grid.Column="2"
+                                     Text="{CompiledBinding CitationKeyDuplicateSuffix}"
+                                     PlaceholderText="a"/>
+                            <TextBlock Grid.Row="1"
+                                       Text="{}Available tokens: {family}, {Family}, {year}, {title}"
+                                       Opacity="0.65"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
+                                       Text="{}Examples: a, _a, _1, :1" Margin="16 0 0 0"
+                                       Opacity="0.65"/>
+                        </Grid>
                     </Grid>
                 </Border>
                 

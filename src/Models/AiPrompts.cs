@@ -2,7 +2,7 @@ namespace Litenbib.Models
 {
     internal static class AiPrompts
     {
-        private const int MaxPdfFirstPageTextLength = 12000;
+        private const int MaxPdfFirstPageTextLength = 15000;
         private const int MaxReferenceTextLength = 30000;
 
         public const string PdfFirstPageToBibtexSystem =
@@ -15,9 +15,7 @@ namespace Litenbib.Models
         {
             string text = firstPageText?.Trim() ?? string.Empty;
             if (text.Length > MaxPdfFirstPageTextLength)
-            {
-                text = text[..MaxPdfFirstPageTextLength];
-            }
+            { text = text[..MaxPdfFirstPageTextLength]; }
 
             return
                 "Extract a single BibTeX entry from the following first-page text.\n\n" +
@@ -30,9 +28,7 @@ namespace Litenbib.Models
         {
             string text = referenceText?.Trim() ?? string.Empty;
             if (text.Length > MaxReferenceTextLength)
-            {
-                text = text[..MaxReferenceTextLength];
-            }
+            { text = text[..MaxReferenceTextLength]; }
 
             return
                 "Convert the following pasted reference text into BibTeX entries.\n\n" +
