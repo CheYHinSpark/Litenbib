@@ -110,9 +110,6 @@
                         <MenuItem Header="_Export"
                                   Command="{CompiledBinding ExportFileCommand}"
                                   CommandParameter="{CompiledBinding $parent[Window]}"/>
-                        <MenuItem Header="_Settings..."
-                                  Command="{CompiledBinding OpenSettingsCommand}"
-                                  CommandParameter="{CompiledBinding $parent[Window]}"/>
                         <MenuItem Header="_Save All"
                                   Command="{CompiledBinding SaveAllCommand}"/>
                     </MenuItem>
@@ -136,6 +133,14 @@
                                   Command="{CompiledBinding SelectedFile.CleanupSelectedEntriesCommand}"/>
                         <MenuItem Header="_Reload From Disk"
                                   Command="{CompiledBinding SelectedFile.ReloadFromDiskCommand}"/>
+                    </MenuItem>
+                    <MenuItem Classes="Top" ToolTip.Tip="Open Settings"
+                              Command="{CompiledBinding OpenSettingsCommand}"
+                              CommandParameter="{CompiledBinding $parent[Window]}">
+                        <MenuItem.Header>
+                            <Path Data="{StaticResource SettingPath}" StrokeThickness="1"
+                                  Stroke="{CompiledBinding $parent[MenuItem].Foreground}"/>
+                        </MenuItem.Header>
                     </MenuItem>
                 </Menu>
             </StackPanel>
