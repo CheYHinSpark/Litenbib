@@ -41,6 +41,9 @@ namespace Litenbib.ViewModels
         private string _citationKeyDuplicateSuffix;
 
         [ObservableProperty]
+        private bool _requireBatchOperationConfirmation;
+
+        [ObservableProperty]
         private string _aiBaseUrl;
 
         [ObservableProperty]
@@ -63,6 +66,7 @@ namespace Litenbib.ViewModels
             PdfFilePathStyle = normalized.PdfFilePathStyle;
             CitationKeyTemplate = normalized.CitationKeyTemplate;
             CitationKeyDuplicateSuffix = normalized.CitationKeyDuplicateSuffix;
+            RequireBatchOperationConfirmation = normalized.RequireBatchOperationConfirmation;
             AiBaseUrl = normalized.AiBaseUrl;
             AiApiKey = normalized.AiApiKey;
             AiModelName = normalized.AiModelName;
@@ -86,6 +90,7 @@ namespace Litenbib.ViewModels
                 PdfFilePathStyle = PdfFilePathStyle,
                 CitationKeyTemplate = CitationKeyTemplate,
                 CitationKeyDuplicateSuffix = CitationKeyDuplicateSuffix,
+                RequireBatchOperationConfirmation = RequireBatchOperationConfirmation,
                 AiBaseUrl = AiBaseUrl,
                 AiApiKey = AiApiKey,
                 AiModelName = AiModelName,

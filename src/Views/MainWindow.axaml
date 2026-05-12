@@ -126,8 +126,8 @@
 						<MenuItem Header="_Cut"
                                   Command="{CompiledBinding SelectedFile.CutBibtexCommand}"
                                   CommandParameter="{CompiledBinding $parent[Window].DataContext}"/>
-                        <MenuItem Header="Batch _Edit..."
-                                  Command="{CompiledBinding SelectedFile.ApplyBatchFieldEditCommand}"
+                        <MenuItem Header="Batch Delete _Fields..."
+                                  Command="{CompiledBinding SelectedFile.ApplyBatchFieldDeleteCommand}"
                                   CommandParameter="{CompiledBinding $parent[Window]}"/>
                         <MenuItem Header="_Clean Selected"
                                   Command="{CompiledBinding SelectedFile.CleanupSelectedEntriesCommand}"/>

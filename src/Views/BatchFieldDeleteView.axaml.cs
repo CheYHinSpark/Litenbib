@@ -3,12 +3,12 @@ using Litenbib.ViewModels;
 
 namespace Litenbib.Views;
 
-public partial class BatchFieldEditView : StyledWindow
+public partial class BatchFieldDeleteView : StyledWindow
 {
-    public BatchFieldEditView()
+    public BatchFieldDeleteView()
     {
         InitializeComponent();
-        DataContext = new BatchFieldEditViewModel();
+        DataContext = new BatchFieldDeleteViewModel();
     }
 
     private void CancelButton_Click(object? sender, RoutedEventArgs e)

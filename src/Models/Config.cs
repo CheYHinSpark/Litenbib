@@ -70,6 +70,8 @@ namespace Litenbib.Models
 
         public string CitationKeyDuplicateSuffix { get; set; } = DefaultCitationKeyDuplicateSuffix;
 
+        public bool RequireBatchOperationConfirmation { get; set; } = true;
+
         public string AiBaseUrl { get; set; } = string.Empty;
 
         public string AiApiKey { get; set; } = string.Empty;
@@ -88,6 +90,7 @@ namespace Litenbib.Models
                 PdfFilePathStyle = PdfFilePathStyle,
                 CitationKeyTemplate = CitationKeyTemplate,
                 CitationKeyDuplicateSuffix = CitationKeyDuplicateSuffix,
+                RequireBatchOperationConfirmation = RequireBatchOperationConfirmation,
                 AiBaseUrl = AiBaseUrl,
                 AiApiKey = AiApiKey,
                 AiModelName = AiModelName,
@@ -112,6 +115,7 @@ namespace Litenbib.Models
                     : PdfFilePathStyles.AbsolutePath,
                 CitationKeyTemplate = NormalizeCitationKeyTemplate(settings.CitationKeyTemplate),
                 CitationKeyDuplicateSuffix = NormalizeCitationKeyDuplicateSuffix(settings.CitationKeyDuplicateSuffix),
+                RequireBatchOperationConfirmation = settings.RequireBatchOperationConfirmation,
                 AiBaseUrl = settings.AiBaseUrl?.Trim() ?? string.Empty,
                 AiApiKey = settings.AiApiKey?.Trim() ?? string.Empty,
                 AiModelName = settings.AiModelName?.Trim() ?? string.Empty,

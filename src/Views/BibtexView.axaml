@@ -197,8 +197,8 @@
                               Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                     </Button>
                     <Button Margin="0 0 8 0"
-                            ToolTip.Tip="Batch edit selected entries"
-                            Command="{CompiledBinding ApplyBatchFieldEditCommand}"
+                            ToolTip.Tip="Delete fields from selected entries"
+                            Command="{CompiledBinding ApplyBatchFieldDeleteCommand}"
                             CommandParameter="{CompiledBinding $parent[Window]}">
                         <Path Data="{StaticResource BatchEditPath}" StrokeThickness="1"
 							  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
@@ -210,7 +210,7 @@
                               Fill="{CompiledBinding $parent[Button].Foreground}"/>
                     </Button>
                     <Button Margin="0 0 8 0"
-                            ToolTip.Tip="Clean selected entries"
+                            ToolTip.Tip="Clean selected entries: trim whitespace, collapse spaces/line breaks, normalize DOI, remove empty fields"
                             Command="{CompiledBinding CleanupSelectedEntriesCommand}">
                         <Path Data="{StaticResource CleanupPath}" StrokeThickness="1"
                               Stroke="{CompiledBinding $parent[Button].Foreground}"/>

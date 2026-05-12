@@ -526,6 +526,17 @@ namespace Litenbib.ViewModels
             return false;
         }
 
+        private static async Task<bool> ConfirmSelectedEntryBatchOperationAsync(string title, string message)
+        {
+            if (!AppSettingsState.Current.RequireBatchOperationConfirmation)
+            {
+                return true;
+            }
+
+            var box = MessageBoxManager.GetMessageBoxStandard(title, message, ButtonEnum.YesNo);
+            return await box.ShowAsync() == ButtonResult.Yes;
+        }
+
         private bool IsCurrentFilePath(string path)
         {
             if (string.IsNullOrWhiteSpace(FullPath))
@@ -1084,43 +1095,62 @@ namespace Litenbib.ViewModels
         }
 
         [RelayCommand]
-        private async Task ApplyBatchFieldEdit(object? sender)
+        private async Task ApplyBatchFieldDelete(object? sender)
         {
             if (sender is not MainWindow window || SelectedIndexItems == null || SelectedIndexItems.Count == 0) { return; }
-            BatchFieldEditView dialog = new();
+            var selectedEntries = SelectedIndexItems.Select(t => t.Item2).ToList();
+            BatchFieldDeleteView dialog = new();
             var result = await dialog.ShowDialog<bool>(window);
-            if (result != true || dialog.DataContext is not BatchFieldEditViewModel vm) { return; }
+            if (result != true || dialog.DataContext is not BatchFieldDeleteViewModel vm) { return; }
+
+            List<string> selectedFields = vm.GetSelectedFieldNames();
+            if (selectedFields.Count == 0)
+            {
+                ShowStatus("No fields selected");
+                return;
+            }
 
             List<EntryFieldChange> changes = [];
-            foreach (var (_, entry) in SelectedIndexItems)
+            foreach (var entry in selectedEntries)
             {
-                var change = vm.CreateChange(entry);
-                if (change == null)
-                {
-                    continue;
-                }
-
-                changes.Add(change.Value);
-                entry.SetValueSilent(change.Value.PropertyName, change.Value.NewValue);
+                changes.AddRange(vm.CreateChanges(entry));
             }
 
             EntryFieldsChangeAction action = new(changes);
             if (!action.HasChanges)
             {
-                ShowStatus("No selected entries changed");
+                ShowStatus("No selected fields found");
                 return;
             }
+
+            string fieldSummary = string.Join(", ", selectedFields);
+            string title = vm.KeepSelectedFieldsOnly
+                ? "Keep Selected Fields Only"
+                : "Delete Selected Fields";
+            string message = vm.KeepSelectedFieldsOnly
+                ? $"Keep only {fieldSummary} in {selectedEntries.Count} selected entries?\n\nThis will remove {changes.Count} other field values."
+                : $"Delete {fieldSummary} from {selectedEntries.Count} selected entries?\n\nThis will remove {changes.Count} matching field values.";
+            if (!await ConfirmSelectedEntryBatchOperationAsync(title, message))
+            {
+                ShowStatus("Batch field deletion canceled");
+                return;
+            }
+
+            ApplyEntryFieldChanges(changes);
             UndoRedoManager.AddAction(action);
             NotifyCanUndoRedo();
-            ShowStatus($"Updated {SelectedIndexItems.Count} selected entries");
+            ShowStatus(vm.KeepSelectedFieldsOnly
+                ? $"Kept {selectedFields.Count} fields; removed {changes.Count} field values"
+                : $"Deleted {changes.Count} field values from {selectedEntries.Count} selected entries");
         }
 
         [RelayCommand]
-        private void CleanupSelectedEntries()
+        private async Task CleanupSelectedEntries()
         {
             if (SelectedIndexItems == null || SelectedIndexItems.Count == 0) { return; }
+            var selectedEntries = SelectedIndexItems.Select(t => t.Item2).ToList();
             List<EntryFieldChange> changes = [];
-            foreach (var (_, entry) in SelectedIndexItems)
+            foreach (var entry in selectedEntries)
             {
                 changes.AddRange(CleanupEntry(entry));
             }
@@ -1131,13 +1161,22 @@ namespace Litenbib.ViewModels
                 ShowStatus("No selected entries needed cleanup");
                 return;
             }
+            if (!await ConfirmSelectedEntryBatchOperationAsync(
+                "Clean Selected Entries",
+                $"Clean {selectedEntries.Count} selected entries?\n\nThis will trim whitespace, collapse spaces and line breaks, normalize DOI values, and remove empty fields."))
+            {
+                ShowStatus("Clean canceled");
+                return;
+            }
+
+            ApplyEntryFieldChanges(changes);
             UndoRedoManager.AddAction(action);
             NotifyCanUndoRedo();
-            ShowStatus($"Cleaned {SelectedIndexItems.Count} selected entries");
+            ShowStatus($"Cleaned {selectedEntries.Count} selected entries");
         }
 
         [RelayCommand]
-        private void GenerateSelectedCitationKeys()
+        private async Task GenerateSelectedCitationKeys()
         {
             if (SelectedIndexItems == null || SelectedIndexItems.Count == 0) { return; }
 
@@ -1171,7 +1210,6 @@ namespace Litenbib.ViewModels
                     nameof(BibtexEntry.CitationKey),
                     entry.CitationKey,
                     newKey));
-                entry.SetValueSilent(nameof(BibtexEntry.CitationKey), newKey);
             }
 
             EntryFieldsChangeAction action = new(changes);
@@ -1180,7 +1218,15 @@ namespace Litenbib.ViewModels
                 ShowStatus("No selected entries changed");
                 return;
             }
+            if (!await ConfirmSelectedEntryBatchOperationAsync(
+                "Generate Citation Keys",
+                $"Generate citation keys for {changes.Count} selected entries?\n\nExisting citation keys on those entries may be replaced."))
+            {
+                ShowStatus("Generate citation keys canceled");
+                return;
+            }
 
+            ApplyEntryFieldChanges(changes);
             UndoRedoManager.AddAction(action);
             NotifyCanUndoRedo();
             ShowStatus($"Generated citation keys for {changes.Count} selected entries");
@@ -1268,9 +1314,19 @@ namespace Litenbib.ViewModels
 
                 string propertyName = GetPropertyNameForField(key);
                 changes.Add(new EntryFieldChange(entry, propertyName, oldValue, newValue));
-                entry.SetValueSilent(propertyName, newValue);
             }
             return changes;
+        }
+
+        private static void ApplyEntryFieldChanges(IEnumerable<EntryFieldChange> changes)
+        {
+            foreach (var change in changes)
+            {
+                if (!string.Equals(change.OldValue, change.NewValue, StringComparison.Ordinal))
+                {
+                    change.Entry.SetValueSilent(change.PropertyName, change.NewValue);
+                }
+            }
         }
 
         [RelayCommand]

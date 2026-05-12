@@ -39,7 +39,7 @@
             <StackPanel Spacing="4">
                 <Border Classes="section-card">
                     <Grid ColumnDefinitions="Auto,*" Margin="4"
-                          RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+                          RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
                         <TextBlock Text="Bibliography" FontWeight="SemiBold" Margin="0 0 0 8"/>
 
                         <TextBlock Text="Lookup timeout" Classes="right"
@@ -92,6 +92,12 @@
                                 Command="{CompiledBinding OpenAbbreviationMappingsCommand}">
                             Edit mappings
                         </Button>
+
+                        <CheckBox Margin="4" Grid.Row="7" HorizontalAlignment="Right"
+                                  IsChecked="{CompiledBinding RequireBatchOperationConfirmation}"/>
+                        <TextBlock Grid.Row="7" Grid.Column="1"
+                                   Text="Confirm selected-entry batch operations"
+                                   Margin="4 0" VerticalAlignment="Center"/>
                     </Grid>
                 </Border>
                 
