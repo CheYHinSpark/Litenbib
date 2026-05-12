@@ -348,7 +348,17 @@ namespace Litenbib.ViewModels
                 }
             }
 
-            entry.File = pdfFile;
+            entry.File = FormatImportedPdfFileValue(pdfFile);
+        }
+
+        private static string FormatImportedPdfFileValue(string pdfFile)
+        {
+            return AppSettingsState.Current.PdfFilePathStyle switch
+            {
+                PdfFilePathStyles.None => string.Empty,
+                PdfFilePathStyles.JabRef => $":{pdfFile.Replace(":", "\\:").Replace(";", "\\;")}:PDF",
+                _ => pdfFile,
+            };
         }
 
         private void AddImportedPdfEntry(BibtexEntry entry)

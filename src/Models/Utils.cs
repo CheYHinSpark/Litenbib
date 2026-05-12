@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
@@ -14,6 +15,16 @@ namespace Litenbib.Models
     {
         public object? OldValue { get; } = oldValue;
         public object? NewValue { get; } = newValue;
+    }
+
+    public static class AppPaths
+    {
+        public static readonly string ConfigDirectory = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Litenbib");
+
+        public static readonly string LocalConfigPath = Path.Combine(ConfigDirectory, "localconfig.json");
+
+        public static readonly string AbbreviationMappingsPath = Path.Combine(ConfigDirectory, "abbr_mappings.txt");
     }
 
     public class ObservableRangeCollection<T> : ObservableCollection<T>

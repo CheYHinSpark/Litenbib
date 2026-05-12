@@ -30,9 +30,8 @@ namespace Litenbib.ViewModels
             Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
             WriteIndented = true
         };
-        private static readonly string ConfigDirectory = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Litenbib");
-        private static readonly string LocalConfigPath = Path.Combine(ConfigDirectory, "localconfig.json");
+        private static readonly string ConfigDirectory = AppPaths.ConfigDirectory;
+        private static readonly string LocalConfigPath = AppPaths.LocalConfigPath;
 
         // 主题色
         [ObservableProperty]

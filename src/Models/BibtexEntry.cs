@@ -397,12 +397,75 @@ namespace Litenbib.Models
         [RelayCommand]
         private void ToFile()
         {
-            string path = File.Replace("\\:", ":");
-            // 使用 Regex.Match 查找匹配项
-            Match match = FileRegex().Match(path);
-            if (match.Success)
-            { path = match.Groups[1].Value; }
+            string path = ResolveFilePath(File);
+            if (string.IsNullOrWhiteSpace(path)) { return; }
             UriProcessor.StartProcess(path);
+        }
+
+        private static string ResolveFilePath(string fileField)
+        {
+            if (string.IsNullOrWhiteSpace(fileField))
+            {
+                return string.Empty;
+            }
+
+            string firstFile = GetFirstJabRefFile(fileField.Trim());
+            int firstSeparator = IndexOfUnescaped(firstFile, ':', 0);
+            int lastSeparator = LastIndexOfUnescaped(firstFile, ':');
+            if (firstSeparator >= 0 && lastSeparator > firstSeparator)
+            {
+                return UnescapeJabRefFilePath(firstFile[(firstSeparator + 1)..lastSeparator].Trim());
+            }
+
+            return UnescapeJabRefFilePath(firstFile.Trim());
+        }
+
+        private static string GetFirstJabRefFile(string fileField)
+        {
+            int separator = IndexOfUnescaped(fileField, ';', 0);
+            return separator >= 0 ? fileField[..separator] : fileField;
+        }
+
+        private static int IndexOfUnescaped(string value, char target, int startIndex)
+        {
+            for (int i = startIndex; i < value.Length; i++)
+            {
+                if (value[i] == target && !IsEscaped(value, i))
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        private static int LastIndexOfUnescaped(string value, char target)
+        {
+            for (int i = value.Length - 1; i >= 0; i--)
+            {
+                if (value[i] == target && !IsEscaped(value, i))
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        private static bool IsEscaped(string value, int index)
+        {
+            int slashCount = 0;
+            for (int i = index - 1; i >= 0 && value[i] == '\\'; i--)
+            {
+                slashCount++;
+            }
+
+            return slashCount % 2 == 1;
+        }
+
+        private static string UnescapeJabRefFilePath(string path)
+        {
+            return path.Replace("\\:", ":").Replace("\\;", ";");
         }
 
         [RelayCommand]
@@ -413,9 +476,6 @@ namespace Litenbib.Models
         private void CopyCitationKey(object? o)
         { if (o is Window w) { w.Clipboard?.SetTextAsync(CitationKey); } }
         #endregion Command
-
-        [GeneratedRegex("^:(.+):(.+)$", RegexOptions.Compiled)]
-        private static partial Regex FileRegex();
 
         [GeneratedRegex(@"[^A-Za-z0-9:_\-]+", RegexOptions.Compiled)]
         private static partial Regex CitationKeyInvalidCharRegex();

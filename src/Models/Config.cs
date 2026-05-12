@@ -64,6 +64,8 @@ namespace Litenbib.Models
 
         public string EntryTypeCaseStyle { get; set; } = EntryTypeCaseStyles.Lowercase;
 
+        public string PdfFilePathStyle { get; set; } = PdfFilePathStyles.AbsolutePath;
+
         public string CitationKeyTemplate { get; set; } = DefaultCitationKeyTemplate;
 
         public string CitationKeyDuplicateSuffix { get; set; } = DefaultCitationKeyDuplicateSuffix;
@@ -83,6 +85,7 @@ namespace Litenbib.Models
                 OnlineLookupTimeoutSeconds = OnlineLookupTimeoutSeconds,
                 FieldIndentSpaces = FieldIndentSpaces,
                 EntryTypeCaseStyle = EntryTypeCaseStyle,
+                PdfFilePathStyle = PdfFilePathStyle,
                 CitationKeyTemplate = CitationKeyTemplate,
                 CitationKeyDuplicateSuffix = CitationKeyDuplicateSuffix,
                 AiBaseUrl = AiBaseUrl,
@@ -104,6 +107,9 @@ namespace Litenbib.Models
                 OnlineLookupTimeoutSeconds = Math.Clamp(settings.OnlineLookupTimeoutSeconds, 3, 120),
                 FieldIndentSpaces = Math.Clamp(settings.FieldIndentSpaces, 0, 12),
                 EntryTypeCaseStyle = caseStyle,
+                PdfFilePathStyle = PdfFilePathStyles.IsSupported(settings.PdfFilePathStyle)
+                    ? settings.PdfFilePathStyle
+                    : PdfFilePathStyles.AbsolutePath,
                 CitationKeyTemplate = NormalizeCitationKeyTemplate(settings.CitationKeyTemplate),
                 CitationKeyDuplicateSuffix = NormalizeCitationKeyDuplicateSuffix(settings.CitationKeyDuplicateSuffix),
                 AiBaseUrl = settings.AiBaseUrl?.Trim() ?? string.Empty,
@@ -158,6 +164,18 @@ namespace Litenbib.Models
         public static bool IsSupported(string? value)
         {
             return value == Lowercase || value == TitleCase || value == Uppercase;
+        }
+    }
+
+    public static class PdfFilePathStyles
+    {
+        public const string None = "Deprecate";
+        public const string AbsolutePath = "Absolute path";
+        public const string JabRef = "JabRef style";
+
+        public static bool IsSupported(string? value)
+        {
+            return value == None || value == AbsolutePath || value == JabRef;
         }
     }
 

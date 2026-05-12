@@ -39,7 +39,7 @@
             <StackPanel Spacing="4">
                 <Border Classes="section-card">
                     <Grid ColumnDefinitions="Auto,*" Margin="4"
-                          RowDefinitions="Auto,Auto,Auto,Auto,Auto">
+                          RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto">
                         <TextBlock Text="Bibliography" FontWeight="SemiBold" Margin="0 0 0 8"/>
 
                         <TextBlock Text="Lookup timeout" Classes="right"
@@ -60,9 +60,15 @@
                                ItemsSource="{CompiledBinding EntryTypeCaseStyleList}"
                                SelectedItem="{CompiledBinding EntryTypeCaseStyle}"/>
 
-                        <TextBlock Text="Citation key&#10;     template" Classes="right"
+                        <TextBlock Text="PDF file path" Classes="right"
                                    Grid.Row="4"/>
-                        <Grid Grid.Row="4" Grid.Column="1" ColumnDefinitions="*,Auto,Auto"
+                        <local:ExComboBox Grid.Row="4" Grid.Column="1" Margin="0 2"
+                               ItemsSource="{CompiledBinding PdfFilePathStyleList}"
+                               SelectedItem="{CompiledBinding PdfFilePathStyle}"/>
+
+                        <TextBlock Text="Citation key&#10;     template" Classes="right"
+                                   Grid.Row="5"/>
+                        <Grid Grid.Row="5" Grid.Column="1" ColumnDefinitions="*,Auto,Auto"
                               RowDefinitions="Auto,Auto">
                             <TextBox Text="{CompiledBinding CitationKeyTemplate}"
                                      PlaceholderText="{}{family}{year}{title}"/>
@@ -75,9 +81,17 @@
                                        Text="{}Available tokens: {family}, {Family}, {year}, {title}"
                                        Opacity="0.65"/>
                             <TextBlock Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
-                                       Text="{}Examples: a, _a, _1, :1" Margin="16 0 0 0"
+                                       Text="{}Examples: 1, _1, a, :a" Margin="16 0 0 0"
                                        Opacity="0.65"/>
                         </Grid>
+
+                        <TextBlock Text="Abbreviations" Classes="right"
+                                   Grid.Row="6"/>
+                        <Button Grid.Row="6" Grid.Column="1"
+                                HorizontalAlignment="Left"
+                                Command="{CompiledBinding OpenAbbreviationMappingsCommand}">
+                            Edit mappings
+                        </Button>
                     </Grid>
                 </Border>
                 

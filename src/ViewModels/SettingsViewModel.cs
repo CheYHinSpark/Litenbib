@@ -1,6 +1,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Litenbib.Models;
 using System.Collections.ObjectModel;
+using System.IO;
 
 namespace Litenbib.ViewModels
 {
@@ -13,6 +15,13 @@ namespace Litenbib.ViewModels
             EntryTypeCaseStyles.Uppercase
         ];
 
+        public static ObservableCollection<string> PdfFilePathStyleList { get; } =
+        [
+            PdfFilePathStyles.None,
+            PdfFilePathStyles.AbsolutePath,
+            PdfFilePathStyles.JabRef
+        ];
+
         [ObservableProperty]
         private string _onlineLookupTimeoutSeconds;
 
@@ -21,6 +30,9 @@ namespace Litenbib.ViewModels
 
         [ObservableProperty]
         private string _entryTypeCaseStyle;
+
+        [ObservableProperty]
+        private string _pdfFilePathStyle;
 
         [ObservableProperty]
         private string _citationKeyTemplate;
@@ -48,6 +60,7 @@ namespace Litenbib.ViewModels
             OnlineLookupTimeoutSeconds = normalized.OnlineLookupTimeoutSeconds.ToString();
             FieldIndentSpaces = normalized.FieldIndentSpaces.ToString();
             EntryTypeCaseStyle = normalized.EntryTypeCaseStyle;
+            PdfFilePathStyle = normalized.PdfFilePathStyle;
             CitationKeyTemplate = normalized.CitationKeyTemplate;
             CitationKeyDuplicateSuffix = normalized.CitationKeyDuplicateSuffix;
             AiBaseUrl = normalized.AiBaseUrl;
@@ -70,6 +83,7 @@ namespace Litenbib.ViewModels
                 OnlineLookupTimeoutSeconds = timeoutSeconds,
                 FieldIndentSpaces = indentSpaces,
                 EntryTypeCaseStyle = EntryTypeCaseStyle,
+                PdfFilePathStyle = PdfFilePathStyle,
                 CitationKeyTemplate = CitationKeyTemplate,
                 CitationKeyDuplicateSuffix = CitationKeyDuplicateSuffix,
                 AiBaseUrl = AiBaseUrl,
@@ -77,6 +91,27 @@ namespace Litenbib.ViewModels
                 AiModelName = AiModelName,
                 UseAiPdfImportFallback = UseAiPdfImportFallback,
             });
+        }
+
+        [RelayCommand]
+        private void OpenAbbreviationMappings()
+        {
+            try
+            {
+                Directory.CreateDirectory(AppPaths.ConfigDirectory);
+                if (!File.Exists(AppPaths.AbbreviationMappingsPath))
+                {
+                    File.WriteAllText(
+                        AppPaths.AbbreviationMappingsPath,
+                        "NeurIPS=Advances in Neural Information Processing Systems\n");
+                }
+
+                UriProcessor.StartProcess(AppPaths.AbbreviationMappingsPath);
+            }
+            catch (System.Exception ex)
+            {
+                NotificationCenter.Error($"Could not open abbreviation mappings: {ex.Message}");
+            }
         }
     }
 }
