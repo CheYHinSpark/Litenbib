@@ -103,14 +103,7 @@ namespace Litenbib.ViewModels
         {
             try
             {
-                Directory.CreateDirectory(AppPaths.ConfigDirectory);
-                if (!File.Exists(AppPaths.AbbreviationMappingsPath))
-                {
-                    File.WriteAllText(
-                        AppPaths.AbbreviationMappingsPath,
-                        "NeurIPS=Advances in Neural Information Processing Systems\n");
-                }
-
+                VenueAbbreviationMappings.EnsureFileExists();
                 UriProcessor.StartProcess(AppPaths.AbbreviationMappingsPath);
             }
             catch (System.Exception ex)

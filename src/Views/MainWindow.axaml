@@ -129,6 +129,9 @@
                         <MenuItem Header="Batch Delete _Fields..."
                                   Command="{CompiledBinding SelectedFile.ApplyBatchFieldDeleteCommand}"
                                   CommandParameter="{CompiledBinding $parent[Window]}"/>
+                        <MenuItem Header="Normalize _Venues with AI..."
+                                  Command="{CompiledBinding SelectedFile.NormalizeSelectedVenueNamesCommand}"
+                                  CommandParameter="{CompiledBinding $parent[Window]}"/>
                         <MenuItem Header="_Clean Selected"
                                   Command="{CompiledBinding SelectedFile.CleanupSelectedEntriesCommand}"/>
                         <MenuItem Header="_Reload From Disk"

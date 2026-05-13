@@ -189,6 +189,8 @@
                             VerticalAlignment="Bottom">
 				    <TextBlock Margin="8 0 0 0" Text="{CompiledBinding BibtexView.Count}"/>
                     <TextBlock Margin="0 0 8 0" Text="entries" Opacity="0.8"/>
+                    
+                    <!-- 批量编辑区 -->
                     <Button Margin="0 0 8 0"
                             ToolTip.Tip="Reload current file from disk"
                             IsVisible="{CompiledBinding HasExternalChanges}"
@@ -202,6 +204,13 @@
                             CommandParameter="{CompiledBinding $parent[Window]}">
                         <Path Data="{StaticResource BatchEditPath}" StrokeThickness="1"
 							  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+                    </Button>
+                    <Button Margin="0 0 8 0"
+                            ToolTip.Tip="Normalize journal/booktitle names with AI"
+                            Command="{CompiledBinding NormalizeSelectedVenueNamesCommand}"
+                            CommandParameter="{CompiledBinding $parent[Window]}">
+                        <Path Data="{StaticResource AiPath}" StrokeThickness="1"
+                              Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                     </Button>
                     <Button Margin="0 0 8 0"
                             ToolTip.Tip="Generate citation keys for selected entries"

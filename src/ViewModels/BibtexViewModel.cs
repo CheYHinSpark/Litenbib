@@ -1145,6 +1145,33 @@ namespace Litenbib.ViewModels
         }
 
         [RelayCommand]
+        private async Task NormalizeSelectedVenueNames(object? sender)
+        {
+            if (sender is not MainWindow window || SelectedIndexItems == null || SelectedIndexItems.Count == 0) { return; }
+            var selectedEntries = SelectedIndexItems
+                .OrderBy(item => item.Item1)
+                .Select(item => item.Item2)
+                .ToList();
+
+            VenueNameNormalizationView dialog = new(selectedEntries);
+            var result = await dialog.ShowDialog<bool>(window);
+            if (result != true || dialog.DataContext is not VenueNameNormalizationViewModel vm) { return; }
+
+            List<EntryFieldChange> changes = vm.CreateChanges();
+            EntryFieldsChangeAction action = new(changes);
+            if (!action.HasChanges)
+            {
+                ShowStatus("No venue names changed");
+                return;
+            }
+
+            ApplyEntryFieldChanges(changes);
+            UndoRedoManager.AddAction(action);
+            NotifyCanUndoRedo();
+            ShowStatus($"Updated {changes.Count} venue name(s)");
+        }
+
+        [RelayCommand]
         private async Task CleanupSelectedEntries()
         {
             if (SelectedIndexItems == null || SelectedIndexItems.Count == 0) { return; }

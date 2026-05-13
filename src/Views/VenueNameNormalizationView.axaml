@@ -1,0 +1,93 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:vm="using:Litenbib.ViewModels"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Width="800" Height="560"
+        WindowStartupLocation="CenterOwner"
+        x:Class="Litenbib.Views.VenueNameNormalizationView"
+        x:DataType="vm:VenueNameNormalizationViewModel"
+        Title="Normalize Venue Names">
+    <Design.DataContext>
+        <vm:VenueNameNormalizationViewModel/>
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto" Margin="12">
+        <TextBlock Text="Normalize journal and venue names" FontSize="18" FontWeight="SemiBold"/>
+        
+        <TextBlock Grid.Row="1" Margin="0 4"
+                   VerticalAlignment="Center"
+                   Text="{CompiledBinding StatusMessage}"/>
+
+        <Grid Grid.Row="2" ColumnDefinitions="Auto,Auto" Margin="0 8"
+              HorizontalAlignment="Right">
+            <Button Command="{CompiledBinding ExpandVenuesCommand}"
+                    IsEnabled="{CompiledBinding IsBusy, Converter={x:Static BoolConverters.Not}}">
+                Expand
+            </Button>
+            <Button Grid.Column="1" Margin="8 4 0 0"
+                    Command="{CompiledBinding AbbreviateVenuesCommand}"
+                    IsEnabled="{CompiledBinding IsBusy, Converter={x:Static BoolConverters.Not}}">
+                Abbreviate
+            </Button>
+        </Grid>
+
+        <Border Grid.Row="3" BorderThickness="1" BorderBrush="{DynamicResource ThemeBorder}"
+                CornerRadius="8" Padding="4">
+            <ScrollViewer Padding="4 4 4 -8">
+                <ItemsControl ItemsSource="{CompiledBinding Items}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="vm:VenueNameNormalizationItemViewModel">
+                            <Border Margin="0 2" Padding="6" CornerRadius="6" Classes="section-card"
+                                    Background="{DynamicResource InputBackground}">
+                                <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="120,*">
+                                    <TextBlock Text="{CompiledBinding CitationKey}" Margin="2"
+                                               FontWeight="SemiBold" FontFamily="Consolas"
+                                               VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" Margin="12 0 2 0"
+                                               Text="{CompiledBinding EntryTitle}"
+                                               ToolTip.Tip="{CompiledBinding EntryTitle}"
+                                               TextTrimming="WordEllipsis"/>
+
+                                    <TextBlock Grid.Row="1" Text="{CompiledBinding FieldName}" FontFamily="Consolas"
+                                               IsVisible="{CompiledBinding HasVenue}"
+                                               Opacity="0.8" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                    <Grid Grid.Row="1" Grid.Column="1" ColumnDefinitions="*,Auto,*"
+                                          IsVisible="{CompiledBinding HasVenue}">
+                                        <TextBox Grid.Column="0" Margin="4 0" IsReadOnly="True"
+                                             Text="{CompiledBinding OriginalValue}"
+                                             TextWrapping="Wrap"
+                                             BorderBrush="Transparent"
+                                             BorderThickness="0"
+                                             Background="Transparent"/>
+                                        <Button Grid.Column="1" Width="24" Height="24" Classes="in_section"
+                                                VerticalAlignment="Center" ToolTip.Tip="Reset"
+                                                Command="{CompiledBinding ResetSuggestionCommand}">
+                                            <Path Data="{StaticResource ResetPath}"
+                                                  Fill="{CompiledBinding $parent[Button].Foreground}"/>
+                                        </Button>
+                                        <TextBox Grid.Column="2" Margin="4 0"
+                                                 Text="{CompiledBinding SuggestedValue, Mode=TwoWay}"
+                                                 TextWrapping="Wrap"/>
+                                    </Grid>
+
+                                    <TextBlock Grid.Row="1" Grid.Column="1"
+                                               Text="No journal or booktitle value"
+                                               IsVisible="{CompiledBinding HasVenue, Converter={x:Static BoolConverters.Not}}"
+                                               Opacity="0.65"/>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Border>
+
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right"
+                    Spacing="8" Margin="0 8 0 0">
+            <Button Click="CancelButton_Click">Cancel</Button>
+            <Button Click="ApplyButton_Click">Apply</Button>
+        </StackPanel>
+    </Grid>
+</Window>
