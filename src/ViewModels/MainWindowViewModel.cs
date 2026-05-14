@@ -90,6 +90,7 @@ namespace Litenbib.ViewModels
                 });
             }
             OnPropertyChanged(nameof(RecentFiles));
+            CloseOtherTabsCommand.NotifyCanExecuteChanged();
         }
 
         public async Task CopyBibtexEntries(IEnumerable<BibtexEntry> list)
@@ -288,6 +289,81 @@ namespace Litenbib.ViewModels
             }
         }
 
+        private static string GetWindowsCopyPath(string sourcePath)
+        {
+            string directory = Path.GetDirectoryName(sourcePath)
+                ?? throw new InvalidOperationException("The source directory is invalid.");
+            string fileName = GetWindowsCopyBaseName(Path.GetFileNameWithoutExtension(sourcePath));
+            string extension = Path.GetExtension(sourcePath);
+
+            string candidate = Path.Combine(directory, $"{fileName} - Copy{extension}");
+            if (!File.Exists(candidate) && !Directory.Exists(candidate))
+            {
+                return candidate;
+            }
+
+            for (int index = 2; ; index++)
+            {
+                candidate = Path.Combine(directory, $"{fileName} - Copy ({index}){extension}");
+                if (!File.Exists(candidate) && !Directory.Exists(candidate))
+                {
+                    return candidate;
+                }
+            }
+        }
+
+        private static string GetWindowsCopyBaseName(string fileName)
+        {
+            const string simpleCopySuffix = " - Copy";
+            if (fileName.EndsWith(simpleCopySuffix, StringComparison.OrdinalIgnoreCase))
+            {
+                return fileName[..^simpleCopySuffix.Length];
+            }
+
+            const string numberedCopySuffixStart = " - Copy (";
+            if (!fileName.EndsWith(')'))
+            {
+                return fileName;
+            }
+
+            int suffixStart = fileName.LastIndexOf(numberedCopySuffixStart, StringComparison.OrdinalIgnoreCase);
+            if (suffixStart < 0)
+            {
+                return fileName;
+            }
+
+            int numberStart = suffixStart + numberedCopySuffixStart.Length;
+            string numberText = fileName[numberStart..^1];
+            return int.TryParse(numberText, out int copyNumber) && copyNumber >= 2
+                ? fileName[..suffixStart]
+                : fileName;
+        }
+
+        private static async Task<bool> PromptSaveIfEdited(BibtexViewModel tab, string actionDescription)
+        {
+            if (!tab.Edited)
+            {
+                return true;
+            }
+
+            var box = MessageBoxManager.GetMessageBoxStandard(
+                "Unsaved Changes",
+                $"{tab.Header} has unsaved changes. Do you want to save it before {actionDescription}?",
+                ButtonEnum.YesNoCancel);
+            var result = await box.ShowAsync();
+            if (result == ButtonResult.Cancel)
+            {
+                return false;
+            }
+
+            if (result == ButtonResult.Yes)
+            {
+                return await tab.SaveCurrentAsync();
+            }
+
+            return true;
+        }
+
         #region Command
         [RelayCommand]
         private void ChangeTheme()
@@ -418,26 +494,85 @@ namespace Litenbib.ViewModels
         {
             if (tab != null && BibtexTabs.Contains(tab))
             {
-                if (tab.Edited)
+                if (!await PromptSaveIfEdited(tab, "closing it"))
                 {
-                    var box = MessageBoxManager.GetMessageBoxStandard(
-                        "Warning", "This file have been edited, but not saved. Do you want to save it?",
-                        ButtonEnum.YesNoCancel);
-                    var result = await box.ShowAsync();
-                    if (result == ButtonResult.Cancel)
-                    { return; }
-                    else if (result == ButtonResult.Yes)
-                    {
-                        if (!await tab.SaveCurrentAsync())
-                        {
-                            return;
-                        }
-                    }
+                    return;
                 }
+
                 BibtexTabs.Remove(tab);
                 RefreshRecentFiles();
             }
         }
+
+        [RelayCommand]
+        private async Task DuplicateTab(BibtexViewModel? tab)
+        {
+            if (tab == null || !BibtexTabs.Contains(tab))
+            {
+                return;
+            }
+
+            if (!await PromptSaveIfEdited(tab, "duplicating it"))
+            {
+                return;
+            }
+
+            string sourcePath;
+            try
+            {
+                sourcePath = Path.GetFullPath(tab.FullPath);
+            }
+            catch (Exception)
+            {
+                NotificationCenter.Error($"Could not duplicate {tab.Header}: invalid file path");
+                return;
+            }
+
+            if (!File.Exists(sourcePath))
+            {
+                NotificationCenter.Error($"Could not duplicate {tab.Header}: source file not found");
+                return;
+            }
+
+            try
+            {
+                string duplicatePath = GetWindowsCopyPath(sourcePath);
+                File.Copy(sourcePath, duplicatePath);
+                await OpenFile(duplicatePath, Path.GetFileName(duplicatePath));
+            }
+            catch (Exception ex)
+            {
+                NotificationCenter.Error($"Could not duplicate {tab.Header}: {ex.Message}");
+            }
+        }
+
+        [RelayCommand(CanExecute = nameof(CanCloseOtherTabs))]
+        private async Task CloseOtherTabs(BibtexViewModel? tab)
+        {
+            if (tab == null || !BibtexTabs.Contains(tab))
+            {
+                return;
+            }
+
+            var tabsToClose = BibtexTabs.Where(item => item != tab).ToList();
+            foreach (var item in tabsToClose)
+            {
+                if (!await PromptSaveIfEdited(item, "closing it"))
+                {
+                    return;
+                }
+            }
+
+            foreach (var item in tabsToClose)
+            {
+                BibtexTabs.Remove(item);
+            }
+
+            SelectedFile = tab;
+            RefreshRecentFiles();
+        }
+
+        private bool CanCloseOtherTabs(BibtexViewModel? tab) => tab != null && BibtexTabs.Contains(tab) && BibtexTabs.Count > 1;
 
         [RelayCommand(CanExecute = nameof(CanAddBibtexEntry))]
         private async Task AddBibtexEntry(Window window)

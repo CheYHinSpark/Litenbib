@@ -319,9 +319,16 @@
                                     PointerReleased="TabItem_PointerReleased">
 							<StackPanel.ContextMenu>
 								<ContextMenu>
-									<MenuItem Header="Save"/>
+                                    <!-- 需要新增一个复制功能，也就是在同文件夹下直接复制出来一个新的并打开。按照Windows复制同名文件的规则命名。有未保存修改的做提示 -->
+									<MenuItem Header="Duplicate"
+                                              Command="{CompiledBinding #LitbibMainWindow.DataContext.DuplicateTabCommand}"
+                                              CommandParameter="{CompiledBinding}"/>
 									<MenuItem Header="Open in File Manager"
 											  Command="{CompiledBinding OpenInFileManagerCommand}"/>
+									<!-- 关闭其他标签页，未保存的逐一提示 -->
+                                    <MenuItem Header="Close others"
+                                              Command="{CompiledBinding #LitbibMainWindow.DataContext.CloseOtherTabsCommand}"
+                                              CommandParameter="{CompiledBinding}"/>
 								</ContextMenu>
 							</StackPanel.ContextMenu>
                             <TextBlock Text="*" FontSize="{CompiledBinding $parent[Window].FontSize}"
