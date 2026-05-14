@@ -15,8 +15,7 @@
 				  HorizontalAlignment="Center" VerticalAlignment="Center"
                   Data="M 6,0 A 6,6 0 1 1 1.2,9.6 A 6,6 0 0 0 6,0"/>-->
 			<Path Stroke="White" StrokeThickness="1"
-                  Data="M 8,0 L 12,4 8,8 8,5 2.5,5 A 1,1 0 0 0 2.5,7 L 3,7 2.5,8
-                  A 2.5,2.5 0 0 1 2.5,3 L 8,3 Z"/>
+                  Data="M 3,0 L 6,3 9,0 M 3,12 6,9 9,12 M 2,2 L 0,2 0,10 2,10 M 10,2 L 12,2 12,10 10,10"/>
         </Grid>
     </Design.PreviewWith>
     
@@ -61,6 +60,10 @@
                   9.964,7.134 11.696,8.134 10.696,9.866 8.964,8.866 7,10 7,12 5,12 5,10
                   3.036,8.866 1.304,9.866 0.304,8.134 2.036,7.134 2.036,4.866 0.304,3.866 1.304,2.134 3.036,3.134
                   5,2 Z M 6,4 A 2,2 0 0 0 6,8 A 2,2 0 0 0 6,4"/>
+    <PathGeometry x:Key="BatchDeleteFieldsPath" Figures="M 2,3.5 L 2,5.5 A 1.5,1.5 0 0 0 5,5.5 M 5,3.5 L 5,7
+                  M 7,3.5 L 7,7 M 8.5,3.5 A 1.5,1.5 0 0 0 7,5 M 10.5,1 L 10.5,6 A 1,1 0 0 0 11.5,7
+                  M 0,5 L 13,5 M 4,0 L 0,0 0,2 M 9,10 L 13,10 13,8"/>
+    <PathGeometry x:Key="BatchCleanPath" Figures="M 3,0 L 6,3 9,0 M 3,12 6,9 9,12 M 2,2 L 0,2 0,10 2,10 M 10,2 L 12,2 12,10 10,10"/>
 
     <SolidColorBrush x:Key="DisabledForeground" Color="{DynamicResource DisabledForegroundColor}"/>
     <SolidColorBrush x:Key="HighlightBackground" Color="{DynamicResource HighlightBackgroundColor}"/>

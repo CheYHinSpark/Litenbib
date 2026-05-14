@@ -202,7 +202,7 @@
                             ToolTip.Tip="Delete fields from selected entries"
                             Command="{CompiledBinding ApplyBatchFieldDeleteCommand}"
                             CommandParameter="{CompiledBinding $parent[Window]}">
-                        <Path Data="{StaticResource BatchEditPath}" StrokeThickness="1"
+                        <Path Data="{StaticResource BatchDeleteFieldsPath}" StrokeThickness="1"
 							  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                     </Button>
                     <Button Margin="0 0 8 0"
@@ -221,7 +221,7 @@
                     <Button Margin="0 0 8 0"
                             ToolTip.Tip="Clean selected entries: trim whitespace, collapse spaces/line breaks, normalize DOI, remove empty fields"
                             Command="{CompiledBinding CleanupSelectedEntriesCommand}">
-                        <Path Data="{StaticResource CleanupPath}" StrokeThickness="1"
+                        <Path Data="{StaticResource BatchCleanPath}" StrokeThickness="1"
                               Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                     </Button>
 					<TextBlock Margin="0 0 12 0" Text="{CompiledBinding StatusMessage}"
