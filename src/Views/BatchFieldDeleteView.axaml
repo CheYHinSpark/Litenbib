@@ -9,29 +9,29 @@
         WindowStartupLocation="CenterOwner"
         x:Class="Litenbib.Views.BatchFieldDeleteView"
         x:DataType="vm:BatchFieldDeleteViewModel"
-        Title="Batch Delete Fields">
+        Title="{DynamicResource BatchDelete.Title}">
     <Design.DataContext>
         <vm:BatchFieldDeleteViewModel/>
     </Design.DataContext>
     <Grid RowDefinitions="Auto,Auto,Auto,*,Auto" Margin="8">
-        <TextBlock Text="Batch delete fields" FontSize="18"
+        <TextBlock Text="{DynamicResource BatchDelete.Heading}" FontSize="18"
                    FontWeight="SemiBold" Margin="2"/>
         
         <Grid Grid.Row="1" ColumnDefinitions="*,*">
             <RadioButton Margin="2" GroupName="BatchFieldMode"
                          IsChecked="{CompiledBinding DeleteSelectedFields, Mode=TwoWay}">
-                Delete selected fields
+                <TextBlock Text="{DynamicResource BatchDelete.DeleteSelected}"/>
             </RadioButton>
             <RadioButton Grid.Column="1" Margin="2" GroupName="BatchFieldMode"
                          IsChecked="{CompiledBinding KeepSelectedFieldsOnly, Mode=TwoWay}">
-                Keep selected fields
+                <TextBlock Text="{DynamicResource BatchDelete.KeepSelected}"/>
             </RadioButton>
         </Grid>
 
         <Grid Grid.Row="2" ColumnDefinitions="*,Auto" Margin="4 0 8 0">
-            <TextBlock Text="Fields" VerticalAlignment="Center"/>
+            <TextBlock Text="{DynamicResource BatchDelete.Fields}" VerticalAlignment="Center"/>
             <Button Grid.Column="1" Width="28" Height="28"
-                    ToolTip.Tip="Add field"
+                    ToolTip.Tip="{DynamicResource BatchDelete.Tooltip.AddField}"
                     Command="{CompiledBinding AddFieldCommand}">
                 <Path Data="{StaticResource AddPath}"
                         Fill="{CompiledBinding $parent[Button].Foreground}"/>
@@ -48,7 +48,7 @@
                                 <local:ExComboBox ItemsSource="{CompiledBinding SupportedFields}"
                                                     SelectedItem="{CompiledBinding FieldName}"/>
                                 <Button Grid.Column="1" Margin="4 0"
-                                        Height="28" Width="28"                                           ToolTip.Tip="Remove field row"
+                                        Height="28" Width="28"                                           ToolTip.Tip="{DynamicResource BatchDelete.Tooltip.RemoveFieldRow}"
                                         Command="{CompiledBinding RemoveCommand}">
                                     <Path Data="{StaticResource xPath}" StrokeThickness="1"
                                           Stroke="{CompiledBinding $parent[Button].Foreground}"/>
@@ -62,8 +62,8 @@
 
         <StackPanel Grid.Row="4" Orientation="Horizontal" Height="28" Margin="0 4 4 0"
                     HorizontalAlignment="Right" Spacing="8">
-            <Button Click="CancelButton_Click">Cancel</Button>
-            <Button Click="ApplyButton_Click">Apply</Button>
+            <Button Click="CancelButton_Click" Content="{DynamicResource Common.Cancel}"/>
+            <Button Click="ApplyButton_Click" Content="{DynamicResource Common.Apply}"/>
         </StackPanel>
     </Grid>
 </Window>

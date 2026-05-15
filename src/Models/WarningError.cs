@@ -44,21 +44,21 @@ namespace Litenbib.Models
             {
                 if (Class == WarningErrorClass.SameCitationKey)
                 {
-                    return $"{SourceEntries.Count} entries have the same CitationKey {FieldName}";
+                    return I18n.Format("Warning.SameCitationKey", SourceEntries.Count, FieldName);
                 }
                 if (Class == WarningErrorClass.SameDoi)
                 {
-                    return $"{SourceEntries.Count} entries have the same DOI {FieldName}";
+                    return I18n.Format("Warning.SameDoi", SourceEntries.Count, FieldName);
                 }
                 if (Class == WarningErrorClass.SameTitleYear)
                 {
-                    return $"{SourceEntries.Count} entries share the same title and year";
+                    return I18n.Format("Warning.SameTitleYear", SourceEntries.Count);
                 }
                 if (Class == WarningErrorClass.SimilarTitle)
                 {
-                    return $"{SourceEntries.Count} entries have very similar titles";
+                    return I18n.Format("Warning.SimilarTitle", SourceEntries.Count);
                 }
-                return $"1 entry missing {FieldName}";
+                return I18n.Format("Warning.MissingField", FieldName);
             }
         }
     }

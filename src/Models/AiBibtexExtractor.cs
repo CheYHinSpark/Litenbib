@@ -49,7 +49,7 @@ namespace Litenbib.Models
             AppSettings settings = AppSettingsState.Current;
             if (!IsConfigured(settings))
             {
-                NotificationCenter.Info("AI settings are incomplete");
+                NotificationCenter.Info(I18n.Get("Message.AiSettingsIncomplete"));
                 return empty;
             }
 
@@ -60,7 +60,7 @@ namespace Litenbib.Models
 
             if (!TryCreateChatCompletionsUri(settings.AiBaseUrl, out Uri? endpoint))
             {
-                NotificationCenter.Error("AI base URL is invalid");
+                NotificationCenter.Error(I18n.Get("Message.AiBaseUrlInvalid"));
                 return empty;
             }
 
@@ -74,7 +74,7 @@ namespace Litenbib.Models
                 using var response = await client.SendAsync(request, cts.Token);
                 if (!response.IsSuccessStatusCode)
                 {
-                    NotificationCenter.Error($"AI extraction failed: {(int)response.StatusCode} {response.ReasonPhrase}");
+                    NotificationCenter.Error(I18n.Format("Message.AiExtractionFailed", $"{(int)response.StatusCode} {response.ReasonPhrase}"));
                     return empty;
                 }
 
@@ -94,7 +94,7 @@ namespace Litenbib.Models
 
                 if (entries.Count == 0)
                 {
-                    NotificationCenter.Error("AI did not return valid BibTeX");
+                    NotificationCenter.Error(I18n.Get("Message.AiDidNotReturnValidBibtex"));
                     return empty;
                 }
 
@@ -102,12 +102,12 @@ namespace Litenbib.Models
             }
             catch (TaskCanceledException ex)
             {
-                NotificationCenter.Error("AI extraction timed out");
+                NotificationCenter.Error(I18n.Get("Message.AiExtractionTimedOut"));
                 Debug.WriteLine(ex);
             }
             catch (Exception ex)
             {
-                NotificationCenter.Error($"AI extraction failed: {ex.Message}");
+                NotificationCenter.Error(I18n.Format("Message.AiExtractionFailed", ex.Message));
                 Debug.WriteLine(ex);
             }
 

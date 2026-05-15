@@ -59,42 +59,45 @@
                 <Grid ColumnDefinitions="*,*,*,2*" Margin="4"
                       Height="{DynamicResource ToolBarHeight}"
                       VerticalAlignment="Bottom">
-                    <RadioButton IsChecked="{CompiledBinding SelectedFile.FilterMode,
+                    <RadioButton Content="{DynamicResource Main.Filter.And}"
+                                 IsChecked="{CompiledBinding SelectedFile.FilterMode,
                                  Converter={StaticResource FilterModeConverter},
                                  Mode=TwoWay, ConverterParameter=0, FallbackValue=True}"
-                                 GroupName="FilterMode" Margin="4">and</RadioButton>
-                    <RadioButton IsChecked="{CompiledBinding SelectedFile.FilterMode,
+                                 GroupName="FilterMode" Margin="4"/>
+                    <RadioButton Content="{DynamicResource Main.Filter.Or}"
+                                 IsChecked="{CompiledBinding SelectedFile.FilterMode,
                                  Converter={StaticResource FilterModeConverter},
                                  Mode=OneWayToSource, ConverterParameter=1}"
-                                 GroupName="FilterMode" Margin="4" Grid.Column="1">or</RadioButton>
-                    <RadioButton IsChecked="{CompiledBinding SelectedFile.FilterMode,
+                                 GroupName="FilterMode" Margin="4" Grid.Column="1"/>
+                    <RadioButton Content="{DynamicResource Main.Filter.All}"
+                                 IsChecked="{CompiledBinding SelectedFile.FilterMode,
                                  Converter={StaticResource FilterModeConverter},
                                  Mode=OneWayToSource, ConverterParameter=2}"
-                                 GroupName="FilterMode" Margin="4" Grid.Column="2">all</RadioButton>
+                                 GroupName="FilterMode" Margin="4" Grid.Column="2"/>
                     <v:ExComboBox Margin="4" Grid.Column="3"
                                   CornerRadius="12" Padding="12 0"
-                                  SelectedItem="{CompiledBinding SelectedFile.FilterField,
-                                  Mode=OneWayToSource}" SelectedIndex="0"
+                                  SelectedItem="{CompiledBinding SelectedFile.FilterFieldOption,
+                                  Mode=TwoWay}" SelectedIndex="0"
                                   ItemsSource="{CompiledBinding FilterFieldList}"/>
                 </Grid>
             </Border>
             <TextBox x:Name="FilterTextBox" Grid.Column="1" Grid.RowSpan="2" UndoLimit="200"
                      m:FocusEx.IsFocused="{CompiledBinding SelectedFile.IsFiltering, Mode=OneWayToSource}"
                      Text="{CompiledBinding SelectedFile.FilterText, Mode=OneWayToSource}"
-                     PlaceholderText="Search..."
+                     PlaceholderText="{DynamicResource Main.SearchPlaceholder}"
                      VerticalAlignment="Top" Margin="8 6"/>
 
             <!--title-->
             <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
                 <Menu>
-                    <MenuItem Header="_File" Classes="Top">
-                        <MenuItem Header="_New"
+                    <MenuItem Header="{DynamicResource Main.Menu.File}" Classes="Top">
+                        <MenuItem Header="{DynamicResource Main.Menu.New}"
                                   Command="{CompiledBinding NewFileCommand}"
                                   CommandParameter="{CompiledBinding $parent[Window]}"/>
-                        <MenuItem Header="_Open..."
+                        <MenuItem Header="{DynamicResource Main.Menu.Open}"
                                   Command="{CompiledBinding OpenFileCommand}"
                                   CommandParameter="{CompiledBinding $parent[Window]}"/>
-                        <MenuItem Header="Open _Recent" ItemsSource="{CompiledBinding RecentFiles}">
+                        <MenuItem Header="{DynamicResource Main.Menu.OpenRecent}" ItemsSource="{CompiledBinding RecentFiles}">
                             <MenuItem.ItemTemplate>
                                 <DataTemplate x:DataType="m:RecentFileState">
                                     <MenuItem Header="{CompiledBinding FileName}"
@@ -104,40 +107,40 @@
                                 </DataTemplate>
                             </MenuItem.ItemTemplate>
                         </MenuItem>
-                        <MenuItem Header="Save _As..."
+                        <MenuItem Header="{DynamicResource Main.Menu.SaveAs}"
                                   Command="{CompiledBinding SaveFileAsCommand}"
                                   CommandParameter="{CompiledBinding $parent[Window]}"/>
-                        <MenuItem Header="_Export"
+                        <MenuItem Header="{DynamicResource Main.Menu.Export}"
                                   Command="{CompiledBinding ExportFileCommand}"
                                   CommandParameter="{CompiledBinding $parent[Window]}"/>
-                        <MenuItem Header="_Save All"
+                        <MenuItem Header="{DynamicResource Main.Menu.SaveAll}"
                                   Command="{CompiledBinding SaveAllCommand}"/>
                     </MenuItem>
-                    <MenuItem Header="_Edit" Classes="Top">
-                        <MenuItem Header="_Add..."
+                    <MenuItem Header="{DynamicResource Main.Menu.Edit}" Classes="Top">
+                        <MenuItem Header="{DynamicResource Main.Menu.Add}"
                                   Command="{CompiledBinding AddBibtexEntryCommand}"
                                   CommandParameter="{CompiledBinding $parent[Window]}"/>
-                        <MenuItem Header="_Copy"
+                        <MenuItem Header="{DynamicResource Main.Menu.Copy}"
                                   Command="{CompiledBinding SelectedFile.CopyBibtexCommand}"
                                   CommandParameter="{CompiledBinding $parent[Window].DataContext}"/>
-						<MenuItem Header="_Paste"
+						<MenuItem Header="{DynamicResource Main.Menu.Paste}"
                                   Command="{CompiledBinding SelectedFile.PasteBibtexCommand}"
                                   CommandParameter="{CompiledBinding $parent[Window].DataContext}"/>
-						<MenuItem Header="_Cut"
+						<MenuItem Header="{DynamicResource Main.Menu.Cut}"
                                   Command="{CompiledBinding SelectedFile.CutBibtexCommand}"
                                   CommandParameter="{CompiledBinding $parent[Window].DataContext}"/>
-                        <MenuItem Header="Batch Delete _Fields..."
+                        <MenuItem Header="{DynamicResource Main.Menu.BatchDeleteFields}"
                                   Command="{CompiledBinding SelectedFile.ApplyBatchFieldDeleteCommand}"
                                   CommandParameter="{CompiledBinding $parent[Window]}"/>
-                        <MenuItem Header="Normalize _Venues with AI..."
+                        <MenuItem Header="{DynamicResource Main.Menu.NormalizeVenues}"
                                   Command="{CompiledBinding SelectedFile.NormalizeSelectedVenueNamesCommand}"
                                   CommandParameter="{CompiledBinding $parent[Window]}"/>
-                        <MenuItem Header="_Clean Selected"
+                        <MenuItem Header="{DynamicResource Main.Menu.CleanSelected}"
                                   Command="{CompiledBinding SelectedFile.CleanupSelectedEntriesCommand}"/>
-                        <MenuItem Header="_Reload From Disk"
+                        <MenuItem Header="{DynamicResource Main.Menu.ReloadFromDisk}"
                                   Command="{CompiledBinding SelectedFile.ReloadFromDiskCommand}"/>
                     </MenuItem>
-                    <MenuItem Classes="Top" ToolTip.Tip="Open Settings"
+                    <MenuItem Classes="Top" ToolTip.Tip="{DynamicResource Main.Tooltip.OpenSettings}"
                               Command="{CompiledBinding OpenSettingsCommand}"
                               CommandParameter="{CompiledBinding $parent[Window]}">
                         <MenuItem.Header>
@@ -149,7 +152,7 @@
             </StackPanel>
             
             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Grid.Column="2">
-				<Button Classes="window" Command="{CompiledBinding ChangeThemeCommand}" ToolTip.Tip="Toggle theme">
+				<Button Classes="window" Command="{CompiledBinding ChangeThemeCommand}" ToolTip.Tip="{DynamicResource Main.Tooltip.ToggleTheme}">
 					<Grid>
 						<Path Data="{StaticResource SunPath}" StrokeThickness="1"
                               Stroke="{CompiledBinding $parent[Button].Foreground}"
@@ -160,15 +163,15 @@
 							  IsVisible="{CompiledBinding ThemeIndex, Converter={x:Static BoolConverters.Not}}"/>
 					</Grid>
 				</Button>
-                <Button Name="MinButton" Click="TitleButton_Click" Classes="window" ToolTip.Tip="Minimize window">
+                <Button Name="MinButton" Click="TitleButton_Click" Classes="window" ToolTip.Tip="{DynamicResource Main.Tooltip.Minimize}">
                     <Path Data="{StaticResource -Path}" StrokeThickness="1"
                           Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                 </Button>
-                <Button Name="MaxButton" Click="TitleButton_Click" Classes="window" ToolTip.Tip="Maximize or restore window">
+                <Button Name="MaxButton" Click="TitleButton_Click" Classes="window" ToolTip.Tip="{DynamicResource Main.Tooltip.Maximize}">
                     <Path Data="{CompiledBinding $parent[Window].WindowState, Converter={StaticResource WindowStateToPathConverter}}"
                           StrokeThickness="1" Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                 </Button>
-                <Button Name="CloseButton" Click="TitleButton_Click" Classes="warning window" ToolTip.Tip="Close window">
+                <Button Name="CloseButton" Click="TitleButton_Click" Classes="warning window" ToolTip.Tip="{DynamicResource Main.Tooltip.Close}">
                     <Path Data="{StaticResource xPath}" StrokeThickness="1"
                           Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                 </Button>
@@ -192,35 +195,35 @@
 						BorderThickness="1"
                         CornerRadius="8">
                     <StackPanel Orientation="Horizontal" Margin="6 0" VerticalAlignment="Center"
-								ToolTip.Tip="Undo">
-                        <Button Command="{CompiledBinding SelectedFile.UndoBibtexCommand}" ToolTip.Tip="Undo">
+								ToolTip.Tip="{DynamicResource Main.Tooltip.Undo}">
+                        <Button Command="{CompiledBinding SelectedFile.UndoBibtexCommand}" ToolTip.Tip="{DynamicResource Main.Tooltip.Undo}">
                             <Path Data="{StaticResource UndoPath}" StrokeThickness="1"
                                   Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                         </Button>
                         <Button Command="{CompiledBinding SelectedFile.RedoBibtexCommand}"
-								ToolTip.Tip="Redo">
+								ToolTip.Tip="{DynamicResource Main.Tooltip.Redo}">
                             <Path Data="{StaticResource RedoPath}" StrokeThickness="1"
                                   Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                         </Button>
                         <Button Command="{CompiledBinding SelectedFile.DeleteBibtexCommand}"
-								ToolTip.Tip="Delete Entry">
+								ToolTip.Tip="{DynamicResource Main.Tooltip.DeleteEntry}">
                             <Path Data="{StaticResource DeletePath}"
                                   Fill="{CompiledBinding $parent[Button].Foreground}"/>
                         </Button>
                         <Button Command="{CompiledBinding SelectedFile.SaveBibtexCommand}"
-								ToolTip.Tip="Save current file">
+								ToolTip.Tip="{DynamicResource Main.Tooltip.SaveCurrentFile}">
                             <Path Data="{StaticResource SavePath}" StrokeThickness="1"
                                   Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                         </Button>
                         <Button Command="{CompiledBinding AddBibtexEntryCommand}"
                                 CommandParameter="{CompiledBinding $parent[Window]}"
-								ToolTip.Tip="Add Entry">
+								ToolTip.Tip="{DynamicResource Main.Tooltip.AddEntry}">
                             <Path Data="{StaticResource AddPath}"
                                   Fill="{CompiledBinding $parent[Button].Foreground}"/>
                         </Button>
                         <Button Command="{CompiledBinding SelectedFile.MergeEntriesCommand}"
                                 CommandParameter="{CompiledBinding $parent[Window]}"
-								ToolTip.Tip="Merge selected entries">
+								ToolTip.Tip="{DynamicResource Main.Tooltip.MergeEntries}">
                             <Path Data="{StaticResource MergePath}" StrokeThickness="1"
                                   Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                         </Button>
@@ -297,11 +300,11 @@
 						       HorizontalAlignment="Center"
 						       FontSize="26"
                                FontWeight="SemiBold"/>
-                    <TextBlock Text="Clean bibliography editing for focused research work."
+                    <TextBlock Text="{DynamicResource Main.Welcome.Tagline}"
                                HorizontalAlignment="Center"
                                TextAlignment="Center"
                                Opacity="0.8"/>
-                    <TextBlock Text="Create a .bib file, open an existing library, or drag a BibTeX file into this window."
+                    <TextBlock Text="{DynamicResource Main.Welcome.GetStarted}"
                                HorizontalAlignment="Center"
                                TextAlignment="Center"
                                Opacity="0.65"
@@ -320,13 +323,13 @@
 							<StackPanel.ContextMenu>
 								<ContextMenu>
                                     <!-- 需要新增一个复制功能，也就是在同文件夹下直接复制出来一个新的并打开。按照Windows复制同名文件的规则命名。有未保存修改的做提示 -->
-									<MenuItem Header="Duplicate"
+									<MenuItem Header="{DynamicResource Main.Context.Duplicate}"
                                               Command="{CompiledBinding #LitbibMainWindow.DataContext.DuplicateTabCommand}"
                                               CommandParameter="{CompiledBinding}"/>
-									<MenuItem Header="Open in File Manager"
+									<MenuItem Header="{DynamicResource Main.Context.OpenInFileManager}"
 											  Command="{CompiledBinding OpenInFileManagerCommand}"/>
 									<!-- 关闭其他标签页，未保存的逐一提示 -->
-                                    <MenuItem Header="Close others"
+                                    <MenuItem Header="{DynamicResource Main.Context.CloseOthers}"
                                               Command="{CompiledBinding #LitbibMainWindow.DataContext.CloseOtherTabsCommand}"
                                               CommandParameter="{CompiledBinding}"/>
 								</ContextMenu>

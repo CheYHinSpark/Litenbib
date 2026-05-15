@@ -8,13 +8,13 @@
         WindowStartupLocation="CenterOwner"
         x:Class="Litenbib.Views.VenueNameNormalizationView"
         x:DataType="vm:VenueNameNormalizationViewModel"
-        Title="Normalize Venue Names">
+        Title="{DynamicResource VenueNormalize.Title}">
     <Design.DataContext>
         <vm:VenueNameNormalizationViewModel/>
     </Design.DataContext>
 
     <Grid RowDefinitions="Auto,Auto,Auto,*,Auto" Margin="12">
-        <TextBlock Text="Normalize journal and venue names" FontSize="18" FontWeight="SemiBold"/>
+        <TextBlock Text="{DynamicResource VenueNormalize.Heading}" FontSize="18" FontWeight="SemiBold"/>
         
         <TextBlock Grid.Row="1" Margin="0 4"
                    VerticalAlignment="Center"
@@ -25,12 +25,12 @@
             <Button Height="28" Margin="4" Padding="2"
                     Command="{CompiledBinding ExpandVenuesCommand}"
                     IsEnabled="{CompiledBinding IsBusy, Converter={x:Static BoolConverters.Not}}">
-                Expand
+                <TextBlock Text="{DynamicResource VenueNormalize.Expand}"/>
             </Button>
             <Button Grid.Column="1" Height="28" Margin="4" Padding="2"
                     Command="{CompiledBinding AbbreviateVenuesCommand}"
                     IsEnabled="{CompiledBinding IsBusy, Converter={x:Static BoolConverters.Not}}">
-                Abbreviate
+                <TextBlock Text="{DynamicResource VenueNormalize.Abbreviate}"/>
             </Button>
         </Grid>
 
@@ -63,7 +63,7 @@
                                              BorderThickness="0"
                                              Background="Transparent"/>
                                         <Button Grid.Column="1" Width="24" Height="24" Classes="in_section"
-                                                VerticalAlignment="Center" ToolTip.Tip="Reset"
+                                                VerticalAlignment="Center" ToolTip.Tip="{DynamicResource Common.Reset}"
                                                 Command="{CompiledBinding ResetSuggestionCommand}">
                                             <Path Data="{StaticResource ResetPath}"
                                                   Fill="{CompiledBinding $parent[Button].Foreground}"/>
@@ -74,7 +74,7 @@
                                     </Grid>
 
                                     <TextBlock Grid.Row="1" Grid.Column="1" Margin="12 0"
-                                               Text="No journal or booktitle value"
+                                               Text="{DynamicResource Bibtex.NoJournalOrBooktitle}"
                                                IsVisible="{CompiledBinding HasVenue, Converter={x:Static BoolConverters.Not}}"
                                                Opacity="0.65"/>
                                 </Grid>
@@ -87,8 +87,8 @@
 
         <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right"
                     Height="28" Spacing="8" Margin="0 8 0 0">
-            <Button Click="CancelButton_Click">Cancel</Button>
-            <Button Click="ApplyButton_Click">Apply</Button>
+            <Button Click="CancelButton_Click" Content="{DynamicResource Common.Cancel}"/>
+            <Button Click="ApplyButton_Click" Content="{DynamicResource Common.Apply}"/>
         </StackPanel>
     </Grid>
 </Window>

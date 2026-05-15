@@ -37,9 +37,9 @@ public partial class CompareEntryView : StyledWindow
         if (DataContext is not CompareEntryViewModel vm) { return; }
 
         MainGrid.RowDefinitions.Add(new RowDefinition(GridLength.Auto));
-        AddTextBlock("Entry Type", 0);
+        AddTextBlock(I18n.Get("Compare.EntryType"), 0);
         MainGrid.RowDefinitions.Add(new RowDefinition(GridLength.Auto));
-        AddTextBlock("Citation Key", 1);
+        AddTextBlock(I18n.Get("Compare.CitationKey"), 1);
         HeaderGrid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Auto) { SharedSizeGroup = "field" });
         MainGrid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Auto) { SharedSizeGroup = "field" });
 
@@ -54,7 +54,7 @@ public partial class CompareEntryView : StyledWindow
 
             Button button = new()
             {
-                Content = $"Entry {column}",
+                Content = I18n.Format("Compare.Entry", column),
                 Tag = "center",
             };
             button.SetValue(Grid.ColumnProperty, column);
@@ -92,7 +92,7 @@ public partial class CompareEntryView : StyledWindow
         MainGrid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Auto));
         Button clearButton = new()
         {
-            Content = "Clear",
+            Content = I18n.Get("Common.Clear"),
             Tag = "center",
         };
         clearButton.SetValue(Grid.ColumnProperty, column);
@@ -126,7 +126,7 @@ public partial class CompareEntryView : StyledWindow
 
     private void AddRadioButton(string? s, string g, int r, int c, bool isChecked = false)
     {
-        string display = string.IsNullOrWhiteSpace(s) ? "(empty)" : s;
+        string display = string.IsNullOrWhiteSpace(s) ? I18n.Get("Common.Empty") : s;
         RadioButton rb = new()
         {
             Content = display,

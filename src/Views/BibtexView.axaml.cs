@@ -151,7 +151,7 @@ public partial class BibtexView : UserControl
         viewModel.DetectExternalModification();
         if (viewModel.HasExternalChanges)
         {
-            viewModel.ShowStatus("File changed on disk");
+            viewModel.ShowStatus(I18n.Get("Message.FileChangedOnDiskStatus"));
         }
     }
 

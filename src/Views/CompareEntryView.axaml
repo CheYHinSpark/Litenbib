@@ -8,7 +8,7 @@
         x:DataType="vm:CompareEntryViewModel"
         WindowStartupLocation="CenterScreen"
         Icon="/Assets/logo.ico"
-        Title="CompareEntryView">
+        Title="{DynamicResource Compare.Title}">
     <Window.Styles>
         <Style Selector="RadioButton">
 			<Setter Property="Background" Value="{DynamicResource InputBackground}"/>
@@ -48,8 +48,8 @@
         </StackPanel>
 
         <StackPanel Margin="24 8 24 0" Grid.Row="1" Spacing="4">
-            <TextBlock Text="Merge entries" FontSize="22" FontWeight="SemiBold"/>
-            <TextBlock Text="Pick the best value for each field. Use Clear when you want a field removed in the merged result."
+            <TextBlock Text="{DynamicResource Compare.Heading}" FontSize="22" FontWeight="SemiBold"/>
+            <TextBlock Text="{DynamicResource Compare.Description}"
                        Opacity="0.7" TextWrapping="Wrap"/>
             <Grid x:Name="HeaderGrid" Margin="0 8 0 0"/>
         </StackPanel>
@@ -60,9 +60,9 @@
 
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right"
                     Margin=" 8 8">
-			<Button Content="Cancel" Width="64"
+			<Button Content="{DynamicResource Common.Cancel}" Width="64"
 					Click="CancelButton_Click"/>
-			<Button Content="Merge" Width="64"
+			<Button Content="{DynamicResource Compare.Merge}" Width="64"
 					Command="{CompiledBinding MergeCommand}"
 					CommandParameter="{CompiledBinding $parent[Window]}"/>
         </StackPanel>

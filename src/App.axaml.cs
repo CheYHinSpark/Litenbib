@@ -11,6 +11,7 @@ namespace Litenbib
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
+            Models.LocalizationManager.ApplyLanguage(Models.LocalizationManager.CurrentLanguageCode);
         }
 
         public override void OnFrameworkInitializationCompleted()

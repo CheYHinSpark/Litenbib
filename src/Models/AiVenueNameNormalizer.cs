@@ -44,22 +44,22 @@ namespace Litenbib.Models
             AppSettings settings = AppSettingsState.Current;
             if (!AiBibtexExtractor.IsConfigured(settings))
             {
-                return VenueNameNormalizationResult.Failed("AI settings are incomplete");
+                return VenueNameNormalizationResult.Failed(I18n.Get("Message.AiSettingsIncomplete"));
             }
 
             if (mappings.Count == 0)
             {
-                return VenueNameNormalizationResult.Failed("No abbreviation mappings found");
+                return VenueNameNormalizationResult.Failed(I18n.Get("VenueNormalize.Status.NoMappings"));
             }
 
             if (venueNames.Count == 0)
             {
-                return VenueNameNormalizationResult.Failed("No journal or booktitle values found");
+                return VenueNameNormalizationResult.Failed(I18n.Get("VenueNormalize.Ai.NoVenueValues"));
             }
 
             if (!TryCreateChatCompletionsUri(settings.AiBaseUrl, out Uri? endpoint))
             {
-                return VenueNameNormalizationResult.Failed("AI base URL is invalid");
+                return VenueNameNormalizationResult.Failed(I18n.Get("Message.AiBaseUrlInvalid"));
             }
 
             string referenceTable = VenueAbbreviationMappings.ToPromptReferenceTable(mappings);
@@ -82,7 +82,7 @@ namespace Litenbib.Models
                 using var response = await client.SendAsync(request, cts.Token);
                 if (!response.IsSuccessStatusCode)
                 {
-                    return VenueNameNormalizationResult.Failed($"AI normalization failed: {(int)response.StatusCode} {response.ReasonPhrase}");
+                    return VenueNameNormalizationResult.Failed(I18n.Format("VenueNormalize.Ai.Failed", $"{(int)response.StatusCode} {response.ReasonPhrase}"));
                 }
 
                 string responseJson = await response.Content.ReadAsStringAsync();
@@ -97,12 +97,12 @@ namespace Litenbib.Models
             catch (TaskCanceledException ex)
             {
                 Debug.WriteLine(ex);
-                return VenueNameNormalizationResult.Failed("AI normalization timed out");
+                return VenueNameNormalizationResult.Failed(I18n.Get("VenueNormalize.Ai.TimedOut"));
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
-                return VenueNameNormalizationResult.Failed($"AI normalization failed: {ex.Message}");
+                return VenueNameNormalizationResult.Failed(I18n.Format("VenueNormalize.Ai.Failed", ex.Message));
             }
         }
 
@@ -216,14 +216,14 @@ namespace Litenbib.Models
                 Match match = NumberedLineRegex().Match(line);
                 if (!match.Success)
                 {
-                    errorMessage = "AI returned extra text instead of a numbered list";
+                    errorMessage = I18n.Get("VenueNormalize.Ai.ExtraText");
                     return false;
                 }
 
                 int number = int.Parse(match.Groups[1].Value);
                 if (number != values.Count + 1)
                 {
-                    errorMessage = "AI returned numbered items out of order";
+                    errorMessage = I18n.Get("VenueNormalize.Ai.OutOfOrder");
                     return false;
                 }
 
@@ -232,13 +232,13 @@ namespace Litenbib.Models
 
             if (values.Count != expectedCount)
             {
-                errorMessage = $"AI returned {values.Count} item(s), expected {expectedCount}";
+                errorMessage = I18n.Format("VenueNormalize.Status.AiReturnedWrongCount", values.Count, expectedCount);
                 return false;
             }
 
             if (values.Any(string.IsNullOrWhiteSpace))
             {
-                errorMessage = "AI returned an empty venue name";
+                errorMessage = I18n.Get("VenueNormalize.Ai.EmptyVenue");
                 return false;
             }
 

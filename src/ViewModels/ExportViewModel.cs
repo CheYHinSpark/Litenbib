@@ -65,7 +65,7 @@ namespace Litenbib.ViewModels
 
             if (string.IsNullOrWhiteSpace(path))
             {
-                errorMessage = "Please choose an export path.";
+                errorMessage = I18n.Get("Export.Validation.ChoosePath");
                 return false;
             }
 
@@ -75,21 +75,21 @@ namespace Litenbib.ViewModels
             }
             catch (Exception)
             {
-                errorMessage = "The export path is invalid.";
+                errorMessage = I18n.Get("Export.Validation.InvalidPath");
                 return false;
             }
 
             string? directory = System.IO.Path.GetDirectoryName(validatedPath);
             if (string.IsNullOrWhiteSpace(directory))
             {
-                errorMessage = "The export directory is invalid.";
+                errorMessage = I18n.Get("Export.Validation.InvalidDirectory");
                 return false;
             }
 
             string extension = System.IO.Path.GetExtension(validatedPath);
             if (!string.Equals(extension, ".bib", StringComparison.OrdinalIgnoreCase))
             {
-                errorMessage = "The export file must use the .bib extension.";
+                errorMessage = I18n.Get("Export.Validation.MustUseBib");
                 return false;
             }
 
@@ -113,13 +113,13 @@ namespace Litenbib.ViewModels
 
             var file = await window.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
             {
-                Title = "Choose Export Path",
+                Title = I18n.Get("Picker.ChooseExportPath"),
                 SuggestedFileName = suggestedFileName,
                 DefaultExtension = "bib",
                 ShowOverwritePrompt = true,
                 FileTypeChoices =
                 [
-                    new FilePickerFileType("BibTeX Files")
+                    new FilePickerFileType(I18n.Get("FileType.BibtexFiles"))
                     {
                         Patterns = ["*.bib"]
                     },
@@ -141,14 +141,15 @@ namespace Litenbib.ViewModels
             if (!TryGetValidatedPath(Path, out string validatedPath, out string errorMessage))
             {
                 NotificationCenter.Error(errorMessage);
-                await ShowMessage("Export Failed", errorMessage);
+                await ShowMessage(I18n.Get("Dialog.ExportFailed.Title"), errorMessage);
                 return;
             }
 
             if (authorClip != 0 && MaxAuthors <= 0)
             {
-                NotificationCenter.Error("Max authors must be greater than 0.");
-                await ShowMessage("Export Failed", "Max authors must be greater than 0.");
+                string message = I18n.Get("Export.Validation.MaxAuthors");
+                NotificationCenter.Error(message);
+                await ShowMessage(I18n.Get("Dialog.ExportFailed.Title"), message);
                 return;
             }
 
@@ -177,14 +178,18 @@ namespace Litenbib.ViewModels
                     }
                 }
 
-                NotificationCenter.Info($"Exported {Entries.Count} entries");
-                await ShowMessage("Export Succeeded", $"Exported {Entries.Count} entries to:\n{validatedPath}");
+                NotificationCenter.Info(I18n.Format("Message.ExportedEntries", Entries.Count));
+                await ShowMessage(
+                    I18n.Get("Dialog.ExportSucceeded.Title"),
+                    I18n.Format("Message.ExportedEntriesTo", Entries.Count, validatedPath));
                 window.Close(true);
             }
             catch (Exception ex)
             {
-                NotificationCenter.Error($"Could not export {System.IO.Path.GetFileName(validatedPath)}: {ex.Message}");
-                await ShowMessage("Export Failed", $"Could not export file.\n{ex.Message}");
+                NotificationCenter.Error(I18n.Format("Message.CouldNotExportNamedFile", System.IO.Path.GetFileName(validatedPath), ex.Message));
+                await ShowMessage(
+                    I18n.Get("Dialog.ExportFailed.Title"),
+                    I18n.Format("Message.CouldNotExportFile", ex.Message));
             }
         }
     }

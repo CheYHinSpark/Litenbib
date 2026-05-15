@@ -70,7 +70,7 @@
                           SelectedItem="{CompiledBinding ShowingEntry}"
                           SelectionChanged="DataGrid_SelectionChanged">
                     <DataGrid.Columns>
-                        <DataGridTemplateColumn Header="File" Width="Auto" CanUserResize="False" CanUserSort="False">
+                        <DataGridTemplateColumn Header="{DynamicResource Bibtex.Column.File}" Width="Auto" CanUserResize="False" CanUserSort="False">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate x:DataType="m:BibtexEntry">
                                     <Button Command="{CompiledBinding ToFileCommand}"
@@ -82,7 +82,7 @@
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-                        <DataGridTemplateColumn Header="Link" Width="Auto" CanUserResize="False" CanUserSort="False">
+                        <DataGridTemplateColumn Header="{DynamicResource Bibtex.Column.Link}" Width="Auto" CanUserResize="False" CanUserSort="False">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate x:DataType="m:BibtexEntry">
 								<Button Command="{CompiledBinding ToLinkCommand}"
@@ -102,7 +102,7 @@
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-                        <DataGridTemplateColumn Header="Type" Width="Auto" CanUserResize="False"
+                        <DataGridTemplateColumn Header="{DynamicResource Bibtex.Column.Type}" Width="Auto" CanUserResize="False"
 											SortMemberPath="EntryType">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate x:DataType="m:BibtexEntry">
@@ -117,7 +117,7 @@
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-                        <DataGridTemplateColumn Header="Author" Width="1*"
+                        <DataGridTemplateColumn Header="{DynamicResource Bibtex.Column.Author}" Width="1*"
 											SortMemberPath="AuthorAndEditor">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate x:DataType="m:BibtexEntry">
@@ -132,7 +132,7 @@
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-						<DataGridTemplateColumn Header="Title" Width="2*"
+						<DataGridTemplateColumn Header="{DynamicResource Bibtex.Column.Title}" Width="2*"
 											SortMemberPath="Title">
 							<DataGridTemplateColumn.CellTemplate>
 								<DataTemplate x:DataType="m:BibtexEntry">
@@ -146,7 +146,7 @@
 								</DataTemplate>
 							</DataGridTemplateColumn.CellTemplate>
 						</DataGridTemplateColumn>
-                        <DataGridTemplateColumn Header="Venue" Width="1*"
+                        <DataGridTemplateColumn Header="{DynamicResource Bibtex.Column.Venue}" Width="1*"
 											SortMemberPath="JournalAndBooktitleAndPublisher">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate x:DataType="m:BibtexEntry">
@@ -162,7 +162,7 @@
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-                        <DataGridTextColumn Header="Year" Binding="{CompiledBinding Year}"
+                        <DataGridTextColumn Header="{DynamicResource Bibtex.Column.Year}" Binding="{CompiledBinding Year}"
                                             x:DataType="m:BibtexEntry" Width="Auto"
                                             CanUserResize="False"/>
                     </DataGrid.Columns>
@@ -171,7 +171,7 @@
 							<Setter Property="ContextMenu">
 								<Setter.Value>
 									<ContextMenu>
-										<MenuItem Header="Delete"
+										<MenuItem Header="{DynamicResource Main.Tooltip.DeleteEntry}"
 											  Command="{CompiledBinding #BibtexViewRoot.DataContext.DeleteBibtexCommand}"/>
 									</ContextMenu>
 								</Setter.Value>
@@ -188,38 +188,38 @@
                 <StackPanel Orientation="Horizontal" Height="{DynamicResource HintBarHeight}"
                             VerticalAlignment="Bottom">
 				    <TextBlock Margin="8 0 0 0" Text="{CompiledBinding BibtexView.Count}"/>
-                    <TextBlock Margin="0 0 8 0" Text="entries" Opacity="0.8"/>
+                    <TextBlock Margin="0 0 8 0" Text="{DynamicResource Bibtex.Entries}" Opacity="0.8"/>
                     
                     <!-- 批量编辑区 -->
                     <Button Margin="0 0 8 0"
-                            ToolTip.Tip="Reload current file from disk"
+                            ToolTip.Tip="{DynamicResource Bibtex.Tooltip.Reload}"
                             IsVisible="{CompiledBinding HasExternalChanges}"
                             Command="{CompiledBinding ReloadFromDiskCommand}">
                         <Path Data="{StaticResource RefreshPath}" StrokeThickness="1"
                               Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                     </Button>
                     <Button Margin="0 0 8 0"
-                            ToolTip.Tip="Delete fields from selected entries"
+                            ToolTip.Tip="{DynamicResource Bibtex.Tooltip.DeleteFields}"
                             Command="{CompiledBinding ApplyBatchFieldDeleteCommand}"
                             CommandParameter="{CompiledBinding $parent[Window]}">
                         <Path Data="{StaticResource BatchDeleteFieldsPath}" StrokeThickness="1"
 							  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                     </Button>
                     <Button Margin="0 0 8 0"
-                            ToolTip.Tip="Normalize journal/booktitle names with AI"
+                            ToolTip.Tip="{DynamicResource Bibtex.Tooltip.NormalizeVenues}"
                             Command="{CompiledBinding NormalizeSelectedVenueNamesCommand}"
                             CommandParameter="{CompiledBinding $parent[Window]}">
                         <Path Data="{StaticResource AiPath}" StrokeThickness="1"
                               Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                     </Button>
                     <Button Margin="0 0 8 0"
-                            ToolTip.Tip="Generate citation keys for selected entries"
+                            ToolTip.Tip="{DynamicResource Bibtex.Tooltip.GenerateCitationKeys}"
                             Command="{CompiledBinding GenerateSelectedCitationKeysCommand}">
                         <Path Data="{StaticResource KeyPath}" StrokeThickness="0"
                               Fill="{CompiledBinding $parent[Button].Foreground}"/>
                     </Button>
                     <Button Margin="0 0 8 0"
-                            ToolTip.Tip="Clean selected entries: trim whitespace, collapse spaces/line breaks, normalize DOI, remove empty fields"
+                            ToolTip.Tip="{DynamicResource Bibtex.Tooltip.CleanSelected}"
                             Command="{CompiledBinding CleanupSelectedEntriesCommand}">
                         <Path Data="{StaticResource BatchCleanPath}" StrokeThickness="1"
                               Stroke="{CompiledBinding $parent[Button].Foreground}"/>
@@ -273,7 +273,7 @@
             <Grid Name="DetailGrid" ColumnDefinitions="Auto,*" RowDefinitions="Auto,*,Auto">
                 <Border Classes="section-card" Margin="0 0 12 0" Grid.Column="1">
                     <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="92,*">
-                        <TextBlock Text="Type" Classes="right"/>
+                        <TextBlock Text="{DynamicResource Bibtex.Column.Type}" Classes="right"/>
                         <Grid Grid.Column="1">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
@@ -283,10 +283,10 @@
                                           ItemsSource="{CompiledBinding TypeList}"
                                           SelectedItem="{CompiledBinding ShowingEntry.EntryType, Converter={StaticResource EntryTypeConverter}}"/>
                             <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                <Button Click="ChangeButton_Click" Classes="in_section" ToolTip.Tip="Switch detail layout">
+                                <Button Click="ChangeButton_Click" Classes="in_section" ToolTip.Tip="{DynamicResource Bibtex.Tooltip.SwitchDetailLayout}">
                                     <Path Data="{StaticResource brPath}"/>
                                 </Button>
-                                <Button Click="CloseButton_Click" Classes="in_section" ToolTip.Tip="Hide detail panel">
+                                <Button Click="CloseButton_Click" Classes="in_section" ToolTip.Tip="{DynamicResource Bibtex.Tooltip.HideDetailPanel}">
                                     <Path Data="{StaticResource xPath}"/>
                                 </Button>
                             </StackPanel>
@@ -301,14 +301,14 @@
                                       Stroke="{CompiledBinding $parent[Button].Foreground}"
                                       HorizontalAlignment="Center"
                                       VerticalAlignment="Center"/>
-							    <TextBlock Grid.Column="1" Text="Citekey" Classes="right"/>
+							    <TextBlock Grid.Column="1" Text="{DynamicResource Bibtex.Detail.Citekey}" Classes="right"/>
                             </Grid>
                         </Button>
                         <Grid ColumnDefinitions="*,Auto" Grid.Row="1" Grid.Column="1">
                             <TextBox Text="{CompiledBinding ShowingEntry.CitationKey}"/>
                             <Button Grid.Column="1" Classes="in_section"
                                     Command="{CompiledBinding ShowingEntry.GenerateCitationKeyCommand}"
-                                    ToolTip.Tip="Generate citation key">
+                                    ToolTip.Tip="{DynamicResource Bibtex.Tooltip.GenerateCitationKeys}">
                                 <Path Data="{StaticResource KeyPath}" StrokeThickness="0"
                                       Fill="{CompiledBinding $parent[Button].Foreground}"/>
                             </Button>
@@ -320,7 +320,7 @@
                               IsVisible="{CompiledBinding ShowingEntry,
                               Converter={x:Static ObjectConverters.IsNotNull}}">
                     <StackPanel Margin="0 0 12 0">
-                        <Expander Header="Required" IsExpanded="True">
+                        <Expander Header="{DynamicResource Bibtex.Section.Required}" IsExpanded="True">
                             <Expander.Styles>
                                 <Style Selector="TextBox">
                                     <Setter Property="Theme" Value="{StaticResource DetailTextBox}"/>
@@ -361,7 +361,7 @@
                             </StackPanel>
                         </Expander>
 					
-                        <Expander Header="Optional" IsExpanded="True">
+                        <Expander Header="{DynamicResource Bibtex.Section.Optional}" IsExpanded="True">
                             <Expander.Styles>
                                 <Style Selector="TextBox">
                                     <Setter Property="Theme" Value="{StaticResource DetailTextBox}"/>
@@ -421,7 +421,7 @@
                             </StackPanel>
                         </Expander>
                         
-                        <Expander Header="Source" IsExpanded="True">
+                        <Expander Header="{DynamicResource Bibtex.Section.Source}" IsExpanded="True">
                             <Expander.Styles>
                                 <Style Selector="TextBox">
                                     <Setter Property="Theme" Value="{StaticResource DetailTextBox}"/>
@@ -468,7 +468,7 @@
                             </StackPanel>
                         </Expander>
                         
-                        <Expander Header="Notes" IsExpanded="False">
+                        <Expander Header="{DynamicResource Bibtex.Section.Notes}" IsExpanded="False">
                             <Expander.Styles>
                                 <Style Selector="TextBox">
                                     <Setter Property="Theme" Value="{StaticResource DetailTextBox}"/>
@@ -503,35 +503,35 @@
 								</WrapPanel.Styles>
 								<Button Command="{CompiledBinding FindMergeByDoiCommand}"
 										CommandParameter="{CompiledBinding $parent[Window]}"
-										Margin="2" ToolTip.Tip="Search from DOI">
+										Margin="2" ToolTip.Tip="{DynamicResource Bibtex.Tooltip.SearchDoi}">
 									<Viewbox Margin="2">
 										<Svg Path="/Assets/doi.svg"/>
 									</Viewbox>
 								</Button>
 								<Button Command="{CompiledBinding FindMergeByDblpCommand}"
 										CommandParameter="{CompiledBinding $parent[Window]}"
-										Margin="2" ToolTip.Tip="Search from DBLP">
+										Margin="2" ToolTip.Tip="{DynamicResource Bibtex.Tooltip.SearchDblp}">
 									<Viewbox Margin="2">
 										<Svg Path="/Assets/dblp.svg"/>
 									</Viewbox>
 								</Button>
 								<Button Command="{CompiledBinding FindMergeByCrossrefCommand}"
 										CommandParameter="{CompiledBinding $parent[Window]}"
-										Margin="2" ToolTip.Tip="Search from Crossref">
+										Margin="2" ToolTip.Tip="{DynamicResource Bibtex.Tooltip.SearchCrossref}">
 									<Viewbox Margin="2">
 										<Svg Path="/Assets/crossref.svg"/>
 									</Viewbox>
 								</Button>
 								<Button Command="{CompiledBinding FindMergeByTitleCommand}"
 										CommandParameter="{CompiledBinding $parent[Window]}"
-										Margin="2" ToolTip.Tip="Search by title">
+										Margin="2" ToolTip.Tip="{DynamicResource Bibtex.Tooltip.SearchTitle}">
 									<Viewbox Margin="0">
 										<TextBlock Text="T"/>
 									</Viewbox>
 								</Button>
 								<Button Command="{CompiledBinding GetDblpFromDoiCommand}"
 										CommandParameter="{CompiledBinding $parent[Window]}"
-										Margin="2" ToolTip.Tip="Super search">
+										Margin="2" ToolTip.Tip="{DynamicResource Bibtex.Tooltip.SuperSearch}">
 									<Viewbox Margin="0">
 										<TextBlock Text="S"/>
 									</Viewbox>

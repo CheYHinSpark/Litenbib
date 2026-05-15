@@ -57,8 +57,8 @@ namespace Litenbib.ViewModels
 
         public bool ShowToolBar { get => SelectedFile != null; }
 
-        public static ObservableCollection<string> FilterFieldList
-        { get => ["Whole", "Author", "Title", "Citation Key"]; }
+        public ObservableCollection<LocalizedOption> FilterFieldList { get; } =
+            [.. LocalizationManager.FilterFieldOptions];
 
         public bool NeedSave
         {
@@ -73,6 +73,20 @@ namespace Litenbib.ViewModels
         public MainWindowViewModel()
         {
             BibtexTabs = [];
+        }
+
+        private void RefreshLocalizedOptions()
+        {
+            FilterFieldList.Clear();
+            foreach (var option in LocalizationManager.FilterFieldOptions)
+            {
+                FilterFieldList.Add(option);
+            }
+
+            foreach (var tab in BibtexTabs)
+            {
+                tab.RefreshLocalizedText();
+            }
         }
 
         private void RefreshRecentFiles()
@@ -114,6 +128,7 @@ namespace Litenbib.ViewModels
             if (!File.Exists(LocalConfigPath))
             {
                 AppSettingsState.Apply(new AppSettings());
+                LocalizationManager.ApplyLanguage(AppSettingsState.Current.LanguageCode);
                 Application.Current!.RequestedThemeVariant = ThemeIndex ? ThemeVariant.Light : ThemeVariant.Dark;
                 return null;
             }
@@ -122,6 +137,7 @@ namespace Litenbib.ViewModels
                 string jsonString = await File.ReadAllTextAsync(LocalConfigPath);
                 var config = JsonSerializer.Deserialize<LocalConfig>(jsonString);
                 AppSettingsState.Apply(config?.Settings);
+                LocalizationManager.ApplyLanguage(AppSettingsState.Current.LanguageCode);
                 ThemeIndex = config?.ThemeIndex ?? false;
                 Application.Current!.RequestedThemeVariant = ThemeIndex ? ThemeVariant.Light : ThemeVariant.Dark;
                 if (config?.RecentFiles != null && config.RecentFiles.Count > 0)
@@ -159,12 +175,12 @@ namespace Litenbib.ViewModels
             }
             catch (JsonException ex)
             {
-                NotificationCenter.Error($"Could not read local config: {ex.Message}");
+                NotificationCenter.Error(I18n.Format("Message.CouldNotReadLocalConfig", ex.Message));
                 Debug.WriteLine($"Error deserializing JSON: {ex.Message}");
             }
             catch (Exception ex)
             {
-                NotificationCenter.Error($"Could not restore recent files: {ex.Message}");
+                NotificationCenter.Error(I18n.Format("Message.CouldNotRestoreRecentFiles", ex.Message));
                 Debug.WriteLine($"An unexpected error occurred: {ex.Message}");
             }
             return null;
@@ -204,12 +220,12 @@ namespace Litenbib.ViewModels
             }
             catch (JsonException ex)
             {
-                NotificationCenter.Error($"Could not save local config: {ex.Message}");
+                NotificationCenter.Error(I18n.Format("Message.CouldNotSaveLocalConfig", ex.Message));
                 Debug.WriteLine($"Error serializing to JSON: {ex.Message}");
             }
             catch (Exception ex)
             {
-                NotificationCenter.Error($"Could not save local config: {ex.Message}");
+                NotificationCenter.Error(I18n.Format("Message.CouldNotSaveLocalConfig", ex.Message));
                 Debug.WriteLine($"An unexpected error occurred: {ex.Message}");
             }
         }
@@ -241,7 +257,7 @@ namespace Litenbib.ViewModels
 
             if (SelectedFile == null)
             {
-                NotificationCenter.Info("Open or create a .bib file before importing PDFs");
+                NotificationCenter.Info(I18n.Get("Message.OpenOrCreateBeforeImportingPdfs"));
                 return;
             }
 
@@ -281,11 +297,11 @@ namespace Litenbib.ViewModels
                 BibtexTabs.Add(newBVM);
                 SelectedFile = newBVM;
                 RefreshRecentFiles();
-                NotificationCenter.Info($"Opened {newBVM.Header}");
+                NotificationCenter.Info(I18n.Format("Message.OpenedFile", newBVM.Header));
             }
             catch (Exception ex)
             {
-                NotificationCenter.Error($"Could not open {Path.GetFileName(fullPath)}: {ex.Message}");
+                NotificationCenter.Error(I18n.Format("Message.CouldNotOpenFile", Path.GetFileName(fullPath), ex.Message));
             }
         }
 
@@ -347,8 +363,8 @@ namespace Litenbib.ViewModels
             }
 
             var box = MessageBoxManager.GetMessageBoxStandard(
-                "Unsaved Changes",
-                $"{tab.Header} has unsaved changes. Do you want to save it before {actionDescription}?",
+                I18n.Get("Dialog.UnsavedChanges.Title"),
+                I18n.Format("Message.TabUnsavedChanges", tab.Header, actionDescription),
                 ButtonEnum.YesNoCancel);
             var result = await box.ShowAsync();
             if (result == ButtonResult.Cancel)
@@ -389,12 +405,14 @@ namespace Litenbib.ViewModels
             if (result != true || dialog.DataContext is not SettingsViewModel vm) { return; }
 
             AppSettingsState.Apply(vm.ToSettings());
+            LocalizationManager.ApplyLanguage(AppSettingsState.Current.LanguageCode);
+            RefreshLocalizedOptions();
             foreach (var tab in BibtexTabs)
             {
                 tab.RefreshGeneratedBibtex();
             }
             await SaveLocalConfig(window);
-            NotificationCenter.Info("Settings saved");
+            NotificationCenter.Info(I18n.Get("Message.SettingsSaved"));
         }
 
         [RelayCommand]
@@ -404,14 +422,14 @@ namespace Litenbib.ViewModels
             //// 启动异步操作以打开对话框。
             var file = await window.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
             {
-                Title = "Create BibTeX File",
+                Title = I18n.Get("Picker.CreateBibtexFile"),
                 SuggestedFileName = "new.bib",
                 DefaultExtension = "bib",
                 ShowOverwritePrompt = true,
                 // 可选：添加文件类型过滤器
                 FileTypeChoices =
                 [
-                    new FilePickerFileType("BibTeX Files")
+                    new FilePickerFileType(I18n.Get("FileType.BibtexFiles"))
                     {
                         Patterns = ["*.bib"]
                     },
@@ -429,9 +447,11 @@ namespace Litenbib.ViewModels
             }
             catch (Exception ex)
             {
-                NotificationCenter.Error($"Could not create {file.Name}: {ex.Message}");
+                NotificationCenter.Error(I18n.Format("Message.CouldNotCreateNamedFile", file.Name, ex.Message));
                 var box = MessageBoxManager.GetMessageBoxStandard(
-                    "Create File Failed", $"Could not create file.\n{ex.Message}", ButtonEnum.Ok);
+                    I18n.Get("Dialog.CreateFileFailed.Title"),
+                    I18n.Format("Message.CouldNotCreateFile", ex.Message),
+                    ButtonEnum.Ok);
                 await box.ShowAsync();
                 return;
             }
@@ -440,7 +460,7 @@ namespace Litenbib.ViewModels
             BibtexTabs.Add(newBVM);
             SelectedFile = newBVM;
             RefreshRecentFiles();
-            NotificationCenter.Info($"Created {newBVM.Header}");
+            NotificationCenter.Info(I18n.Format("Message.CreatedFile", newBVM.Header));
         }
 
         [RelayCommand]
@@ -450,11 +470,11 @@ namespace Litenbib.ViewModels
             //// 启动异步操作以打开对话框。
             var files = await window.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
             {
-                Title = "Open BibTeX File",
+                Title = I18n.Get("Picker.OpenBibtexFile"),
                 AllowMultiple = false,
                 FileTypeFilter =
                 [
-                    new FilePickerFileType("BibTeX Files")
+                    new FilePickerFileType(I18n.Get("FileType.BibtexFiles"))
                     {
                         Patterns = ["*.bib"]
                     },
@@ -475,7 +495,7 @@ namespace Litenbib.ViewModels
             if (!File.Exists(recent.FilePath))
             {
                 RecentFiles.Remove(recent);
-                NotificationCenter.Error($"Recent file not found: {recent.FileName}");
+                NotificationCenter.Error(I18n.Format("Message.RecentFileNotFound", recent.FileName));
                 return;
             }
 
@@ -494,7 +514,7 @@ namespace Litenbib.ViewModels
         {
             if (tab != null && BibtexTabs.Contains(tab))
             {
-                if (!await PromptSaveIfEdited(tab, "closing it"))
+            if (!await PromptSaveIfEdited(tab, I18n.Get("Message.ActionClosing")))
                 {
                     return;
                 }
@@ -512,7 +532,7 @@ namespace Litenbib.ViewModels
                 return;
             }
 
-            if (!await PromptSaveIfEdited(tab, "duplicating it"))
+            if (!await PromptSaveIfEdited(tab, I18n.Get("Message.ActionDuplicating")))
             {
                 return;
             }
@@ -524,13 +544,13 @@ namespace Litenbib.ViewModels
             }
             catch (Exception)
             {
-                NotificationCenter.Error($"Could not duplicate {tab.Header}: invalid file path");
+                NotificationCenter.Error(I18n.Format("Message.CouldNotDuplicateInvalidPath", tab.Header));
                 return;
             }
 
             if (!File.Exists(sourcePath))
             {
-                NotificationCenter.Error($"Could not duplicate {tab.Header}: source file not found");
+                NotificationCenter.Error(I18n.Format("Message.CouldNotDuplicateSourceMissing", tab.Header));
                 return;
             }
 
@@ -542,7 +562,7 @@ namespace Litenbib.ViewModels
             }
             catch (Exception ex)
             {
-                NotificationCenter.Error($"Could not duplicate {tab.Header}: {ex.Message}");
+                NotificationCenter.Error(I18n.Format("Message.CouldNotDuplicate", tab.Header, ex.Message));
             }
         }
 
@@ -557,7 +577,7 @@ namespace Litenbib.ViewModels
             var tabsToClose = BibtexTabs.Where(item => item != tab).ToList();
             foreach (var item in tabsToClose)
             {
-                if (!await PromptSaveIfEdited(item, "closing it"))
+                if (!await PromptSaveIfEdited(item, I18n.Get("Message.ActionClosing")))
                 {
                     return;
                 }
@@ -599,7 +619,7 @@ namespace Litenbib.ViewModels
         {
             if (await SaveAllFilesAsync())
             {
-                NotificationCenter.Info("All edited files saved");
+                NotificationCenter.Info(I18n.Get("Message.AllEditedFilesSaved"));
             }
         }
 

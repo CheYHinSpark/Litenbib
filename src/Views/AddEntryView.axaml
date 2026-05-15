@@ -10,7 +10,7 @@
         x:Name="AddEntryRoot"
         x:DataType="vm:AddEntryViewModel"
         Icon="/Assets/logo.ico"
-        Title="Add Entry">
+        Title="{DynamicResource AddEntry.Title}">
     <Window.Styles>
 		<Style Selector="TextBox">
 			<Setter Property="AcceptsReturn" Value="True"/>
@@ -37,8 +37,8 @@
 
     <Grid RowDefinitions="Auto,Auto,*,*,Auto">
 		<StackPanel Margin="8 12 0 4" Spacing="4">
-            <TextBlock Text="Add bibliography entries" FontSize="18" FontWeight="SemiBold"/>
-            <TextBlock Text="Resolve from DOI, arXiv, OpenReview, title, or URL. Then import only the candidates you want."
+            <TextBlock Text="{DynamicResource AddEntry.Heading}" FontSize="18" FontWeight="SemiBold"/>
+            <TextBlock Text="{DynamicResource AddEntry.Description}"
                        Opacity="0.8" TextWrapping="Wrap"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
@@ -54,17 +54,17 @@
 		
         <Grid Grid.Row="1" Margin="4" ColumnDefinitions="*,Auto">
             <TextBox Text="{Binding DoiText}" Margin="4 0"
-					 PlaceholderText="Input DOI / arXiv / OpenReview / title / URL, or paste reference text."/>
+					 PlaceholderText="{DynamicResource AddEntry.InputPlaceholder}"/>
             <StackPanel Orientation="Vertical" Grid.Column="1"
                         VerticalAlignment="Bottom">
                 <Button VerticalAlignment="Bottom" Classes="icon" Margin="4 0"
-                        ToolTip.Tip="Resolve bibliography candidates"
+                        ToolTip.Tip="{DynamicResource AddEntry.Tooltip.Resolve}"
                         Command="{Binding ParseDoiCommand}">
                     <Path Data="{StaticResource SearchPath}" Stroke="{DynamicResource MainForeground}"
                           StrokeThickness="1"/>
                 </Button>
                 <Button VerticalAlignment="Bottom" Classes="icon" Margin="4 0"
-                        ToolTip.Tip="Generate BibTeX entries with AI"
+                        ToolTip.Tip="{DynamicResource AddEntry.Tooltip.GenerateAi}"
                         Command="{Binding GenerateBibtexWithAiCommand}">
                     <Path Data="{StaticResource AiPath}" StrokeThickness="1"
                           Stroke="{DynamicResource MainForeground}"/>
@@ -74,15 +74,15 @@
 
         <Grid Grid.Row="2" Margin="8 4" RowDefinitions="Auto,*">
             <Grid ColumnDefinitions="*,Auto,Auto">
-                <TextBlock Text="Candidates" VerticalAlignment="Center"/>
+                <TextBlock Text="{DynamicResource AddEntry.Candidates}" VerticalAlignment="Center"/>
                 <Button Grid.Column="1" Classes="icon" Margin="4 0"
-                        ToolTip.Tip="Select all candidates"
+                        ToolTip.Tip="{DynamicResource AddEntry.Tooltip.SelectAll}"
                         Command="{Binding SelectAllCandidatesCommand}">
                     <Path Data="{StaticResource BatchEditPath}" StrokeThickness="1"
                           Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                 </Button>
                 <Button Grid.Column="2" Classes="icon" Margin="0"
-                        ToolTip.Tip="Clear candidate selection"
+                        ToolTip.Tip="{DynamicResource AddEntry.Tooltip.ClearSelection}"
                         Command="{Binding ClearCandidateSelectionCommand}">
                     <Path Data="{StaticResource CleanupPath}" StrokeThickness="1"
                           Stroke="{CompiledBinding $parent[Button].Foreground}"/>
@@ -104,9 +104,9 @@
                                             <TextBlock Text="{Binding Title}" FontWeight="Bold"/>
                                             <TextBlock Text="{Binding CitationKey}" IsVisible="{Binding CitationKey, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
                                             <TextBlock>
-                                                <Run Text="Source: "/>
+                                                <Run Text="{DynamicResource AddEntry.SourceLabel}"/>
                                                 <Run Text="{Binding Source}"/>
-                                                <Run Text=" | Query: "/>
+                                                <Run Text="{DynamicResource AddEntry.QueryLabel}"/>
                                                 <Run Text="{Binding Query}"/>
                                             </TextBlock>
                                         </StackPanel>
@@ -120,7 +120,7 @@
         </Grid>
 
         <v:BibtexEditor Grid.Row="3" Margin="8 4"
-                        PlaceholderText="Selected BibTeX entries to import. You can also edit manually."
+                        PlaceholderText="{DynamicResource AddEntry.SelectedBibtexPlaceholder}"
 						Text="{Binding BibtexText, Mode=TwoWay}"/>
 		<TextBlock Grid.Row="4" Margin="8 0"
 				   HorizontalAlignment="Left"
@@ -129,10 +129,10 @@
         <StackPanel Grid.Row="4" Orientation="Horizontal"
 					Margin="0 4 8 8"
                     HorizontalAlignment="Right">
-			<Button Classes="icon" ToolTip.Tip="Cancel" Click="CancelButton_Click">
+			<Button Classes="icon" ToolTip.Tip="{DynamicResource Common.Cancel}" Click="CancelButton_Click">
                 <Path Data="{StaticResource xPath}" Stroke="{CompiledBinding $parent[Button].Foreground}" StrokeThickness="1"/>
             </Button>
-			<Button Classes="icon" ToolTip.Tip="Add selected entries" Click="AddButton_Click">
+			<Button Classes="icon" ToolTip.Tip="{DynamicResource AddEntry.Tooltip.AddSelected}" Click="AddButton_Click">
                 <Path Data="{StaticResource AddPath}" Fill="{CompiledBinding $parent[Button].Foreground}"/>
             </Button>
         </StackPanel>

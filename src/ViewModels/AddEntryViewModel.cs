@@ -61,14 +61,14 @@ namespace Litenbib.ViewModels
                 .ToList();
             if (inputs.Count == 0)
             {
-                HintText = "Please input DOI / arXiv / OpenReview / title / URL, one per line.";
+                HintText = I18n.Get("AddEntry.Hint.InputRequired");
                 return;
             }
 
             Candidates.Clear();
             List<string> hints = [];
             HashSet<string> seen = new();
-            NotificationCenter.Info($"Searching {inputs.Count} bibliography query(s)...");
+            NotificationCenter.Info(I18n.Format("Message.SearchingBibliographyQueries", inputs.Count));
 
             foreach (string input in inputs)
             {
@@ -87,32 +87,32 @@ namespace Litenbib.ViewModels
                         {
                             Source = candidate.Source,
                             Query = candidate.Query,
-                            Title = string.IsNullOrWhiteSpace(candidate.Title) ? "(Untitled)" : candidate.Title,
+                            Title = string.IsNullOrWhiteSpace(candidate.Title) ? I18n.Get("Common.Untitled") : candidate.Title,
                             CitationKey = candidate.Entry?.CitationKey ?? string.Empty,
                             BibTeX = candidate.BibTeX,
                             IsSelected = true,
                         });
                         added++;
                     }
-                    hints.Add($"{input}: {added} candidate(s)");
+                    hints.Add(I18n.Format("AddEntry.LookupCandidateCount", input, added));
                 }
                 else
                 {
-                    hints.Add($"{input}: not found");
+                    hints.Add(I18n.Format("AddEntry.LookupNotFound", input));
                 }
             }
 
             UpdateSelectedBibtex();
             HintText = Candidates.Count == 0
                 ? string.Join(" | ", hints)
-                : $"{Candidates.Count} candidate(s) ready. Select what to import.";
+                : I18n.Format("AddEntry.Hint.CandidatesReady", Candidates.Count);
             if (Candidates.Count == 0)
             {
-                NotificationCenter.Info("No bibliography candidates found");
+                NotificationCenter.Info(I18n.Get("Message.NoBibliographyCandidatesFound"));
             }
             else
             {
-                NotificationCenter.Info($"Found {Candidates.Count} bibliography candidate(s)");
+                NotificationCenter.Info(I18n.Format("Message.FoundBibliographyCandidates", Candidates.Count));
             }
         }
 
@@ -122,14 +122,14 @@ namespace Litenbib.ViewModels
             string input = DoiText.Trim();
             if (string.IsNullOrWhiteSpace(input))
             {
-                HintText = "Please paste reference text before using AI.";
+                HintText = I18n.Get("AddEntry.Hint.InputAiRequired");
                 return;
             }
 
             Candidates.Clear();
             BibtexText = string.Empty;
-            HintText = "Asking AI to generate BibTeX entries...";
-            NotificationCenter.Info("Generating BibTeX with AI...");
+            HintText = I18n.Get("AddEntry.Hint.AskingAi");
+            NotificationCenter.Info(I18n.Get("Message.GeneratingBibtexWithAi"));
 
             List<BibtexEntry> entries = await AiBibtexExtractor.ExtractEntriesFromReferenceTextAsync(input);
             HashSet<string> seen = new();
@@ -142,9 +142,9 @@ namespace Litenbib.ViewModels
 
                 Candidates.Add(new AddEntryCandidateViewModel
                 {
-                    Source = "AI",
-                    Query = "Pasted text",
-                    Title = string.IsNullOrWhiteSpace(entry.Title) ? "(Untitled)" : entry.Title,
+                    Source = I18n.Get("AddEntry.Source.Ai"),
+                    Query = I18n.Get("AddEntry.Source.PastedText"),
+                    Title = string.IsNullOrWhiteSpace(entry.Title) ? I18n.Get("Common.Untitled") : entry.Title,
                     CitationKey = entry.CitationKey,
                     BibTeX = entry.BibTeX,
                     IsSelected = true,
@@ -154,13 +154,13 @@ namespace Litenbib.ViewModels
             UpdateSelectedBibtex();
             if (Candidates.Count == 0)
             {
-                HintText = "AI did not generate any valid BibTeX entries.";
-                NotificationCenter.Info("No valid AI BibTeX entries generated");
+                HintText = I18n.Get("AddEntry.Hint.NoValidAiEntries");
+                NotificationCenter.Info(I18n.Get("Message.NoValidAiBibtexEntriesGenerated"));
                 return;
             }
 
-            HintText = $"{Candidates.Count} AI-generated candidate(s) ready. Review before importing.";
-            NotificationCenter.Info($"Generated {Candidates.Count} BibTeX candidate(s)");
+            HintText = I18n.Format("AddEntry.Hint.AiCandidatesReady", Candidates.Count);
+            NotificationCenter.Info(I18n.Format("Message.GeneratedBibtexCandidates", Candidates.Count));
         }
 
         [RelayCommand]

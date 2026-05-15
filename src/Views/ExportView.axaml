@@ -9,7 +9,7 @@
         x:DataType="vm:ExportViewModel"
 		WindowStartupLocation="CenterScreen"
         Icon="/Assets/logo.ico"
-        Title="ExportView">
+        Title="{DynamicResource Export.Title}">
 	<Window.Resources>
 		<m:FilterModeConverter x:Key="FilterModeConverter"/>
 	</Window.Resources>
@@ -30,8 +30,8 @@
 	
 	<Grid RowDefinitions="Auto,*,Auto" Grid.IsSharedSizeScope="True" Margin="0 0 0 8">
 		<StackPanel Margin="24 12 24 0" Spacing="4">
-            <TextBlock Text="Export bibliography" FontSize="22" FontWeight="SemiBold"/>
-            <TextBlock Text="Choose a destination and keep only the formatting rules you actually need."
+            <TextBlock Text="{DynamicResource Export.Heading}" FontSize="22" FontWeight="SemiBold"/>
+            <TextBlock Text="{DynamicResource Export.Description}"
                        Opacity="0.7"/>
         </StackPanel>
 		<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
@@ -54,12 +54,12 @@
 						<ColumnDefinition Width="*"/>
 						<ColumnDefinition Width="Auto"/>
 					</Grid.ColumnDefinitions>
-					<TextBlock Text="Path"
+					<TextBlock Text="{DynamicResource Export.Path}"
 							   HorizontalAlignment="Right" VerticalAlignment="Center"/>
 					<TextBox Grid.Column="1"  Margin="4" Text="{CompiledBinding Path}"/>
 					<Button Grid.Column="2" Classes="icon" Margin="0 4 4 4"
 					Command="{CompiledBinding BrowsePathCommand}"
-					ToolTip.Tip="Choose export path"
+					ToolTip.Tip="{DynamicResource Export.Tooltip.ChoosePath}"
 					CommandParameter="{CompiledBinding $parent[Window]}">
                         <Path Data="{StaticResource FilePath}" Stroke="{CompiledBinding $parent[Button].Foreground}" StrokeThickness="1"/>
                     </Button>
@@ -70,25 +70,25 @@
 						<ColumnDefinition Width="*"/>
 						<ColumnDefinition Width="*"/>
 					</Grid.ColumnDefinitions>
-					<TextBlock Classes="right" Text="Author Format"
+					<TextBlock Classes="right" Text="{DynamicResource Export.AuthorFormat}"
 							   HorizontalAlignment="Right" VerticalAlignment="Center"/>
 					<RadioButton Grid.Column="1" GroupName="author_format"
-								 Content="Givenname Familyname"
+								 Content="{DynamicResource Export.GivenFamily}"
 								 IsChecked="{CompiledBinding AuthorFormat,
 								 Converter={StaticResource FilterModeConverter},
 								 ConverterParameter=0, Mode=TwoWay, FallbackValue=True}"/>
 					<RadioButton Grid.Column="2" GroupName="author_format"
-								 Content="Familyname, Givenname"
+								 Content="{DynamicResource Export.FamilyGiven}"
 								 IsChecked="{CompiledBinding AuthorFormat,
 								 Converter={StaticResource FilterModeConverter},
 								 ConverterParameter=1, Mode=OneWayToSource}"/>
 					<RadioButton Grid.Column="1" Grid.Row="1" GroupName="author_format"
-								 Content="G. Familyname"
+								 Content="{DynamicResource Export.InitialFamily}"
 								 IsChecked="{CompiledBinding AuthorFormat,
 								 Converter={StaticResource FilterModeConverter},
 								 ConverterParameter=2, Mode=OneWayToSource}"/>
 					<RadioButton Grid.Column="2" Grid.Row="1" GroupName="author_format"
-								 Content="Familyname, G."
+								 Content="{DynamicResource Export.FamilyInitial}"
 								 IsChecked="{CompiledBinding AuthorFormat,
 								 Converter={StaticResource FilterModeConverter},
 								 ConverterParameter=3, Mode=OneWayToSource}"/>
@@ -99,10 +99,10 @@
 						<ColumnDefinition Width="*"/>
 						<ColumnDefinition Width="2*"/>
 					</Grid.ColumnDefinitions>
-					<TextBlock Classes="right" Text="Author Clip"
+					<TextBlock Classes="right" Text="{DynamicResource Export.AuthorClip}"
 							   HorizontalAlignment="Right" VerticalAlignment="Center"/>
 					<RadioButton Grid.Column="1" GroupName="author_clip"
-								 Content="Keep all authors"
+								 Content="{DynamicResource Export.KeepAllAuthors}"
 								 IsChecked="{CompiledBinding AuthorClip,
 								 Converter={StaticResource FilterModeConverter},
 								 ConverterParameter=0, Mode=TwoWay, FallbackValue=True}"/>
@@ -111,10 +111,10 @@
 								 Converter={StaticResource FilterModeConverter},
 								 ConverterParameter=1, Mode=OneWayToSource}">
 						<StackPanel Orientation="Horizontal">
-							<TextBlock Text="Keep at most "/>
+							<TextBlock Text="{DynamicResource Export.KeepAtMost}"/>
 							<TextBox Text="{CompiledBinding MaxAuthors}" BorderThickness="0" Padding="8 0"
 									 MinWidth="24" HorizontalContentAlignment="Center"/>
-							<TextBlock Text=" authors, ending with "/>
+							<TextBlock Text="{DynamicResource Export.AuthorsEndingWith}"/>
 							<TextBox Text="{CompiledBinding Ending}" BorderThickness="0" Padding="8 0"
 									 MinWidth="24" HorizontalContentAlignment="Center"/>
 						</StackPanel>
@@ -125,10 +125,10 @@
 
 		<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right"
                     Margin=" 8 8">
-			<Button Classes="icon" ToolTip.Tip="Cancel export" Click="CancelButton_Click">
+			<Button Classes="icon" ToolTip.Tip="{DynamicResource Export.Tooltip.Cancel}" Click="CancelButton_Click">
                 <Path Data="{StaticResource xPath}" Stroke="{CompiledBinding $parent[Button].Foreground}" StrokeThickness="1"/>
             </Button>
-			<Button Classes="icon" ToolTip.Tip="Export bibliography"
+			<Button Classes="icon" ToolTip.Tip="{DynamicResource Export.Tooltip.Export}"
 					Command="{CompiledBinding ExportCommand}"
 					CommandParameter="{CompiledBinding $parent[Window]}">
                 <Path Data="{StaticResource ToLinkPath}" Stroke="{CompiledBinding $parent[Button].Foreground}" StrokeThickness="1"/>

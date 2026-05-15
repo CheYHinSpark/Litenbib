@@ -22,6 +22,12 @@ namespace Litenbib.ViewModels
             PdfFilePathStyles.JabRef
         ];
 
+        public static ObservableCollection<LocalizedOption> LanguageList { get; } =
+            [.. LocalizationManager.LanguageOptions];
+
+        [ObservableProperty]
+        private LocalizedOption _selectedLanguage = LocalizationManager.GetLanguageOption(null);
+
         [ObservableProperty]
         private string _onlineLookupTimeoutSeconds;
 
@@ -60,6 +66,7 @@ namespace Litenbib.ViewModels
         public SettingsViewModel(AppSettings settings)
         {
             AppSettings normalized = AppSettings.Normalize(settings);
+            SelectedLanguage = LocalizationManager.GetLanguageOption(normalized.LanguageCode);
             OnlineLookupTimeoutSeconds = normalized.OnlineLookupTimeoutSeconds.ToString();
             FieldIndentSpaces = normalized.FieldIndentSpaces.ToString();
             EntryTypeCaseStyle = normalized.EntryTypeCaseStyle;
@@ -86,6 +93,7 @@ namespace Litenbib.ViewModels
             {
                 OnlineLookupTimeoutSeconds = timeoutSeconds,
                 FieldIndentSpaces = indentSpaces,
+                LanguageCode = SelectedLanguage.Value,
                 EntryTypeCaseStyle = EntryTypeCaseStyle,
                 PdfFilePathStyle = PdfFilePathStyle,
                 CitationKeyTemplate = CitationKeyTemplate,
@@ -108,7 +116,7 @@ namespace Litenbib.ViewModels
             }
             catch (System.Exception ex)
             {
-                NotificationCenter.Error($"Could not open abbreviation mappings: {ex.Message}");
+                NotificationCenter.Error(I18n.Format("Message.CouldNotOpenAbbreviationMappings", ex.Message));
             }
         }
     }

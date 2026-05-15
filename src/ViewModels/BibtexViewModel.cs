@@ -44,7 +44,7 @@ namespace Litenbib.ViewModels
         public ObservableCollection<WarningError> Warnings { get; set; }
 
         public string WarningHint
-        { get { return Warnings.Count == 0 ? string.Empty : $"{Warnings.Count} warnings or errors"; } }
+        { get { return Warnings.Count == 0 ? string.Empty : I18n.Format("Warning.Hint", Warnings.Count); } }
 
         [ObservableProperty]
         private int _hasError = -1;
@@ -125,7 +125,20 @@ namespace Litenbib.ViewModels
             set
             {
                 SetProperty(ref filterField, value);
+                OnPropertyChanged(nameof(FilterFieldOption));
                 RefreshFilter();
+            }
+        }
+
+        public LocalizedOption FilterFieldOption
+        {
+            get => LocalizationManager.GetFilterFieldOption(FilterField);
+            set
+            {
+                if (value != null)
+                {
+                    FilterField = value.Value;
+                }
             }
         }
 
@@ -182,6 +195,17 @@ namespace Litenbib.ViewModels
             CheckErrorsNow();
         }
 
+        public void RefreshLocalizedText()
+        {
+            OnPropertyChanged(nameof(FilterFieldOption));
+            OnPropertyChanged(nameof(WarningHint));
+            foreach (var warning in Warnings)
+            {
+                _ = warning.HintString;
+            }
+            OnPropertyChanged(nameof(Warnings));
+        }
+
         #region Event
         private async void OnEntryPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
@@ -220,18 +244,18 @@ namespace Litenbib.ViewModels
             }
             catch (Exception)
             {
-                NotificationCenter.Error("Could not import PDF: invalid file path");
+                NotificationCenter.Error(I18n.Get("Message.ImportPdfInvalidPath"));
                 return;
             }
 
             string fileName = Path.GetFileName(fullPath);
             if (!File.Exists(fullPath))
             {
-                NotificationCenter.Error($"Could not import {fileName}: file not found");
+                NotificationCenter.Error(I18n.Format("Message.ImportPdfFileNotFound", fileName));
                 return;
             }
 
-            ShowStatus($"Reading {fileName}");
+            ShowStatus(I18n.Format("Message.ReadingFile", fileName));
             ExtractedMetadata metadata = await Task.Run(() => PdfMetadataExtractor.Extract(fullPath));
             string query = CreatePdfLookupQuery(metadata);
 
@@ -239,42 +263,42 @@ namespace Litenbib.ViewModels
             bool resolvedByAi = false;
             if (!string.IsNullOrWhiteSpace(query))
             {
-                ShowStatus($"Resolving {fileName}");
+                ShowStatus(I18n.Format("Message.ResolvingFile", fileName));
                 var resolvedEntries = await LinkResolver.ResolveEntriesAsync(query, maxCandidates: 1);
                 entry = resolvedEntries.FirstOrDefault();
             }
             else
             {
-                NotificationCenter.Info($"No DOI or arXiv ID found in {fileName}");
+                NotificationCenter.Info(I18n.Format("Message.NoDoiOrArxivFound", fileName));
             }
 
             if (entry == null && AppSettingsState.Current.UseAiPdfImportFallback)
             {
-                ShowStatus($"Asking AI to read {fileName}");
+                ShowStatus(I18n.Format("Message.AskingAiToRead", fileName));
                 entry = await AiBibtexExtractor.ExtractFromPdfFirstPageAsync(metadata.RawText);
                 if (entry != null)
                 {
                     resolvedByAi = true;
-                    NotificationCenter.Info($"AI extracted metadata for {fileName}");
+                    NotificationCenter.Info(I18n.Format("Message.AiExtractedMetadata", fileName));
                 }
             }
 
             if (entry == null)
             {
                 entry = CreatePdfFallbackEntry(metadata, fullPath);
-                NotificationCenter.Info($"Added placeholder entry for {fileName}");
+                NotificationCenter.Info(I18n.Format("Message.AddedPlaceholderEntry", fileName));
             }
             else
             {
                 if (!resolvedByAi)
                 {
-                    NotificationCenter.Info($"Resolved metadata for {fileName}");
+                    NotificationCenter.Info(I18n.Format("Message.ResolvedMetadata", fileName));
                 }
             }
 
             PrepareImportedPdfEntry(entry, metadata, fullPath);
             await Dispatcher.UIThread.InvokeAsync(() => AddImportedPdfEntry(entry));
-            ShowStatus($"Imported {fileName}");
+            ShowStatus(I18n.Format("Message.ImportedFile", fileName));
         }
 
         private static string CreatePdfLookupQuery(ExtractedMetadata metadata)
@@ -433,7 +457,7 @@ namespace Litenbib.ViewModels
                 }
                 if (addedEntries.Count == 0)
                 {
-                    NotificationCenter.Info("No BibTeX entries were added");
+                    NotificationCenter.Info(I18n.Get("Message.NoBibtexEntriesAdded"));
                     return;
                 }
                 UndoRedoManager.AddAction(new AddEntriesAction(BibtexEntries, index_entries));
@@ -447,7 +471,7 @@ namespace Litenbib.ViewModels
             BibtexEntry? entryToFocus = addedEntries.FirstOrDefault(FilterBibtex);
             if (entryToFocus == null)
             {
-                NotificationCenter.Info("Added entry, but it is hidden by the current filter");
+                NotificationCenter.Info(I18n.Get("Message.AddedEntryHiddenByFilter"));
                 return;
             }
 
@@ -513,8 +537,8 @@ namespace Litenbib.ViewModels
             }
 
             var box = MessageBoxManager.GetMessageBoxStandard(
-                "File Changed On Disk",
-                "This file has changed on disk since it was opened or last saved. Saving now will overwrite those external changes.\n\nDo you want to overwrite the disk file?",
+                I18n.Get("Dialog.FileChangedOnDisk.Title"),
+                I18n.Get("Message.FileChangedOnDisk"),
                 ButtonEnum.YesNo);
             var result = await box.ShowAsync();
             if (result == ButtonResult.Yes)
@@ -522,7 +546,7 @@ namespace Litenbib.ViewModels
                 return true;
             }
 
-            NotificationCenter.Info("Save canceled: file changed on disk");
+            NotificationCenter.Info(I18n.Get("Message.SaveCanceledExternalChange"));
             return false;
         }
 
@@ -564,7 +588,7 @@ namespace Litenbib.ViewModels
 
             if (string.IsNullOrWhiteSpace(path))
             {
-                errorMessage = "The file path is empty.";
+                errorMessage = I18n.Get("Save.Validation.EmptyPath");
                 return false;
             }
 
@@ -574,20 +598,20 @@ namespace Litenbib.ViewModels
             }
             catch (Exception)
             {
-                errorMessage = "The file path is invalid.";
+                errorMessage = I18n.Get("Save.Validation.InvalidPath");
                 return false;
             }
 
             string? directory = Path.GetDirectoryName(validatedPath);
             if (string.IsNullOrWhiteSpace(directory))
             {
-                errorMessage = "The target directory is invalid.";
+                errorMessage = I18n.Get("Save.Validation.InvalidDirectory");
                 return false;
             }
 
             if (!string.Equals(Path.GetExtension(validatedPath), ".bib", StringComparison.OrdinalIgnoreCase))
             {
-                errorMessage = "Only .bib files can be saved.";
+                errorMessage = I18n.Get("Save.Validation.MustUseBib");
                 return false;
             }
 
@@ -611,7 +635,7 @@ namespace Litenbib.ViewModels
         {
             if (string.IsNullOrWhiteSpace(FullPath) || !File.Exists(FullPath))
             {
-                await ShowMessage("Reload Failed", "The source file no longer exists.");
+                await ShowMessage(I18n.Get("Dialog.ReloadFailed.Title"), I18n.Get("Message.SourceFileMissing"));
                 return;
             }
 
@@ -632,7 +656,7 @@ namespace Litenbib.ViewModels
             LastDiskWriteTimeUtc = File.GetLastWriteTimeUtc(FullPath);
             ShowingEntry = BibtexEntries.FirstOrDefault();
             NotifyCanUndoRedo();
-            ShowStatus("Reloaded from disk");
+            ShowStatus(I18n.Get("Message.ReloadedFromDisk"));
         }
 
         [RelayCommand]
@@ -790,7 +814,7 @@ namespace Litenbib.ViewModels
             if (!TryGetValidatedSavePath(targetPath, out string validatedPath, out string errorMessage))
             {
                 NotificationCenter.Error(errorMessage);
-                await ShowMessage("Save Failed", errorMessage);
+                await ShowMessage(I18n.Get("Dialog.SaveFailed.Title"), errorMessage);
                 return false;
             }
 
@@ -820,13 +844,15 @@ namespace Litenbib.ViewModels
                 UndoRedoManager.Edited = false;
                 OnPropertyChanged(nameof(Edited));
                 SaveBibtexCommand.NotifyCanExecuteChanged();
-                ShowStatus($"Saved {Header}");
+                ShowStatus(I18n.Format("Message.SavedFile", Header));
                 return true;
             }
             catch (Exception ex)
             {
-                NotificationCenter.Error($"Could not save {Path.GetFileName(validatedPath)}: {ex.Message}");
-                await ShowMessage("Save Failed", $"Could not save file.\n{ex.Message}");
+                NotificationCenter.Error(I18n.Format("Message.CouldNotSaveNamedFile", Path.GetFileName(validatedPath), ex.Message));
+                await ShowMessage(
+                    I18n.Get("Dialog.SaveFailed.Title"),
+                    I18n.Format("Message.CouldNotSaveFile", ex.Message));
                 return false;
             }
         }
@@ -839,13 +865,13 @@ namespace Litenbib.ViewModels
 
             var file = await window.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
             {
-                Title = "Save BibTeX File As",
+                Title = I18n.Get("Picker.SaveBibtexFileAs"),
                 SuggestedFileName = suggestedFileName,
                 DefaultExtension = "bib",
                 ShowOverwritePrompt = true,
                 FileTypeChoices =
                 [
-                    new FilePickerFileType("BibTeX Files")
+                    new FilePickerFileType(I18n.Get("FileType.BibtexFiles"))
                     {
                         Patterns = ["*.bib"]
                     },
@@ -1016,22 +1042,22 @@ namespace Litenbib.ViewModels
             if (ShowingEntry == null || sender is not MainWindow window) { return; }
             var targetEntry = ShowingEntry;
             string sourceName = GetMergeSearchSourceName(source);
-            NotificationCenter.Info($"Searching {sourceName}...");
+            NotificationCenter.Info(I18n.Format("Message.SearchingSource", sourceName));
             var list = await LinkResolver.SearchMergeCandidatesAsync(targetEntry, source);
             if (list.Count == 0)
             {
-                NotificationCenter.Info($"No {sourceName} candidates found");
+                NotificationCenter.Info(I18n.Format("Message.NoSourceCandidatesFound", sourceName));
                 return;
             }
 
             int targetIndex = BibtexEntries.IndexOf(targetEntry);
             if (targetIndex < 0)
             {
-                NotificationCenter.Error("Search result ignored: the original entry was removed");
+                NotificationCenter.Error(I18n.Get("Message.SearchResultIgnoredOriginalRemoved"));
                 return;
             }
 
-            NotificationCenter.Info($"Found {list.Count} {sourceName} candidate(s)");
+            NotificationCenter.Info(I18n.Format("Message.FoundSourceCandidates", list.Count, sourceName));
             list.Insert(0, targetEntry);
             CompareEntryView dialog = new(list);
             var result = await dialog.ShowDialog<bool>(window);
@@ -1041,7 +1067,7 @@ namespace Litenbib.ViewModels
                 targetIndex = BibtexEntries.IndexOf(targetEntry);
                 if (targetIndex < 0)
                 {
-                    NotificationCenter.Error("Merge canceled: the original entry was removed");
+                    NotificationCenter.Error(I18n.Get("Message.MergeCanceledOriginalRemoved"));
                     return;
                 }
 
@@ -1106,7 +1132,7 @@ namespace Litenbib.ViewModels
             List<string> selectedFields = vm.GetSelectedFieldNames();
             if (selectedFields.Count == 0)
             {
-                ShowStatus("No fields selected");
+                ShowStatus(I18n.Get("Message.NoFieldsSelected"));
                 return;
             }
 
@@ -1119,20 +1145,20 @@ namespace Litenbib.ViewModels
             EntryFieldsChangeAction action = new(changes);
             if (!action.HasChanges)
             {
-                ShowStatus("No selected fields found");
+                ShowStatus(I18n.Get("Message.NoSelectedFieldsFound"));
                 return;
             }
 
             string fieldSummary = string.Join(", ", selectedFields);
             string title = vm.KeepSelectedFieldsOnly
-                ? "Keep Selected Fields Only"
-                : "Delete Selected Fields";
+                ? I18n.Get("Dialog.KeepSelectedFieldsOnly.Title")
+                : I18n.Get("Dialog.DeleteSelectedFields.Title");
             string message = vm.KeepSelectedFieldsOnly
-                ? $"Keep only {fieldSummary} in {selectedEntries.Count} selected entries?\n\nThis will remove {changes.Count} other field values."
-                : $"Delete {fieldSummary} from {selectedEntries.Count} selected entries?\n\nThis will remove {changes.Count} matching field values.";
+                ? I18n.Format("Dialog.KeepSelectedFieldsOnly.Message", fieldSummary, selectedEntries.Count, changes.Count)
+                : I18n.Format("Dialog.DeleteSelectedFields.Message", fieldSummary, selectedEntries.Count, changes.Count);
             if (!await ConfirmSelectedEntryBatchOperationAsync(title, message))
             {
-                ShowStatus("Batch field deletion canceled");
+                ShowStatus(I18n.Get("Message.BatchFieldDeletionCanceled"));
                 return;
             }
 
@@ -1140,8 +1166,8 @@ namespace Litenbib.ViewModels
             UndoRedoManager.AddAction(action);
             NotifyCanUndoRedo();
             ShowStatus(vm.KeepSelectedFieldsOnly
-                ? $"Kept {selectedFields.Count} fields; removed {changes.Count} field values"
-                : $"Deleted {changes.Count} field values from {selectedEntries.Count} selected entries");
+                ? I18n.Format("Message.KeptFields", selectedFields.Count, changes.Count)
+                : I18n.Format("Message.DeletedFieldValues", changes.Count, selectedEntries.Count));
         }
 
         [RelayCommand]
@@ -1161,14 +1187,14 @@ namespace Litenbib.ViewModels
             EntryFieldsChangeAction action = new(changes);
             if (!action.HasChanges)
             {
-                ShowStatus("No venue names changed");
+                ShowStatus(I18n.Get("Message.NoVenueNamesChanged"));
                 return;
             }
 
             ApplyEntryFieldChanges(changes);
             UndoRedoManager.AddAction(action);
             NotifyCanUndoRedo();
-            ShowStatus($"Updated {changes.Count} venue name(s)");
+            ShowStatus(I18n.Format("Message.UpdatedVenueNames", changes.Count));
         }
 
         [RelayCommand]
@@ -1185,21 +1211,21 @@ namespace Litenbib.ViewModels
             EntryFieldsChangeAction action = new(changes);
             if (!action.HasChanges)
             {
-                ShowStatus("No selected entries needed cleanup");
+                ShowStatus(I18n.Get("Message.NoSelectedEntriesNeededCleanup"));
                 return;
             }
             if (!await ConfirmSelectedEntryBatchOperationAsync(
-                "Clean Selected Entries",
-                $"Clean {selectedEntries.Count} selected entries?\n\nThis will trim whitespace, collapse spaces and line breaks, normalize DOI values, and remove empty fields."))
+                I18n.Get("Dialog.CleanSelectedEntries.Title"),
+                I18n.Format("Dialog.CleanSelectedEntries.Message", selectedEntries.Count)))
             {
-                ShowStatus("Clean canceled");
+                ShowStatus(I18n.Get("Message.CleanCanceled"));
                 return;
             }
 
             ApplyEntryFieldChanges(changes);
             UndoRedoManager.AddAction(action);
             NotifyCanUndoRedo();
-            ShowStatus($"Cleaned {selectedEntries.Count} selected entries");
+            ShowStatus(I18n.Format("Message.CleanedSelectedEntries", selectedEntries.Count));
         }
 
         [RelayCommand]
@@ -1242,21 +1268,21 @@ namespace Litenbib.ViewModels
             EntryFieldsChangeAction action = new(changes);
             if (!action.HasChanges)
             {
-                ShowStatus("No selected entries changed");
+                ShowStatus(I18n.Get("Message.NoSelectedEntriesChanged"));
                 return;
             }
             if (!await ConfirmSelectedEntryBatchOperationAsync(
-                "Generate Citation Keys",
-                $"Generate citation keys for {changes.Count} selected entries?\n\nExisting citation keys on those entries may be replaced."))
+                I18n.Get("Dialog.GenerateCitationKeys.Title"),
+                I18n.Format("Dialog.GenerateCitationKeys.Message", changes.Count)))
             {
-                ShowStatus("Generate citation keys canceled");
+                ShowStatus(I18n.Get("Message.GenerateCitationKeysCanceled"));
                 return;
             }
 
             ApplyEntryFieldChanges(changes);
             UndoRedoManager.AddAction(action);
             NotifyCanUndoRedo();
-            ShowStatus($"Generated citation keys for {changes.Count} selected entries");
+            ShowStatus(I18n.Format("Message.GeneratedCitationKeys", changes.Count));
         }
 
         private static string CreateUniqueCitationKey(string baseKey, HashSet<string> occupiedKeys)

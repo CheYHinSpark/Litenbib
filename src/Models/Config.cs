@@ -66,6 +66,8 @@ namespace Litenbib.Models
 
         public string PdfFilePathStyle { get; set; } = PdfFilePathStyles.AbsolutePath;
 
+        public string LanguageCode { get; set; } = LocalizationManager.GetDefaultLanguageCode();
+
         public string CitationKeyTemplate { get; set; } = DefaultCitationKeyTemplate;
 
         public string CitationKeyDuplicateSuffix { get; set; } = DefaultCitationKeyDuplicateSuffix;
@@ -88,6 +90,7 @@ namespace Litenbib.Models
                 FieldIndentSpaces = FieldIndentSpaces,
                 EntryTypeCaseStyle = EntryTypeCaseStyle,
                 PdfFilePathStyle = PdfFilePathStyle,
+                LanguageCode = LanguageCode,
                 CitationKeyTemplate = CitationKeyTemplate,
                 CitationKeyDuplicateSuffix = CitationKeyDuplicateSuffix,
                 RequireBatchOperationConfirmation = RequireBatchOperationConfirmation,
@@ -113,6 +116,7 @@ namespace Litenbib.Models
                 PdfFilePathStyle = PdfFilePathStyles.IsSupported(settings.PdfFilePathStyle)
                     ? settings.PdfFilePathStyle
                     : PdfFilePathStyles.AbsolutePath,
+                LanguageCode = LocalizationManager.NormalizeLanguageCode(settings.LanguageCode),
                 CitationKeyTemplate = NormalizeCitationKeyTemplate(settings.CitationKeyTemplate),
                 CitationKeyDuplicateSuffix = NormalizeCitationKeyDuplicateSuffix(settings.CitationKeyDuplicateSuffix),
                 RequireBatchOperationConfirmation = settings.RequireBatchOperationConfirmation,

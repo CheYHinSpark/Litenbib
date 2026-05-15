@@ -487,8 +487,8 @@ namespace Litenbib.Models
         private static void NotifyLookupException(string source, Exception ex)
         {
             string message = ex is TaskCanceledException or TimeoutException
-                ? $"{source} search timed out"
-                : $"{source} search failed: {ex.Message}";
+                ? I18n.Format("Message.LookupTimedOut", source)
+                : I18n.Format("Message.LookupFailed", source, ex.Message);
             NotificationCenter.Error(message);
         }
 

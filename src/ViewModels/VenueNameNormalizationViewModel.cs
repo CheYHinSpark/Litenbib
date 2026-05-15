@@ -14,11 +14,11 @@ namespace Litenbib.ViewModels
         public BibtexEntry Entry { get; } = entry;
 
         public string CitationKey => string.IsNullOrWhiteSpace(Entry.CitationKey)
-            ? "(no citation key)"
+            ? I18n.Get("Common.NoCitationKey")
             : Entry.CitationKey;
 
         public string EntryTitle => string.IsNullOrWhiteSpace(Entry.Title)
-            ? "(untitled)"
+            ? I18n.Get("Common.Untitled").ToLowerInvariant()
             : Entry.Title;
 
         public string FieldName { get; } = !string.IsNullOrWhiteSpace(entry.Journal)
@@ -76,8 +76,8 @@ namespace Litenbib.ViewModels
             Items = new ObservableCollection<VenueNameNormalizationItemViewModel>(
                 entries.Select(entry => new VenueNameNormalizationItemViewModel(entry)));
             StatusMessage = Items.Count == 0
-                ? "No entries selected"
-                : $"{Items.Count} selected entries. Click Expand or Abbreviate to ask AI for suggestions.";
+                ? I18n.Get("VenueNormalize.Status.NoEntriesSelected")
+                : I18n.Format("VenueNormalize.Status.SelectedEntries", Items.Count);
         }
 
         [RelayCommand]
@@ -106,7 +106,7 @@ namespace Litenbib.ViewModels
                 .ToList();
             if (targetItems.Count == 0)
             {
-                StatusMessage = "No selected entries have journal or booktitle values";
+                StatusMessage = I18n.Get("VenueNormalize.Status.NoSelectedVenues");
                 return;
             }
 
@@ -114,19 +114,20 @@ namespace Litenbib.ViewModels
             try { mappings = VenueAbbreviationMappings.Load(); }
             catch (Exception ex)
             {
-                StatusMessage = $"Could not read abbreviation mappings: {ex.Message}";
+                StatusMessage = I18n.Format("VenueNormalize.Status.CouldNotReadMappings", ex.Message);
                 return;
             }
 
             if (mappings.Count == 0)
             {
-                StatusMessage = "No abbreviation mappings found";
+                StatusMessage = I18n.Get("VenueNormalize.Status.NoMappings");
                 return;
             }
 
             IsBusy = true;
-            string action = mode == VenueNameNormalizationMode.Expand ? "Expanding" : "Abbreviating";
-            StatusMessage = $"{action} {targetItems.Count} venue names with AI...";
+            StatusMessage = mode == VenueNameNormalizationMode.Expand
+                ? I18n.Format("VenueNormalize.Status.Expanding", targetItems.Count)
+                : I18n.Format("VenueNormalize.Status.Abbreviating", targetItems.Count);
 
             VenueNameNormalizationResult result = await AiVenueNameNormalizer.NormalizeAsync(
                 mode,
@@ -143,14 +144,14 @@ namespace Litenbib.ViewModels
 
             if (result.Values.Count != targetItems.Count)
             {
-                StatusMessage = $"AI returned {result.Values.Count} item(s), expected {targetItems.Count}";
+                StatusMessage = I18n.Format("VenueNormalize.Status.AiReturnedWrongCount", result.Values.Count, targetItems.Count);
                 return;
             }
 
             for (int index = 0; index < targetItems.Count; index++)
             { targetItems[index].SuggestedValue = result.Values[index]; }
 
-            StatusMessage = $"{targetItems.Count} suggestion(s) ready. Please review before applying.";
+            StatusMessage = I18n.Format("VenueNormalize.Status.SuggestionsReady", targetItems.Count);
         }
     }
 }

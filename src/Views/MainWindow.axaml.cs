@@ -58,7 +58,8 @@ namespace Litenbib.Views
             if (_viewModel.NeedSave)
             {
                 var box = MessageBoxManager.GetMessageBoxStandard(
-                    "Warning", "Some files have been edited, but not saved. Do you want to save them?",
+                    I18n.Get("Dialog.Warning.Title"),
+                    I18n.Get("Message.SomeFilesUnsaved"),
                     ButtonEnum.YesNoCancel);
                 var result = await box.ShowAsync();
                 if (result == ButtonResult.Cancel)
