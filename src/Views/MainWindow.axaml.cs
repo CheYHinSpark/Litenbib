@@ -36,6 +36,7 @@ namespace Litenbib.Views
             InitializeComponent();
             MainTabControl.AddHandler(DragDrop.DropEvent, OnDrop);
             MainTabControl.AddHandler(DragDrop.DragEnterEvent, OnDragOver);
+            MainTabControl.AddHandler(DragDrop.DragOverEvent, OnDragOver);
             MainTabControl.AddHandler(DragDrop.DragLeaveEvent, OnDragLeave);
         }
 
@@ -109,7 +110,7 @@ namespace Litenbib.Views
         private void OnDragOver(object? sender, DragEventArgs e)
         {
             //// �����ק���������Ƿ�����ļ�
-            if (e.DataTransfer.Items.OfType<IStorageFile>().Any(IsSupportedDropFile))
+            if (HasSupportedDropFile(e))
             {
                 // ����������ڴ˴������ļ�
                 e.DragEffects = DragDropEffects.Copy;
@@ -132,7 +133,7 @@ namespace Litenbib.Views
 
         private async void OnDrop(object? sender, DragEventArgs e)
         {
-            var filePaths = e.DataTransfer.Items.OfType<IStorageItem>().ToList();
+            var filePaths = GetDroppedStorageItems(e).ToList();
 
             if (filePaths.Count != 0)
             {
@@ -140,6 +141,27 @@ namespace Litenbib.Views
             }
             DragBorder.Opacity = 0.0;
             e.Handled = true;
+        }
+
+        private static IEnumerable<IStorageItem> GetDroppedStorageItems(DragEventArgs e)
+        {
+            var files = e.DataTransfer.TryGetFiles();
+            if (files != null)
+            {
+                return files;
+            }
+
+            return e.DataTransfer.Items
+                .Select(item => item.TryGetFile())
+                .OfType<IStorageItem>();
+        }
+
+        private static bool HasSupportedDropFile(DragEventArgs e)
+        {
+            var files = GetDroppedStorageItems(e).OfType<IStorageFile>().ToList();
+            return files.Count != 0
+                ? files.Any(IsSupportedDropFile)
+                : e.DataTransfer.Contains(DataFormat.File);
         }
 
         private static bool IsSupportedDropFile(IStorageFile file)
