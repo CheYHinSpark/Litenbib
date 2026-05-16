@@ -43,7 +43,7 @@ namespace Litenbib.Views
         protected async override void OnInitialized()
         {
             base.OnInitialized();
-            await Task.Delay(1); // ȷ������Ԫ�ؼ������
+            await Task.Delay(1);
             //MainTabControl.AddHandler(PointerMovedEvent, TabControl_PointerMoved, RoutingStrategies.Bubble);
             if (DataContext is MainWindowViewModel mwvm)
             {
@@ -55,7 +55,6 @@ namespace Litenbib.Views
 
         protected override async Task<bool> OnCloseButtonClicked()
         {
-            // ����Ƿ���Ҫ����
             if (_viewModel.NeedSave)
             {
                 var box = MessageBoxManager.GetMessageBoxStandard(
@@ -109,16 +108,13 @@ namespace Litenbib.Views
         #region drag drop events
         private void OnDragOver(object? sender, DragEventArgs e)
         {
-            //// �����ק���������Ƿ�����ļ�
             if (HasSupportedDropFile(e))
             {
-                // ����������ڴ˴������ļ�
                 e.DragEffects = DragDropEffects.Copy;
                 DragBorder.Opacity = 0.5;
             }
             else
             {
-                // ����������ļ�������ʾ���ܷ��õ�Ч��
                 e.DragEffects = DragDropEffects.None;
                 DragBorder.Opacity = 0.0;
             }
@@ -126,7 +122,6 @@ namespace Litenbib.Views
         }
         private void OnDragLeave(object? sender, DragEventArgs e)
         {
-            //// �����ק���������Ƿ�����ļ�
             DragBorder.Opacity = 0.0;
         }
 
@@ -135,11 +130,11 @@ namespace Litenbib.Views
         {
             var filePaths = GetDroppedStorageItems(e).ToList();
 
+            DragBorder.Opacity = 0.0;
             if (filePaths.Count != 0)
             {
                 await _viewModel.DropProcess(filePaths);
             }
-            DragBorder.Opacity = 0.0;
             e.Handled = true;
         }
 

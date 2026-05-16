@@ -14,6 +14,14 @@
     <x:String x:Key="Settings.Title">设置</x:String>
     <x:String x:Key="Settings.General">通用</x:String>
     <x:String x:Key="Settings.Language">语言</x:String>
+    <x:String x:Key="Settings.Theme">主题</x:String>
+    <x:String x:Key="Settings.Theme.Dark">深色</x:String>
+    <x:String x:Key="Settings.Theme.Light">浅色</x:String>
+    <x:String x:Key="Settings.BibtexEditing">BibTeX编辑</x:String>
+    <x:String x:Key="Settings.PdfImport">PDF 导入</x:String>
+    <x:String x:Key="Settings.NetworkAi">联网与AI</x:String>
+    <x:String x:Key="Settings.ExportDefaults">默认导出设置</x:String>
+    <x:String x:Key="Settings.Advanced">高级</x:String>
     <x:String x:Key="Settings.Bibliography">文献库</x:String>
     <x:String x:Key="Settings.LookupTimeout">检索超时</x:String>
     <x:String x:Key="Settings.IndentSpaces">缩进空格数</x:String>
@@ -27,6 +35,9 @@
     <x:String x:Key="Settings.AbbreviationMappings">期刊/会议缩写映射</x:String>
     <x:String x:Key="Settings.EditMappings">编辑映射</x:String>
     <x:String x:Key="Settings.ConfirmBatchOperations">批量操作前确认</x:String>
+    <x:String x:Key="Settings.ConfigFolder">配置文件夹</x:String>
+    <x:String x:Key="Settings.OpenConfigFolder">打开配置文件夹</x:String>
+    <x:String x:Key="Settings.ResetSettings">重置设置</x:String>
     <x:String x:Key="Settings.Ai">AI</x:String>
     <x:String x:Key="Settings.BaseUrl">Base URL</x:String>
     <x:String x:Key="Settings.ApiKey">API 密钥</x:String>
@@ -79,7 +90,7 @@
     <x:String x:Key="Bibtex.Column.Type">类型</x:String>
     <x:String x:Key="Bibtex.Column.Author">作者</x:String>
     <x:String x:Key="Bibtex.Column.Title">标题</x:String>
-    <x:String x:Key="Bibtex.Column.Venue">来源</x:String>
+    <x:String x:Key="Bibtex.Column.Venue">期刊/会议</x:String>
     <x:String x:Key="Bibtex.Column.Year">年份</x:String>
     <x:String x:Key="Bibtex.Entries">条目</x:String>
     <x:String x:Key="Bibtex.Detail.Citekey">引用键</x:String>
@@ -187,6 +198,7 @@
     <x:String x:Key="Message.CouldNotDuplicateSourceMissing">无法复制 {0}：源文件不存在</x:String>
     <x:String x:Key="Message.CouldNotDuplicate">无法复制 {0}：{1}</x:String>
     <x:String x:Key="Message.CouldNotOpenAbbreviationMappings">无法打开缩写映射：{0}</x:String>
+    <x:String x:Key="Message.CouldNotOpenConfigFolder">无法打开配置文件夹：{0}</x:String>
     <x:String x:Key="AddEntry.Hint.InputRequired">请输入 DOI / arXiv / OpenReview / 标题 / URL，每行一个。</x:String>
     <x:String x:Key="AddEntry.Hint.InputAiRequired">使用 AI 前，请先粘贴参考文献文本。</x:String>
     <x:String x:Key="AddEntry.Hint.AskingAi">正在请求 AI 生成 BibTeX 条目...</x:String>
@@ -222,7 +234,6 @@
     <x:String x:Key="Message.ImportPdfInvalidPath">无法导入 PDF：文件路径无效</x:String>
     <x:String x:Key="Message.ImportPdfFileNotFound">无法导入 {0}：文件不存在</x:String>
     <x:String x:Key="Message.ReadingFile">正在读取 {0}</x:String>
-    <x:String x:Key="Message.ResolvingFile">正在解析 {0}</x:String>
     <x:String x:Key="Message.NoDoiOrArxivFound">{0} 中没有找到 DOI 或 arXiv ID</x:String>
     <x:String x:Key="Message.AskingAiToRead">正在请求 AI 读取 {0}</x:String>
     <x:String x:Key="Message.AiExtractedMetadata">AI 已从 {0} 提取元数据</x:String>

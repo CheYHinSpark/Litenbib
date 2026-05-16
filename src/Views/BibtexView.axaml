@@ -225,8 +225,28 @@
                               Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                     </Button>
 					<TextBlock Margin="0 0 12 0" Text="{CompiledBinding StatusMessage}"
-							   Opacity="0.8"
-                               IsVisible="{CompiledBinding StatusMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+							   Tag="{CompiledBinding StatusMessageTag}">
+                        <TextBlock.Transitions>
+                            <Transitions>
+                                <DoubleTransition Property="Opacity" Duration="0:0:0.2"/>
+                                <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2"/>
+                            </Transitions>
+                        </TextBlock.Transitions>
+                        <TextBlock.Styles>
+                            <Style Selector="TextBlock[Tag=hide]">
+                                <Setter Property="Opacity" Value="0"/>
+                                <Setter Property="RenderTransform" Value="translateY(8px)"/>
+                            </Style>
+                            <Style Selector="TextBlock[Tag=show]">
+                                <Setter Property="Opacity" Value="0.8"/>
+                                <Setter Property="RenderTransform" Value="translateY(0px)"/>
+                            </Style>
+                            <Style Selector="TextBlock[Tag=hiding]">
+                                <Setter Property="Opacity" Value="0"/>
+                                <Setter Property="RenderTransform" Value="translateY(-8px)"/>
+                            </Style>
+                        </TextBlock.Styles>
+                    </TextBlock>
                     <ToggleButton x:Name="WarningToggle" Content="{CompiledBinding WarningHint}"
                                   IsChecked="{CompiledBinding IsChecking}"
                                   IsVisible="{CompiledBinding WarningHint, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"

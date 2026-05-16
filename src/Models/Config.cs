@@ -46,6 +46,14 @@ namespace Litenbib.Models
 
         public const string DefaultCitationKeyDuplicateSuffix = "a";
 
+        public const int DefaultExportAuthorFormat = 0;
+
+        public const int DefaultExportAuthorClip = 0;
+
+        public const int DefaultExportMaxAuthors = 5;
+
+        public const string DefaultExportEnding = "and others";
+
         private static readonly Regex CitationKeyTemplateTokenRegex = new(@"\{([^{}]+)\}", RegexOptions.Compiled);
 
         private static readonly Regex CitationKeyDuplicateSuffixRegex = new(@"^[A-Za-z0-9:_-]*(?:1|a)$", RegexOptions.Compiled);
@@ -62,6 +70,8 @@ namespace Litenbib.Models
 
         public int FieldIndentSpaces { get; set; } = 4;
 
+        public string ThemeMode { get; set; } = ThemeModes.Dark;
+
         public string EntryTypeCaseStyle { get; set; } = EntryTypeCaseStyles.Lowercase;
 
         public string PdfFilePathStyle { get; set; } = PdfFilePathStyles.AbsolutePath;
@@ -73,6 +83,14 @@ namespace Litenbib.Models
         public string CitationKeyDuplicateSuffix { get; set; } = DefaultCitationKeyDuplicateSuffix;
 
         public bool RequireBatchOperationConfirmation { get; set; } = true;
+
+        public int ExportAuthorFormat { get; set; } = DefaultExportAuthorFormat;
+
+        public int ExportAuthorClip { get; set; } = DefaultExportAuthorClip;
+
+        public int ExportMaxAuthors { get; set; } = DefaultExportMaxAuthors;
+
+        public string ExportEnding { get; set; } = DefaultExportEnding;
 
         public string AiBaseUrl { get; set; } = string.Empty;
 
@@ -88,12 +106,17 @@ namespace Litenbib.Models
             {
                 OnlineLookupTimeoutSeconds = OnlineLookupTimeoutSeconds,
                 FieldIndentSpaces = FieldIndentSpaces,
+                ThemeMode = ThemeMode,
                 EntryTypeCaseStyle = EntryTypeCaseStyle,
                 PdfFilePathStyle = PdfFilePathStyle,
                 LanguageCode = LanguageCode,
                 CitationKeyTemplate = CitationKeyTemplate,
                 CitationKeyDuplicateSuffix = CitationKeyDuplicateSuffix,
                 RequireBatchOperationConfirmation = RequireBatchOperationConfirmation,
+                ExportAuthorFormat = ExportAuthorFormat,
+                ExportAuthorClip = ExportAuthorClip,
+                ExportMaxAuthors = ExportMaxAuthors,
+                ExportEnding = ExportEnding,
                 AiBaseUrl = AiBaseUrl,
                 AiApiKey = AiApiKey,
                 AiModelName = AiModelName,
@@ -112,6 +135,7 @@ namespace Litenbib.Models
             {
                 OnlineLookupTimeoutSeconds = Math.Clamp(settings.OnlineLookupTimeoutSeconds, 3, 120),
                 FieldIndentSpaces = Math.Clamp(settings.FieldIndentSpaces, 0, 12),
+                ThemeMode = ThemeModes.IsSupported(settings.ThemeMode) ? settings.ThemeMode : ThemeModes.Dark,
                 EntryTypeCaseStyle = caseStyle,
                 PdfFilePathStyle = PdfFilePathStyles.IsSupported(settings.PdfFilePathStyle)
                     ? settings.PdfFilePathStyle
@@ -120,6 +144,10 @@ namespace Litenbib.Models
                 CitationKeyTemplate = NormalizeCitationKeyTemplate(settings.CitationKeyTemplate),
                 CitationKeyDuplicateSuffix = NormalizeCitationKeyDuplicateSuffix(settings.CitationKeyDuplicateSuffix),
                 RequireBatchOperationConfirmation = settings.RequireBatchOperationConfirmation,
+                ExportAuthorFormat = Math.Clamp(settings.ExportAuthorFormat, 0, 3),
+                ExportAuthorClip = Math.Clamp(settings.ExportAuthorClip, 0, 1),
+                ExportMaxAuthors = Math.Clamp(settings.ExportMaxAuthors, 1, 999),
+                ExportEnding = NormalizeExportEnding(settings.ExportEnding),
                 AiBaseUrl = settings.AiBaseUrl?.Trim() ?? string.Empty,
                 AiApiKey = settings.AiApiKey?.Trim() ?? string.Empty,
                 AiModelName = settings.AiModelName?.Trim() ?? string.Empty,
@@ -160,6 +188,25 @@ namespace Litenbib.Models
             return CitationKeyDuplicateSuffixRegex.IsMatch(suffix)
                 ? suffix
                 : DefaultCitationKeyDuplicateSuffix;
+        }
+
+        private static string NormalizeExportEnding(string? ending)
+        {
+            ending = ending?.Trim();
+            return string.IsNullOrWhiteSpace(ending)
+                ? DefaultExportEnding
+                : ending;
+        }
+    }
+
+    public static class ThemeModes
+    {
+        public const string Dark = "dark";
+        public const string Light = "light";
+
+        public static bool IsSupported(string? value)
+        {
+            return value == Dark || value == Light;
         }
     }
 

@@ -2,10 +2,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:local="using:Litenbib.Views"
+        xmlns:m="using:Litenbib.Models"
         xmlns:vm="using:Litenbib.ViewModels"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Width="800" Height="800"
+        Width="880" Height="760"
         WindowStartupLocation="CenterOwner"
         x:Class="Litenbib.Views.SettingsView"
         x:DataType="vm:SettingsViewModel"
@@ -13,6 +14,10 @@
     <Design.DataContext>
         <vm:SettingsViewModel/>
     </Design.DataContext>
+
+    <Window.Resources>
+        <m:FilterModeConverter x:Key="FilterModeConverter"/>
+    </Window.Resources>
 
     <Window.Styles>
         <Style Selector="TextBlock.right">
@@ -23,6 +28,16 @@
         <Style Selector="TextBox">
             <Setter Property="Margin" Value="0 2"/>
             <Setter Property="FontFamily" Value="Consolas"/>
+        </Style>
+        <Style Selector="RadioButton">
+            <Setter Property="Margin" Value="4"/>
+            <Setter Property="Padding" Value="4"/>
+        </Style>
+        <Style Selector="Button.settings-action">
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="Margin" Value="0 2"/>
+            <Setter Property="Padding" Value="12 6"/>
+            <Setter Property="CornerRadius" Value="8"/>
         </Style>
     </Window.Styles>
 
@@ -35,126 +50,276 @@
             <TextBlock Text="{DynamicResource Settings.Title}" FontSize="18" FontWeight="SemiBold"/>
         </StackPanel>
 
-        <ScrollViewer Grid.Row="1" Padding="8">
-            <StackPanel Spacing="4">
-                <Border Classes="section-card">
-                    <Grid ColumnDefinitions="Auto,*" Margin="4"
-                          RowDefinitions="Auto,Auto">
-                        <TextBlock Text="{DynamicResource Settings.General}" FontWeight="SemiBold" Margin="0 0 0 8"/>
+        <TabControl Grid.Row="1" Margin="0 8 0 0" TabStripPlacement="Left">
+            <TabControl.Styles>
+                <!-- 所有 tab 标签本身 -->
+                <Style Selector="TabItem">
+                    <Setter Property="Margin" Value="4 0"/>
+                    <Setter Property="Padding" Value="0 0 16 0"/>
+                    <Setter Property="FontSize" Value="14"/>
+                    <Setter Property="Foreground" Value="{DynamicResource DisabledForeground}"/>
+                    <Setter Property="Template">
+                        <ControlTemplate>
+                            <Border Name="PART_LayoutRoot"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="{TemplateBinding CornerRadius}"
+                                    Padding="{TemplateBinding Padding}">
+                                <ContentPresenter Name="PART_ContentPresenter"
+                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                  Content="{TemplateBinding Header}"
+                                                  ContentTemplate="{TemplateBinding HeaderTemplate}"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter>
+                </Style>
+                <!-- 选中的 tab 标签 -->
+                <Style Selector="TabItem:selected">
+                    <Setter Property="Foreground" Value="{DynamicResource ThemeBorder}"/>
+                    <Setter Property="FontWeight" Value="SemiBold"/>
+                    <Setter Property="Padding" Value="16 0 0 0"/>
+                </Style>
+                <!-- 鼠标悬停 -->
+                <Style Selector="TabItem:pointerover">
+                    <Setter Property="Foreground" Value="{DynamicResource HighlightForeground}"/>
+                </Style>
+            </TabControl.Styles>
 
-                        <TextBlock Text="{DynamicResource Settings.Language}" Classes="right"
-                                   Grid.Row="1"/>
-                        <local:ExComboBox Grid.Row="1" Grid.Column="1" Margin="0 2"
-                               ItemsSource="{CompiledBinding LanguageList}"
-                               SelectedItem="{CompiledBinding SelectedLanguage}"/>
-                    </Grid>
-                </Border>
+            <TabItem Header="{DynamicResource Settings.General}">
+                <ScrollViewer Padding="8">
+                    <StackPanel Spacing="4">
+                        <Border Classes="section-card">
+                            <Grid ColumnDefinitions="Auto,*" Margin="4"
+                                  RowDefinitions="Auto,Auto,Auto">
+                                <TextBlock Text="{DynamicResource Settings.General}"
+                                           FontWeight="SemiBold" Margin="0 0 0 8"/>
 
-                <Border Classes="section-card">
-                    <Grid ColumnDefinitions="Auto,*" Margin="4"
-                          RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto">
-                        <TextBlock Text="{DynamicResource Settings.Bibliography}" FontWeight="SemiBold" Margin="0 0 0 8"/>
+                                <TextBlock Text="{DynamicResource Settings.Language}" Classes="right"
+                                           Grid.Row="1"/>
+                                <local:ExComboBox Grid.Row="1" Grid.Column="1" Margin="0 2"
+                                                  ItemsSource="{CompiledBinding LanguageList}"
+                                                  SelectedItem="{CompiledBinding SelectedLanguage}"/>
 
-                        <TextBlock Text="{DynamicResource Settings.LookupTimeout}" Classes="right"
-                                   Grid.Row="1"/>
-                        <TextBox Grid.Row="1" Grid.Column="1"
-                                 Text="{CompiledBinding OnlineLookupTimeoutSeconds}"
-                                 PlaceholderText="15"/>
+                                <TextBlock Text="{DynamicResource Settings.Theme}" Classes="right"
+                                           Grid.Row="2"/>
+                                <local:ExComboBox Grid.Row="2" Grid.Column="1" Margin="0 2"
+                                                  ItemsSource="{CompiledBinding ThemeModeList}"
+                                                  SelectedItem="{CompiledBinding SelectedThemeMode}"/>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
 
-                        <TextBlock Text="{DynamicResource Settings.IndentSpaces}" Classes="right"
-                                   Grid.Row="2"/>
-                        <TextBox Grid.Row="2" Grid.Column="1"
-                                 Text="{CompiledBinding FieldIndentSpaces}"
-                                 PlaceholderText="4"/>
+            <TabItem Header="{DynamicResource Settings.BibtexEditing}">
+                <ScrollViewer Padding="8">
+                    <StackPanel Spacing="4">
+                        <Border Classes="section-card">
+                            <Grid ColumnDefinitions="Auto,*" Margin="4"
+                                  RowDefinitions="Auto,Auto,Auto,Auto,Auto">
+                                <TextBlock Text="{DynamicResource Settings.BibtexEditing}"
+                                           FontWeight="SemiBold" Margin="0 0 0 8"/>
 
-                        <TextBlock Text="{DynamicResource Settings.EntryTypeCase}" Classes="right"
-                                   Grid.Row="3"/>
-                        <local:ExComboBox Grid.Row="3" Grid.Column="1" Margin="0 2"
-                               ItemsSource="{CompiledBinding EntryTypeCaseStyleList}"
-                               SelectedItem="{CompiledBinding EntryTypeCaseStyle}"/>
+                                <TextBlock Text="{DynamicResource Settings.IndentSpaces}" Classes="right"
+                                           Grid.Row="1"/>
+                                <TextBox Grid.Row="1" Grid.Column="1"
+                                         Text="{CompiledBinding FieldIndentSpaces}"
+                                         PlaceholderText="4"/>
 
-                        <TextBlock Text="{DynamicResource Settings.PdfFilePath}" Classes="right"
-                                   Grid.Row="4"/>
-                        <local:ExComboBox Grid.Row="4" Grid.Column="1" Margin="0 2"
-                               ItemsSource="{CompiledBinding PdfFilePathStyleList}"
-                               SelectedItem="{CompiledBinding PdfFilePathStyle}"/>
+                                <TextBlock Text="{DynamicResource Settings.EntryTypeCase}" Classes="right"
+                                           Grid.Row="2"/>
+                                <local:ExComboBox Grid.Row="2" Grid.Column="1" Margin="0 2"
+                                                  ItemsSource="{CompiledBinding EntryTypeCaseStyleList}"
+                                                  SelectedItem="{CompiledBinding EntryTypeCaseStyle}"/>
 
-                        <TextBlock Text="{DynamicResource Settings.CitationKeyTemplate}" Classes="right"
-                                   Grid.Row="5"/>
-                        <Grid Grid.Row="5" Grid.Column="1" ColumnDefinitions="*,Auto,Auto"
-                              RowDefinitions="Auto,Auto">
-                            <TextBox Text="{CompiledBinding CitationKeyTemplate}"
-                                     PlaceholderText="{}{family}{year}{title}"/>
-                            <TextBlock Text="{DynamicResource Settings.DuplicateSuffix}" VerticalAlignment="Center"
-                                       Grid.Column="1" Margin="16 0 8 0"/>
-                            <TextBox Grid.Column="2"
-                                     Text="{CompiledBinding CitationKeyDuplicateSuffix}"
-                                     PlaceholderText="a"/>
-                            <TextBlock Grid.Row="1"
-                                       Text="{DynamicResource Settings.AvailableTokens}"
-                                       Opacity="0.65"/>
-                            <TextBlock Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
-                                       Text="{DynamicResource Settings.SuffixExamples}" Margin="16 0 0 0"
-                                       Opacity="0.65"/>
-                        </Grid>
-                    </Grid>
-                </Border>
-                
-                <Border Classes="section-card">
-                    <Grid ColumnDefinitions="Auto,*" Margin="4"
-                          RowDefinitions="Auto,Auto,Auto">
-                        <TextBlock Text="{DynamicResource Settings.Editing}" FontWeight="SemiBold" Margin="0 0 0 8"/>
+                                <TextBlock Text="{DynamicResource Settings.CitationKeyTemplate}" Classes="right"
+                                           Grid.Row="3"/>
+                                <Grid Grid.Row="3" Grid.Column="1" ColumnDefinitions="*,Auto,Auto"
+                                      RowDefinitions="Auto,Auto">
+                                    <TextBox Text="{CompiledBinding CitationKeyTemplate}"
+                                             PlaceholderText="{}{family}{year}{title}"/>
+                                    <TextBlock Text="{DynamicResource Settings.DuplicateSuffix}"
+                                               VerticalAlignment="Center"
+                                               Grid.Column="1" Margin="16 0 8 0"/>
+                                    <TextBox Grid.Column="2"
+                                             Text="{CompiledBinding CitationKeyDuplicateSuffix}"
+                                             PlaceholderText="a"/>
+                                    <TextBlock Grid.Row="1"
+                                               Text="{DynamicResource Settings.AvailableTokens}"
+                                               Opacity="0.65"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
+                                               Text="{DynamicResource Settings.SuffixExamples}"
+                                               Margin="16 0 0 0"
+                                               Opacity="0.65"/>
+                                </Grid>
 
-                        <TextBlock Text="{DynamicResource Settings.AbbreviationMappings}" Classes="right"
-                                   Grid.Row="1"/>
-                        <Button Grid.Row="1" Grid.Column="1"
-                                HorizontalAlignment="Left"
-                                Command="{CompiledBinding OpenAbbreviationMappingsCommand}">
-                            <TextBlock Text="{DynamicResource Settings.EditMappings}"/>
-                        </Button>
+                                <CheckBox Margin="4" Grid.Row="4" HorizontalAlignment="Right"
+                                          IsChecked="{CompiledBinding RequireBatchOperationConfirmation}"/>
+                                <TextBlock Grid.Row="4" Grid.Column="1"
+                                           Text="{DynamicResource Settings.ConfirmBatchOperations}"
+                                           Margin="4 0" VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
 
-                        <CheckBox Margin="4" Grid.Row="2" HorizontalAlignment="Right"
-                                  IsChecked="{CompiledBinding RequireBatchOperationConfirmation}"/>
-                        <TextBlock Grid.Row="2" Grid.Column="1"
-                                   Text="{DynamicResource Settings.ConfirmBatchOperations}"
-                                   Margin="4 0" VerticalAlignment="Center"/>
-                    </Grid>
-                </Border>
+                        <Border Classes="section-card">
+                            <Grid ColumnDefinitions="Auto,*" Margin="4"
+                                  RowDefinitions="Auto,Auto,Auto">
+                                <TextBlock Text="{DynamicResource Settings.PdfImport}"
+                                           FontWeight="SemiBold" Margin="0 0 0 8"/>
 
+                                <TextBlock Text="{DynamicResource Settings.PdfFilePath}" Classes="right"
+                                           Grid.Row="1"/>
+                                <local:ExComboBox Grid.Row="1" Grid.Column="1" Margin="0 2"
+                                                  ItemsSource="{CompiledBinding PdfFilePathStyleList}"
+                                                  SelectedItem="{CompiledBinding PdfFilePathStyle}"/>
 
-                <Border Classes="section-card">
-                    <Grid ColumnDefinitions="Auto,*" Margin="4"
-                          RowDefinitions="Auto,Auto,Auto,Auto,Auto">
-                        <TextBlock Text="{DynamicResource Settings.Ai}" FontWeight="SemiBold" Margin="0 0 0 8"/>
+                                <CheckBox Margin="4" Grid.Row="2" HorizontalAlignment="Right"
+                                          IsChecked="{CompiledBinding UseAiPdfImportFallback}"/>
+                                <TextBlock Grid.Row="2" Grid.Column="1"
+                                           Text="{DynamicResource Settings.UseAiPdfFallback}"
+                                           Margin="4 0" VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
 
-                        <TextBlock Text="{DynamicResource Settings.BaseUrl}" Classes="right"
-                                   Grid.Row="1"/>
-                        <TextBox Grid.Row="1" Grid.Column="1"
-                                 Text="{CompiledBinding AiBaseUrl}"
-                                 PlaceholderText="https://api.openai.com/v1"/>
-                        
-                        <TextBlock Text="{DynamicResource Settings.ApiKey}" Classes="right"
-                                   Grid.Row="2"/>
-                        <TextBox Grid.Row="2" Grid.Column="1"
-                                 Text="{CompiledBinding AiApiKey}"
-                                 PasswordChar="*"
-                                 PlaceholderText="sk-..."/>
-                        
-                        <TextBlock Text="{DynamicResource Settings.ModelName}" Classes="right"
-                                   Grid.Row="3"/>
-                        <TextBox Grid.Row="3" Grid.Column="1"
-                                 Text="{CompiledBinding AiModelName}"
-                                 PlaceholderText="gpt-5.4-mini"/>
+            <TabItem Header="{DynamicResource Settings.NetworkAi}">
+                <ScrollViewer Padding="8">
+                    <StackPanel Spacing="4">
+                        <Border Classes="section-card">
+                            <Grid ColumnDefinitions="Auto,*" Margin="4"
+                                  RowDefinitions="Auto,Auto,Auto,Auto,Auto">
+                                <TextBlock Text="{DynamicResource Settings.NetworkAi}"
+                                           FontWeight="SemiBold" Margin="0 0 0 8"/>
 
-                        <CheckBox Margin="4" Grid.Row="4" HorizontalAlignment="Right"
-                                  IsChecked="{CompiledBinding UseAiPdfImportFallback}"/>
-                        <TextBlock Grid.Row="4" Grid.Column="1"
-                                   Text="{DynamicResource Settings.UseAiPdfFallback}"
-                                   Margin="4 0" VerticalAlignment="Center"/>
-                    </Grid>
-                </Border>
-            </StackPanel>
-        </ScrollViewer>
+                                <TextBlock Text="{DynamicResource Settings.LookupTimeout}" Classes="right"
+                                           Grid.Row="1"/>
+                                <TextBox Grid.Row="1" Grid.Column="1"
+                                         Text="{CompiledBinding OnlineLookupTimeoutSeconds}"
+                                         PlaceholderText="15"/>
+
+                                <TextBlock Text="{DynamicResource Settings.BaseUrl}" Classes="right"
+                                           Grid.Row="2"/>
+                                <TextBox Grid.Row="2" Grid.Column="1"
+                                         Text="{CompiledBinding AiBaseUrl}"
+                                         PlaceholderText="https://api.openai.com/v1"/>
+
+                                <TextBlock Text="{DynamicResource Settings.ApiKey}" Classes="right"
+                                           Grid.Row="3"/>
+                                <TextBox Grid.Row="3" Grid.Column="1"
+                                         Text="{CompiledBinding AiApiKey}"
+                                         PasswordChar="*"
+                                         PlaceholderText="sk-..."/>
+
+                                <TextBlock Text="{DynamicResource Settings.ModelName}" Classes="right"
+                                           Grid.Row="4"/>
+                                <TextBox Grid.Row="4" Grid.Column="1"
+                                         Text="{CompiledBinding AiModelName}"
+                                         PlaceholderText="gpt-5.4-mini"/>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="{DynamicResource Settings.ExportDefaults}">
+                <ScrollViewer Padding="8">
+                    <StackPanel Spacing="4">
+                        <Border Classes="section-card">
+                            <Grid ColumnDefinitions="Auto,*,*" Margin="4"
+                                  RowDefinitions="Auto,Auto,Auto,Auto">
+                                <TextBlock Text="{DynamicResource Settings.ExportDefaults}"
+                                           FontWeight="SemiBold" Margin="0 0 0 8"/>
+
+                                <TextBlock Text="{DynamicResource Export.AuthorFormat}" Classes="right"
+                                           Grid.Row="1"/>
+                                <RadioButton Grid.Row="1" Grid.Column="1" GroupName="settings_export_author_format"
+                                             Content="{DynamicResource Export.GivenFamily}"
+                                             IsChecked="{CompiledBinding ExportAuthorFormat,
+                                             Converter={StaticResource FilterModeConverter},
+                                             ConverterParameter=0, Mode=TwoWay, FallbackValue=True}"/>
+                                <RadioButton Grid.Row="1" Grid.Column="2" GroupName="settings_export_author_format"
+                                             Content="{DynamicResource Export.FamilyGiven}"
+                                             IsChecked="{CompiledBinding ExportAuthorFormat,
+                                             Converter={StaticResource FilterModeConverter},
+                                             ConverterParameter=1, Mode=OneWayToSource}"/>
+                                <RadioButton Grid.Row="2" Grid.Column="1" GroupName="settings_export_author_format"
+                                             Content="{DynamicResource Export.InitialFamily}"
+                                             IsChecked="{CompiledBinding ExportAuthorFormat,
+                                             Converter={StaticResource FilterModeConverter},
+                                             ConverterParameter=2, Mode=OneWayToSource}"/>
+                                <RadioButton Grid.Row="2" Grid.Column="2" GroupName="settings_export_author_format"
+                                             Content="{DynamicResource Export.FamilyInitial}"
+                                             IsChecked="{CompiledBinding ExportAuthorFormat,
+                                             Converter={StaticResource FilterModeConverter},
+                                             ConverterParameter=3, Mode=OneWayToSource}"/>
+
+                                <TextBlock Text="{DynamicResource Export.AuthorClip}" Classes="right"
+                                           Grid.Row="3"/>
+                                <RadioButton Grid.Row="3" Grid.Column="1" GroupName="settings_export_author_clip"
+                                             Content="{DynamicResource Export.KeepAllAuthors}"
+                                             IsChecked="{CompiledBinding ExportAuthorClip,
+                                             Converter={StaticResource FilterModeConverter},
+                                             ConverterParameter=0, Mode=TwoWay, FallbackValue=True}"/>
+                                <RadioButton Grid.Row="3" Grid.Column="2" GroupName="settings_export_author_clip"
+                                             IsChecked="{CompiledBinding ExportAuthorClip,
+                                             Converter={StaticResource FilterModeConverter},
+                                             ConverterParameter=1, Mode=OneWayToSource}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{DynamicResource Export.KeepAtMost}"/>
+                                        <TextBox Text="{CompiledBinding ExportMaxAuthors}"
+                                                 BorderThickness="0" Padding="8 0"
+                                                 MinWidth="32" HorizontalContentAlignment="Center"/>
+                                        <TextBlock Text="{DynamicResource Export.AuthorsEndingWith}"/>
+                                        <TextBox Text="{CompiledBinding ExportEnding}"
+                                                 BorderThickness="0" Padding="8 0"
+                                                 MinWidth="96" HorizontalContentAlignment="Center"/>
+                                    </StackPanel>
+                                </RadioButton>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="{DynamicResource Settings.Advanced}">
+                <ScrollViewer Padding="8">
+                    <StackPanel Spacing="4">
+                        <Border Classes="section-card">
+                            <Grid ColumnDefinitions="Auto,*" Margin="4"
+                                  RowDefinitions="Auto,Auto,Auto,Auto">
+                                <TextBlock Text="{DynamicResource Settings.Advanced}"
+                                           FontWeight="SemiBold" Margin="0 0 0 8"/>
+
+                                <TextBlock Text="{DynamicResource Settings.ConfigFolder}" Classes="right"
+                                           Grid.Row="1"/>
+                                <Button Grid.Row="1" Grid.Column="1"
+                                        Classes="settings-action"
+                                        Command="{CompiledBinding OpenConfigFolderCommand}"
+                                        Content="{DynamicResource Settings.OpenConfigFolder}"/>
+
+                                <TextBlock Text="{DynamicResource Settings.AbbreviationMappings}" Classes="right"
+                                           Grid.Row="2"/>
+                                <Button Grid.Row="2" Grid.Column="1"
+                                        Classes="settings-action"
+                                        Command="{CompiledBinding OpenAbbreviationMappingsCommand}"
+                                        Content="{DynamicResource Settings.EditMappings}"/>
+
+                                <TextBlock Text="{DynamicResource Settings.ResetSettings}" Classes="right"
+                                           Grid.Row="3"/>
+                                <Button Grid.Row="3" Grid.Column="1"
+                                        Classes="settings-action warning"
+                                        Command="{CompiledBinding ResetSettingsCommand}"
+                                        Content="{DynamicResource Settings.ResetSettings}"/>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
             <Button Click="CancelButton_Click" Content="{DynamicResource Common.Cancel}"/>

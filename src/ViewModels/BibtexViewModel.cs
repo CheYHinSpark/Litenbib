@@ -33,6 +33,9 @@ namespace Litenbib.ViewModels
         private string _statusMessage = string.Empty;
 
         [ObservableProperty]
+        private string _statusMessageTag = "hide";
+
+        [ObservableProperty]
         private bool _hasExternalChanges;
 
         public DateTime? LastDiskWriteTimeUtc { get; private set; }
@@ -263,14 +266,11 @@ namespace Litenbib.ViewModels
             bool resolvedByAi = false;
             if (!string.IsNullOrWhiteSpace(query))
             {
-                ShowStatus(I18n.Format("Message.ResolvingFile", fileName));
                 var resolvedEntries = await LinkResolver.ResolveEntriesAsync(query, maxCandidates: 1);
                 entry = resolvedEntries.FirstOrDefault();
             }
             else
-            {
-                NotificationCenter.Info(I18n.Format("Message.NoDoiOrArxivFound", fileName));
-            }
+            { NotificationCenter.Info(I18n.Format("Message.NoDoiOrArxivFound", fileName)); }
 
             if (entry == null && AppSettingsState.Current.UseAiPdfImportFallback)
             {
@@ -291,9 +291,7 @@ namespace Litenbib.ViewModels
             else
             {
                 if (!resolvedByAi)
-                {
-                    NotificationCenter.Info(I18n.Format("Message.ResolvedMetadata", fileName));
-                }
+                { NotificationCenter.Info(I18n.Format("Message.ResolvedMetadata", fileName)); }
             }
 
             PrepareImportedPdfEntry(entry, metadata, fullPath);
@@ -305,15 +303,11 @@ namespace Litenbib.ViewModels
         {
             List<string> parts = [];
             if (!string.IsNullOrWhiteSpace(metadata.Doi))
-            {
-                parts.Add(CleanIdentifier(metadata.Doi));
-            }
+            { parts.Add(CleanIdentifier(metadata.Doi)); }
 
             string arxivId = NormalizeArxivId(metadata.ArxivId);
             if (!string.IsNullOrWhiteSpace(arxivId))
-            {
-                parts.Add(arxivId);
-            }
+            { parts.Add(arxivId); }
 
             return string.Join('\n', parts.Where(part => !string.IsNullOrWhiteSpace(part)));
         }
@@ -322,15 +316,11 @@ namespace Litenbib.ViewModels
         {
             string fileTitle = Path.GetFileNameWithoutExtension(pdfFile);
             BibtexEntry entry = new("misc", CreateFallbackCitationKey(fileTitle))
-            {
-                Title = fileTitle,
-            };
+            { Title = fileTitle, };
 
             string doi = CleanIdentifier(metadata.Doi);
             if (!string.IsNullOrWhiteSpace(doi))
-            {
-                entry.DOI = doi;
-            }
+            { entry.DOI = doi; }
 
             string arxivId = NormalizeArxivId(metadata.ArxivId);
             if (!string.IsNullOrWhiteSpace(arxivId))
@@ -345,31 +335,23 @@ namespace Litenbib.ViewModels
         private static void PrepareImportedPdfEntry(BibtexEntry entry, ExtractedMetadata metadata, string pdfFile)
         {
             if (string.IsNullOrWhiteSpace(entry.EntryType))
-            {
-                entry.EntryType = "misc";
-            }
+            { entry.EntryType = "misc"; }
 
             if (string.IsNullOrWhiteSpace(entry.CitationKey))
-            {
-                entry.CitationKey = CreateFallbackCitationKey(Path.GetFileNameWithoutExtension(pdfFile));
-            }
+            { entry.CitationKey = CreateFallbackCitationKey(Path.GetFileNameWithoutExtension(pdfFile)); }
 
             if (string.IsNullOrWhiteSpace(entry.DOI))
             {
                 string doi = CleanIdentifier(metadata.Doi);
                 if (!string.IsNullOrWhiteSpace(doi))
-                {
-                    entry.DOI = doi;
-                }
+                { entry.DOI = doi; }
             }
 
             if (string.IsNullOrWhiteSpace(entry.Url))
             {
                 string arxivId = NormalizeArxivId(metadata.ArxivId);
                 if (!string.IsNullOrWhiteSpace(arxivId))
-                {
-                    entry.Url = $"https://arxiv.org/abs/{arxivId}";
-                }
+                { entry.Url = $"https://arxiv.org/abs/{arxivId}"; }
             }
 
             entry.File = FormatImportedPdfFileValue(pdfFile);
@@ -401,13 +383,9 @@ namespace Litenbib.ViewModels
             foreach (char c in value)
             {
                 if (char.IsAsciiLetterOrDigit(c) || c == ':' || c == '_' || c == '-')
-                {
-                    builder.Append(c);
-                }
+                { builder.Append(c); }
                 else if (builder.Length == 0 || builder[^1] != '_')
-                {
-                    builder.Append('_');
-                }
+                { builder.Append('_'); }
             }
 
             string key = builder.ToString().Trim('_');
@@ -415,23 +393,17 @@ namespace Litenbib.ViewModels
         }
 
         private static string CleanIdentifier(string value)
-        {
-            return (value ?? string.Empty).Trim().TrimEnd('.', ',', ';', ':', ')', ']', '}');
-        }
+        { return (value ?? string.Empty).Trim().TrimEnd('.', ',', ';', ':', ')', ']', '}'); }
 
         private static string NormalizeArxivId(string value)
         {
             string arxivId = CleanIdentifier(value);
             if (arxivId.StartsWith("arXiv:", StringComparison.OrdinalIgnoreCase))
-            {
-                arxivId = arxivId[6..].Trim();
-            }
+            { arxivId = arxivId[6..].Trim(); }
 
             int categoryIndex = arxivId.IndexOf(' ');
             if (categoryIndex >= 0)
-            {
-                arxivId = arxivId[..categoryIndex].Trim();
-            }
+            { arxivId = arxivId[..categoryIndex].Trim(); }
 
             return arxivId;
         }
@@ -487,9 +459,7 @@ namespace Litenbib.ViewModels
                 string oldBibtex = entry.BibTeX;
                 entry.UpdateBibtex(isSilent: true);
                 if (!string.Equals(oldBibtex, entry.BibTeX, StringComparison.Ordinal))
-                {
-                    changed = true;
-                }
+                { changed = true; }
             }
 
             if (changed)
@@ -504,7 +474,9 @@ namespace Litenbib.ViewModels
         public void ShowStatus(string message)
         {
             int version = ++_statusVersion;
+            _ = Dispatcher.UIThread.InvokeAsync(() => StatusMessageTag = "hide");
             StatusMessage = message;
+            _ = Dispatcher.UIThread.InvokeAsync(() => StatusMessageTag = "show");
             _ = ClearStatusLaterAsync(version);
         }
 
@@ -513,11 +485,14 @@ namespace Litenbib.ViewModels
             await Task.Delay(3000);
             if (version == _statusVersion && !string.IsNullOrWhiteSpace(StatusMessage))
             {
-                await Dispatcher.UIThread.InvokeAsync(() =>
+                await Dispatcher.UIThread.InvokeAsync(async () =>
                 {
                     if (version == _statusVersion)
                     {
+                        StatusMessageTag = "hiding";
+                        await Task.Delay(200);
                         StatusMessage = string.Empty;
+                        StatusMessageTag = "hide";
                     }
                 });
             }
@@ -532,9 +507,7 @@ namespace Litenbib.ViewModels
         private async Task<bool> ConfirmOverwriteExternalChangesAsync(string validatedPath)
         {
             if (!IsCurrentFilePath(validatedPath) || !DetectExternalModification())
-            {
-                return true;
-            }
+            { return true; }
 
             var box = MessageBoxManager.GetMessageBoxStandard(
                 I18n.Get("Dialog.FileChangedOnDisk.Title"),
@@ -542,9 +515,7 @@ namespace Litenbib.ViewModels
                 ButtonEnum.YesNo);
             var result = await box.ShowAsync();
             if (result == ButtonResult.Yes)
-            {
-                return true;
-            }
+            { return true; }
 
             NotificationCenter.Info(I18n.Get("Message.SaveCanceledExternalChange"));
             return false;
@@ -553,9 +524,7 @@ namespace Litenbib.ViewModels
         private static async Task<bool> ConfirmSelectedEntryBatchOperationAsync(string title, string message)
         {
             if (!AppSettingsState.Current.RequireBatchOperationConfirmation)
-            {
-                return true;
-            }
+            { return true; }
 
             var box = MessageBoxManager.GetMessageBoxStandard(title, message, ButtonEnum.YesNo);
             return await box.ShowAsync() == ButtonResult.Yes;
@@ -564,9 +533,7 @@ namespace Litenbib.ViewModels
         private bool IsCurrentFilePath(string path)
         {
             if (string.IsNullOrWhiteSpace(FullPath))
-            {
-                return false;
-            }
+            { return false; }
 
             try
             {
@@ -576,9 +543,7 @@ namespace Litenbib.ViewModels
                     StringComparison.OrdinalIgnoreCase);
             }
             catch (Exception)
-            {
-                return false;
-            }
+            { return false; }
         }
 
         private static bool TryGetValidatedSavePath(string? path, out string validatedPath, out string errorMessage)
@@ -728,10 +693,7 @@ namespace Litenbib.ViewModels
         private async Task CheckErrorsAsync(int version)
         {
             var result = await WarningErrorChecker.CheckBibtex(BibtexEntries);
-            if (version != _diagnosticsVersion)
-            {
-                return;
-            }
+            if (version != _diagnosticsVersion) { return; }
 
             Warnings = new ObservableCollection<WarningError>(result.Item1);
             HasError = result.Item2;

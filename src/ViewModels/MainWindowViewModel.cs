@@ -129,17 +129,23 @@ namespace Litenbib.ViewModels
             {
                 AppSettingsState.Apply(new AppSettings());
                 LocalizationManager.ApplyLanguage(AppSettingsState.Current.LanguageCode);
-                Application.Current!.RequestedThemeVariant = ThemeIndex ? ThemeVariant.Light : ThemeVariant.Dark;
+                ApplyThemeSettings();
                 return null;
             }
             try
             {
                 string jsonString = await File.ReadAllTextAsync(LocalConfigPath);
                 var config = JsonSerializer.Deserialize<LocalConfig>(jsonString);
-                AppSettingsState.Apply(config?.Settings);
+                AppSettings settings = config?.Settings ?? new AppSettings();
+                if (config?.ThemeIndex == true && settings.ThemeMode == ThemeModes.Dark)
+                {
+                    settings = settings.Copy();
+                    settings.ThemeMode = ThemeModes.Light;
+                }
+
+                AppSettingsState.Apply(settings);
                 LocalizationManager.ApplyLanguage(AppSettingsState.Current.LanguageCode);
-                ThemeIndex = config?.ThemeIndex ?? false;
-                Application.Current!.RequestedThemeVariant = ThemeIndex ? ThemeVariant.Light : ThemeVariant.Dark;
+                ApplyThemeSettings();
                 if (config?.RecentFiles != null && config.RecentFiles.Count > 0)
                 {
                     foreach (var fileState in config.RecentFiles)
@@ -234,20 +240,13 @@ namespace Litenbib.ViewModels
         {
             var storageFiles = files.OfType<IStorageFile>().ToList();
 
-            // 如果没有Tab打开，先打开文件中的所有bib文件
-            if (SelectedFile == null)
+            foreach (var file in storageFiles.Where(IsBibFile))
             {
-                foreach (var file in storageFiles)
-                {
-                    if (Path.GetExtension(file.Name).Equals(".bib", StringComparison.OrdinalIgnoreCase))
-                    {
-                        await OpenFile(file);
-                    }
-                }
+                await OpenFile(file);
             }
 
             var pdfFiles = storageFiles
-                .Where(file => Path.GetExtension(file.Name).Equals(".pdf", StringComparison.OrdinalIgnoreCase))
+                .Where(IsPdfFile)
                 .ToList();
 
             if (pdfFiles.Count == 0)
@@ -265,6 +264,16 @@ namespace Litenbib.ViewModels
             {
                 await SelectedFile.ExtractPdf(GetStoragePath(file));
             }
+        }
+
+        private static bool IsBibFile(IStorageFile file)
+        {
+            return Path.GetExtension(file.Name).Equals(".bib", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool IsPdfFile(IStorageFile file)
+        {
+            return Path.GetExtension(file.Name).Equals(".pdf", StringComparison.OrdinalIgnoreCase);
         }
 
         private async Task OpenFile(IStorageFile file)
@@ -380,12 +389,21 @@ namespace Litenbib.ViewModels
             return true;
         }
 
+        private void ApplyThemeSettings()
+        {
+            bool isLight = AppSettingsState.Current.ThemeMode == ThemeModes.Light;
+            ThemeIndex = isLight;
+            Application.Current!.RequestedThemeVariant = isLight ? ThemeVariant.Light : ThemeVariant.Dark;
+        }
+
         #region Command
         [RelayCommand]
         private void ChangeTheme()
         {
-            ThemeIndex = !ThemeIndex;
-            Application.Current!.RequestedThemeVariant = ThemeIndex? ThemeVariant.Light : ThemeVariant.Dark;
+            AppSettings settings = AppSettingsState.Current.Copy();
+            settings.ThemeMode = ThemeIndex ? ThemeModes.Dark : ThemeModes.Light;
+            AppSettingsState.Apply(settings);
+            ApplyThemeSettings();
         }
 
         [RelayCommand]
@@ -406,6 +424,7 @@ namespace Litenbib.ViewModels
 
             AppSettingsState.Apply(vm.ToSettings());
             LocalizationManager.ApplyLanguage(AppSettingsState.Current.LanguageCode);
+            ApplyThemeSettings();
             RefreshLocalizedOptions();
             foreach (var tab in BibtexTabs)
             {

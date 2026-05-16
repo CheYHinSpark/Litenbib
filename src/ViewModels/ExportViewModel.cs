@@ -21,7 +21,7 @@ namespace Litenbib.ViewModels
 
         public List<BibtexEntry> Entries = list ?? [];
 
-        private int authorFormat = 0;
+        private int authorFormat = AppSettingsState.Current.ExportAuthorFormat;
         public int AuthorFormat
         {
             get => authorFormat;
@@ -32,7 +32,7 @@ namespace Litenbib.ViewModels
             }
         }
 
-        private int authorClip = 0;
+        private int authorClip = AppSettingsState.Current.ExportAuthorClip;
         public int AuthorClip
         {
             get => authorClip;
@@ -44,10 +44,10 @@ namespace Litenbib.ViewModels
         }
 
         [ObservableProperty]
-        private int _maxAuthors = 5;
+        private int _maxAuthors = AppSettingsState.Current.ExportMaxAuthors;
 
         [ObservableProperty]
-        private string _ending = "and others";
+        private string _ending = AppSettingsState.Current.ExportEnding;
 
         private static string GenerateNewPath(string path)
         {

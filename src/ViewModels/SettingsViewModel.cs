@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using Litenbib.Models;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 
 namespace Litenbib.ViewModels
 {
@@ -25,38 +26,59 @@ namespace Litenbib.ViewModels
         public static ObservableCollection<LocalizedOption> LanguageList { get; } =
             [.. LocalizationManager.LanguageOptions];
 
+        public static ObservableCollection<LocalizedOption> ThemeModeList { get; } =
+        [
+            new(ThemeModes.Dark, "Settings.Theme.Dark"),
+            new(ThemeModes.Light, "Settings.Theme.Light"),
+        ];
+
         [ObservableProperty]
         private LocalizedOption _selectedLanguage = LocalizationManager.GetLanguageOption(null);
 
         [ObservableProperty]
-        private string _onlineLookupTimeoutSeconds;
+        private LocalizedOption _selectedThemeMode = GetThemeModeOption(null);
 
         [ObservableProperty]
-        private string _fieldIndentSpaces;
+        private string _onlineLookupTimeoutSeconds = string.Empty;
 
         [ObservableProperty]
-        private string _entryTypeCaseStyle;
+        private string _fieldIndentSpaces = string.Empty;
 
         [ObservableProperty]
-        private string _pdfFilePathStyle;
+        private string _entryTypeCaseStyle = string.Empty;
 
         [ObservableProperty]
-        private string _citationKeyTemplate;
+        private string _pdfFilePathStyle = string.Empty;
 
         [ObservableProperty]
-        private string _citationKeyDuplicateSuffix;
+        private string _citationKeyTemplate = string.Empty;
+
+        [ObservableProperty]
+        private string _citationKeyDuplicateSuffix = string.Empty;
 
         [ObservableProperty]
         private bool _requireBatchOperationConfirmation;
 
         [ObservableProperty]
-        private string _aiBaseUrl;
+        private int _exportAuthorFormat;
 
         [ObservableProperty]
-        private string _aiApiKey;
+        private int _exportAuthorClip;
 
         [ObservableProperty]
-        private string _aiModelName;
+        private int _exportMaxAuthors;
+
+        [ObservableProperty]
+        private string _exportEnding = string.Empty;
+
+        [ObservableProperty]
+        private string _aiBaseUrl = string.Empty;
+
+        [ObservableProperty]
+        private string _aiApiKey = string.Empty;
+
+        [ObservableProperty]
+        private string _aiModelName = string.Empty;
 
         [ObservableProperty]
         private bool _useAiPdfImportFallback;
@@ -65,8 +87,14 @@ namespace Litenbib.ViewModels
 
         public SettingsViewModel(AppSettings settings)
         {
+            LoadFromSettings(settings);
+        }
+
+        private void LoadFromSettings(AppSettings settings)
+        {
             AppSettings normalized = AppSettings.Normalize(settings);
             SelectedLanguage = LocalizationManager.GetLanguageOption(normalized.LanguageCode);
+            SelectedThemeMode = GetThemeModeOption(normalized.ThemeMode);
             OnlineLookupTimeoutSeconds = normalized.OnlineLookupTimeoutSeconds.ToString();
             FieldIndentSpaces = normalized.FieldIndentSpaces.ToString();
             EntryTypeCaseStyle = normalized.EntryTypeCaseStyle;
@@ -74,10 +102,20 @@ namespace Litenbib.ViewModels
             CitationKeyTemplate = normalized.CitationKeyTemplate;
             CitationKeyDuplicateSuffix = normalized.CitationKeyDuplicateSuffix;
             RequireBatchOperationConfirmation = normalized.RequireBatchOperationConfirmation;
+            ExportAuthorFormat = normalized.ExportAuthorFormat;
+            ExportAuthorClip = normalized.ExportAuthorClip;
+            ExportMaxAuthors = normalized.ExportMaxAuthors;
+            ExportEnding = normalized.ExportEnding;
             AiBaseUrl = normalized.AiBaseUrl;
             AiApiKey = normalized.AiApiKey;
             AiModelName = normalized.AiModelName;
             UseAiPdfImportFallback = normalized.UseAiPdfImportFallback;
+        }
+
+        private static LocalizedOption GetThemeModeOption(string? value)
+        {
+            return ThemeModeList.FirstOrDefault(option => option.Value == value)
+                ?? ThemeModeList[0];
         }
 
         public AppSettings ToSettings()
@@ -94,16 +132,35 @@ namespace Litenbib.ViewModels
                 OnlineLookupTimeoutSeconds = timeoutSeconds,
                 FieldIndentSpaces = indentSpaces,
                 LanguageCode = SelectedLanguage.Value,
+                ThemeMode = SelectedThemeMode.Value,
                 EntryTypeCaseStyle = EntryTypeCaseStyle,
                 PdfFilePathStyle = PdfFilePathStyle,
                 CitationKeyTemplate = CitationKeyTemplate,
                 CitationKeyDuplicateSuffix = CitationKeyDuplicateSuffix,
                 RequireBatchOperationConfirmation = RequireBatchOperationConfirmation,
+                ExportAuthorFormat = ExportAuthorFormat,
+                ExportAuthorClip = ExportAuthorClip,
+                ExportMaxAuthors = ExportMaxAuthors,
+                ExportEnding = ExportEnding,
                 AiBaseUrl = AiBaseUrl,
                 AiApiKey = AiApiKey,
                 AiModelName = AiModelName,
                 UseAiPdfImportFallback = UseAiPdfImportFallback,
             });
+        }
+
+        [RelayCommand]
+        private void OpenConfigFolder()
+        {
+            try
+            {
+                Directory.CreateDirectory(AppPaths.ConfigDirectory);
+                UriProcessor.StartProcess(AppPaths.ConfigDirectory);
+            }
+            catch (System.Exception ex)
+            {
+                NotificationCenter.Error(I18n.Format("Message.CouldNotOpenConfigFolder", ex.Message));
+            }
         }
 
         [RelayCommand]
@@ -118,6 +175,12 @@ namespace Litenbib.ViewModels
             {
                 NotificationCenter.Error(I18n.Format("Message.CouldNotOpenAbbreviationMappings", ex.Message));
             }
+        }
+
+        [RelayCommand]
+        private void ResetSettings()
+        {
+            LoadFromSettings(new AppSettings());
         }
     }
 }

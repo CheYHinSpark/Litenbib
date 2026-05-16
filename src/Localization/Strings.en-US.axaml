@@ -14,6 +14,14 @@
     <x:String x:Key="Settings.Title">Settings</x:String>
     <x:String x:Key="Settings.General">General</x:String>
     <x:String x:Key="Settings.Language">Language</x:String>
+    <x:String x:Key="Settings.Theme">Theme</x:String>
+    <x:String x:Key="Settings.Theme.Dark">Dark</x:String>
+    <x:String x:Key="Settings.Theme.Light">Light</x:String>
+    <x:String x:Key="Settings.BibtexEditing">BibTeX Editing</x:String>
+    <x:String x:Key="Settings.PdfImport">PDF import</x:String>
+    <x:String x:Key="Settings.NetworkAi">Network &amp; AI</x:String>
+    <x:String x:Key="Settings.ExportDefaults">Export defaults</x:String>
+    <x:String x:Key="Settings.Advanced">Advanced</x:String>
     <x:String x:Key="Settings.Bibliography">Bibliography</x:String>
     <x:String x:Key="Settings.LookupTimeout">Lookup timeout</x:String>
     <x:String x:Key="Settings.IndentSpaces">Indent spaces</x:String>
@@ -27,6 +35,9 @@
     <x:String x:Key="Settings.AbbreviationMappings">Journal/Booktitle Abbreviations</x:String>
     <x:String x:Key="Settings.EditMappings">Edit mappings</x:String>
     <x:String x:Key="Settings.ConfirmBatchOperations">Confirm entry batch operations</x:String>
+    <x:String x:Key="Settings.ConfigFolder">Config folder</x:String>
+    <x:String x:Key="Settings.OpenConfigFolder">Open config folder</x:String>
+    <x:String x:Key="Settings.ResetSettings">Reset settings</x:String>
     <x:String x:Key="Settings.Ai">AI</x:String>
     <x:String x:Key="Settings.BaseUrl">Base URL</x:String>
     <x:String x:Key="Settings.ApiKey">API key</x:String>
@@ -79,7 +90,7 @@
     <x:String x:Key="Bibtex.Column.Type">Type</x:String>
     <x:String x:Key="Bibtex.Column.Author">Author</x:String>
     <x:String x:Key="Bibtex.Column.Title">Title</x:String>
-    <x:String x:Key="Bibtex.Column.Venue">Venue</x:String>
+    <x:String x:Key="Bibtex.Column.Venue">Journal/Booktitle</x:String>
     <x:String x:Key="Bibtex.Column.Year">Year</x:String>
     <x:String x:Key="Bibtex.Entries">entries</x:String>
     <x:String x:Key="Bibtex.Detail.Citekey">Citekey</x:String>
@@ -187,6 +198,7 @@
     <x:String x:Key="Message.CouldNotDuplicateSourceMissing">Could not duplicate {0}: source file not found</x:String>
     <x:String x:Key="Message.CouldNotDuplicate">Could not duplicate {0}: {1}</x:String>
     <x:String x:Key="Message.CouldNotOpenAbbreviationMappings">Could not open abbreviation mappings: {0}</x:String>
+    <x:String x:Key="Message.CouldNotOpenConfigFolder">Could not open config folder: {0}</x:String>
     <x:String x:Key="AddEntry.Hint.InputRequired">Please input DOI / arXiv / OpenReview / title / URL, one per line.</x:String>
     <x:String x:Key="AddEntry.Hint.InputAiRequired">Please paste reference text before using AI.</x:String>
     <x:String x:Key="AddEntry.Hint.AskingAi">Asking AI to generate BibTeX entries...</x:String>
@@ -222,7 +234,6 @@
     <x:String x:Key="Message.ImportPdfInvalidPath">Could not import PDF: invalid file path</x:String>
     <x:String x:Key="Message.ImportPdfFileNotFound">Could not import {0}: file not found</x:String>
     <x:String x:Key="Message.ReadingFile">Reading {0}</x:String>
-    <x:String x:Key="Message.ResolvingFile">Resolving {0}</x:String>
     <x:String x:Key="Message.NoDoiOrArxivFound">No DOI or arXiv ID found in {0}</x:String>
     <x:String x:Key="Message.AskingAiToRead">Asking AI to read {0}</x:String>
     <x:String x:Key="Message.AiExtractedMetadata">AI extracted metadata for {0}</x:String>
