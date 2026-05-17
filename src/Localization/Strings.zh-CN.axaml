@@ -17,6 +17,8 @@
     <x:String x:Key="Settings.Theme">主题</x:String>
     <x:String x:Key="Settings.Theme.Dark">深色</x:String>
     <x:String x:Key="Settings.Theme.Light">浅色</x:String>
+    <x:String x:Key="Settings.RestoreLastSessionFiles">启动时恢复上次打开的文件</x:String>
+    <x:String x:Key="Settings.RecentFilesLimit">最近文件数量</x:String>
     <x:String x:Key="Settings.BibtexEditing">BibTeX编辑</x:String>
     <x:String x:Key="Settings.PdfImport">PDF 导入</x:String>
     <x:String x:Key="Settings.NetworkAi">联网与AI</x:String>
@@ -25,9 +27,10 @@
     <x:String x:Key="Settings.Bibliography">文献库</x:String>
     <x:String x:Key="Settings.LookupTimeout">检索超时</x:String>
     <x:String x:Key="Settings.IndentSpaces">缩进空格数</x:String>
+    <x:String x:Key="Settings.UndoRedoMaxSteps">撤销/重做历史上限</x:String>
     <x:String x:Key="Settings.EntryTypeCase">条目类型大小写</x:String>
     <x:String x:Key="Settings.PdfFilePath">PDF 文件路径</x:String>
-    <x:String x:Key="Settings.CitationKeyTemplate">引用键&#10;     模板</x:String>
+    <x:String x:Key="Settings.CitationKeyTemplate">引用键模板</x:String>
     <x:String x:Key="Settings.DuplicateSuffix">重复后缀</x:String>
     <x:String x:Key="Settings.AvailableTokens">可用占位符：{family}, {Family}, {year}, {title}</x:String>
     <x:String x:Key="Settings.SuffixExamples">示例：1, _1, a, :a</x:String>

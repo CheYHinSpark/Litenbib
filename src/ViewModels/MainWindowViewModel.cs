@@ -53,6 +53,10 @@ namespace Litenbib.ViewModels
             OnPropertyChanged(nameof(ShowToolBar));
             AddBibtexEntryCommand.NotifyCanExecuteChanged();
             SaveAllCommand.NotifyCanExecuteChanged();
+            if (value != null)
+            {
+                TouchRecentFile(value);
+            }
         }
 
         public bool ShowToolBar { get => SelectedFile != null; }
@@ -89,22 +93,90 @@ namespace Litenbib.ViewModels
             }
         }
 
-        private void RefreshRecentFiles()
+        private void NotifyTabCollectionChanged()
+        {
+            CloseOtherTabsCommand.NotifyCanExecuteChanged();
+        }
+
+        private void LoadRecentFiles(IEnumerable<RecentFileState>? files)
         {
             RecentFiles.Clear();
-            foreach (var tab in BibtexTabs)
+            if (files == null)
             {
+                return;
+            }
+
+            foreach (var file in files)
+            {
+                if (string.IsNullOrWhiteSpace(file.FilePath)
+                    || RecentFiles.Any(item => IsSamePath(item.FilePath, file.FilePath)))
+                {
+                    continue;
+                }
+
                 RecentFiles.Add(new RecentFileState
                 {
-                    FilePath = tab.FullPath,
-                    FileName = tab.Header,
-                    FilterMode = tab.FilterMode,
-                    FilterField = tab.FilterField,
-                    FilterText = tab.FilterText,
+                    FilePath = file.FilePath,
+                    FileName = string.IsNullOrWhiteSpace(file.FileName)
+                        ? Path.GetFileName(file.FilePath)
+                        : file.FileName,
                 });
             }
-            OnPropertyChanged(nameof(RecentFiles));
-            CloseOtherTabsCommand.NotifyCanExecuteChanged();
+
+            TrimRecentFiles();
+        }
+
+        private void TouchRecentFile(BibtexViewModel tab)
+        {
+            TouchRecentFile(tab.FullPath, tab.Header);
+        }
+
+        private void TouchRecentFile(string filePath, string? fileName = null)
+        {
+            if (string.IsNullOrWhiteSpace(filePath))
+            {
+                return;
+            }
+
+            if (AppSettingsState.Current.RecentFilesLimit <= 0)
+            {
+                RecentFiles.Clear();
+                return;
+            }
+
+            var existing = RecentFiles.FirstOrDefault(item => IsSamePath(item.FilePath, filePath));
+            if (existing != null)
+            {
+                RecentFiles.Remove(existing);
+            }
+
+            RecentFiles.Insert(0, new RecentFileState
+            {
+                FilePath = filePath,
+                FileName = string.IsNullOrWhiteSpace(fileName) ? Path.GetFileName(filePath) : fileName,
+            });
+            TrimRecentFiles();
+        }
+
+        private void TrimRecentFiles()
+        {
+            int limit = AppSettingsState.Current.RecentFilesLimit;
+            while (RecentFiles.Count > Math.Max(0, limit))
+            {
+                RecentFiles.RemoveAt(RecentFiles.Count - 1);
+            }
+        }
+
+        private static bool IsSamePath(string left, string right)
+        {
+            try
+            {
+                return string.Equals(Path.GetFullPath(left), Path.GetFullPath(right), StringComparison.OrdinalIgnoreCase);
+            }
+            catch (Exception)
+            {
+                return string.Equals(left, right, StringComparison.OrdinalIgnoreCase);
+            }
         }
 
         public async Task CopyBibtexEntries(IEnumerable<BibtexEntry> list)
@@ -146,36 +218,40 @@ namespace Litenbib.ViewModels
                 AppSettingsState.Apply(settings);
                 LocalizationManager.ApplyLanguage(AppSettingsState.Current.LanguageCode);
                 ApplyThemeSettings();
-                if (config?.RecentFiles != null && config.RecentFiles.Count > 0)
+                LoadRecentFiles(config?.RecentFiles);
+
+                IEnumerable<string> sessionPaths = [];
+                if (AppSettingsState.Current.RestoreLastSessionFiles)
                 {
-                    foreach (var fileState in config.RecentFiles)
+                    sessionPaths = config?.LastSessionFiles != null
+                        ? config.LastSessionFiles.Select(file => file.FilePath)
+                        : config?.RecentFiles?.Select(file => file.FilePath) ?? [];
+                }
+
+                foreach (string filePath in sessionPaths)
+                {
+                    if (string.IsNullOrWhiteSpace(filePath) || !File.Exists(filePath))
                     {
-                        if (!File.Exists(fileState.FilePath))
-                        {
-                            continue;
-                        }
-                        string fileContent = await File.ReadAllTextAsync(fileState.FilePath);
-                        var newBVM = new BibtexViewModel(
-                            Path.GetFileName(fileState.FilePath),
-                            fileState.FilePath,
-                            fileContent,
-                            fileState.FilterMode)
-                        {
-                            FilterField = string.IsNullOrWhiteSpace(fileState.FilterField) ? "Whole" : fileState.FilterField,
-                            FilterText = fileState.FilterText ?? string.Empty,
-                        };
-                        BibtexTabs.Add(newBVM);
+                        continue;
                     }
-                    RefreshRecentFiles();
-                    if (BibtexTabs.Count > 0)
+
+                    string fileContent = await File.ReadAllTextAsync(filePath);
+                    var newBVM = new BibtexViewModel(
+                        Path.GetFileName(filePath),
+                        filePath,
+                        fileContent);
+                    BibtexTabs.Add(newBVM);
+                }
+
+                NotifyTabCollectionChanged();
+                if (BibtexTabs.Count > 0)
+                {
+                    int selectedIndex = config?.SelectedTabIndex ?? -1;
+                    if (selectedIndex < 0 || selectedIndex >= BibtexTabs.Count)
                     {
-                        int selectedIndex = config.SelectedTabIndex;
-                        if (selectedIndex < 0 || selectedIndex >= BibtexTabs.Count)
-                        {
-                            selectedIndex = BibtexTabs.Count - 1;
-                        }
-                        SelectedFile = BibtexTabs[selectedIndex];
+                        selectedIndex = BibtexTabs.Count - 1;
                     }
+                    SelectedFile = BibtexTabs[selectedIndex];
                 }
                 return config;
             }
@@ -194,18 +270,19 @@ namespace Litenbib.ViewModels
 
         public async Task SaveLocalConfig(Window? window = null)
         {
+            bool restoreLastSession = AppSettingsState.Current.RestoreLastSessionFiles;
             var config = new LocalConfig
             {
                 ThemeIndex = ThemeIndex,
                 Settings = AppSettingsState.Current.Copy(),
-                SelectedTabIndex = SelectedFile == null ? -1 : BibtexTabs.IndexOf(SelectedFile),
-                RecentFiles = [.. BibtexTabs.Select(b => new RecentFileState
+                SelectedTabIndex = restoreLastSession && SelectedFile != null ? BibtexTabs.IndexOf(SelectedFile) : -1,
+                LastSessionFiles = restoreLastSession
+                    ? [.. BibtexTabs.Select(b => new LastSessionFileState { FilePath = b.FullPath })]
+                    : [],
+                RecentFiles = [.. RecentFiles.Select(file => new RecentFileState
                 {
-                    FilePath = b.FullPath,
-                    FileName = b.Header,
-                    FilterMode = b.FilterMode,
-                    FilterField = b.FilterField,
-                    FilterText = b.FilterText,
+                    FilePath = file.FilePath,
+                    FileName = file.FileName,
                 })]
             };
             if (window != null)
@@ -294,6 +371,7 @@ namespace Litenbib.ViewModels
             var existed = BibtexTabs.FirstOrDefault(b => string.Equals(b.FullPath, fullPath, StringComparison.OrdinalIgnoreCase));
             if (existed != null)
             {
+                TouchRecentFile(existed);
                 SelectedFile = existed;
                 return;
             }
@@ -305,7 +383,7 @@ namespace Litenbib.ViewModels
                 var newBVM = new BibtexViewModel(fileName ?? Path.GetFileName(fullPath), fullPath, fileContent, newMode);
                 BibtexTabs.Add(newBVM);
                 SelectedFile = newBVM;
-                RefreshRecentFiles();
+                NotifyTabCollectionChanged();
                 NotificationCenter.Info(I18n.Format("Message.OpenedFile", newBVM.Header));
             }
             catch (Exception ex)
@@ -425,9 +503,11 @@ namespace Litenbib.ViewModels
             AppSettingsState.Apply(vm.ToSettings());
             LocalizationManager.ApplyLanguage(AppSettingsState.Current.LanguageCode);
             ApplyThemeSettings();
+            TrimRecentFiles();
             RefreshLocalizedOptions();
             foreach (var tab in BibtexTabs)
             {
+                tab.ApplyUndoRedoLimit();
                 tab.RefreshGeneratedBibtex();
             }
             await SaveLocalConfig(window);
@@ -478,7 +558,7 @@ namespace Litenbib.ViewModels
             var newBVM = new BibtexViewModel(file.Name, fullPath, string.Empty, newMode);
             BibtexTabs.Add(newBVM);
             SelectedFile = newBVM;
-            RefreshRecentFiles();
+            NotifyTabCollectionChanged();
             NotificationCenter.Info(I18n.Format("Message.CreatedFile", newBVM.Header));
         }
 
@@ -521,6 +601,7 @@ namespace Litenbib.ViewModels
             var existed = BibtexTabs.FirstOrDefault(b => string.Equals(b.FullPath, recent.FilePath, StringComparison.OrdinalIgnoreCase));
             if (existed != null)
             {
+                TouchRecentFile(existed);
                 SelectedFile = existed;
                 return;
             }
@@ -539,7 +620,7 @@ namespace Litenbib.ViewModels
                 }
 
                 BibtexTabs.Remove(tab);
-                RefreshRecentFiles();
+                NotifyTabCollectionChanged();
             }
         }
 
@@ -608,7 +689,7 @@ namespace Litenbib.ViewModels
             }
 
             SelectedFile = tab;
-            RefreshRecentFiles();
+            NotifyTabCollectionChanged();
         }
 
         private bool CanCloseOtherTabs(BibtexViewModel? tab) => tab != null && BibtexTabs.Contains(tab) && BibtexTabs.Count > 1;
@@ -627,8 +708,10 @@ namespace Litenbib.ViewModels
         private async Task SaveFileAs(Window? window)
         {
             if (window == null || SelectedFile == null) { return; }
-            await SelectedFile.SaveBibtexAs(window);
-            RefreshRecentFiles();
+            if (await SelectedFile.SaveBibtexAs(window))
+            {
+                TouchRecentFile(SelectedFile);
+            }
         }
 
         private bool CanAddBibtexEntry() => SelectedFile != null;

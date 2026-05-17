@@ -39,10 +39,19 @@ namespace Litenbib.ViewModels
         private LocalizedOption _selectedThemeMode = GetThemeModeOption(null);
 
         [ObservableProperty]
+        private bool _restoreLastSessionFiles;
+
+        [ObservableProperty]
+        private string _recentFilesLimit = string.Empty;
+
+        [ObservableProperty]
         private string _onlineLookupTimeoutSeconds = string.Empty;
 
         [ObservableProperty]
         private string _fieldIndentSpaces = string.Empty;
+
+        [ObservableProperty]
+        private string _undoRedoMaxSteps = string.Empty;
 
         [ObservableProperty]
         private string _entryTypeCaseStyle = string.Empty;
@@ -95,8 +104,11 @@ namespace Litenbib.ViewModels
             AppSettings normalized = AppSettings.Normalize(settings);
             SelectedLanguage = LocalizationManager.GetLanguageOption(normalized.LanguageCode);
             SelectedThemeMode = GetThemeModeOption(normalized.ThemeMode);
+            RestoreLastSessionFiles = normalized.RestoreLastSessionFiles;
+            RecentFilesLimit = normalized.RecentFilesLimit.ToString();
             OnlineLookupTimeoutSeconds = normalized.OnlineLookupTimeoutSeconds.ToString();
             FieldIndentSpaces = normalized.FieldIndentSpaces.ToString();
+            UndoRedoMaxSteps = normalized.UndoRedoMaxSteps.ToString();
             EntryTypeCaseStyle = normalized.EntryTypeCaseStyle;
             PdfFilePathStyle = normalized.PdfFilePathStyle;
             CitationKeyTemplate = normalized.CitationKeyTemplate;
@@ -122,17 +134,26 @@ namespace Litenbib.ViewModels
         {
             int timeoutSeconds = AppSettingsState.Current.OnlineLookupTimeoutSeconds;
             int indentSpaces = AppSettingsState.Current.FieldIndentSpaces;
+            int recentFilesLimit = AppSettingsState.Current.RecentFilesLimit;
+            int undoRedoMaxSteps = AppSettingsState.Current.UndoRedoMaxSteps;
             if (int.TryParse(OnlineLookupTimeoutSeconds, out int parsedTimeoutSeconds))
             { timeoutSeconds = parsedTimeoutSeconds; }
             if (int.TryParse(FieldIndentSpaces, out int parsedIndentSpaces))
             { indentSpaces = parsedIndentSpaces; }
+            if (int.TryParse(RecentFilesLimit, out int parsedRecentFilesLimit))
+            { recentFilesLimit = parsedRecentFilesLimit; }
+            if (int.TryParse(UndoRedoMaxSteps, out int parsedUndoRedoMaxSteps))
+            { undoRedoMaxSteps = parsedUndoRedoMaxSteps; }
 
             return AppSettings.Normalize(new AppSettings
             {
                 OnlineLookupTimeoutSeconds = timeoutSeconds,
                 FieldIndentSpaces = indentSpaces,
+                UndoRedoMaxSteps = undoRedoMaxSteps,
                 LanguageCode = SelectedLanguage.Value,
                 ThemeMode = SelectedThemeMode.Value,
+                RestoreLastSessionFiles = RestoreLastSessionFiles,
+                RecentFilesLimit = recentFilesLimit,
                 EntryTypeCaseStyle = EntryTypeCaseStyle,
                 PdfFilePathStyle = PdfFilePathStyle,
                 CitationKeyTemplate = CitationKeyTemplate,

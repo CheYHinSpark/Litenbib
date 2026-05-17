@@ -17,6 +17,8 @@
     <x:String x:Key="Settings.Theme">Theme</x:String>
     <x:String x:Key="Settings.Theme.Dark">Dark</x:String>
     <x:String x:Key="Settings.Theme.Light">Light</x:String>
+    <x:String x:Key="Settings.RestoreLastSessionFiles">Restore files from last session on startup</x:String>
+    <x:String x:Key="Settings.RecentFilesLimit">Recent files limit</x:String>
     <x:String x:Key="Settings.BibtexEditing">BibTeX Editing</x:String>
     <x:String x:Key="Settings.PdfImport">PDF import</x:String>
     <x:String x:Key="Settings.NetworkAi">Network &amp; AI</x:String>
@@ -25,6 +27,7 @@
     <x:String x:Key="Settings.Bibliography">Bibliography</x:String>
     <x:String x:Key="Settings.LookupTimeout">Lookup timeout</x:String>
     <x:String x:Key="Settings.IndentSpaces">Indent spaces</x:String>
+    <x:String x:Key="Settings.UndoRedoMaxSteps">Undo/redo history limit</x:String>
     <x:String x:Key="Settings.EntryTypeCase">Entry type case</x:String>
     <x:String x:Key="Settings.PdfFilePath">PDF file path</x:String>
     <x:String x:Key="Settings.CitationKeyTemplate">Citation key&#10;     template</x:String>

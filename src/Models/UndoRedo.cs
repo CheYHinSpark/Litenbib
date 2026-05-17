@@ -34,13 +34,24 @@ namespace Litenbib.Models
         public object? NewEditedBox { get; set; }
 
         // 检查是否可以撤销
-        public bool CanUndo => _undoList.Count != 0;
+        public bool CanUndo => AppSettingsState.Current.UndoRedoMaxSteps > 0 && _undoList.Count != 0;
         // 检查是否可以重做
-        public bool CanRedo => _redoList.Count != 0;
+        public bool CanRedo => AppSettingsState.Current.UndoRedoMaxSteps > 0 && _redoList.Count != 0;
 
         // 添加一个新操作
         public void AddAction(IUndoableAction action)
         {
+            int maxSteps = AppSettingsState.Current.UndoRedoMaxSteps;
+            if (maxSteps <= 0)
+            {
+                _undoList.Clear();
+                _redoList.Clear();
+                Edited = true;
+                lastTime = DateTime.Now;
+                LastEditedBox = NewEditedBox;
+                return;
+            }
+
             // 检查新编辑动作是否与最后的一样
             if (action is EntryChangeAction entrychange
                 && _undoList.Last != null
@@ -52,20 +63,36 @@ namespace Litenbib.Models
                     lastchange.NewValue = entrychange.NewValue;
                     lastchange.NewIndex = entrychange.NewIndex;
                     lastTime = DateTime.Now;
+                    if (savedStep >= _undoList.Count)
+                    {
+                        savedStep = -1;
+                    }
                     return;
                 }
             }
             _undoList.AddLast(action);
-            if (_undoList.Count > 100) // 最大限制100条
-            {
-                _undoList.RemoveFirst();
-                --savedStep;
-            }
+            TrimUndoList(maxSteps);
             _redoList.Clear(); // 添加新操作时，重做历史被清空
             lastTime = DateTime.Now;
             LastEditedBox = NewEditedBox;
             if (savedStep >= _undoList.Count)
             { savedStep = -1; }
+        }
+
+        public void ApplyLimit()
+        {
+            bool wasEdited = Edited;
+            int maxSteps = AppSettingsState.Current.UndoRedoMaxSteps;
+            if (maxSteps <= 0)
+            {
+                _undoList.Clear();
+                _redoList.Clear();
+                savedStep = wasEdited ? -1 : 0;
+                return;
+            }
+
+            TrimUndoList(maxSteps);
+            TrimRedoList(maxSteps);
         }
 
         // 执行撤销
@@ -96,6 +123,7 @@ namespace Litenbib.Models
                 _redoList.RemoveLast();
                 action.Redo();
                 _undoList.AddLast(action);
+                TrimUndoList(AppSettingsState.Current.UndoRedoMaxSteps);
                 if (action is EntryChangeAction entrychange
                     && LastEditedBox != null
                     && LastEditedBox == NewEditedBox)
@@ -117,6 +145,30 @@ namespace Litenbib.Models
             else if (textHost is IUndoRedoTextHost undoRedoTextHost)
             {
                 undoRedoTextHost.SetCaretOffset(offset);
+            }
+        }
+
+        private void TrimUndoList(int maxSteps)
+        {
+            while (_undoList.Count > maxSteps)
+            {
+                _undoList.RemoveFirst();
+                if (savedStep > 0)
+                {
+                    --savedStep;
+                }
+                else if (savedStep == 0)
+                {
+                    savedStep = -1;
+                }
+            }
+        }
+
+        private void TrimRedoList(int maxSteps)
+        {
+            while (_redoList.Count > maxSteps)
+            {
+                _redoList.RemoveFirst();
             }
         }
     }

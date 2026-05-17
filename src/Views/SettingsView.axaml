@@ -51,39 +51,83 @@
         </StackPanel>
 
         <TabControl Grid.Row="1" Margin="0 8 0 0" TabStripPlacement="Left">
+            <TabControl.Template>
+                <ControlTemplate>
+                    <DockPanel>
+                        <ItemsPresenter Name="PART_ItemsPresenter"
+                                        ItemsPanel="{TemplateBinding ItemsPanel}"
+                                        DockPanel.Dock="{TemplateBinding TabStripPlacement}" />
+                        <Border Name="PART_ContentBorder" ClipToBounds="True"
+                                CornerRadius="16" Background="{DynamicResource TabBackground}">
+                            <ContentPresenter Name="PART_SelectedContentHost"
+                                              Margin="{TemplateBinding Padding}"
+                                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        </Border>
+                    </DockPanel>
+                </ControlTemplate>
+            </TabControl.Template>
+
             <TabControl.Styles>
+                <Style Selector="TabControl[SelectedIndex=0] /template/ Border#PART_ContentBorder">
+                    <Setter Property="CornerRadius" Value="0 16 16 16"/>
+                </Style>
+
                 <!-- 所有 tab 标签本身 -->
                 <Style Selector="TabItem">
-                    <Setter Property="Margin" Value="4 0"/>
-                    <Setter Property="Padding" Value="0 0 16 0"/>
+                    <Setter Property="Margin" Value="4 -8 0 -8"/>
+                    <Setter Property="Padding" Value="4 8 28 8"/>
                     <Setter Property="FontSize" Value="14"/>
+                    <Setter Property="CornerRadius" Value="8"/>
                     <Setter Property="Foreground" Value="{DynamicResource DisabledForeground}"/>
                     <Setter Property="Template">
                         <ControlTemplate>
-                            <Border Name="PART_LayoutRoot"
-                                    Background="{TemplateBinding Background}"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                    CornerRadius="{TemplateBinding CornerRadius}"
-                                    Padding="{TemplateBinding Padding}">
-                                <ContentPresenter Name="PART_ContentPresenter"
-                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                  Content="{TemplateBinding Header}"
-                                                  ContentTemplate="{TemplateBinding HeaderTemplate}"/>
-                            </Border>
+                            <Grid RowDefinitions="Auto,*,Auto">
+                                <!-- 上反圆角：默认不显示 -->
+                                <Path Name="PART_TopInverseCorner"
+                                      Data="M 8,0 A 8,8 0 0 1 0,8 L 8,8 Z"
+                                      Fill="{DynamicResource TabBackground}"
+                                      HorizontalAlignment="Right"
+                                      IsVisible="{TemplateBinding IsSelected}"/>
+                                <Border Name="PART_TabBorder" Margin="0 8"
+                                        Grid.Row="1"
+                                        Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        CornerRadius="{TemplateBinding CornerRadius}"
+                                        Padding="{TemplateBinding Padding}">
+                                    <ContentPresenter Name="PART_ContentPresenter"
+                                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                      Content="{TemplateBinding Header}"
+                                                      ContentTemplate="{TemplateBinding HeaderTemplate}"/>
+                                </Border>
+
+                                <!-- 下反圆角：默认不显示 -->
+                                <Path Name="PART_BottomInverseCorner"
+                                      Grid.Row="2"
+                                      Data="M 8,0 L 8,8 A 8,8 0 0 0 0,0 Z"
+                                      Fill="{DynamicResource TabBackground}"
+                                      HorizontalAlignment="Right"
+                                      IsVisible="{TemplateBinding IsSelected}"/>
+                            </Grid>
                         </ControlTemplate>
                     </Setter>
-                </Style>
-                <!-- 选中的 tab 标签 -->
-                <Style Selector="TabItem:selected">
-                    <Setter Property="Foreground" Value="{DynamicResource ThemeBorder}"/>
-                    <Setter Property="FontWeight" Value="SemiBold"/>
-                    <Setter Property="Padding" Value="16 0 0 0"/>
-                </Style>
-                <!-- 鼠标悬停 -->
-                <Style Selector="TabItem:pointerover">
-                    <Setter Property="Foreground" Value="{DynamicResource HighlightForeground}"/>
+
+                    <Style Selector="^:pointerover:not(:selected)">
+                        <Setter Property="Background" Value="{DynamicResource HighlightBackground}"/>
+                        <Setter Property="Foreground" Value="{DynamicResource HighlightForeground}"/>
+                    </Style>
+                    <Style Selector="^:selected">
+                        <Setter Property="Background" Value="{DynamicResource TabBackground}"/>
+                        <Setter Property="Foreground" Value="{DynamicResource ThemeBorder}"/>
+                        <Setter Property="FontWeight" Value="SemiBold"/>
+                        <Setter Property="Padding" Value="16 8"/>
+                        <Setter Property="CornerRadius" Value="8 0 0 8"/>
+                        <Style Selector="^ /template/ Border#PART_TabBorder">
+                            <Setter Property="Margin" Value="0"/>
+                        </Style>
+                    </Style>
                 </Style>
             </TabControl.Styles>
 
@@ -92,7 +136,7 @@
                     <StackPanel Spacing="4">
                         <Border Classes="section-card">
                             <Grid ColumnDefinitions="Auto,*" Margin="4"
-                                  RowDefinitions="Auto,Auto,Auto">
+                                  RowDefinitions="Auto,Auto,Auto,Auto,Auto">
                                 <TextBlock Text="{DynamicResource Settings.General}"
                                            FontWeight="SemiBold" Margin="0 0 0 8"/>
 
@@ -107,6 +151,18 @@
                                 <local:ExComboBox Grid.Row="2" Grid.Column="1" Margin="0 2"
                                                   ItemsSource="{CompiledBinding ThemeModeList}"
                                                   SelectedItem="{CompiledBinding SelectedThemeMode}"/>
+
+                                <CheckBox Margin="4" Grid.Row="3" HorizontalAlignment="Right"
+                                          IsChecked="{CompiledBinding RestoreLastSessionFiles}"/>
+                                <TextBlock Grid.Row="3" Grid.Column="1"
+                                           Text="{DynamicResource Settings.RestoreLastSessionFiles}"
+                                           Margin="4 0" VerticalAlignment="Center"/>
+
+                                <TextBlock Text="{DynamicResource Settings.RecentFilesLimit}" Classes="right"
+                                           Grid.Row="4"/>
+                                <TextBox Grid.Row="4" Grid.Column="1"
+                                         Text="{CompiledBinding RecentFilesLimit}"
+                                         PlaceholderText="0~20"/>
                             </Grid>
                         </Border>
                     </StackPanel>
@@ -118,7 +174,7 @@
                     <StackPanel Spacing="4">
                         <Border Classes="section-card">
                             <Grid ColumnDefinitions="Auto,*" Margin="4"
-                                  RowDefinitions="Auto,Auto,Auto,Auto,Auto">
+                                  RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto">
                                 <TextBlock Text="{DynamicResource Settings.BibtexEditing}"
                                            FontWeight="SemiBold" Margin="0 0 0 8"/>
 
@@ -128,15 +184,21 @@
                                          Text="{CompiledBinding FieldIndentSpaces}"
                                          PlaceholderText="4"/>
 
-                                <TextBlock Text="{DynamicResource Settings.EntryTypeCase}" Classes="right"
+                                <TextBlock Text="{DynamicResource Settings.UndoRedoMaxSteps}" Classes="right"
                                            Grid.Row="2"/>
-                                <local:ExComboBox Grid.Row="2" Grid.Column="1" Margin="0 2"
+                                <TextBox Grid.Row="2" Grid.Column="1"
+                                         Text="{CompiledBinding UndoRedoMaxSteps}"
+                                         PlaceholderText="0~200"/>
+
+                                <TextBlock Text="{DynamicResource Settings.EntryTypeCase}" Classes="right"
+                                           Grid.Row="3"/>
+                                <local:ExComboBox Grid.Row="3" Grid.Column="1" Margin="0 2"
                                                   ItemsSource="{CompiledBinding EntryTypeCaseStyleList}"
                                                   SelectedItem="{CompiledBinding EntryTypeCaseStyle}"/>
 
                                 <TextBlock Text="{DynamicResource Settings.CitationKeyTemplate}" Classes="right"
-                                           Grid.Row="3"/>
-                                <Grid Grid.Row="3" Grid.Column="1" ColumnDefinitions="*,Auto,Auto"
+                                           Grid.Row="4"/>
+                                <Grid Grid.Row="4" Grid.Column="1" ColumnDefinitions="*,Auto,Auto"
                                       RowDefinitions="Auto,Auto">
                                     <TextBox Text="{CompiledBinding CitationKeyTemplate}"
                                              PlaceholderText="{}{family}{year}{title}"/>
@@ -155,9 +217,9 @@
                                                Opacity="0.65"/>
                                 </Grid>
 
-                                <CheckBox Margin="4" Grid.Row="4" HorizontalAlignment="Right"
+                                <CheckBox Margin="4" Grid.Row="5" HorizontalAlignment="Right"
                                           IsChecked="{CompiledBinding RequireBatchOperationConfirmation}"/>
-                                <TextBlock Grid.Row="4" Grid.Column="1"
+                                <TextBlock Grid.Row="5" Grid.Column="1"
                                            Text="{DynamicResource Settings.ConfirmBatchOperations}"
                                            Margin="4 0" VerticalAlignment="Center"/>
                             </Grid>
@@ -322,8 +384,10 @@
         </TabControl>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
-            <Button Click="CancelButton_Click" Content="{DynamicResource Common.Cancel}"/>
-            <Button Click="ApplyButton_Click" Content="{DynamicResource Common.Apply}"/>
+            <Button Margin="4 8 4 0" Padding="16 8"
+                    Click="CancelButton_Click" Content="{DynamicResource Common.Cancel}"/>
+            <Button Margin="4 8 4 0" Padding="16 8"
+                    Click="ApplyButton_Click" Content="{DynamicResource Common.Apply}"/>
         </StackPanel>
     </Grid>
 </Window>

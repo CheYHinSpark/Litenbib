@@ -471,6 +471,12 @@ namespace Litenbib.ViewModels
             return changed;
         }
 
+        public void ApplyUndoRedoLimit()
+        {
+            UndoRedoManager.ApplyLimit();
+            NotifyCanUndoRedo();
+        }
+
         public void ShowStatus(string message)
         {
             int version = ++_statusVersion;

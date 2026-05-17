@@ -22,6 +22,8 @@ namespace Litenbib.Models
 
         public int SelectedTabIndex { get; set; } = -1;
 
+        public List<LastSessionFileState>? LastSessionFiles { get; set; }
+
         public List<RecentFileState> RecentFiles { get; set; } = [];
 
         public AppSettings Settings { get; set; } = new();
@@ -40,6 +42,11 @@ namespace Litenbib.Models
         public string FilterText { get; set; } = string.Empty;
     }
 
+    public class LastSessionFileState
+    {
+        public string FilePath { get; set; } = string.Empty;
+    }
+
     public class AppSettings
     {
         public const string DefaultCitationKeyTemplate = "{family}{year}{title}";
@@ -53,6 +60,10 @@ namespace Litenbib.Models
         public const int DefaultExportMaxAuthors = 5;
 
         public const string DefaultExportEnding = "and others";
+
+        public const int DefaultRecentFilesLimit = 10;
+
+        public const int DefaultUndoRedoMaxSteps = 100;
 
         private static readonly Regex CitationKeyTemplateTokenRegex = new(@"\{([^{}]+)\}", RegexOptions.Compiled);
 
@@ -71,6 +82,12 @@ namespace Litenbib.Models
         public int FieldIndentSpaces { get; set; } = 4;
 
         public string ThemeMode { get; set; } = ThemeModes.Dark;
+
+        public bool RestoreLastSessionFiles { get; set; } = true;
+
+        public int RecentFilesLimit { get; set; } = DefaultRecentFilesLimit;
+
+        public int UndoRedoMaxSteps { get; set; } = DefaultUndoRedoMaxSteps;
 
         public string EntryTypeCaseStyle { get; set; } = EntryTypeCaseStyles.Lowercase;
 
@@ -107,6 +124,9 @@ namespace Litenbib.Models
                 OnlineLookupTimeoutSeconds = OnlineLookupTimeoutSeconds,
                 FieldIndentSpaces = FieldIndentSpaces,
                 ThemeMode = ThemeMode,
+                RestoreLastSessionFiles = RestoreLastSessionFiles,
+                RecentFilesLimit = RecentFilesLimit,
+                UndoRedoMaxSteps = UndoRedoMaxSteps,
                 EntryTypeCaseStyle = EntryTypeCaseStyle,
                 PdfFilePathStyle = PdfFilePathStyle,
                 LanguageCode = LanguageCode,
@@ -136,6 +156,9 @@ namespace Litenbib.Models
                 OnlineLookupTimeoutSeconds = Math.Clamp(settings.OnlineLookupTimeoutSeconds, 3, 120),
                 FieldIndentSpaces = Math.Clamp(settings.FieldIndentSpaces, 0, 12),
                 ThemeMode = ThemeModes.IsSupported(settings.ThemeMode) ? settings.ThemeMode : ThemeModes.Dark,
+                RestoreLastSessionFiles = settings.RestoreLastSessionFiles,
+                RecentFilesLimit = Math.Clamp(settings.RecentFilesLimit, 0, 20),
+                UndoRedoMaxSteps = Math.Clamp(settings.UndoRedoMaxSteps, 0, 200),
                 EntryTypeCaseStyle = caseStyle,
                 PdfFilePathStyle = PdfFilePathStyles.IsSupported(settings.PdfFilePathStyle)
                     ? settings.PdfFilePathStyle
