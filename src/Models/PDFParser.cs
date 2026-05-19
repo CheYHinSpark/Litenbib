@@ -12,8 +12,6 @@ namespace Litenbib.Models
 {
     public class ExtractedMetadata
     {
-        //public string Title { get; set; } = "Unknown";
-        //public string Authors { get; set; } = "Unknown";
         public string Doi { get; set; } = "";
         public string ArxivId { get; set; } = "";
         public string RawText { get; set; } = string.Empty;
@@ -69,50 +67,6 @@ namespace Litenbib.Models
             var arxivMatch = ArxivRegex().Match(text);
             if (arxivMatch.Success)
             { metadata.ArxivId = arxivMatch.Groups[1].Value.Trim(); }
-
-            //// --- 2. 标题和作者提取 (启发式方法，精度较低) ---
-
-
-            //var lines = text.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
-
-            //string titleCandidate = "未找到";
-            //int titleIndex = -1;
-
-            //// 尝试从前几行中找到最长的一行作为标题 (启发式)
-            //for (int i = 0; i < Math.Min(lines.Length, 5); i++)
-            //{
-            //    string line = lines[i].Trim();
-            //    // 排除过短的行或明显的日期/标识符行
-            //    if (line.Length > 20 && !line.ToLower().Contains("arxiv") && !line.ToLower().Contains("date"))
-            //    {
-            //        if (line.Length > titleCandidate.Length)
-            //        {
-            //            titleCandidate = line;
-            //            titleIndex = i;
-            //        }
-            //    }
-            //}
-
-            //if (titleCandidate != "未找到")
-            //{
-            //    metadata.Title = titleCandidate;
-
-            //    // 假设作者信息紧跟在标题之后
-            //    if (titleIndex != -1 && lines.Length > titleIndex + 1)
-            //    {
-            //        // 简单地取标题后的一两行作为作者的候选文本
-            //        metadata.Authors = lines[titleIndex + 1].Trim();
-
-            //        // 尝试清理作者行：移除邮箱和机构信息
-            //        // 此正则表达式仅为示例，可能需要根据实际论文格式调整
-            //        string cleanAuthorLine = Regex.Replace(metadata.Authors, @"[\w\.-]+@[\w\.-]+\s*(\(.+?\))?", "").Trim();
-
-            //        if (!string.IsNullOrWhiteSpace(cleanAuthorLine) && cleanAuthorLine.Length > 5)
-            //        {
-            //            metadata.Authors = cleanAuthorLine;
-            //        }
-            //    }
-            //}
         }
 
         [GeneratedRegex(@"(10\.\d{4,9}\/[^\s]+)", RegexOptions.IgnoreCase)]

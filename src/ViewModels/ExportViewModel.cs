@@ -167,14 +167,14 @@ namespace Litenbib.ViewModels
                 {
                     foreach (var entry in Entries)
                     {
-                        await writer.WriteAsync(entry.ExportBibtex(authorFormat) + "\n");
+                        await writer.WriteAsync(entry.BuildBibtex(true, authorFormat) + "\n");
                     }
                 }
                 else
                 {
                     foreach (var entry in Entries)
                     {
-                        await writer.WriteAsync(entry.ExportBibtex(authorFormat, MaxAuthors, endingText) + "\n");
+                        await writer.WriteAsync(entry.BuildBibtex(true, authorFormat, MaxAuthors, endingText) + "\n");
                     }
                 }
 

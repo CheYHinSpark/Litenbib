@@ -189,22 +189,7 @@ namespace Litenbib.Models
         public void UpdateBibtex(string? newBibtex = null, bool isSilent = false)
         {
             if (newBibtex == null)
-            {
-                int maxFieldLength = MaxFieldLength();
-                string indent = new(' ', AppSettingsState.Current.FieldIndentSpaces);
-                StringBuilder builder = new();
-                builder.Append('@').Append(FormatEntryType(entryType)).Append('{').Append(citationKey).Append(",\n");
-                foreach (KeyValuePair<string, string> kvp in Fields)
-                {
-                    builder.Append(indent)
-                        .Append(kvp.Key)
-                        .Append(' ', maxFieldLength - kvp.Key.Length)
-                        .Append(" = {")
-                        .Append(kvp.Value)
-                        .Append("},\n");
-                }
-                bibtex = builder.Append("}\n").ToString();
-            }
+            { bibtex = BuildBibtex(); }
             else
             {
                 // 直接修改的BibTeX，需要反过来更新其他东西
@@ -220,43 +205,36 @@ namespace Litenbib.Models
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BibTeX)));
         }
 
-        public string ExportBibtex(int author_format = 0, int max_authors = -1, string ending = "")
+        public string BuildBibtex(bool formatAuthor = false, int authorFormat = 0, int maxAuthors = -1, string ending = "")
         {
             int maxFieldLength = MaxFieldLength();
             string indent = new(' ', AppSettingsState.Current.FieldIndentSpaces);
             StringBuilder builder = new();
             builder.Append('@').Append(FormatEntryType(entryType)).Append('{').Append(citationKey).Append(",\n");
-            int abbreviation = author_format / 2;
-            author_format = author_format % 2;
+            int abbreviation = authorFormat / 2;
+            authorFormat %= 2;
             foreach (KeyValuePair<string, string> kvp in Fields)
             {
-                if (kvp.Key == "author")
+                string value = kvp.Value;
+                if (formatAuthor && kvp.Key == "author")
                 {
                     string[]? authors = kvp.Value.Split(" and ", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
-                    max_authors = max_authors == -1 ? authors.Length : max_authors;
-                    for (int i = int.Min(max_authors, authors.Length) - 1; i >= 0; --i)
+                    int authorLimit = maxAuthors == -1 ? authors.Length : maxAuthors;
+                    int authorCount = int.Min(authorLimit, authors.Length);
+                    for (int i = authorCount - 1; i >= 0; --i)
                     {
                         var a = Models.Author.GetFamilyGiven(authors[i], abbreviation);
-                        authors[i] = author_format == 0 ? $"{a.Item2} {a.Item1}" : $"{a.Item1}, {a.Item2}";
+                        authors[i] = authorFormat == 0 ? $"{a.Item2} {a.Item1}" : $"{a.Item1}, {a.Item2}";
                     }
-                    string author = string.Join(" and ", authors[0..int.Min(max_authors, authors.Length)])
-                        + (authors.Length > max_authors ? ending : "");
-                    builder.Append(indent)
-                        .Append("author")
-                        .Append(' ', maxFieldLength - kvp.Key.Length)
-                        .Append(" = {")
-                        .Append(author)
-                        .Append("},\n");
+                    value = string.Join(" and ", authors[0..authorCount])
+                        + (authors.Length > authorLimit ? ending : "");
                 }
-                else
-                {
-                    builder.Append(indent)
-                        .Append(kvp.Key)
-                        .Append(' ', maxFieldLength - kvp.Key.Length)
-                        .Append(" = {")
-                        .Append(kvp.Value)
-                        .Append("},\n");
-                }
+                builder.Append(indent)
+                    .Append(kvp.Key)
+                    .Append(' ', maxFieldLength - kvp.Key.Length)
+                    .Append(" = {")
+                    .Append(value)
+                    .Append("},\n");
             }
             return builder.Append("}\n").ToString();
         }
