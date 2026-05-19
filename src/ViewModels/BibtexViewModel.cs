@@ -1,5 +1,6 @@
 ﻿using Avalonia.Collections;
 using Avalonia.Controls;
+using Avalonia.Input.Platform;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -1358,6 +1359,56 @@ namespace Litenbib.ViewModels
             {
                 UriProcessor.StartProcess(directory);
             }
+        }
+
+        [RelayCommand]
+        private void GenerateCitationKey()
+        {
+            if (ShowingEntry == null) { return; }
+            string key = ShowingEntry.BuildCitationKey();
+            if (string.IsNullOrWhiteSpace(key)) { return; }
+            ShowingEntry.CitationKey = key;
+        }
+
+        [RelayCommand]
+        private void ToShowingLink(string s)
+        {
+            if (ShowingEntry == null) { return; }
+            if (s == "DOI")
+            { UriProcessor.StartProcess("https://doi.org/" + ShowingEntry.DOI); }
+            else if (s == "Url")
+            { UriProcessor.StartProcess(ShowingEntry.Url); }
+        }
+
+        [RelayCommand]
+        private static void ToLink(object o)
+        {
+            if (o is not BibtexEntry entry) { return; }
+            UriProcessor.StartProcess(entry.DOI == "" ? entry.Url : "https://doi.org/" + entry.DOI);
+        }
+
+        [RelayCommand]
+        private static void ToFile(object o)
+        {
+            if (o is not BibtexEntry entry) { return; }
+            string path = BibtexEntry.ResolveFilePath(entry.File);
+            if (string.IsNullOrWhiteSpace(path)) { return; }
+            UriProcessor.StartProcess(path);
+        }
+
+
+        [RelayCommand]
+        private void CopyBibtexText(object o)
+        {
+            if (ShowingEntry == null) { return; }
+            if (o is Window w) { w.Clipboard?.SetTextAsync(ShowingEntry.BibTeX); }
+        }
+
+        [RelayCommand]
+        private void CopyCitationKey(object? o)
+        {
+            if (ShowingEntry == null) { return; }
+            if (o is Window w) { w.Clipboard?.SetTextAsync(ShowingEntry.CitationKey); }
         }
         #endregion Command
     }

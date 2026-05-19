@@ -116,6 +116,7 @@ namespace Litenbib.Models
         // 用于UndoRedo的功能
         public event PropertyChangedEventHandler? UndoRedoPropertyChanged;
 
+        #region Method
         // Get Field元素
         private string GetValue(string k)
         { return Fields.TryGetValue(k, out string? value) ? value : ""; }
@@ -328,17 +329,6 @@ namespace Litenbib.Models
             return entry;
         }
 
-
-        #region Command
-        [RelayCommand]
-        private void GenerateCitationKey()
-        {
-            Debug.WriteLine("Generating Citation Key");
-            string key = BuildCitationKey();
-            if (string.IsNullOrWhiteSpace(key)) { return; }
-            CitationKey = key;
-        }
-
         public string BuildCitationKey()
         {
             string familyName = GetFirstFamilyName();
@@ -381,33 +371,10 @@ namespace Litenbib.Models
             return string.Join(string.Empty, words);
         }
 
-        [RelayCommand]
-        private void ToShowingLink(string s)
-        {
-            if (s == "DOI")
-            { UriProcessor.StartProcess("https://doi.org/" + DOI); }
-            else if (s == "Url")
-            { UriProcessor.StartProcess(Url); }
-        }
-
-        [RelayCommand]
-        private void ToLink()
-        { UriProcessor.StartProcess(DOI == "" ? Url : "https://doi.org/" + DOI); }
-
-        [RelayCommand]
-        private void ToFile()
-        {
-            string path = ResolveFilePath(File);
-            if (string.IsNullOrWhiteSpace(path)) { return; }
-            UriProcessor.StartProcess(path);
-        }
-
-        private static string ResolveFilePath(string fileField)
+        public static string ResolveFilePath(string fileField)
         {
             if (string.IsNullOrWhiteSpace(fileField))
-            {
-                return string.Empty;
-            }
+            { return string.Empty; }
 
             string firstFile = GetFirstJabRefFile(fileField.Trim());
             int firstSeparator = IndexOfUnescaped(firstFile, ':', 0);
@@ -431,9 +398,7 @@ namespace Litenbib.Models
             for (int i = startIndex; i < value.Length; i++)
             {
                 if (value[i] == target && !IsEscaped(value, i))
-                {
-                    return i;
-                }
+                { return i; }
             }
 
             return -1;
@@ -444,9 +409,7 @@ namespace Litenbib.Models
             for (int i = value.Length - 1; i >= 0; i--)
             {
                 if (value[i] == target && !IsEscaped(value, i))
-                {
-                    return i;
-                }
+                { return i; }
             }
 
             return -1;
@@ -456,26 +419,14 @@ namespace Litenbib.Models
         {
             int slashCount = 0;
             for (int i = index - 1; i >= 0 && value[i] == '\\'; i--)
-            {
-                slashCount++;
-            }
+            { slashCount++; }
 
             return slashCount % 2 == 1;
         }
 
         private static string UnescapeJabRefFilePath(string path)
-        {
-            return path.Replace("\\:", ":").Replace("\\;", ";");
-        }
-
-        [RelayCommand]
-        private void CopyBibtexText(object o)
-        { if (o is Window w) { w.Clipboard?.SetTextAsync(BibTeX); } }
-
-        [RelayCommand]
-        private void CopyCitationKey(object? o)
-        { if (o is Window w) { w.Clipboard?.SetTextAsync(CitationKey); } }
-        #endregion Command
+        { return path.Replace("\\:", ":").Replace("\\;", ";"); }
+        #endregion Method
 
         [GeneratedRegex(@"[^A-Za-z0-9:_\-]+", RegexOptions.Compiled)]
         private static partial Regex CitationKeyInvalidCharRegex();

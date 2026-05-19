@@ -73,8 +73,7 @@
                         <DataGridTemplateColumn Header="{DynamicResource Bibtex.Column.File}" Width="Auto" CanUserResize="False" CanUserSort="False">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate x:DataType="m:BibtexEntry">
-                                    <Button Command="{CompiledBinding ToFileCommand}"
-                                            Classes="link_in_row"
+                                    <Button Command="{CompiledBinding #BibtexViewRoot.DataContext.ToFileCommand}" Classes="link_in_row"
                                             IsVisible="{CompiledBinding File, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
                                         <Path Data="{DynamicResource FilePath}" StrokeThickness="1"
                                               Stroke="{CompiledBinding $parent[Button].Foreground}"/>
@@ -85,8 +84,9 @@
                         <DataGridTemplateColumn Header="{DynamicResource Bibtex.Column.Link}" Width="Auto" CanUserResize="False" CanUserSort="False">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate x:DataType="m:BibtexEntry">
-								<Button Command="{CompiledBinding ToLinkCommand}"
-                                            Classes="link_in_row">
+								<Button Command="{CompiledBinding #BibtexViewRoot.DataContext.ToLinkCommand}"
+                                        CommandParameter="{CompiledBinding .}"
+                                        Classes="link_in_row">
                                         <Button.IsVisible>
                                             <MultiBinding Converter="{x:Static BoolConverters.Or}">
                                                 <Binding Path="DOI" Converter="{x:Static StringConverters.IsNotNullOrEmpty}"/>
@@ -315,7 +315,7 @@
 
                         <Button Grid.Row="1" Width="92" HorizontalContentAlignment="Stretch" Padding="0"
 								Classes="in_section"
-                                Command="{CompiledBinding ShowingEntry.CopyCitationKeyCommand}"
+                                Command="{CompiledBinding CopyCitationKeyCommand}"
                                 CommandParameter="{CompiledBinding $parent[Window]}">
                             <Grid ColumnDefinitions="32,*">
                                 <Path Data="{StaticResource CopyPath}" StrokeThickness="1"
@@ -328,7 +328,7 @@
                         <Grid ColumnDefinitions="*,Auto" Grid.Row="1" Grid.Column="1">
                             <TextBox Text="{CompiledBinding ShowingEntry.CitationKey}"/>
                             <Button Grid.Column="1" Classes="in_section"
-                                    Command="{CompiledBinding ShowingEntry.GenerateCitationKeyCommand}"
+                                    Command="{CompiledBinding GenerateCitationKeyCommand}"
                                     ToolTip.Tip="{DynamicResource Bibtex.Tooltip.GenerateCitationKeys}">
                                 <Path Data="{StaticResource KeyPath}" StrokeThickness="0"
                                       Fill="{CompiledBinding $parent[Button].Foreground}"/>
@@ -451,7 +451,7 @@
                             <StackPanel>
                                 <Grid ColumnDefinitions="100,*,Auto">
 									<Button Width="100" HorizontalContentAlignment="Stretch" Padding="0"
-                                            Command="{CompiledBinding ShowingEntry.ToShowingLinkCommand}"
+                                            Command="{CompiledBinding ToShowingLinkCommand}"
                                             CommandParameter="DOI">
 										<Grid ColumnDefinitions="32,*">
 											<Path Data="{StaticResource ToLinkPath}"
@@ -470,7 +470,7 @@
                                 </Grid>
                                 <Grid ColumnDefinitions="100,*">
 									<Button Width="100" HorizontalContentAlignment="Stretch" Padding="0"
-                                            Command="{CompiledBinding ShowingEntry.ToShowingLinkCommand}"
+                                            Command="{CompiledBinding ToShowingLinkCommand}"
                                             CommandParameter="Url">
 										<Grid ColumnDefinitions="32,*">
 											<Path Data="{StaticResource ToLinkPath}"
@@ -562,7 +562,7 @@
 						
 						<Button Width="92" HorizontalContentAlignment="Stretch" Padding="0"
 								Classes="in_section" Grid.Row="1"
-								Command="{CompiledBinding ShowingEntry.CopyBibtexTextCommand}"
+								Command="{CompiledBinding CopyBibtexTextCommand}"
 								CommandParameter="{CompiledBinding $parent[Window]}">
 							<Grid ColumnDefinitions="32,*">
 								<Path Data="{StaticResource CopyPath}" StrokeThickness="1"
