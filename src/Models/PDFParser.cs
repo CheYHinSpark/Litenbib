@@ -2,11 +2,10 @@
 using UglyToad.PdfPig.DocumentLayoutAnalysis.TextExtractor;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.IO;
 using System.Diagnostics;
+using System.Text;
 
 namespace Litenbib.Models
 {
@@ -16,8 +15,152 @@ namespace Litenbib.Models
         public string ArxivId { get; set; } = "";
         public string RawText { get; set; } = string.Empty;
     }
+
+    public class PdfImportResult
+    {
+        public PdfImportResult(string pdfFilePath, ExtractedMetadata metadata)
+        {
+            PdfFilePath = pdfFilePath;
+            Metadata = metadata;
+            LookupQuery = CreateLookupQuery(metadata);
+        }
+
+        public string PdfFilePath { get; }
+
+        public ExtractedMetadata Metadata { get; }
+
+        public string LookupQuery { get; }
+
+        public string RawText => Metadata.RawText;
+
+        public BibtexEntry CreateFallbackEntry()
+        {
+            string fileTitle = Path.GetFileNameWithoutExtension(PdfFilePath);
+            BibtexEntry entry = new("misc", CreateFallbackCitationKey(fileTitle))
+            { Title = fileTitle, };
+
+            string doi = CleanIdentifier(Metadata.Doi);
+            if (!string.IsNullOrWhiteSpace(doi))
+            { entry.DOI = doi; }
+
+            string arxivId = NormalizeArxivId(Metadata.ArxivId);
+            if (!string.IsNullOrWhiteSpace(arxivId))
+            {
+                entry.Url = $"https://arxiv.org/abs/{arxivId}";
+                entry.Note = $"arXiv:{arxivId}";
+            }
+
+            return entry;
+        }
+
+        public void PrepareEntry(BibtexEntry entry)
+        {
+            if (string.IsNullOrWhiteSpace(entry.EntryType))
+            { entry.EntryType = "misc"; }
+
+            if (string.IsNullOrWhiteSpace(entry.CitationKey))
+            { entry.CitationKey = CreateFallbackCitationKey(Path.GetFileNameWithoutExtension(PdfFilePath)); }
+
+            if (string.IsNullOrWhiteSpace(entry.DOI))
+            {
+                string doi = CleanIdentifier(Metadata.Doi);
+                if (!string.IsNullOrWhiteSpace(doi))
+                { entry.DOI = doi; }
+            }
+
+            if (string.IsNullOrWhiteSpace(entry.Url))
+            {
+                string arxivId = NormalizeArxivId(Metadata.ArxivId);
+                if (!string.IsNullOrWhiteSpace(arxivId))
+                { entry.Url = $"https://arxiv.org/abs/{arxivId}"; }
+            }
+
+            entry.File = FormatImportedPdfFileValue(PdfFilePath);
+        }
+
+        private static string CreateLookupQuery(ExtractedMetadata metadata)
+        {
+            List<string> parts = [];
+
+            string doi = CleanIdentifier(metadata.Doi);
+            if (!string.IsNullOrWhiteSpace(doi))
+            { parts.Add(doi); }
+
+            string arxivId = NormalizeArxivId(metadata.ArxivId);
+            if (!string.IsNullOrWhiteSpace(arxivId))
+            { parts.Add(arxivId); }
+
+            return string.Join('\n', parts);
+        }
+
+        private static string FormatImportedPdfFileValue(string pdfFile)
+        {
+            return AppSettingsState.Current.PdfFilePathStyle switch
+            {
+                PdfFilePathStyles.None => string.Empty,
+                PdfFilePathStyles.JabRef => $":{pdfFile.Replace(":", "\\:").Replace(";", "\\;")}:PDF",
+                _ => pdfFile,
+            };
+        }
+
+        private static string CreateFallbackCitationKey(string value)
+        {
+            StringBuilder builder = new();
+            foreach (char c in value)
+            {
+                if (char.IsAsciiLetterOrDigit(c) || c == ':' || c == '_' || c == '-')
+                { builder.Append(c); }
+                else if (builder.Length == 0 || builder[^1] != '_')
+                { builder.Append('_'); }
+            }
+
+            string key = builder.ToString().Trim('_');
+            return string.IsNullOrWhiteSpace(key) ? "pdf_import" : key;
+        }
+
+        private static string CleanIdentifier(string value)
+        { return (value ?? string.Empty).Trim().TrimEnd('.', ',', ';', ':', ')', ']', '}'); }
+
+        private static string NormalizeArxivId(string value)
+        {
+            string arxivId = CleanIdentifier(value);
+            if (arxivId.StartsWith("arXiv:", StringComparison.OrdinalIgnoreCase))
+            { arxivId = arxivId[6..].Trim(); }
+
+            int categoryIndex = arxivId.IndexOf(' ');
+            if (categoryIndex >= 0)
+            { arxivId = arxivId[..categoryIndex].Trim(); }
+
+            return arxivId;
+        }
+    }
+    
     public partial class PdfMetadataExtractor
     {
+        public static PdfImportResult ExtractImportResult(string pdfFilePath)
+        { return new(pdfFilePath, Extract(pdfFilePath)); }
+        
+        public static string? TryResolvePdfFullPath(string pdfFile)
+        {
+            string fullPath;
+            try
+            {
+                fullPath = Path.GetFullPath(pdfFile);
+            }
+            catch (Exception)
+            {
+                NotificationCenter.Error(I18n.Get("Message.ImportPdfInvalidPath"));
+                return null;
+            }
+
+            if (!File.Exists(fullPath))
+            {
+                NotificationCenter.Error(I18n.Format("Message.ImportPdfFileNotFound", fullPath));
+                return null;
+            }
+            return fullPath;
+        }
+
         public static ExtractedMetadata Extract(string pdfFilePath)
         {
             var metadata = new ExtractedMetadata();

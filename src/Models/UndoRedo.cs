@@ -215,6 +215,14 @@ namespace Litenbib.Models
 
         public bool HasChanges => _changes.Count > 0;
 
+        public void Apply()
+        {
+            foreach (var change in _changes)
+            {
+                change.Entry.SetValueSilent(change.PropertyName, change.NewValue);
+            }
+        }
+
         public override void Undo()
         {
             foreach (var change in _changes.AsEnumerable().Reverse())
@@ -224,12 +232,7 @@ namespace Litenbib.Models
         }
 
         public override void Redo()
-        {
-            foreach (var change in _changes)
-            {
-                change.Entry.SetValueSilent(change.PropertyName, change.NewValue);
-            }
-        }
+        { Apply(); }
     }
 
     public class AddEntriesAction(ObservableRangeCollection<BibtexEntry> holder,

@@ -84,7 +84,7 @@ namespace Litenbib.ViewModels
                     SetProperty(ref _showingEntry, value);
                     _holdShowingEntry = value!;
                     DeleteBibtexCommand.NotifyCanExecuteChanged();
-                    DeleteBibtexKeyCommand.NotifyCanExecuteChanged();
+                    DeleteBibtexByKeyCommand.NotifyCanExecuteChanged();
                 }
             }
         }
@@ -241,33 +241,18 @@ namespace Litenbib.ViewModels
         #region Method
         public async Task ExtractPdf(string pdfFile)
         {
-            string fullPath;
-            try
-            {
-                fullPath = Path.GetFullPath(pdfFile);
-            }
-            catch (Exception)
-            {
-                NotificationCenter.Error(I18n.Get("Message.ImportPdfInvalidPath"));
-                return;
-            }
-
+            if (PdfMetadataExtractor.TryResolvePdfFullPath(pdfFile) is not string fullPath)
+            { return; }
             string fileName = Path.GetFileName(fullPath);
-            if (!File.Exists(fullPath))
-            {
-                NotificationCenter.Error(I18n.Format("Message.ImportPdfFileNotFound", fileName));
-                return;
-            }
 
             ShowStatus(I18n.Format("Message.ReadingFile", fileName));
-            ExtractedMetadata metadata = await Task.Run(() => PdfMetadataExtractor.Extract(fullPath));
-            string query = CreatePdfLookupQuery(metadata);
+            PdfImportResult pdfImport = await Task.Run(() => PdfMetadataExtractor.ExtractImportResult(fullPath));
 
             BibtexEntry? entry = null;
             bool resolvedByAi = false;
-            if (!string.IsNullOrWhiteSpace(query))
+            if (!string.IsNullOrWhiteSpace(pdfImport.LookupQuery))
             {
-                var resolvedEntries = await LinkResolver.ResolveEntriesAsync(query, maxCandidates: 1);
+                var resolvedEntries = await LinkResolver.ResolveEntriesAsync(pdfImport.LookupQuery, maxCandidates: 1);
                 entry = resolvedEntries.FirstOrDefault();
             }
             else
@@ -276,7 +261,7 @@ namespace Litenbib.ViewModels
             if (entry == null && AppSettingsState.Current.UseAiPdfImportFallback)
             {
                 ShowStatus(I18n.Format("Message.AskingAiToRead", fileName));
-                entry = await AiBibtexExtractor.ExtractFromPdfFirstPageAsync(metadata.RawText);
+                entry = await AiBibtexExtractor.ExtractFromPdfFirstPageAsync(pdfImport.RawText);
                 if (entry != null)
                 {
                     resolvedByAi = true;
@@ -286,86 +271,15 @@ namespace Litenbib.ViewModels
 
             if (entry == null)
             {
-                entry = CreatePdfFallbackEntry(metadata, fullPath);
+                entry = pdfImport.CreateFallbackEntry();
                 NotificationCenter.Info(I18n.Format("Message.AddedPlaceholderEntry", fileName));
             }
-            else
-            {
-                if (!resolvedByAi)
-                { NotificationCenter.Info(I18n.Format("Message.ResolvedMetadata", fileName)); }
-            }
+            else if (!resolvedByAi)
+            { NotificationCenter.Info(I18n.Format("Message.ResolvedMetadata", fileName)); }
 
-            PrepareImportedPdfEntry(entry, metadata, fullPath);
+            pdfImport.PrepareEntry(entry);
             await Dispatcher.UIThread.InvokeAsync(() => AddImportedPdfEntry(entry));
             ShowStatus(I18n.Format("Message.ImportedFile", fileName));
-        }
-
-        private static string CreatePdfLookupQuery(ExtractedMetadata metadata)
-        {
-            List<string> parts = [];
-            if (!string.IsNullOrWhiteSpace(metadata.Doi))
-            { parts.Add(CleanIdentifier(metadata.Doi)); }
-
-            string arxivId = NormalizeArxivId(metadata.ArxivId);
-            if (!string.IsNullOrWhiteSpace(arxivId))
-            { parts.Add(arxivId); }
-
-            return string.Join('\n', parts.Where(part => !string.IsNullOrWhiteSpace(part)));
-        }
-
-        private static BibtexEntry CreatePdfFallbackEntry(ExtractedMetadata metadata, string pdfFile)
-        {
-            string fileTitle = Path.GetFileNameWithoutExtension(pdfFile);
-            BibtexEntry entry = new("misc", CreateFallbackCitationKey(fileTitle))
-            { Title = fileTitle, };
-
-            string doi = CleanIdentifier(metadata.Doi);
-            if (!string.IsNullOrWhiteSpace(doi))
-            { entry.DOI = doi; }
-
-            string arxivId = NormalizeArxivId(metadata.ArxivId);
-            if (!string.IsNullOrWhiteSpace(arxivId))
-            {
-                entry.Url = $"https://arxiv.org/abs/{arxivId}";
-                entry.Note = $"arXiv:{arxivId}";
-            }
-
-            return entry;
-        }
-
-        private static void PrepareImportedPdfEntry(BibtexEntry entry, ExtractedMetadata metadata, string pdfFile)
-        {
-            if (string.IsNullOrWhiteSpace(entry.EntryType))
-            { entry.EntryType = "misc"; }
-
-            if (string.IsNullOrWhiteSpace(entry.CitationKey))
-            { entry.CitationKey = CreateFallbackCitationKey(Path.GetFileNameWithoutExtension(pdfFile)); }
-
-            if (string.IsNullOrWhiteSpace(entry.DOI))
-            {
-                string doi = CleanIdentifier(metadata.Doi);
-                if (!string.IsNullOrWhiteSpace(doi))
-                { entry.DOI = doi; }
-            }
-
-            if (string.IsNullOrWhiteSpace(entry.Url))
-            {
-                string arxivId = NormalizeArxivId(metadata.ArxivId);
-                if (!string.IsNullOrWhiteSpace(arxivId))
-                { entry.Url = $"https://arxiv.org/abs/{arxivId}"; }
-            }
-
-            entry.File = FormatImportedPdfFileValue(pdfFile);
-        }
-
-        private static string FormatImportedPdfFileValue(string pdfFile)
-        {
-            return AppSettingsState.Current.PdfFilePathStyle switch
-            {
-                PdfFilePathStyles.None => string.Empty,
-                PdfFilePathStyles.JabRef => $":{pdfFile.Replace(":", "\\:").Replace(";", "\\;")}:PDF",
-                _ => pdfFile,
-            };
         }
 
         private void AddImportedPdfEntry(BibtexEntry entry)
@@ -376,37 +290,6 @@ namespace Litenbib.ViewModels
             UndoRedoManager.AddAction(new AddEntriesAction(BibtexEntries, [(index, entry)]));
             NotifyCanUndoRedo();
             FocusFirstVisibleAddedEntry([entry]);
-        }
-
-        private static string CreateFallbackCitationKey(string value)
-        {
-            StringBuilder builder = new();
-            foreach (char c in value)
-            {
-                if (char.IsAsciiLetterOrDigit(c) || c == ':' || c == '_' || c == '-')
-                { builder.Append(c); }
-                else if (builder.Length == 0 || builder[^1] != '_')
-                { builder.Append('_'); }
-            }
-
-            string key = builder.ToString().Trim('_');
-            return string.IsNullOrWhiteSpace(key) ? "pdf_import" : key;
-        }
-
-        private static string CleanIdentifier(string value)
-        { return (value ?? string.Empty).Trim().TrimEnd('.', ',', ';', ':', ')', ']', '}'); }
-
-        private static string NormalizeArxivId(string value)
-        {
-            string arxivId = CleanIdentifier(value);
-            if (arxivId.StartsWith("arXiv:", StringComparison.OrdinalIgnoreCase))
-            { arxivId = arxivId[6..].Trim(); }
-
-            int categoryIndex = arxivId.IndexOf(' ');
-            if (categoryIndex >= 0)
-            { arxivId = arxivId[..categoryIndex].Trim(); }
-
-            return arxivId;
         }
 
         public async Task AddBibtexEntry(Window window)
@@ -736,6 +619,13 @@ namespace Litenbib.ViewModels
             }
         }
 
+        private void ApplyEntryFieldsChangeAction(EntryFieldsChangeAction action)
+        {
+            action.Apply();
+            UndoRedoManager.AddAction(action);
+            NotifyCanUndoRedo();
+        }
+
         private void SetIsTailSelected()
         {
             if (UndoRedoManager.NewEditedBox is TextBox tb)
@@ -754,22 +644,6 @@ namespace Litenbib.ViewModels
             }
         }
 
-        private static string GetPropertyNameForField(string fieldName)
-        {
-            if (string.IsNullOrWhiteSpace(fieldName))
-            {
-                return fieldName;
-            }
-
-            return fieldName.ToLowerInvariant() switch
-            {
-                "doi" => "DOI",
-                "isbn" => "ISBN",
-                "issn" => "ISSN",
-                "url" => "Url",
-                _ => char.ToUpperInvariant(fieldName[0]) + fieldName[1..]
-            };
-        }
         #endregion Method
 
         #region Command
@@ -795,24 +669,8 @@ namespace Litenbib.ViewModels
             Debug.WriteLine($"Saving...{validatedPath}");
             try
             {
-                string? directory = Path.GetDirectoryName(validatedPath);
-                if (!string.IsNullOrWhiteSpace(directory))
-                {
-                    Directory.CreateDirectory(directory);
-                }
-
-                using var writer = new StreamWriter(validatedPath, append: false, new UTF8Encoding(false), bufferSize: 65536);
-                foreach (var entry in BibtexEntries)
-                {
-                    await writer.WriteAsync(entry.BibTeX + "\n");
-                }
-                FullPath = validatedPath;
-                Header = Path.GetFileName(validatedPath);
-                LastDiskWriteTimeUtc = File.GetLastWriteTimeUtc(validatedPath);
-                HasExternalChanges = false;
-                UndoRedoManager.Edited = false;
-                OnPropertyChanged(nameof(Edited));
-                SaveBibtexCommand.NotifyCanExecuteChanged();
+                await WriteBibtexFileAsync(validatedPath);
+                MarkSaved(validatedPath);
                 ShowStatus(I18n.Format("Message.SavedFile", Header));
                 return true;
             }
@@ -824,6 +682,32 @@ namespace Litenbib.ViewModels
                     I18n.Format("Message.CouldNotSaveFile", ex.Message));
                 return false;
             }
+        }
+
+        private async Task WriteBibtexFileAsync(string validatedPath)
+        {
+            string? directory = Path.GetDirectoryName(validatedPath);
+            if (!string.IsNullOrWhiteSpace(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+
+            await using var writer = new StreamWriter(validatedPath, append: false, new UTF8Encoding(false), bufferSize: 65536);
+            foreach (var entry in BibtexEntries)
+            {
+                await writer.WriteAsync(entry.BibTeX + "\n");
+            }
+        }
+
+        private void MarkSaved(string validatedPath)
+        {
+            FullPath = validatedPath;
+            Header = Path.GetFileName(validatedPath);
+            LastDiskWriteTimeUtc = File.GetLastWriteTimeUtc(validatedPath);
+            HasExternalChanges = false;
+            UndoRedoManager.Edited = false;
+            OnPropertyChanged(nameof(Edited));
+            SaveBibtexCommand.NotifyCanExecuteChanged();
         }
 
         public async Task<bool> SaveBibtexAs(Window window)
@@ -885,10 +769,10 @@ namespace Litenbib.ViewModels
         { Delete(); }
         private bool CanDelete() => ShowingEntry != null;
 
-        [RelayCommand(CanExecute = nameof(CanDeleteKey))]
-        private void DeleteBibtexKey()
+        [RelayCommand(CanExecute = nameof(CanDeleteByKey))]
+        private void DeleteBibtexByKey()
         { Delete(); }
-        private bool CanDeleteKey() => ShowingEntry != null
+        private bool CanDeleteByKey() => ShowingEntry != null
             && UndoRedoManager.NewEditedBox == null && !IsFiltering;
 
         [RelayCommand]
@@ -1010,7 +894,14 @@ namespace Litenbib.ViewModels
         {
             if (ShowingEntry == null || sender is not MainWindow window) { return; }
             var targetEntry = ShowingEntry;
-            string sourceName = GetMergeSearchSourceName(source);
+            string sourceName = source switch
+            {
+                MergeSearchSource.Doi => "DOI",
+                MergeSearchSource.Dblp => "DBLP",
+                MergeSearchSource.Crossref => "Crossref",
+                MergeSearchSource.Title => "title",
+                _ => "bibliography"
+            };
             NotificationCenter.Info(I18n.Format("Message.SearchingSource", sourceName));
             var list = await LinkResolver.SearchMergeCandidatesAsync(targetEntry, source);
             if (list.Count == 0)
@@ -1033,33 +924,12 @@ namespace Litenbib.ViewModels
             if (result == true)
             {
                 if (dialog.DataContext is not CompareEntryViewModel cevm) { return; }
-                targetIndex = BibtexEntries.IndexOf(targetEntry);
-                if (targetIndex < 0)
+                if (!ReplaceEntriesWithMerged([targetEntry], cevm.MergedEntry))
                 {
                     NotificationCenter.Error(I18n.Get("Message.MergeCanceledOriginalRemoved"));
                     return;
                 }
-
-                var oldEntry = targetEntry;
-                BibtexEntries.Insert(targetIndex, cevm.MergedEntry);
-                cevm.MergedEntry.UndoRedoPropertyChanged += OnEntryPropertyChanged;
-                BibtexEntries.Remove(oldEntry);
-                UndoRedoManager.AddAction(new ReplaceEntriesAction(BibtexEntries, [(targetIndex, oldEntry)], [(targetIndex, cevm.MergedEntry)]));
-                ShowingEntry = cevm.MergedEntry;
-                NotifyCanUndoRedo();
             }
-        }
-
-        private static string GetMergeSearchSourceName(MergeSearchSource source)
-        {
-            return source switch
-            {
-                MergeSearchSource.Doi => "DOI",
-                MergeSearchSource.Dblp => "DBLP",
-                MergeSearchSource.Crossref => "Crossref",
-                MergeSearchSource.Title => "title",
-                _ => "bibliography"
-            };
         }
 
         [RelayCommand]
@@ -1069,24 +939,41 @@ namespace Litenbib.ViewModels
             if (SelectedIndexItems == null || SelectedIndexItems.Count < 2) { return; }
             var list = SelectedIndexItems.Select(t => t.Item2).ToList();
             CompareEntryView dialog = new(list);
-            // 显示对话框并等待结果 (ShowDialog 需要传入父窗口引用)
-            var result = await dialog.ShowDialog<bool>(window); // 等待对话框关闭并获取 DialogResult
+            var result = await dialog.ShowDialog<bool>(window);
             if (result == true)
             {
                 if (dialog.DataContext is not CompareEntryViewModel cevm) { return; }
-                int i = BibtexEntries.IndexOf(list[0]);
-                List<(int, BibtexEntry)> removed = [];
-                foreach (var entry in list)
+                if (!ReplaceEntriesWithMerged(list, cevm.MergedEntry))
                 {
-                    removed.Add((BibtexEntries.IndexOf(entry), entry));
-                    BibtexEntries.Remove(entry);
+                    NotificationCenter.Error(I18n.Get("Message.MergeCanceledOriginalRemoved"));
                 }
-                BibtexEntries.Insert(i, cevm.MergedEntry);
-                cevm.MergedEntry.UndoRedoPropertyChanged += OnEntryPropertyChanged;
-                UndoRedoManager.AddAction(new ReplaceEntriesAction(BibtexEntries, removed, [(i, cevm.MergedEntry)]));
-                ShowingEntry = cevm.MergedEntry;
-                NotifyCanUndoRedo();
             }
+        }
+
+        private bool ReplaceEntriesWithMerged(IReadOnlyList<BibtexEntry> oldEntries, BibtexEntry mergedEntry)
+        {
+            List<(int Index, BibtexEntry Entry)> oldIndexEntries = oldEntries
+                .Select(entry => (Index: BibtexEntries.IndexOf(entry), Entry: entry))
+                .Where(item => item.Index >= 0)
+                .OrderBy(item => item.Index)
+                .ToList();
+
+            if (oldIndexEntries.Count != oldEntries.Count || oldIndexEntries.Count == 0)
+            { return false; }
+
+            int insertIndex = oldIndexEntries[0].Index;
+            foreach (var (_, entry) in oldIndexEntries)
+            { BibtexEntries.Remove(entry); }
+
+            BibtexEntries.Insert(insertIndex, mergedEntry);
+            mergedEntry.UndoRedoPropertyChanged += OnEntryPropertyChanged;
+            UndoRedoManager.AddAction(new ReplaceEntriesAction(
+                BibtexEntries,
+                oldIndexEntries.Select(item => (item.Index, item.Entry)).ToList(),
+                [(insertIndex, mergedEntry)]));
+            ShowingEntry = mergedEntry;
+            NotifyCanUndoRedo();
+            return true;
         }
 
         [RelayCommand]
@@ -1131,9 +1018,7 @@ namespace Litenbib.ViewModels
                 return;
             }
 
-            ApplyEntryFieldChanges(changes);
-            UndoRedoManager.AddAction(action);
-            NotifyCanUndoRedo();
+            ApplyEntryFieldsChangeAction(action);
             ShowStatus(vm.KeepSelectedFieldsOnly
                 ? I18n.Format("Message.KeptFields", selectedFields.Count, changes.Count)
                 : I18n.Format("Message.DeletedFieldValues", changes.Count, selectedEntries.Count));
@@ -1160,9 +1045,7 @@ namespace Litenbib.ViewModels
                 return;
             }
 
-            ApplyEntryFieldChanges(changes);
-            UndoRedoManager.AddAction(action);
-            NotifyCanUndoRedo();
+            ApplyEntryFieldsChangeAction(action);
             ShowStatus(I18n.Format("Message.UpdatedVenueNames", changes.Count));
         }
 
@@ -1171,11 +1054,7 @@ namespace Litenbib.ViewModels
         {
             if (SelectedIndexItems == null || SelectedIndexItems.Count == 0) { return; }
             var selectedEntries = SelectedIndexItems.Select(t => t.Item2).ToList();
-            List<EntryFieldChange> changes = [];
-            foreach (var entry in selectedEntries)
-            {
-                changes.AddRange(CleanupEntry(entry));
-            }
+            List<EntryFieldChange> changes = BibtexBatchOperations.CreateCleanupChanges(selectedEntries);
 
             EntryFieldsChangeAction action = new(changes);
             if (!action.HasChanges)
@@ -1191,9 +1070,7 @@ namespace Litenbib.ViewModels
                 return;
             }
 
-            ApplyEntryFieldChanges(changes);
-            UndoRedoManager.AddAction(action);
-            NotifyCanUndoRedo();
+            ApplyEntryFieldsChangeAction(action);
             ShowStatus(I18n.Format("Message.CleanedSelectedEntries", selectedEntries.Count));
         }
 
@@ -1206,33 +1083,7 @@ namespace Litenbib.ViewModels
                 .OrderBy(item => item.Item1)
                 .Select(item => item.Item2)
                 .ToList();
-            HashSet<BibtexEntry> selectedEntrySet = new(selectedEntries);
-            HashSet<string> occupiedKeys = new(StringComparer.OrdinalIgnoreCase);
-            foreach (var entry in BibtexEntries)
-            {
-                if (!selectedEntrySet.Contains(entry) && !string.IsNullOrWhiteSpace(entry.CitationKey))
-                {
-                    occupiedKeys.Add(entry.CitationKey);
-                }
-            }
-
-            List<EntryFieldChange> changes = [];
-            foreach (var entry in selectedEntries)
-            {
-                string baseKey = entry.BuildCitationKey();
-                string newKey = CreateUniqueCitationKey(baseKey, occupiedKeys);
-                if (string.IsNullOrWhiteSpace(newKey)
-                    || string.Equals(entry.CitationKey, newKey, StringComparison.Ordinal))
-                {
-                    continue;
-                }
-
-                changes.Add(new EntryFieldChange(
-                    entry,
-                    nameof(BibtexEntry.CitationKey),
-                    entry.CitationKey,
-                    newKey));
-            }
+            List<EntryFieldChange> changes = BibtexBatchOperations.CreateCitationKeyChanges(selectedEntries, BibtexEntries);
 
             EntryFieldsChangeAction action = new(changes);
             if (!action.HasChanges)
@@ -1248,107 +1099,8 @@ namespace Litenbib.ViewModels
                 return;
             }
 
-            ApplyEntryFieldChanges(changes);
-            UndoRedoManager.AddAction(action);
-            NotifyCanUndoRedo();
+            ApplyEntryFieldsChangeAction(action);
             ShowStatus(I18n.Format("Message.GeneratedCitationKeys", changes.Count));
-        }
-
-        private static string CreateUniqueCitationKey(string baseKey, HashSet<string> occupiedKeys)
-        {
-            if (string.IsNullOrWhiteSpace(baseKey))
-            {
-                return string.Empty;
-            }
-
-            if (occupiedKeys.Add(baseKey))
-            {
-                return baseKey;
-            }
-
-            for (int index = 1; index < int.MaxValue; index++)
-            {
-                string candidate = baseKey + FormatDuplicateSuffix(AppSettingsState.Current.CitationKeyDuplicateSuffix, index);
-                if (occupiedKeys.Add(candidate))
-                {
-                    return candidate;
-                }
-            }
-
-            return string.Empty;
-        }
-
-        private static string FormatDuplicateSuffix(string suffixRule, int index)
-        {
-            if (string.IsNullOrWhiteSpace(suffixRule))
-            {
-                suffixRule = AppSettings.DefaultCitationKeyDuplicateSuffix;
-            }
-
-            string prefix = suffixRule[..^1];
-            return suffixRule[^1] == '1'
-                ? prefix + index.ToString()
-                : prefix + ToAlphabeticSuffix(index);
-        }
-
-        private static string ToAlphabeticSuffix(int index)
-        {
-            StringBuilder builder = new();
-            int value = index;
-            while (value > 0)
-            {
-                value--;
-                builder.Insert(0, (char)('a' + value % 26));
-                value /= 26;
-            }
-
-            return builder.ToString();
-        }
-
-        private static List<EntryFieldChange> CleanupEntry(BibtexEntry entry)
-        {
-            List<EntryFieldChange> changes = [];
-            var keys = entry.Fields.Keys.ToList();
-            foreach (var key in keys)
-            {
-                var oldValue = entry.Fields[key];
-                var value = oldValue;
-                value = value.Replace("\r", " ").Replace("\n", " ").Trim();
-                while (value.Contains("  "))
-                {
-                    value = value.Replace("  ", " ");
-                }
-
-                if (key.Equals("doi", StringComparison.OrdinalIgnoreCase))
-                {
-                    value = BibtexDiagnostics.NormalizeDoi(value);
-                }
-                if (key.Equals("url", StringComparison.OrdinalIgnoreCase))
-                {
-                    value = value.Trim();
-                }
-
-                string? newValue = string.IsNullOrWhiteSpace(value) ? null : value;
-                if (string.Equals(oldValue, newValue, StringComparison.Ordinal))
-                {
-                    continue;
-                }
-
-                string propertyName = GetPropertyNameForField(key);
-                changes.Add(new EntryFieldChange(entry, propertyName, oldValue, newValue));
-            }
-            return changes;
-        }
-
-        private static void ApplyEntryFieldChanges(IEnumerable<EntryFieldChange> changes)
-        {
-            foreach (var change in changes)
-            {
-                if (!string.Equals(change.OldValue, change.NewValue, StringComparison.Ordinal))
-                {
-                    change.Entry.SetValueSilent(change.PropertyName, change.NewValue);
-                }
-            }
         }
 
         [RelayCommand]

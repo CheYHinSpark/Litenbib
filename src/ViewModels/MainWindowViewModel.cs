@@ -614,7 +614,7 @@ namespace Litenbib.ViewModels
         {
             if (tab != null && BibtexTabs.Contains(tab))
             {
-            if (!await PromptSaveIfEdited(tab, I18n.Get("Message.ActionClosing")))
+                if (!await PromptSaveIfEdited(tab, I18n.Get("Message.ActionClosing")))
                 {
                     return;
                 }

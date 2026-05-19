@@ -30,7 +30,7 @@
                     CommandParameter="{CompiledBinding #LitbibMainWindow.DataContext}"/>
         <KeyBinding Command="{CompiledBinding SelectedFile.UndoBibtexCommand}" Gesture="Ctrl+Z"/>
         <KeyBinding Command="{CompiledBinding SelectedFile.RedoBibtexCommand}" Gesture="Ctrl+Y"/>
-        <KeyBinding Command="{CompiledBinding SelectedFile.DeleteBibtexKeyCommand}" Gesture="Delete"/>
+        <KeyBinding Command="{CompiledBinding SelectedFile.DeleteBibtexByKeyCommand}" Gesture="Delete"/>
         <KeyBinding Command="{CompiledBinding SelectedFile.SaveBibtexCommand}" Gesture="Ctrl+S"/>
     </Window.KeyBindings>
 

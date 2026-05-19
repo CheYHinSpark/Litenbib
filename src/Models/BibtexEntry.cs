@@ -169,14 +169,6 @@ namespace Litenbib.Models
             Debug.WriteLine("Changing " + propertyName);
         }
 
-        public static BibtexEntry FromDOI(string doi)
-        {
-            BibtexEntry entry = new("", doi);
-            entry.Fields["doi"] = doi;
-            // TODO: 解析DOI
-            return entry;
-        }
-
         private int MaxFieldLength()
         {
             int maxFieldLength = 0;
@@ -254,9 +246,7 @@ namespace Litenbib.Models
         private static string FirstCharToUpper(string value)
         {
             if (string.IsNullOrWhiteSpace(value))
-            {
-                return string.Empty;
-            }
+            { return string.Empty; }
 
             return char.ToUpperInvariant(value[0]) + value[1..].ToLowerInvariant();
         }
@@ -282,7 +272,7 @@ namespace Litenbib.Models
 
             foreach (var propertyName in properties)
             {
-                if (BibtexEntry.NonFieldsProperties.Contains(propertyName)) { continue; }
+                if (NonFieldsProperties.Contains(propertyName)) { continue; }
 
                 string property = propertyName.ToLower();
                 entry.Fields.TryGetValue(property, out string? value);
@@ -310,12 +300,16 @@ namespace Litenbib.Models
         public string BuildCitationKey()
         {
             string familyName = GetFirstFamilyName();
+            var titleWords = CitationKeyWordRegex().Matches(Title.Replace("{", "").Replace("}", ""))
+                .Cast<Match>()
+                .Select(match => match.Value.ToLowerInvariant())
+                .Take(2);
             string template = AppSettingsState.Current.CitationKeyTemplate;
             string rawKey = template
                 .Replace("{family}", familyName.ToLowerInvariant(), StringComparison.Ordinal)
                 .Replace("{Family}", FirstCharToUpper(familyName), StringComparison.Ordinal)
                 .Replace("{year}", Year, StringComparison.Ordinal)
-                .Replace("{title}", GetTitleToken(), StringComparison.Ordinal);
+                .Replace("{title}", string.Join(string.Empty, titleWords), StringComparison.Ordinal);
 
             string key = CitationKeyInvalidCharRegex().Replace(rawKey, "_");
             key = MultipleUnderscoreRegex().Replace(key, "_").Trim('_');
@@ -340,51 +334,33 @@ namespace Litenbib.Models
             return nameParts.Length == 0 ? string.Empty : nameParts[^1];
         }
 
-        private string GetTitleToken()
-        {
-            var words = CitationKeyWordRegex().Matches(Title.Replace("{", "").Replace("}", ""))
-                .Cast<Match>()
-                .Select(match => match.Value.ToLowerInvariant())
-                .Take(2);
-            return string.Join(string.Empty, words);
-        }
-
         public static string ResolveFilePath(string fileField)
         {
+            fileField = fileField.Trim();
             if (string.IsNullOrWhiteSpace(fileField))
             { return string.Empty; }
 
-            string firstFile = GetFirstJabRefFile(fileField.Trim());
+            int separator = IndexOfUnescaped(fileField, ';', 0);
+            string firstFile = separator >= 0 ? fileField[..separator] : fileField;
+            
             int firstSeparator = IndexOfUnescaped(firstFile, ':', 0);
-            int lastSeparator = LastIndexOfUnescaped(firstFile, ':');
-            if (firstSeparator >= 0 && lastSeparator > firstSeparator)
+
+            int lastSeparator = fileField.Length - 1;
+            for ( ; lastSeparator >= 0; lastSeparator--)
             {
-                return UnescapeJabRefFilePath(firstFile[(firstSeparator + 1)..lastSeparator].Trim());
+                if (firstFile[lastSeparator] == ':' && !IsEscaped(firstFile, lastSeparator))
+                { break; }
             }
 
-            return UnescapeJabRefFilePath(firstFile.Trim());
-        }
+            if (firstSeparator >= 0 && lastSeparator > firstSeparator)
+            { return UnescapeJabRefFilePath(firstFile[(firstSeparator + 1)..lastSeparator].Trim()); }
 
-        private static string GetFirstJabRefFile(string fileField)
-        {
-            int separator = IndexOfUnescaped(fileField, ';', 0);
-            return separator >= 0 ? fileField[..separator] : fileField;
+            return UnescapeJabRefFilePath(firstFile.Trim());
         }
 
         private static int IndexOfUnescaped(string value, char target, int startIndex)
         {
             for (int i = startIndex; i < value.Length; i++)
-            {
-                if (value[i] == target && !IsEscaped(value, i))
-                { return i; }
-            }
-
-            return -1;
-        }
-
-        private static int LastIndexOfUnescaped(string value, char target)
-        {
-            for (int i = value.Length - 1; i >= 0; i--)
             {
                 if (value[i] == target && !IsEscaped(value, i))
                 { return i; }

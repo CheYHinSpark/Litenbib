@@ -125,7 +125,7 @@ namespace Litenbib.ViewModels
 
                     changes.Add(new EntryFieldChange(
                         entry,
-                        GetPropertyNameForField(key),
+                        BibtexBatchOperations.GetPropertyNameForField(key),
                         entry.Fields[key],
                         null));
                 }
@@ -139,7 +139,7 @@ namespace Litenbib.ViewModels
 
                 changes.Add(new EntryFieldChange(
                     entry,
-                    GetPropertyNameForField(field),
+                    BibtexBatchOperations.GetPropertyNameForField(field),
                     oldValue,
                     null));
             }
@@ -153,19 +153,5 @@ namespace Litenbib.ViewModels
             { row.NotifyCanRemoveChanged(); }
         }
 
-        private static string GetPropertyNameForField(string fieldName)
-        {
-            if (string.IsNullOrWhiteSpace(fieldName))
-            { return fieldName; }
-
-            return fieldName.ToLowerInvariant() switch
-            {
-                "doi" => "DOI",
-                "isbn" => "ISBN",
-                "issn" => "ISSN",
-                "url" => "Url",
-                _ => char.ToUpperInvariant(fieldName[0]) + fieldName[1..]
-            };
-        }
     }
 }
