@@ -353,10 +353,10 @@
     
     <ControlTheme x:Key="{x:Type GridSplitter}" TargetType="GridSplitter">
         <Setter Property="Focusable" Value="True" />
-        <Setter Property="MinWidth" Value="6" />
-        <Setter Property="MinHeight" Value="6" />
+        <Setter Property="MinWidth" Value="4" />
+        <Setter Property="MinHeight" Value="4" />
 		<Setter Property="Background" Value="{DynamicResource MainBackground}" />
-		<Setter Property="CornerRadius" Value="3" />
+		<Setter Property="CornerRadius" Value="2" />
         <Setter Property="Template">
             <ControlTemplate>
                 <Border Name="Part_Border" BorderBrush="{TemplateBinding BorderBrush}"

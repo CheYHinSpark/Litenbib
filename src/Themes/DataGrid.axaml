@@ -6,7 +6,7 @@
     <ControlTheme x:Key="{x:Type DataGridColumnHeader}" TargetType="DataGridColumnHeader">
 		<Setter Property="Background" Value="{DynamicResource InputBackground}"/>
 		<Setter Property="Foreground" Value="{DynamicResource MainForeground}"/>
-        <Setter Property="Padding" Value="0 8 10 8"/>
+        <Setter Property="Padding" Value="0 8"/>
 		<Setter Property="AreSeparatorsVisible" Value="False"/>
 		<Setter Property="SeparatorBrush" Value="{DynamicResource MainBorder}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource MainBorder}"/>
@@ -21,13 +21,12 @@
 							BorderBrush="{TemplateBinding BorderBrush}"
 							BorderThickness="{TemplateBinding BorderThickness}"
 							CornerRadius="{TemplateBinding CornerRadius}"/>
-                    <ContentPresenter Grid.ColumnSpan="2"
-                                      Margin="{TemplateBinding Padding}"
+                    <ContentPresenter Margin="{TemplateBinding Padding}"
                                       Content="{TemplateBinding Content}"
                                       ContentTemplate="{TemplateBinding ContentTemplate}"/>
-                    <Path Name="SortIcon" Margin="4" Fill="{TemplateBinding Foreground}"
+                    <Path Name="SortIcon" Fill="{TemplateBinding Foreground}"
                           HorizontalAlignment="Right" VerticalAlignment="Center"
-                          Stretch="Uniform" Height="12"/>
+                          Stretch="Uniform" Grid.Column="1"/>
                     <Rectangle Name="VerticalSeparator" Grid.Column="1" Width="1"
                                VerticalAlignment="Stretch" Fill="{TemplateBinding SeparatorBrush}"
                                IsVisible="{TemplateBinding AreSeparatorsVisible}"/>
@@ -46,14 +45,21 @@
 		</Style>
 
 		<Style Selector="^:sortascending /template/ Path#SortIcon">
-			<Setter Property="IsVisible" Value="True" />
 			<Setter Property="Data" Value="{StaticResource DataGridSortIconAscendingPath}" />
+            <Setter Property="Margin" Value="0 0 4 0"/>
+            <Setter Property="Width" Value="12"/>
 		</Style>
 
 		<Style Selector="^:sortdescending /template/ Path#SortIcon">
-			<Setter Property="IsVisible" Value="True" />
 			<Setter Property="Data" Value="{StaticResource DataGridSortIconDescendingPath}" />
+            <Setter Property="Margin" Value="0 0 4 0"/>
+            <Setter Property="Width" Value="12"/>
 		</Style>
+
+        <Style Selector="^:not(:sortascending):not(:sortdescending) /template/ Path#SortIcon">
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="Width" Value="0"/>
+        </Style>
     </ControlTheme>
 
     <ControlTheme x:Key="{x:Type DataGridCell}" TargetType="DataGridCell">
@@ -86,12 +92,18 @@
                                     ColumnDefinitions="Auto,*"
 									Background="{TemplateBinding Background}"
                                     RowDefinitions="*,Auto">
-                    <Border Name="BackgroundBorder"
-							MinHeight="36"
-							CornerRadius="10"
-                            Margin="0 2"
-                            Grid.RowSpan="2"
-                            Grid.ColumnSpan="2" />
+                    <Border Name="BackgroundBorder" MinHeight="32" CornerRadius="10"
+                            Margin="0 2" Grid.RowSpan="2" Grid.ColumnSpan="2"
+                            Background="{DynamicResource MainBackground}"
+                            BorderBrush="{DynamicResource MainBackground}"
+                            BorderThickness="1">
+                        <Border.Transitions>
+                            <Transitions>
+                                <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                                <BrushTransition Property="BorderBrush" Duration="0:0:0.15"/>
+                            </Transitions>
+                        </Border.Transitions>
+                    </Border>
                     <DataGridRowHeader Name="PART_RowHeader"
                                        Grid.RowSpan="2"
                                        DataGridFrozenGrid.IsFrozen="True" />
@@ -119,19 +131,16 @@
 			</Style.Animations>
 		</Style>-->
 
+     
+
 		<Style Selector="^:pointerover /template/ Border#BackgroundBorder">
 			<Setter Property="Background" Value="{DynamicResource HighlightBackground}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource HighlightBackground}" />
 		</Style>
 
-        <Style Selector="^:selected">
-            <Style Selector="^ /template/ Border#BackgroundBorder">
-				<Setter Property="Background" Value="{DynamicResource ThemeBackground}" />
-                <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorder}" />
-                <Setter Property="BorderThickness" Value="1" />
-            </Style>
-            <Style Selector="^:pointerover /template/ Border#BackgroundBorder">
-				<Setter Property="Background" Value="{DynamicResource ThemeBackground}" />
-            </Style>
+        <Style Selector="^:selected /template/ Border#BackgroundBorder">
+			<Setter Property="Background" Value="{DynamicResource ThemeBackground}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorder}" />
         </Style>
     </ControlTheme>
 </ResourceDictionary>

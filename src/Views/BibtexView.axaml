@@ -59,8 +59,8 @@
             <RowDefinition Height="0" MaxHeight="0" MinHeight="0"/>
         </Grid.RowDefinitions>
 
-        <Grid RowDefinitions="*,Auto">
-            <Border Margin="8 8 8 0" Padding="6" CornerRadius="16"
+        <Grid Name="MainGrid" RowDefinitions="*,Auto" Margin="8 8 0 8">
+            <Border Margin="0 0 0 8" Padding="6" CornerRadius="16"
                     Background="{DynamicResource MainBackground}"
                     BorderBrush="{DynamicResource MainBorder}"
                     BorderThickness="1">
@@ -102,23 +102,24 @@
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-                        <DataGridTemplateColumn Header="{DynamicResource Bibtex.Column.Type}" Width="Auto" CanUserResize="False"
-											SortMemberPath="EntryType">
+                        <DataGridTemplateColumn Header="{DynamicResource Bibtex.Column.Type}" Width="120" CanUserResize="False"
+                                                SortMemberPath="EntryType">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate x:DataType="m:BibtexEntry">
-								<Panel Margin="0 4">
-								    <Border HorizontalAlignment="Stretch" CornerRadius="12"
-										    Background="{CompiledBinding #TypeText.Text, Converter={StaticResource TextToBackgroundConverter}}"/>
-									<Border HorizontalAlignment="Stretch" CornerRadius="12" Opacity="0.78"
-										    Background="{DynamicResource InputBackground}"/>
-									<TextBlock Name="TypeText" HorizontalAlignment="Center"
-										   Text="{CompiledBinding EntryType, Converter={StaticResource EntryTypeConverter}}"/>
-								</Panel>
+								    <Grid Margin="0 6">
+								        <Border HorizontalAlignment="Stretch" CornerRadius="12"
+										        Background="{CompiledBinding #TypeText.Text, Converter={StaticResource TextToBackgroundConverter}}"/>
+									    <Border HorizontalAlignment="Stretch" CornerRadius="12" Opacity="0.8"
+										        Background="{DynamicResource InputBackground}">
+                                            <TextBlock Name="TypeText" HorizontalAlignment="Center" FontFamily="Consolas" VerticalAlignment="Center"
+										               Text="{CompiledBinding EntryType, Converter={StaticResource EntryTypeConverter}}"/>
+                                        </Border>
+								    </Grid>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
                         <DataGridTemplateColumn Header="{DynamicResource Bibtex.Column.Author}" Width="1*"
-											SortMemberPath="AuthorAndEditor">
+											    SortMemberPath="AuthorAndEditor">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate x:DataType="m:BibtexEntry">
                                     <TextBlock>
@@ -133,7 +134,7 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 						<DataGridTemplateColumn Header="{DynamicResource Bibtex.Column.Title}" Width="2*"
-											SortMemberPath="Title">
+											    SortMemberPath="Title">
 							<DataGridTemplateColumn.CellTemplate>
 								<DataTemplate x:DataType="m:BibtexEntry">
 									<TextBlock>
@@ -147,7 +148,7 @@
 							</DataGridTemplateColumn.CellTemplate>
 						</DataGridTemplateColumn>
                         <DataGridTemplateColumn Header="{DynamicResource Bibtex.Column.Venue}" Width="1*"
-											SortMemberPath="JournalAndBooktitleAndPublisher">
+											    SortMemberPath="JournalAndBooktitleAndPublisher">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate x:DataType="m:BibtexEntry">
                                     <TextBlock>
@@ -163,7 +164,7 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
                         <DataGridTextColumn Header="{DynamicResource Bibtex.Column.Year}" Binding="{CompiledBinding Year}"
-                                            x:DataType="m:BibtexEntry" Width="Auto"
+                                            x:DataType="m:BibtexEntry" Width="Auto" SortMemberPath="Year"
                                             CanUserResize="False"/>
                     </DataGrid.Columns>
 					<DataGrid.Styles>
@@ -181,7 +182,7 @@
 				</DataGrid>
             </Border>
 
-			<Border Grid.Row="1" Margin="8 8 8 8" Padding="8 4" CornerRadius="12"
+			<Border Grid.Row="1" Padding="8 4" CornerRadius="16"
                     Background="{DynamicResource MainBackground}"
                     BorderBrush="{DynamicResource MainBorder}"
                     BorderThickness="1">
@@ -277,12 +278,12 @@
             </Border>
         </Grid>
 
-        <GridSplitter Name="Splitter" Grid.Column="1" Margin="0 24 4 24"
+        <GridSplitter Name="Splitter" Grid.Column="1" Margin="4 24"
                       DragDelta="GridSplitter_DragDelta"/>
         
         <Border Name="DetailPanel" Background="{DynamicResource MainBackground}" Grid.Column="2"
                 BorderBrush="{DynamicResource MainBorder}" BorderThickness="1"
-                CornerRadius="18" Margin="4 8 0 8">
+                CornerRadius="16">
             <Border.Styles>
                 <Style Selector="TextBlock.right">
                     <Setter Property="Margin" Value="0 0 4 0"/>
