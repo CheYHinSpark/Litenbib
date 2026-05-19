@@ -77,7 +77,6 @@ namespace Litenbib.Views
         }
 
 
-
         private void ApplyWindowState(LocalConfig? config)
         {
             if (config == null)

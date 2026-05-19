@@ -181,11 +181,16 @@ namespace Litenbib.ViewModels
         }
 
         public BibtexViewModel(string header, string fullPath, string filecontent, int filterMode = 0)
+            : this(header, fullPath, BibtexParser.Parse(filecontent), filterMode)
+        {
+        }
+
+        public BibtexViewModel(string header, string fullPath, IEnumerable<BibtexEntry> entries, int filterMode = 0)
         {
             Header = Uri.UnescapeDataString(header);
             FullPath = Uri.UnescapeDataString(fullPath);
             LastDiskWriteTimeUtc = File.Exists(FullPath) ? File.GetLastWriteTimeUtc(FullPath) : null;
-            BibtexEntries = new ObservableRangeCollection<BibtexEntry>(BibtexParser.Parse(filecontent));
+            BibtexEntries = new ObservableRangeCollection<BibtexEntry>(entries);
             Warnings = [];
             foreach (var entry in BibtexEntries)
             { entry.UndoRedoPropertyChanged += OnEntryPropertyChanged; }

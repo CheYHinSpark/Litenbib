@@ -235,11 +235,11 @@ namespace Litenbib.ViewModels
                         continue;
                     }
 
-                    string fileContent = await File.ReadAllTextAsync(filePath);
+                    List<BibtexEntry> entries = await ReadBibtexEntriesAsync(filePath);
                     var newBVM = new BibtexViewModel(
                         Path.GetFileName(filePath),
                         filePath,
-                        fileContent);
+                        entries);
                     BibtexTabs.Add(newBVM);
                 }
 
@@ -378,9 +378,9 @@ namespace Litenbib.ViewModels
 
             try
             {
-                var fileContent = await File.ReadAllTextAsync(fullPath);
+                List<BibtexEntry> entries = await ReadBibtexEntriesAsync(fullPath);
                 int newMode = SelectedFile == null ? 0 : SelectedFile.FilterMode;
-                var newBVM = new BibtexViewModel(fileName ?? Path.GetFileName(fullPath), fullPath, fileContent, newMode);
+                var newBVM = new BibtexViewModel(fileName ?? Path.GetFileName(fullPath), fullPath, entries, newMode);
                 BibtexTabs.Add(newBVM);
                 SelectedFile = newBVM;
                 NotifyTabCollectionChanged();
@@ -390,6 +390,12 @@ namespace Litenbib.ViewModels
             {
                 NotificationCenter.Error(I18n.Format("Message.CouldNotOpenFile", Path.GetFileName(fullPath), ex.Message));
             }
+        }
+
+        private static async Task<List<BibtexEntry>> ReadBibtexEntriesAsync(string filePath)
+        {
+            string fileContent = await File.ReadAllTextAsync(filePath);
+            return await Task.Run(() => BibtexParser.Parse(fileContent));
         }
 
         private static string GetWindowsCopyPath(string sourcePath)
@@ -582,9 +588,7 @@ namespace Litenbib.ViewModels
             });
 
             foreach (var file in files)
-            {
-                await OpenFile(file);
-            }
+            { await OpenFile(file); }
         }
 
         [RelayCommand]
@@ -615,9 +619,7 @@ namespace Litenbib.ViewModels
             if (tab != null && BibtexTabs.Contains(tab))
             {
                 if (!await PromptSaveIfEdited(tab, I18n.Get("Message.ActionClosing")))
-                {
-                    return;
-                }
+                { return; }
 
                 BibtexTabs.Remove(tab);
                 NotifyTabCollectionChanged();
@@ -627,21 +629,13 @@ namespace Litenbib.ViewModels
         [RelayCommand]
         private async Task DuplicateTab(BibtexViewModel? tab)
         {
-            if (tab == null || !BibtexTabs.Contains(tab))
-            {
-                return;
-            }
+            if (tab == null || !BibtexTabs.Contains(tab)) { return; }
 
             if (!await PromptSaveIfEdited(tab, I18n.Get("Message.ActionDuplicating")))
-            {
-                return;
-            }
+            { return; }
 
             string sourcePath;
-            try
-            {
-                sourcePath = Path.GetFullPath(tab.FullPath);
-            }
+            try { sourcePath = Path.GetFullPath(tab.FullPath); }
             catch (Exception)
             {
                 NotificationCenter.Error(I18n.Format("Message.CouldNotDuplicateInvalidPath", tab.Header));

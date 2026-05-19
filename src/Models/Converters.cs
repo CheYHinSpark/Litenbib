@@ -179,18 +179,16 @@ namespace Litenbib.Models
     {
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            // 检查value是否为string类型
+            // 检查value类型
             if (value is WindowState)
             {
-                // 这里根据你的逻辑返回不同的颜色
                 return value switch
                 {
                     WindowState.Maximized => PathGeometry.Parse("M 0,2 L 8,2 8,9 0,9 Z M 2,0 L 10,0 10,7"),
-                    _ => PathGeometry.Parse("M 0,0 L 9,0 9,8 0,8 Z"), // 默认背景
+                    _ => PathGeometry.Parse("M 0,0 L 9,0 9,8 0,8 Z"),
                 };
             }
-            // 如果value不是字符串，返回默认颜色
-            return Brushes.Transparent;
+            return null;
         }
 
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
