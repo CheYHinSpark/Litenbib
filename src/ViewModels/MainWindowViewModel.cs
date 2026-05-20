@@ -1,7 +1,5 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Input;
-using Avalonia.Markup.Xaml.Styling;
 using Avalonia.Platform.Storage;
 using Avalonia.Styling;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -51,7 +49,6 @@ namespace Litenbib.ViewModels
         {
             // inform Commands to update
             OnPropertyChanged(nameof(ShowToolBar));
-            AddBibtexEntryCommand.NotifyCanExecuteChanged();
             SaveAllCommand.NotifyCanExecuteChanged();
             if (value != null)
             {
@@ -688,16 +685,6 @@ namespace Litenbib.ViewModels
 
         private bool CanCloseOtherTabs(BibtexViewModel? tab) => tab != null && BibtexTabs.Contains(tab) && BibtexTabs.Count > 1;
 
-        [RelayCommand(CanExecute = nameof(CanAddBibtexEntry))]
-        private async Task AddBibtexEntry(Window window)
-        {
-            if (SelectedFile != null)
-            {
-                // 创建对话框实例，并传入参数
-                await SelectedFile.AddBibtexEntry(window);
-            }
-        }
-
         [RelayCommand]
         private async Task SaveFileAs(Window? window)
         {
@@ -707,8 +694,6 @@ namespace Litenbib.ViewModels
                 TouchRecentFile(SelectedFile);
             }
         }
-
-        private bool CanAddBibtexEntry() => SelectedFile != null;
 
         [RelayCommand(CanExecute = nameof(CanSaveAll))]
         private async Task SaveAll()

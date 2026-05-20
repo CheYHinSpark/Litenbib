@@ -191,40 +191,48 @@
 				    <TextBlock Margin="8 0 4 0" Text="{CompiledBinding BibtexView.Count}"/>
                     <TextBlock Margin="0 0 8 0" Text="{DynamicResource Bibtex.Entries}" Opacity="0.8"/>
                     
-                    <!-- 批量编辑区 -->
-                    <Button Margin="0 0 8 0"
-                            ToolTip.Tip="{DynamicResource Bibtex.Tooltip.Reload}"
+                    <!-- 编辑区 -->
+                    <Button ToolTip.Tip="{DynamicResource Bibtex.Tooltip.Reload}"
                             IsVisible="{CompiledBinding HasExternalChanges}"
                             Command="{CompiledBinding ReloadFromDiskCommand}">
                         <Path Data="{StaticResource RefreshPath}" StrokeThickness="1"
                               Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                     </Button>
-                    <Button Margin="0 0 8 0"
-                            ToolTip.Tip="{DynamicResource Bibtex.Tooltip.DeleteFields}"
+                    <Button ToolTip.Tip="{DynamicResource Bibtex.Tooltip.DeleteFields}"
                             Command="{CompiledBinding ApplyBatchFieldDeleteCommand}"
                             CommandParameter="{CompiledBinding $parent[Window]}">
                         <Path Data="{StaticResource BatchDeleteFieldsPath}" StrokeThickness="1"
 							  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                     </Button>
-                    <Button Margin="0 0 8 0"
-                            ToolTip.Tip="{DynamicResource Bibtex.Tooltip.NormalizeVenues}"
+                    <Button ToolTip.Tip="{DynamicResource Bibtex.Tooltip.NormalizeVenues}"
                             Command="{CompiledBinding NormalizeSelectedVenueNamesCommand}"
                             CommandParameter="{CompiledBinding $parent[Window]}">
                         <Path Data="{StaticResource AiPath}" StrokeThickness="1"
                               Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                     </Button>
-                    <Button Margin="0 0 8 0"
-                            ToolTip.Tip="{DynamicResource Bibtex.Tooltip.GenerateCitationKeys}"
+                    <Button ToolTip.Tip="{DynamicResource Bibtex.Tooltip.GenerateCitationKeys}"
                             Command="{CompiledBinding GenerateSelectedCitationKeysCommand}">
                         <Path Data="{StaticResource KeyPath}" StrokeThickness="0"
                               Fill="{CompiledBinding $parent[Button].Foreground}"/>
                     </Button>
-                    <Button Margin="0 0 8 0"
-                            ToolTip.Tip="{DynamicResource Bibtex.Tooltip.CleanSelected}"
+                    <Button ToolTip.Tip="{DynamicResource Bibtex.Tooltip.CleanSelected}"
                             Command="{CompiledBinding CleanupSelectedEntriesCommand}">
                         <Path Data="{StaticResource BatchCleanPath}" StrokeThickness="1"
                               Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                     </Button>
+                    <Button Command="{CompiledBinding MergeEntriesCommand}"
+                            CommandParameter="{CompiledBinding $parent[Window]}"
+                            ToolTip.Tip="{DynamicResource Main.Tooltip.MergeEntries}">
+                        <Path Data="{StaticResource MergePath}" StrokeThickness="1"
+                              Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+                    </Button>
+                    <Button Command="{CompiledBinding AddBibtexEntryCommand}"
+                            CommandParameter="{CompiledBinding $parent[Window]}"
+                            ToolTip.Tip="{DynamicResource Main.Tooltip.AddEntry}">
+                        <Path Data="{StaticResource AddPath}"
+                              Fill="{CompiledBinding $parent[Button].Foreground}"/>
+                    </Button>
+
 					<TextBlock Margin="0 0 12 0" Text="{CompiledBinding StatusMessage}"
 							   Tag="{CompiledBinding StatusMessageTag}">
                         <TextBlock.Transitions>

@@ -297,36 +297,6 @@ namespace Litenbib.ViewModels
             FocusFirstVisibleAddedEntry([entry]);
         }
 
-        public async Task AddBibtexEntry(Window window)
-        {
-            AddEntryView dialog = new();
-
-            var result = await dialog.ShowDialog<bool>(window);
-            if (result == true && dialog.DataContext is AddEntryViewModel aevm)
-            {
-                string bibtex = aevm.BibtexText;
-                List<(int, BibtexEntry)> index_entries = [];
-                List<BibtexEntry> addedEntries = [];
-                int c = BibtexEntries.Count;
-                foreach (BibtexEntry entry in BibtexParser.Parse(bibtex))
-                {
-                    index_entries.Add((c, entry));
-                    addedEntries.Add(entry);
-                    BibtexEntries.Add(entry);
-                    entry.UndoRedoPropertyChanged += OnEntryPropertyChanged;
-                    c++;
-                }
-                if (addedEntries.Count == 0)
-                {
-                    NotificationCenter.Info(I18n.Get("Message.NoBibtexEntriesAdded"));
-                    return;
-                }
-                UndoRedoManager.AddAction(new AddEntriesAction(BibtexEntries, index_entries));
-                NotifyCanUndoRedo();
-                FocusFirstVisibleAddedEntry(addedEntries);
-            }
-        }
-
         private void FocusFirstVisibleAddedEntry(IReadOnlyList<BibtexEntry> addedEntries)
         {
             BibtexEntry? entryToFocus = addedEntries.FirstOrDefault(FilterBibtex);
@@ -652,6 +622,38 @@ namespace Litenbib.ViewModels
         #endregion Method
 
         #region Command
+        [RelayCommand]
+        private async Task AddBibtexEntry(object o)
+        {
+            if (o is not Window window) { return; }
+            AddEntryView dialog = new();
+
+            var result = await dialog.ShowDialog<bool>(window);
+            if (result == true && dialog.DataContext is AddEntryViewModel aevm)
+            {
+                string bibtex = aevm.BibtexText;
+                List<(int, BibtexEntry)> index_entries = [];
+                List<BibtexEntry> addedEntries = [];
+                int c = BibtexEntries.Count;
+                foreach (BibtexEntry entry in BibtexParser.Parse(bibtex))
+                {
+                    index_entries.Add((c, entry));
+                    addedEntries.Add(entry);
+                    BibtexEntries.Add(entry);
+                    entry.UndoRedoPropertyChanged += OnEntryPropertyChanged;
+                    c++;
+                }
+                if (addedEntries.Count == 0)
+                {
+                    NotificationCenter.Info(I18n.Get("Message.NoBibtexEntriesAdded"));
+                    return;
+                }
+                UndoRedoManager.AddAction(new AddEntriesAction(BibtexEntries, index_entries));
+                NotifyCanUndoRedo();
+                FocusFirstVisibleAddedEntry(addedEntries);
+            }
+        }
+
         public async Task<bool> SaveCurrentAsync()
         {
             return await SaveBibtexToPath(FullPath);

@@ -20,7 +20,7 @@
     <Window.KeyBindings>
         <KeyBinding Command="{CompiledBinding NewFileCommand}" Gesture="Ctrl+N"
                     CommandParameter="{CompiledBinding #LitbibMainWindow}"/>
-        <KeyBinding Command="{CompiledBinding AddBibtexEntryCommand}" Gesture="Ctrl+Shift+A"
+        <KeyBinding Command="{CompiledBinding SelectedFile.AddBibtexEntryCommand}" Gesture="Ctrl+Shift+A"
                     CommandParameter="{CompiledBinding #LitbibMainWindow}"/>
         <KeyBinding Command="{CompiledBinding SelectedFile.CopyBibtexCommand}" Gesture="Ctrl+C"
                     CommandParameter="{CompiledBinding #LitbibMainWindow.DataContext}"/>
@@ -118,7 +118,7 @@
                     </MenuItem>
                     <MenuItem Header="{DynamicResource Main.Menu.Edit}" Classes="Top">
                         <MenuItem Header="{DynamicResource Main.Menu.Add}"
-                                  Command="{CompiledBinding AddBibtexEntryCommand}"
+                                  Command="{CompiledBinding SelectedFile.AddBibtexEntryCommand}"
                                   CommandParameter="{CompiledBinding $parent[Window]}"/>
                         <MenuItem Header="{DynamicResource Main.Menu.Copy}"
                                   Command="{CompiledBinding SelectedFile.CopyBibtexCommand}"
@@ -178,7 +178,7 @@
             </StackPanel>
 
             <!--tool-->
-            <Grid Grid.Row="1" Height="{StaticResource TitleBarHeight}"
+            <!-- <Grid Grid.Row="1" Height="{StaticResource TitleBarHeight}"
                   Grid.ColumnSpan="3"
                   Opacity="{CompiledBinding ShowToolBar}">
                 <Grid.Styles>
@@ -189,46 +189,6 @@
 						<Setter Property="Margin" Value="0 2"/>
                     </Style>
                 </Grid.Styles>
-                <Border Margin="8 0" Background="{DynamicResource InputBackground}"
-                        HorizontalAlignment="Left" VerticalAlignment="Center"
-						BorderBrush="{DynamicResource MainBorder}"
-						BorderThickness="1"
-                        CornerRadius="8">
-                    <StackPanel Orientation="Horizontal" Margin="6 0" VerticalAlignment="Center"
-								ToolTip.Tip="{DynamicResource Main.Tooltip.Undo}">
-                        <Button Command="{CompiledBinding SelectedFile.UndoBibtexCommand}" ToolTip.Tip="{DynamicResource Main.Tooltip.Undo}">
-                            <Path Data="{StaticResource UndoPath}" StrokeThickness="1"
-                                  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
-                        </Button>
-                        <Button Command="{CompiledBinding SelectedFile.RedoBibtexCommand}"
-								ToolTip.Tip="{DynamicResource Main.Tooltip.Redo}">
-                            <Path Data="{StaticResource RedoPath}" StrokeThickness="1"
-                                  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
-                        </Button>
-                        <Button Command="{CompiledBinding SelectedFile.DeleteBibtexCommand}"
-								ToolTip.Tip="{DynamicResource Main.Tooltip.DeleteEntry}">
-                            <Path Data="{StaticResource DeletePath}"
-                                  Fill="{CompiledBinding $parent[Button].Foreground}"/>
-                        </Button>
-                        <Button Command="{CompiledBinding SelectedFile.SaveBibtexCommand}"
-								ToolTip.Tip="{DynamicResource Main.Tooltip.SaveCurrentFile}">
-                            <Path Data="{StaticResource SavePath}" StrokeThickness="1"
-                                  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
-                        </Button>
-                        <Button Command="{CompiledBinding AddBibtexEntryCommand}"
-                                CommandParameter="{CompiledBinding $parent[Window]}"
-								ToolTip.Tip="{DynamicResource Main.Tooltip.AddEntry}">
-                            <Path Data="{StaticResource AddPath}"
-                                  Fill="{CompiledBinding $parent[Button].Foreground}"/>
-                        </Button>
-                        <Button Command="{CompiledBinding SelectedFile.MergeEntriesCommand}"
-                                CommandParameter="{CompiledBinding $parent[Window]}"
-								ToolTip.Tip="{DynamicResource Main.Tooltip.MergeEntries}">
-                            <Path Data="{StaticResource MergePath}" StrokeThickness="1"
-                                  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
-                        </Button>
-                    </StackPanel>
-                </Border>
                 <Border Margin="8 0" Background="{DynamicResource InputBackground}"
                         HorizontalAlignment="Right" VerticalAlignment="Center"
 						BorderBrush="{DynamicResource MainBorder}"
@@ -280,7 +240,8 @@
                     </StackPanel>
                 </Border>
             </Grid>
-        </Grid>  
+         -->
+        </Grid>
         
         <!--content-->
         <Grid x:Name="MainTabControl" Grid.Row="1" RowDefinitions="Auto,*"
@@ -322,13 +283,11 @@
                                     PointerReleased="TabItem_PointerReleased">
 							<StackPanel.ContextMenu>
 								<ContextMenu>
-                                    <!-- 需要新增一个复制功能，也就是在同文件夹下直接复制出来一个新的并打开。按照Windows复制同名文件的规则命名。有未保存修改的做提示 -->
 									<MenuItem Header="{DynamicResource Main.Context.Duplicate}"
                                               Command="{CompiledBinding #LitbibMainWindow.DataContext.DuplicateTabCommand}"
                                               CommandParameter="{CompiledBinding}"/>
 									<MenuItem Header="{DynamicResource Main.Context.OpenInFileManager}"
 											  Command="{CompiledBinding OpenInFileManagerCommand}"/>
-									<!-- 关闭其他标签页，未保存的逐一提示 -->
                                     <MenuItem Header="{DynamicResource Main.Context.CloseOthers}"
                                               Command="{CompiledBinding #LitbibMainWindow.DataContext.CloseOtherTabsCommand}"
                                               CommandParameter="{CompiledBinding}"/>
