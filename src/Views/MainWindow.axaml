@@ -14,8 +14,19 @@
     <Window.Resources>
         <m:FilterModeConverter x:Key="FilterModeConverter"/>
         <m:MultiObjectEqualConverter x:Key="MultiObjectEqualConverter"/>
-        <m:WindowStateToPathConverter x:Key="WindowStateToPathConverter"/>
     </Window.Resources>
+
+    <Window.Styles>
+        <Style Selector="Path.restore-icon">
+            <Setter Property="IsVisible" Value="False"/>
+        </Style>
+        <Style Selector="Window[WindowState=Maximized] Path.maximize-icon">
+            <Setter Property="IsVisible" Value="False"/>
+        </Style>
+        <Style Selector="Window[WindowState=Maximized] Path.restore-icon">
+            <Setter Property="IsVisible" Value="True"/>
+        </Style>
+    </Window.Styles>
 
     <Window.KeyBindings>
         <KeyBinding Command="{CompiledBinding NewFileCommand}" Gesture="Ctrl+N"
@@ -168,8 +179,12 @@
                           Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                 </Button>
                 <Button Name="MaxButton" Click="TitleButton_Click" Classes="window" ToolTip.Tip="{DynamicResource Main.Tooltip.Maximize}">
-                    <Path Data="{CompiledBinding $parent[Window].WindowState, Converter={StaticResource WindowStateToPathConverter}}"
-                          StrokeThickness="1" Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+                    <Grid>
+                        <Path Classes="maximize-icon" Data="{StaticResource MaximizePath}"
+                              StrokeThickness="1" Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+                        <Path Classes="restore-icon" Data="{StaticResource RestorePath}"
+                              StrokeThickness="1" Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+                    </Grid>
                 </Button>
                 <Button Name="CloseButton" Click="TitleButton_Click" Classes="warning window" ToolTip.Tip="{DynamicResource Main.Tooltip.Close}">
                     <Path Data="{StaticResource xPath}" StrokeThickness="1"
