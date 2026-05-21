@@ -10,13 +10,13 @@
 		<Setter Property="Background" Value="Transparent" />
 		<Setter Property="Foreground" Value="{DynamicResource MainForeground}" />
 		<Setter Property="Padding" Value="6" />
-		<Setter Property="Margin" Value="-12 0"/>
-		<Setter Property="CornerRadius" Value="12" />
+		<Setter Property="Margin" Value="-8 0"/>
+		<Setter Property="CornerRadius" Value="8" />
 		<Setter Property="VerticalContentAlignment" Value="Center" />
 		<Setter Property="Template">
 			<ControlTemplate>
-				<Grid ColumnDefinitions="12,*,12">
-					<Path Data="M 0,12 A 12,12 0 0 0 12,0 L 12,12 Z"
+				<Grid ColumnDefinitions="8,*,8">
+					<Path Data="M 0,8 A 8,8 0 0 0 8,0 L 8,8 Z"
                           VerticalAlignment="Bottom"
                           Fill="{TemplateBinding Background}"
                           IsVisible="False"/>
@@ -33,7 +33,7 @@
                                           ContentTemplate="{TemplateBinding ContentTemplate}"
                                           RecognizesAccessKey="True" />
 					</Border>
-					<Path Data="M 12,12 A 12,12 0 0 1 0,0 L 0,12 Z"
+					<Path Data="M 8,8 A 8,8 0 0 1 0,0 L 0,8 Z"
                           Grid.Column="2"
                           VerticalAlignment="Bottom"
                           Fill="{TemplateBinding Background}"
@@ -47,7 +47,7 @@
 		<!--We don't use selector to PART_LayoutRoot, so developer can override selected item background with TabStripItem.Background-->
 		<Style Selector="^:selected">
 			<Setter Property="Background" Value="{DynamicResource TabBackground}" />
-			<Setter Property="CornerRadius" Value="12 12 0 0" />
+			<Setter Property="CornerRadius" Value="8 8 0 0" />
 			<Style Selector="^ /template/ Path">
 				<Setter Property="IsVisible" Value="True"/>
 			</Style>
@@ -62,7 +62,7 @@
 		<!--  Selected PointerOver state  -->
 		<Style Selector="^:selected:pointerover">
 			<Setter Property="Background" Value="{DynamicResource TabBackground}" />
-			<Setter Property="CornerRadius" Value="12 12 0 0" />
+			<Setter Property="CornerRadius" Value="8 8 0 0" />
 			<Style Selector="^ /template/ Path">
 				<Setter Property="IsVisible" Value="True"/>
 			</Style>

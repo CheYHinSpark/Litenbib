@@ -4,6 +4,7 @@ using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Templates;
 using Avalonia.Input;
+using System.ComponentModel;
 
 namespace Litenbib.Views
 {
@@ -37,6 +38,8 @@ namespace Litenbib.Views
             AvaloniaProperty.RegisterDirect<ExComboBox, object?>(nameof(SelectionBoxItem), o => o.SelectionBoxItem);
 
         private object? _selectionBoxItem;
+        private object? _selectionBoxSourceItem;
+        private INotifyPropertyChanged? _selectionBoxNotifier;
 
         /// <summary>
         /// Gets or sets the item to display as the control's content.
@@ -131,9 +134,32 @@ namespace Litenbib.Views
 
         private void UpdateSelectionBoxItem(object? item)
         {
-            // This is a simplified approach. In a real application, you might use a template
-            // or a string converter to get the display value.
-            SelectionBoxItem = item;
+            if (_selectionBoxNotifier != null)
+            {
+                _selectionBoxNotifier.PropertyChanged -= SelectionBoxSourceItem_PropertyChanged;
+            }
+
+            _selectionBoxSourceItem = item;
+            _selectionBoxNotifier = item as INotifyPropertyChanged;
+            if (_selectionBoxNotifier != null)
+            {
+                _selectionBoxNotifier.PropertyChanged += SelectionBoxSourceItem_PropertyChanged;
+            }
+
+            RefreshSelectionBoxItem();
+        }
+
+        private void SelectionBoxSourceItem_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName == "DisplayName")
+            {
+                RefreshSelectionBoxItem();
+            }
+        }
+
+        private void RefreshSelectionBoxItem()
+        {
+            SelectionBoxItem = _selectionBoxSourceItem?.ToString();
         }
 
         // Add these methods back to your SimpleComboBox class

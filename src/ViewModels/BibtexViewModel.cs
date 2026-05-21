@@ -1150,11 +1150,21 @@ namespace Litenbib.ViewModels
         private static void ToFile(object o)
         {
             if (o is not BibtexEntry entry) { return; }
-            string path = BibtexEntry.ResolveFilePath(entry.File);
+            string path = PathProcessor.ResolveFilePath(entry.File);
             if (string.IsNullOrWhiteSpace(path)) { return; }
             UriProcessor.StartProcess(path);
         }
 
+        [RelayCommand]
+        private static void ToFolder(object o)
+        {
+            if (o is not BibtexEntry entry) { return; }
+            string path = PathProcessor.ResolveFilePath(entry.File);
+            if (string.IsNullOrWhiteSpace(path)) { return; }
+            string? directory = Path.GetDirectoryName(path);
+            if (string.IsNullOrWhiteSpace(directory)) { return; }
+            UriProcessor.StartProcess(directory);
+        }
 
         [RelayCommand]
         private void CopyBibtexText(object o)

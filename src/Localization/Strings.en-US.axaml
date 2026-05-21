@@ -85,8 +85,6 @@
     <x:String x:Key="Main.Tooltip.Redo">Redo</x:String>
     <x:String x:Key="Main.Tooltip.DeleteEntry">Delete Entry</x:String>
     <x:String x:Key="Main.Tooltip.SaveCurrentFile">Save current file</x:String>
-    <x:String x:Key="Main.Tooltip.AddEntry">Add Entry</x:String>
-    <x:String x:Key="Main.Tooltip.MergeEntries">Merge selected entries</x:String>
 
     <x:String x:Key="Bibtex.Column.File">File</x:String>
     <x:String x:Key="Bibtex.Column.Link">Link</x:String>
@@ -114,6 +112,8 @@
     <x:String x:Key="Bibtex.Tooltip.SearchCrossref">Search from Crossref</x:String>
     <x:String x:Key="Bibtex.Tooltip.SearchTitle">Search by title</x:String>
     <x:String x:Key="Bibtex.Tooltip.SuperSearch">Super search</x:String>
+    <x:String x:Key="Bibtex.Tooltip.AddEntry">Add Entry</x:String>
+    <x:String x:Key="Bibtex.Tooltip.MergeEntries">Merge selected entries</x:String>
 
     <x:String x:Key="AddEntry.Title">Add Entry</x:String>
     <x:String x:Key="AddEntry.Heading">Add bibliography entries</x:String>

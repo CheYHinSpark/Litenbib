@@ -165,9 +165,9 @@ public partial class BibtexView : UserControl
             Grid.SetRow(DetailPanel, 0);
             Grid.SetColumn(Splitter, 1);
             Grid.SetColumn(DetailPanel, 2);
-            Splitter.Margin = Thickness.Parse("4 24");
+            Splitter.Margin = Thickness.Parse("2 8");
             MainGrid.Margin = Thickness.Parse("8 8 0 8");
-            DetailPanel.CornerRadius = CornerRadius.Parse("16 0 0 0");
+            DetailPanel.CornerRadius = CornerRadius.Parse("8 0 0 0");
             DetailPanel.Margin = Thickness.Parse("0 8 0 0");
             DetailPanel.Padding = Thickness.Parse("8 8 4 8");
             Grid.SetRow(BibtexSection, 2);
@@ -184,16 +184,18 @@ public partial class BibtexView : UserControl
             Grid.SetRow(DetailPanel, 2);
             Grid.SetColumn(Splitter, 0);
             Grid.SetColumn(DetailPanel, 0);
-            Splitter.Margin = Thickness.Parse("24 0");
-            MainGrid.Margin = Thickness.Parse("8 8 8 4");
-            DetailPanel.CornerRadius = CornerRadius.Parse("16 16 0 0");
-            DetailPanel.Margin = Thickness.Parse("0 4 0 0");
+            Splitter.Margin = Thickness.Parse("8 2");
+            MainGrid.Margin = Thickness.Parse("8 8 8 0");
+            DetailPanel.CornerRadius = CornerRadius.Parse("8 8 0 0");
+            DetailPanel.Margin = Thickness.Parse("0");
             DetailPanel.Padding = Thickness.Parse("8 8 8 4");
             Grid.SetRow(BibtexSection, 0);
             Grid.SetRowSpan(BibtexSection, 2);
             Grid.SetColumn(BibtexSection, 0);
         }
         isDetailShowing = true;
+        RightPath.IsVisible = isColumns;
+        BottomPath.IsVisible = !isColumns;
     }
 
     private void CloseDetail()

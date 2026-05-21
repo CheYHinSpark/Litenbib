@@ -3,19 +3,20 @@
                     xmlns:v="using:Litenbib.Views"
                     xmlns:ae="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit">
     <Design.PreviewWith>
-        <Grid Width="28" Height="28">
+        <Grid Width="16" Height="16">
 			<Grid.Styles>
 				<Style Selector="Path">
 					<Setter Property="HorizontalAlignment" Value="Center"/>
 					<Setter Property="VerticalAlignment" Value="Center"/>
-					<Setter Property="StrokeLineCap" Value="Round"/>
+                    <Setter Property="StrokeLineCap" Value="Round"/>
+					<Setter Property="StrokeJoin" Value="Round"/>
 				</Style>
 			</Grid.Styles>
 			<!--<Path Fill="White" Opacity="0.5"
 				  HorizontalAlignment="Center" VerticalAlignment="Center"
                   Data="M 6,0 A 6,6 0 1 1 1.2,9.6 A 6,6 0 0 0 6,0"/>-->
 			<Path Stroke="White" StrokeThickness="1"
-                  Data="M 3,0 L 6,3 9,0 M 3,12 6,9 9,12 M 2,2 L 0,2 0,10 2,10 M 10,2 L 12,2 12,10 10,10"/>
+                  Data="M 0,9 A 2,2 0 0 0 2,11 L 10,11 A 2,2 0 0 0 12,9 L 12,4 A 2,2 0 0 0 10,2 L 7,2 5,0 2,0 0,2 Z M 7,2 5,4 0,4"/>
         </Grid>
     </Design.PreviewWith>
     
@@ -23,49 +24,46 @@
     <x:Double x:Key="ToolBarHeight">32</x:Double>
     <x:Double x:Key="HintBarHeight">28</x:Double>
     
-    <PathGeometry x:Key="-Path" Figures="M 0,0 L 11,0"/>
-    <PathGeometry x:Key="xPath" Figures="M 0,0 L 9,9 M 0,9 L 9,0"/>
-    <PathGeometry x:Key="MaximizePath" Figures="M 0,0 L 9,0 9,8 0,8 Z"/>
-    <PathGeometry x:Key="RestorePath" Figures="M 0,2 L 8,2 8,9 0,9 Z M 2,0 L 10,0 10,7"/>
-    <PathGeometry x:Key="brPath" Figures="M 0,9 L 8,9 A 1,1 0 0 0 9,8 L 9,0 M 12,3 L 9,0 M 6,3 L 9,0 M 3,6 L 0,9 M 3,12 L 0,9"/>
-    <PathGeometry x:Key="UndoPath" Figures="M 10,12 L 10,9 A 5,5 0 0 0 5,4 L 0,4 M 4,0 L 0,4 4,8"/>
-    <PathGeometry x:Key="RedoPath" Figures="M 0,12 L 0,9 A 5,5 0 0 1 5,4 L 10,4 M 6,0 L 10,4 6,8"/>
-    <PathGeometry x:Key="DeletePath" Figures="M 3,0 L 7,0 7,1 10,1 10,2 0,2 0,1 3,1 Z M 9,3 L 9,10 8,11 2,11 1,10 1,3 Z"/>
+    <PathGeometry x:Key="-Path" Figures="M 0,0 12,0"/>
+    <PathGeometry x:Key="xPath" Figures="M 0,0 10,10 M 0,10 10,0"/>
+    <PathGeometry x:Key="MaximizePath" Figures="M 0,0 11,0 11,10 0,10 Z"/>
+    <PathGeometry x:Key="RestorePath" Figures="M 0,2 9,2 9,10 0,10 Z M 2,0 11,0 11,8"/>
+    <PathGeometry x:Key="RightLayoutPath" Figures="M 6,0 11,0 11,10 6,10 Z"/>
+    <PathGeometry x:Key="BottomLayoutPath" Figures="M 0,5 11,5 11,10 0,10 Z"/>
     <PathGeometry x:Key="LinkPath" Figures="M 8,4 A 2.8284,2.8284 0 0 1 8,8 L 4,12 A 2.8284,2.8284 0 0 1 0,8 L 1,7
                   M 4,8 A 2.8284,2.8284 0 0 1 4,4 L 8,0 A 2.8284,2.8284 0 0 1 12,4 L 11,5"/>
-    <PathGeometry x:Key="SavePath" Figures="M 1,3.2 L 6,3.2 6,2.2 4.8,1 1.2,1 0,2.2 0,10 1,11 12,11 14,9 14,8 2.8,8 1.3,9.5
-                  M 11,0 L 11,6 M 8,3 L 11,6 14,3"/>
-    <PathGeometry x:Key="ToLinkPath" Figures="M 6,0 L 11,0 M 11,0 L 11,5 M 11,0 L 3,8
-				  M 5,2 L 1,2 A 1,1 0 0 0 0,3 L 0,10 A 1,1 0 0 0 1,11 L 8,11 A 1,1 0 0 0 9,10 L 9,5"/>
-    <PathGeometry x:Key="ImportPath" Figures="M 3.5,1 L 2,1 0,3 0,10 2,12 10,12 12,10 12,3 10,1 8.5,1 M 6,0 L 6,9 M 3,6 L 6,9 9,6"/>
-    <PathGeometry x:Key="CopyPath" Figures="M 4,0 L 11,0 A 1,1 0 0 1 12,1 L 12,8 A 1,1 0 0 1 11,9 L 4,9 A 1,1 0 0 1 3,8 L 3,1 A 1,1 0 0 1 4,0
-				  M 1.5,3 L 1,3 A 1,1 0 0 0 0,4 L 0,11 A 1,1 0 0 0 1,12 L 8,12 A 1,1 0 0 0 9,11 L 9,10.5"/>
-    <PathGeometry x:Key="RightArrowPath" Figures="M 0,0 L 5,5 0,10"/>
-	<PathGeometry x:Key="FilePath" Figures="M 0,0 L 0,11 9,11 9,4 5,0 Z M 5,0 L 5,4 9,4"/>
+    <PathGeometry x:Key="ToLinkPath" Figures="M 7,0 12,0 12,5 M 12,0 L 4,8 M 5,2 1,2 A 1,1 0 0 0 0,3 L 0,11 A 1,1 0 0 0 1,12 L 9,12 A 1,1 0 0 0 10,11 L 10,7"/>
+    <PathGeometry x:Key="ImportPath" Figures="M 3.5,1 2,1 A 2,2 0 0 0 0,3 L 0,10 A 2,2 0 0 0 2,12 L 10,12 A 2,2 0 0 0 12,10 L 12,3 A 2,2 0 0 0 10,1 L 8.5,1 M 6,0 L 6,9 M 3,6 L 6,9 9,6"/>
+    <PathGeometry x:Key="CopyPath" Figures="M 4,0 11,0 A 1,1 0 0 1 12,1 L 12,8 A 1,1 0 0 1 11,9 L 4,9 A 1,1 0 0 1 3,8 L 3,1 A 1,1 0 0 1 4,0
+				  M 1.5,3 1,3 A 1,1 0 0 0 0,4 L 0,11 A 1,1 0 0 0 1,12 L 8,12 A 1,1 0 0 0 9,11 L 9,10.5"/>
+    <PathGeometry x:Key="RightArrowPath" Figures="M 0,0 5.5,5.5 0,11"/>
+    <PathGeometry x:Key="FolderPath" Figures="M 0,9 A 2,2 0 0 0 2,11 L 10,11 A 2,2 0 0 0 12,9 L 12,4 A 2,2 0 0 0 10,2 L 7,2 5,0 2,0 0,2 Z M 7,2 5,4 0,4"/>
+	<PathGeometry x:Key="FilePath" Figures="M 0,0 0,12 10,12 10,4 6,0 Z M 6,0 L 6,4 10,4"/>
     <PathGeometry x:Key="KeyPath" Figures="M 3.9,0 A 3.9,3.9 0 1 0 5.4,7.5 L 7,8 12.5,13.5 14.5,11.5 13.5,10.5 12.5,11.5 12,11 13,10 12,9 11,10 10.5,9.5 11.5,8.5 10.5,7.5 9.5,8.5 8,7 7.5,5.4
                   A 3.9,3.9 0 0 0 3.9,0 M 3.9,2.6 A 1.3,1.3 0 0 0 3.9,5.2 A 1.3,1.3 0 0 0 3.9,2.6"/>
-	<PathGeometry x:Key="AddPath" Figures="M 5,0 L 5,5 0,5 0,7 5,7 5,12 7,12 7,7 12,7 12,5 7,5 7,0 Z"/>
+	<PathGeometry x:Key="AddPath" Figures="M 5,5 1,5 A 1,1 0 0 0 1,7 L 5,7 5,11 A 1,1 0 0 0 7,11 L 7,7 11,7 A 1,1 0 0 0 11,5 L 7,5 7,1 A 1,1 0 0 0 5,1 Z"/>
     <PathGeometry x:Key="AiPath" Figures="M 0,12 L 4,1 M 4,1 L 8,12 M 2,7.5 L 6,7.5 M 10,7 L 10,12 M 10,0 L 10.5,1.5 12,2 10.5,2.5 10,4 9.5,2.5 8,2 9.5,1.5 Z"/>
-	<PathGeometry x:Key="MergePath" Figures="M 5.5,2.5 L 3,0 0,0 0,11 5.5,11 5.5,9 M 7.5,9 L 7.5,11 13,11 13,2.5 10.5,0 7.5,0 7.5,3
-				  M 1.5,6 L 5.5,6 M 3.5,4 L 5.5,6 3.5,8 M 11.5,6 L 7.5,6 M 9.5,4 L 7.5,6 9.5,8"/>
-	<PathGeometry x:Key="SunPath" Figures="M 6,3 A 3,3 0 0 0 6,9 A 3,3 0 0 0 6,3 M 6,0 L 6,1 M 6,12 L 6,11 M 0,6 L 1,6 M 12,6 L 11,6
-				  M 1.7574,1.7574 L 2.4645,2.4645 M 10.2426,10.2426 L 9.5355,9.5355 M 10.2426,1.7574 L 9.5355,2.4645 M 1.7574,10.2426 L 2.4645,9.5355"/>
+    <PathGeometry x:Key="MergePath" Figures="M 5.5,2.5 3,0 0,0 0,11 5.5,11 5.5,9 7.5,9 7.5,11 13,11 13,2.5 10.5,0 7.5,0 7.5,2.5
+			      M 4,4 A 5,5 0 0 0 9,4 M 9,7.5 A 5,5 0 0 0 4,7.5"/>
+    <PathGeometry x:Key="SunPath" Figures="M 6,3 A 3,3 0 0 0 6,9 A 3,3 0 0 0 6,3 M 6,0 6,1 M 6,12 6,11 M 0,6 1,6 M 12,6 11,6
+				  M 1.7574,1.7574 2.4645,2.4645 M 10.2426,10.2426 9.5355,9.5355 M 10.2426,1.7574 9.5355,2.4645 M 1.7574,10.2426 2.4645,9.5355"/>
 	<PathGeometry x:Key="MoonPath" Figures="M 6,0 A 6,6 0 1 1 1.2,9.6 A 6,6 0 0 0 6,0"/>
-    <PathGeometry x:Key="RefreshPath" Figures="M 7,4 L 7.5,1.5 10,1 M 8,2 A 4.243,4.243 0 1 1 2,2"/>
-    <PathGeometry x:Key="ResetPath" Figures="M 8,0 L 12,4 8,8 8,5 2.5,5 A 1,1 0 0 0 2.5,7 L 3,7 2.5,8 A 2.5,2.5 0 0 1 2.5,3 L 8,3 Z"/>
+    <PathGeometry x:Key="RefreshPath" Figures="M 9,4 9.5,1.5 12,1 M 10,2 A 5.657,5.756 0 1 1 2,2"/>
+    <PathGeometry x:Key="ResetPath" Figures="M 8,0 12,4 8,8 8,5 2.5,5 A 1,1 0 0 0 2.5,7 L 3,7 2.5,8 A 2.5,2.5 0 0 1 2.5,3 L 8,3 Z"/>
     <PathGeometry x:Key="BatchEditPath" Figures="M 1,2 A 1,1 0 0 0 0,3 L 0,10 A 1,1 0 0 0 1,11 L 8,11 A 1,1 0 0 0 9,10
-                  M 9,0 L 3,0 A 1,1 0 0 0 2,1 L 2,8 A 1,1 0 0 0 3,9 L 10,9 A 1,1 0 0 0 11,8 L 11,5 M 3.5,4 L 6,6.5 10,2.5"/>
+                  M 9,0 L 3,0 A 1,1 0 0 0 2,1 L 2,8 A 1,1 0 0 0 3,9 L 10,9 A 1,1 0 0 0 11,8 L 11,5 M 3.5,4 6,6.5 10,2.5"/>
     <PathGeometry x:Key="CleanupPath" Figures="M 1,2 A 1,1 0 0 0 0,3 L 0,10 A 1,1 0 0 0 1,11 L 8,11 A 1,1 0 0 0 9,10
-                  M 8,0 L 3,0 A 1,1 0 0 0 2,1 L 2,8 A 1,1 0 0 0 3,9 L 10,9 A 1,1 0 0 0 11,8 L 11,4 M 4,2 L 9,7 M 4,7 L 9,2"/>
-    <PathGeometry x:Key="SearchPath" Figures="M 4,0 A 4,4 0 1 0 4,8 A 4,4 0 1 0 4,0 M 7,7 L 8.5,8.5 8,9 12,13 13,12 9,8 8.5,8.5"/>
+                  M 8,0 L 3,0 A 1,1 0 0 0 2,1 L 2,8 A 1,1 0 0 0 3,9 L 10,9 A 1,1 0 0 0 11,8 L 11,4 M 4,2 9,7 M 4,7 9,2"/>
+    <PathGeometry x:Key="SearchPath" Figures="M 4,0 A 4,4 0 1 0 4,8 A 4,4 0 1 0 4,0 M 7,7 8,8 8,9 11,12 12,11 9,8 8,8"/>
     <PathGeometry x:Key="SettingPath" Figures="M 5,0 L 7,0 7,2 8.964,3.134 10.696,2.134 11.696,3.866 9.964,4.866
                   9.964,7.134 11.696,8.134 10.696,9.866 8.964,8.866 7,10 7,12 5,12 5,10
                   3.036,8.866 1.304,9.866 0.304,8.134 2.036,7.134 2.036,4.866 0.304,3.866 1.304,2.134 3.036,3.134
                   5,2 Z M 6,4 A 2,2 0 0 0 6,8 A 2,2 0 0 0 6,4"/>
-    <PathGeometry x:Key="BatchDeleteFieldsPath" Figures="M 2,3.5 L 2,5.5 A 1.5,1.5 0 0 0 5,5.5 M 5,3.5 L 5,7
-                  M 7,3.5 L 7,7 M 8.5,3.5 A 1.5,1.5 0 0 0 7,5 M 10.5,1 L 10.5,6 A 1,1 0 0 0 11.5,7
-                  M 0,5 L 13,5 M 4,0 L 0,0 0,2 M 9,10 L 13,10 13,8"/>
-    <PathGeometry x:Key="BatchCleanPath" Figures="M 3,0 L 6,3 9,0 M 3,12 6,9 9,12 M 2,2 L 0,2 0,10 2,10 M 10,2 L 12,2 12,10 10,10"/>
+    <PathGeometry x:Key="BatchDeleteFieldsPath" Figures="M 2,3.5 2,5.5 A 1.5,1.5 0 0 0 5,5.5 M 5,3.5 5,7
+                  M 7,3.5 7,7 M 8.5,3.5 A 1.5,1.5 0 0 0 7,5 M 10.5,1 10.5,6 A 1,1 0 0 0 11.5,7
+                  M 0,5 13,5 M 4,0 0,0 0,2 M 9,10 13,10 13,8"/>
+    <PathGeometry x:Key="BatchCleanPath" Figures="M 0,10.5 1.5,10.5 2,12 3.5,11.5 4.5,13 6,12 7.5,13 8.5,11.5 10,12 10.5,10.5 12,10.5 10.5,8.5 A 7.5,7.5 0 0 1 1.5,8.5 Z
+                  M 3,7 A 5,5 0 0 0 9,7 L 8,6 7,6 7,0 5,0 5,6 4,6 Z"/>
 
     <SolidColorBrush x:Key="DisabledForeground" Color="{DynamicResource DisabledForegroundColor}"/>
     <SolidColorBrush x:Key="HighlightBackground" Color="{DynamicResource HighlightBackgroundColor}"/>
@@ -125,8 +123,8 @@
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="Background" Value="{DynamicResource MainBackground}"/>
         <Setter Property="Foreground" Value="{DynamicResource MainForeground}"/>
-        <Setter Property="Padding" Value="4"/>
-        <Setter Property="CornerRadius" Value="0"/>
+        <Setter Property="Padding" Value="2"/>
+        <Setter Property="CornerRadius" Value="2"/>
         <Setter Property="Template">
             <ControlTemplate>
                 <Border Background="{TemplateBinding Background}"
@@ -145,12 +143,15 @@
         <Style Selector="^:pointerover">
             <Setter Property="Background" Value="{DynamicResource HighlightBackground}"/>
             <Setter Property="Foreground" Value="{DynamicResource HighlightForeground}"/>
-            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="CornerRadius" Value="4"/>
 			<Setter Property="RenderTransform" Value="scale(1.03)" />
 		</Style>
 
         <Style Selector="^.warning:pointerover">
             <Setter Property="Background" Value="{DynamicResource WarningBackground}"/>
+            <Setter Property="Foreground" Value="{DynamicResource HighlightForeground}"/>
+            <Setter Property="CornerRadius" Value="4"/>
+			<Setter Property="RenderTransform" Value="scale(1.03)" />
         </Style>
 
         <Style Selector="^:pressed">
@@ -357,7 +358,7 @@
         <Setter Property="Focusable" Value="True" />
         <Setter Property="MinWidth" Value="4" />
         <Setter Property="MinHeight" Value="4" />
-		<Setter Property="Background" Value="{DynamicResource MainBackground}" />
+		<Setter Property="Background" Value="{DynamicResource TabBackground}" />
 		<Setter Property="CornerRadius" Value="2" />
         <Setter Property="Template">
             <ControlTemplate>
@@ -585,7 +586,7 @@
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="BorderBrush" Value="{DynamicResource MainBorder}"/>
         <Setter Property="Padding" Value="8 4"/>
-        <Setter Property="CornerRadius" Value="12"/>
+        <Setter Property="CornerRadius" Value="8"/>
         <Setter Property="Template">
             <ControlTemplate>
                 <Panel>
@@ -644,7 +645,7 @@
         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         <Setter Property="VerticalContentAlignment" Value="Stretch"/>
         <Setter Property="Padding" Value="8 4"/>
-        <Setter Property="CornerRadius" Value="12"/>
+        <Setter Property="CornerRadius" Value="8"/>
         <Setter Property="Template">
             <ControlTemplate>
                 <Panel>

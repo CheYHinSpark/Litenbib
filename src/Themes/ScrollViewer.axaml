@@ -1,7 +1,7 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <x:Double x:Key="ScrollBarSize">12</x:Double>
-    <CornerRadius x:Key="ScrollBarCornerRadius">6</CornerRadius>
+    <CornerRadius x:Key="ScrollBarCornerRadius">4</CornerRadius>
     
     <ControlTheme x:Key="{x:Type ScrollBar}" TargetType="ScrollBar">
         <Setter Property="MinWidth" Value="{DynamicResource ScrollBarSize}" />

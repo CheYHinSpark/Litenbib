@@ -330,53 +330,6 @@ namespace Litenbib.Models
             var nameParts = firstAuthor.Split(' ', StringSplitOptions.RemoveEmptyEntries);
             return nameParts.Length == 0 ? string.Empty : nameParts[^1];
         }
-
-        public static string ResolveFilePath(string fileField)
-        {
-            fileField = fileField.Trim();
-            if (string.IsNullOrWhiteSpace(fileField))
-            { return string.Empty; }
-
-            int separator = IndexOfUnescaped(fileField, ';', 0);
-            string firstFile = separator >= 0 ? fileField[..separator] : fileField;
-            
-            int firstSeparator = IndexOfUnescaped(firstFile, ':', 0);
-
-            int lastSeparator = fileField.Length - 1;
-            for ( ; lastSeparator >= 0; lastSeparator--)
-            {
-                if (firstFile[lastSeparator] == ':' && !IsEscaped(firstFile, lastSeparator))
-                { break; }
-            }
-
-            if (firstSeparator >= 0 && lastSeparator > firstSeparator)
-            { return UnescapeJabRefFilePath(firstFile[(firstSeparator + 1)..lastSeparator].Trim()); }
-
-            return UnescapeJabRefFilePath(firstFile.Trim());
-        }
-
-        private static int IndexOfUnescaped(string value, char target, int startIndex)
-        {
-            for (int i = startIndex; i < value.Length; i++)
-            {
-                if (value[i] == target && !IsEscaped(value, i))
-                { return i; }
-            }
-
-            return -1;
-        }
-
-        private static bool IsEscaped(string value, int index)
-        {
-            int slashCount = 0;
-            for (int i = index - 1; i >= 0 && value[i] == '\\'; i--)
-            { slashCount++; }
-
-            return slashCount % 2 == 1;
-        }
-
-        private static string UnescapeJabRefFilePath(string path)
-        { return path.Replace("\\:", ":").Replace("\\;", ";"); }
         #endregion Method
 
         [GeneratedRegex(@"[^A-Za-z0-9:_\-]+", RegexOptions.Compiled)]

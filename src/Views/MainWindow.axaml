@@ -12,7 +12,6 @@
         Icon="/Assets/logo.ico"
         Title="Litenbib">
     <Window.Resources>
-        <m:FilterModeConverter x:Key="FilterModeConverter"/>
         <m:MultiObjectEqualConverter x:Key="MultiObjectEqualConverter"/>
     </Window.Resources>
 
@@ -56,10 +55,8 @@
                    PointerPressed="TitleBar_PointerPressed"
                    PointerReleased="TitleBar_PointerReleased"/>
         
-        <Grid Name="TitleBarGrid" ColumnDefinitions="*,*,*"
-              RowDefinitions="Auto,Auto">
-            <Border Grid.Column="1" Grid.RowSpan="2" CornerRadius="0 0 12 12"
-                    Margin="0 0 0 2"
+        <Grid Name="TitleBarGrid" ColumnDefinitions="*,*,*">
+            <Border Name="FilterBorder" Grid.Column="1" CornerRadius="0"
                     Background="{DynamicResource TabBackground}" Classes="hide_show">
                 <Border.IsEnabled>
                     <MultiBinding Converter="{x:Static BoolConverters.And}">
@@ -67,36 +64,40 @@
                         <Binding Path="SelectedFile" Converter="{x:Static ObjectConverters.IsNotNull}" />
                     </MultiBinding>
                 </Border.IsEnabled>
-                <Grid ColumnDefinitions="*,*,*,2*" Margin="4"
-                      Height="{DynamicResource ToolBarHeight}"
-                      VerticalAlignment="Bottom">
-                    <RadioButton Content="{DynamicResource Main.Filter.And}"
-                                 IsChecked="{CompiledBinding SelectedFile.FilterMode,
-                                 Converter={StaticResource FilterModeConverter},
-                                 Mode=TwoWay, ConverterParameter=0, FallbackValue=True}"
-                                 GroupName="FilterMode" Margin="4"/>
-                    <RadioButton Content="{DynamicResource Main.Filter.Or}"
-                                 IsChecked="{CompiledBinding SelectedFile.FilterMode,
-                                 Converter={StaticResource FilterModeConverter},
-                                 Mode=OneWayToSource, ConverterParameter=1}"
-                                 GroupName="FilterMode" Margin="4" Grid.Column="1"/>
-                    <RadioButton Content="{DynamicResource Main.Filter.All}"
-                                 IsChecked="{CompiledBinding SelectedFile.FilterMode,
-                                 Converter={StaticResource FilterModeConverter},
-                                 Mode=OneWayToSource, ConverterParameter=2}"
-                                 GroupName="FilterMode" Margin="4" Grid.Column="2"/>
-                    <v:ExComboBox Margin="4" Grid.Column="3"
-                                  CornerRadius="12" Padding="12 0"
-                                  SelectedItem="{CompiledBinding SelectedFile.FilterFieldOption,
-                                  Mode=TwoWay}" SelectedIndex="0"
-                                  ItemsSource="{CompiledBinding FilterFieldList}"/>
-                </Grid>
             </Border>
-            <TextBox x:Name="FilterTextBox" Grid.Column="1" Grid.RowSpan="2" UndoLimit="200"
+            <Border HorizontalAlignment="Right" Width="120" CornerRadius="0 0 0 8"
+                    Background="{DynamicResource TabBackground}" Classes="hide_show"
+                    IsEnabled="{CompiledBinding #FilterBorder.IsEnabled}">
+                <v:ExComboBox Margin="4"
+                              HorizontalAlignment="Stretch"
+                              VerticalAlignment="Center"
+                              Background="{DynamicResource MainBackground}"
+                              BorderBrush="{DynamicResource MainBorder}"
+                              CornerRadius="8"
+                              Padding="8 0"
+                              SelectedIndex="{CompiledBinding SelectedFile.FilterMode, Mode=TwoWay, FallbackValue=0}"
+                              ItemsSource="{CompiledBinding FilterModeList}"
+                              IsEnabled="{CompiledBinding SelectedFile, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+            </Border>
+            <Border Grid.Column="2" HorizontalAlignment="Left" Width="120" CornerRadius="0 0 8 0"
+                    Background="{DynamicResource TabBackground}" Classes="hide_show"
+                    IsEnabled="{CompiledBinding #FilterBorder.IsEnabled}">
+                <v:ExComboBox Margin="4"
+                              HorizontalAlignment="Stretch"
+                              VerticalAlignment="Center"
+                              Background="{DynamicResource MainBackground}"
+                              BorderBrush="{DynamicResource MainBorder}"
+                              CornerRadius="8"
+                              Padding="8 0"
+                              SelectedItem="{CompiledBinding SelectedFile.FilterFieldOption, Mode=TwoWay}"
+                              SelectedIndex="0"
+                              ItemsSource="{CompiledBinding FilterFieldList}"
+                              IsEnabled="{CompiledBinding SelectedFile, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+            </Border>
+            <TextBox x:Name="FilterTextBox" Grid.Column="1" Margin="4"
                      m:FocusEx.IsFocused="{CompiledBinding SelectedFile.IsFiltering, Mode=OneWayToSource}"
                      Text="{CompiledBinding SelectedFile.FilterText, Mode=OneWayToSource}"
-                     PlaceholderText="{DynamicResource Main.SearchPlaceholder}"
-                     VerticalAlignment="Top" Margin="8 6"/>
+                     PlaceholderText="{DynamicResource Main.SearchPlaceholder}"/>
 
             <!--title-->
             <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
@@ -265,7 +266,7 @@
 			  DragDrop.AllowDrop="True">
 			<!--welcome-->
 			<Border Grid.RowSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center"
-                    Padding="36 28" CornerRadius="20"
+                    Padding="36 28" CornerRadius="8"
                     Background="{DynamicResource InputBackground}"
                     BorderBrush="{DynamicResource MainBorder}"
                     BorderThickness="1"

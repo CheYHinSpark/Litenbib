@@ -94,7 +94,7 @@
                     <ItemsControl ItemsSource="{Binding Candidates}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate x:DataType="vm:AddEntryCandidateViewModel">
-                                <Border Margin="0 2" Padding="6" CornerRadius="6"
+                                <Border Margin="0 2" Padding="6" CornerRadius="4"
                                         Background="{DynamicResource InputBackground}">
                                     <Grid ColumnDefinitions="Auto,*">
                                         <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}"

@@ -3,18 +3,32 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml.Styling;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace Litenbib.Models
 {
-    public sealed class LocalizedOption(string value, string resourceKey)
+    public sealed class LocalizedOption(string value, string resourceKey) : INotifyPropertyChanged
     {
         public string Value { get; } = value;
 
         public string ResourceKey { get; } = resourceKey;
 
         public string DisplayName => I18n.Get(ResourceKey);
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        internal void RefreshDisplayName()
+        {
+            OnPropertyChanged(nameof(DisplayName));
+        }
+
+        private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
         public override string ToString()
         { return DisplayName; }
@@ -39,6 +53,13 @@ namespace Litenbib.Models
         [
             new(English, "Language.English"),
             new(ChineseSimplified, "Language.ChineseSimplified"),
+        ];
+
+        public static IReadOnlyList<LocalizedOption> FilterModeOptions { get; } =
+        [
+            new("And", "Main.Filter.And"),
+            new("Or", "Main.Filter.Or"),
+            new("All", "Main.Filter.All"),
         ];
 
         public static IReadOnlyList<LocalizedOption> FilterFieldOptions { get; } =
@@ -115,6 +136,17 @@ namespace Litenbib.Models
                 Source = new Uri($"avares://Litenbib/Localization/Strings.{normalizedCode}.axaml"),
             };
             Application.Current.Resources.MergedDictionaries.Add(_currentLanguageResources);
+            NotifyLocalizedOptionsChanged();
+        }
+
+        private static void NotifyLocalizedOptionsChanged()
+        {
+            foreach (var option in LanguageOptions
+                .Concat(FilterModeOptions)
+                .Concat(FilterFieldOptions))
+            {
+                option.RefreshDisplayName();
+            }
         }
     }
 

@@ -35,12 +35,12 @@
         </Setter>
 
 		<Style Selector="^:nth-child(1)">
-			<Setter Property="CornerRadius" Value="12,0,0,12"/>
+			<Setter Property="CornerRadius" Value="8 0 0 8"/>
             <Setter Property="BorderThickness" Value="1 1 0 1"/>
 		</Style>
 
 		<Style Selector="^:nth-last-child(1)">
-			<Setter Property="CornerRadius" Value="0,12,12,0"/>
+			<Setter Property="CornerRadius" Value="0 8 8 0"/>
             <Setter Property="BorderThickness" Value="0 1 1 1"/>
 		</Style>
 
@@ -92,7 +92,7 @@
                                     ColumnDefinitions="Auto,*"
 									Background="{TemplateBinding Background}"
                                     RowDefinitions="*,Auto">
-                    <Border Name="BackgroundBorder" MinHeight="32" CornerRadius="10"
+                    <Border Name="BackgroundBorder" MinHeight="32" CornerRadius="8"
                             Margin="0 2" Grid.RowSpan="2" Grid.ColumnSpan="2"
                             Background="{DynamicResource MainBackground}"
                             BorderBrush="{DynamicResource MainBackground}"

@@ -61,6 +61,9 @@ namespace Litenbib.ViewModels
         public ObservableCollection<LocalizedOption> FilterFieldList { get; } =
             [.. LocalizationManager.FilterFieldOptions];
 
+        public ObservableCollection<LocalizedOption> FilterModeList { get; } =
+            [.. LocalizationManager.FilterModeOptions];
+
         public bool NeedSave
         {
             get
@@ -78,6 +81,12 @@ namespace Litenbib.ViewModels
 
         private void RefreshLocalizedOptions()
         {
+            FilterModeList.Clear();
+            foreach (var option in LocalizationManager.FilterModeOptions)
+            {
+                FilterModeList.Add(option);
+            }
+
             FilterFieldList.Clear();
             foreach (var option in LocalizationManager.FilterFieldOptions)
             {

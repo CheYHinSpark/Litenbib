@@ -58,7 +58,7 @@
                                         ItemsPanel="{TemplateBinding ItemsPanel}"
                                         DockPanel.Dock="{TemplateBinding TabStripPlacement}" />
                         <Border Name="PART_ContentBorder" ClipToBounds="True"
-                                CornerRadius="16" Background="{DynamicResource TabBackground}">
+                                CornerRadius="8" Background="{DynamicResource TabBackground}">
                             <ContentPresenter Name="PART_SelectedContentHost"
                                               Margin="{TemplateBinding Padding}"
                                               HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
@@ -70,7 +70,7 @@
 
             <TabControl.Styles>
                 <Style Selector="TabControl[SelectedIndex=0] /template/ Border#PART_ContentBorder">
-                    <Setter Property="CornerRadius" Value="0 16 16 16"/>
+                    <Setter Property="CornerRadius" Value="0 8 8 8"/>
                 </Style>
 
                 <!-- 所有 tab 标签本身 -->

@@ -85,8 +85,6 @@
     <x:String x:Key="Main.Tooltip.Redo">重做</x:String>
     <x:String x:Key="Main.Tooltip.DeleteEntry">删除条目</x:String>
     <x:String x:Key="Main.Tooltip.SaveCurrentFile">保存当前文件</x:String>
-    <x:String x:Key="Main.Tooltip.AddEntry">添加条目</x:String>
-    <x:String x:Key="Main.Tooltip.MergeEntries">合并所选条目</x:String>
 
     <x:String x:Key="Bibtex.Column.File">文件</x:String>
     <x:String x:Key="Bibtex.Column.Link">链接</x:String>
@@ -114,6 +112,8 @@
     <x:String x:Key="Bibtex.Tooltip.SearchCrossref">从 Crossref 搜索</x:String>
     <x:String x:Key="Bibtex.Tooltip.SearchTitle">按标题搜索</x:String>
     <x:String x:Key="Bibtex.Tooltip.SuperSearch">超级搜索</x:String>
+    <x:String x:Key="Bibtex.Tooltip.AddEntry">添加条目</x:String>
+    <x:String x:Key="Bibtex.Tooltip.MergeEntries">合并所选条目</x:String>
 
     <x:String x:Key="AddEntry.Title">添加条目</x:String>
     <x:String x:Key="AddEntry.Heading">添加文献条目</x:String>

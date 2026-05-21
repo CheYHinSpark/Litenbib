@@ -60,7 +60,7 @@
         </Grid.RowDefinitions>
 
         <Grid Name="MainGrid" RowDefinitions="*,Auto" Margin="8 8 0 8">
-            <Border Margin="0 0 0 8" Padding="6" CornerRadius="16"
+            <Border Margin="0 0 0 8" Padding="6" CornerRadius="8"
                     Background="{DynamicResource MainBackground}"
                     BorderBrush="{DynamicResource MainBorder}"
                     BorderThickness="1">
@@ -73,7 +73,9 @@
                         <DataGridTemplateColumn Header="{DynamicResource Bibtex.Column.File}" Width="Auto" CanUserResize="False" CanUserSort="False">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate x:DataType="m:BibtexEntry">
-                                    <Button Command="{CompiledBinding #BibtexViewRoot.DataContext.ToFileCommand}" Classes="link_in_row"
+                                    <Button Command="{CompiledBinding #BibtexViewRoot.DataContext.ToFileCommand}"
+                                            CommandParameter="{CompiledBinding .}"
+                                            Classes="link_in_row"
                                             IsVisible="{CompiledBinding File, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
                                         <Path Data="{DynamicResource FilePath}" StrokeThickness="1"
                                               Stroke="{CompiledBinding $parent[Button].Foreground}"/>
@@ -93,9 +95,9 @@
                                                 <Binding Path="Url" Converter="{x:Static StringConverters.IsNotNullOrEmpty}"/>
                                             </MultiBinding>
                                         </Button.IsVisible>
-                                        <Viewbox Width="14" Height="14">
+                                        <Viewbox Width="16" Height="16">
                                             <Path Data="{DynamicResource LinkPath}" StrokeThickness="1"
-                                                  Stretch="UniformToFill" Margin="1"
+                                                  Stretch="None" Margin="2"
                                                   Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                                         </Viewbox>
                                     </Button>
@@ -107,9 +109,9 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate x:DataType="m:BibtexEntry">
 								    <Grid Margin="0 6">
-								        <Border HorizontalAlignment="Stretch" CornerRadius="12"
+								        <Border HorizontalAlignment="Stretch" CornerRadius="8"
 										        Background="{CompiledBinding #TypeText.Text, Converter={StaticResource TextToBackgroundConverter}}"/>
-									    <Border HorizontalAlignment="Stretch" CornerRadius="12" Opacity="0.8"
+									    <Border HorizontalAlignment="Stretch" CornerRadius="8" Opacity="0.8"
 										        Background="{DynamicResource InputBackground}">
                                             <TextBlock Name="TypeText" HorizontalAlignment="Center" FontFamily="Consolas" VerticalAlignment="Center"
 										               Text="{CompiledBinding EntryType, Converter={StaticResource EntryTypeConverter}}"/>
@@ -182,7 +184,7 @@
 				</DataGrid>
             </Border>
 
-			<Border Grid.Row="1" Padding="8 4" CornerRadius="16"
+			<Border Grid.Row="1" Padding="8 4" CornerRadius="8"
                     Background="{DynamicResource MainBackground}"
                     BorderBrush="{DynamicResource MainBorder}"
                     BorderThickness="1">
@@ -218,17 +220,17 @@
                     <Button ToolTip.Tip="{DynamicResource Bibtex.Tooltip.CleanSelected}"
                             Command="{CompiledBinding CleanupSelectedEntriesCommand}">
                         <Path Data="{StaticResource BatchCleanPath}" StrokeThickness="1"
-                              Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+                              Fill="{CompiledBinding $parent[Button].Foreground}"/>
                     </Button>
                     <Button Command="{CompiledBinding MergeEntriesCommand}"
                             CommandParameter="{CompiledBinding $parent[Window]}"
-                            ToolTip.Tip="{DynamicResource Main.Tooltip.MergeEntries}">
+                            ToolTip.Tip="{DynamicResource Bibtex.Tooltip.MergeEntries}">
                         <Path Data="{StaticResource MergePath}" StrokeThickness="1"
                               Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                     </Button>
                     <Button Command="{CompiledBinding AddBibtexEntryCommand}"
                             CommandParameter="{CompiledBinding $parent[Window]}"
-                            ToolTip.Tip="{DynamicResource Main.Tooltip.AddEntry}">
+                            ToolTip.Tip="{DynamicResource Bibtex.Tooltip.AddEntry}">
                         <Path Data="{StaticResource AddPath}"
                               Fill="{CompiledBinding $parent[Button].Foreground}"/>
                     </Button>
@@ -286,12 +288,12 @@
             </Border>
         </Grid>
 
-        <GridSplitter Name="Splitter" Grid.Column="1" Margin="4 24"
+        <GridSplitter Name="Splitter" Grid.Column="1" Margin="2 8"
                       DragDelta="GridSplitter_DragDelta"/>
         
         <Border Name="DetailPanel" Background="{DynamicResource MainBackground}" Grid.Column="2"
                 BorderBrush="{DynamicResource MainBorder}" BorderThickness="1"
-                CornerRadius="16">
+                CornerRadius="8">
             <Border.Styles>
                 <Style Selector="TextBlock.right">
                     <Setter Property="Margin" Value="0 0 4 0"/>
@@ -308,12 +310,19 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <v:ExComboBox HorizontalAlignment="Stretch" Margin="0 2"
-                                          ItemsSource="{CompiledBinding TypeList}"
+                            <v:ExComboBox HorizontalAlignment="Stretch" Margin="0 0 0 2"
+                                          ItemsSource="{CompiledBinding TypeList}" Padding="0 2"
                                           SelectedItem="{CompiledBinding ShowingEntry.EntryType, Converter={StaticResource EntryTypeConverter}}"/>
                             <StackPanel Grid.Column="1" Orientation="Horizontal">
                                 <Button Click="ChangeButton_Click" Classes="in_section" ToolTip.Tip="{DynamicResource Bibtex.Tooltip.SwitchDetailLayout}">
-                                    <Path Data="{StaticResource brPath}"/>
+                                    <Grid>
+                                        <Path Data="{StaticResource MaximizePath}" StrokeThickness="1"
+                                              Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+                                        <Path Name="RightPath" Data="{StaticResource RightLayoutPath}"
+                                              Fill="{CompiledBinding $parent[Button].Foreground}"/>
+                                        <Path Name="BottomPath" Data="{StaticResource BottomLayoutPath}"
+                                              Fill="{CompiledBinding $parent[Button].Foreground}"/>
+                                    </Grid>
                                 </Button>
                                 <Button Click="CloseButton_Click" Classes="in_section" ToolTip.Tip="{DynamicResource Bibtex.Tooltip.HideDetailPanel}">
                                     <Path Data="{StaticResource xPath}"/>
@@ -334,7 +343,7 @@
                             </Grid>
                         </Button>
                         <Grid ColumnDefinitions="*,Auto" Grid.Row="1" Grid.Column="1">
-                            <TextBox Text="{CompiledBinding ShowingEntry.CitationKey}"/>
+                            <TextBox Text="{CompiledBinding ShowingEntry.CitationKey}" Margin="0 2 0 0"/>
                             <Button Grid.Column="1" Classes="in_section"
                                     Command="{CompiledBinding GenerateCitationKeyCommand}"
                                     ToolTip.Tip="{DynamicResource Bibtex.Tooltip.GenerateCitationKeys}">
@@ -472,6 +481,7 @@
 											 Text="{CompiledBinding ShowingEntry.DOI}"/>
                                     <StackPanel Orientation="Horizontal" Grid.Column="2">
                                         <Button>
+                                            <!--TODO-->
                                             <Path Data="{StaticResource ImportPath}"/>
                                         </Button>
                                     </StackPanel>
@@ -491,12 +501,30 @@
 											 Text="{CompiledBinding ShowingEntry.Url}"/>
                                 </Grid>
                                 <TextBox PlaceholderText="Crossref" Text="{CompiledBinding ShowingEntry.Crossref}"/>
-                                <TextBox PlaceholderText="File" Text="{CompiledBinding ShowingEntry.File}"/>
+                                <Grid ColumnDefinitions="100,*,Auto">
+                                    <Button Width="100" HorizontalContentAlignment="Stretch" Padding="0"
+                                            Command="{CompiledBinding ToFileCommand}"
+                                            CommandParameter="{CompiledBinding ShowingEntry}">
+										<Grid ColumnDefinitions="32,*">
+											<Path Data="{StaticResource ToLinkPath}"
+												  HorizontalAlignment="Center"
+												  VerticalAlignment="Center"/>
+											<TextBlock Grid.Column="1" Text="File" Classes="right"/>
+										</Grid>
+									</Button>
+                                    <TextBox Theme="{StaticResource {x:Type TextBox}}" Grid.Column="1"
+											 Text="{CompiledBinding ShowingEntry.File}"/>
+                                    <Button Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                            Command="{CompiledBinding ToFolderCommand}"
+                                            CommandParameter="{CompiledBinding ShowingEntry}">
+                                        <Path Data="{StaticResource FolderPath}" StrokeThickness="1"
+                                              Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+                                    </Button>
+                                </Grid>
                                 <TextBox PlaceholderText="ISSN" Text="{CompiledBinding ShowingEntry.ISSN}"/>
                                 <TextBox PlaceholderText="ISBN" Text="{CompiledBinding ShowingEntry.ISBN}"/>
                             </StackPanel>
                         </Expander>
-                        
                         <Expander Header="{DynamicResource Bibtex.Section.Notes}" IsExpanded="False">
                             <Expander.Styles>
                                 <Style Selector="TextBox">
@@ -521,51 +549,52 @@
 						</Grid.ColumnDefinitions>
 
 						<Border Grid.ColumnSpan="2"
-								Margin="4" HorizontalAlignment="Center"
+								Margin="4 0 4 4" HorizontalAlignment="Center"
 								CornerRadius="8"
 								Background="{DynamicResource MainBackground}">
-							<WrapPanel HorizontalAlignment="Center">
-								<WrapPanel.Styles>
+							<StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
+                                        Spacing="2" Margin="4 2">
+								<StackPanel.Styles>
 									<Style Selector="Button">
-										<Setter Property="MinHeight" Value="30"/>
+										<Setter Property="MinHeight" Value="28"/>
 									</Style>
-								</WrapPanel.Styles>
+								</StackPanel.Styles>
 								<Button Command="{CompiledBinding FindMergeByDoiCommand}"
 										CommandParameter="{CompiledBinding $parent[Window]}"
-										Margin="2" ToolTip.Tip="{DynamicResource Bibtex.Tooltip.SearchDoi}">
+										ToolTip.Tip="{DynamicResource Bibtex.Tooltip.SearchDoi}">
 									<Viewbox Margin="2">
 										<Svg Path="/Assets/doi.svg"/>
 									</Viewbox>
 								</Button>
 								<Button Command="{CompiledBinding FindMergeByDblpCommand}"
 										CommandParameter="{CompiledBinding $parent[Window]}"
-										Margin="2" ToolTip.Tip="{DynamicResource Bibtex.Tooltip.SearchDblp}">
+										ToolTip.Tip="{DynamicResource Bibtex.Tooltip.SearchDblp}">
 									<Viewbox Margin="2">
 										<Svg Path="/Assets/dblp.svg"/>
 									</Viewbox>
 								</Button>
 								<Button Command="{CompiledBinding FindMergeByCrossrefCommand}"
 										CommandParameter="{CompiledBinding $parent[Window]}"
-										Margin="2" ToolTip.Tip="{DynamicResource Bibtex.Tooltip.SearchCrossref}">
+										ToolTip.Tip="{DynamicResource Bibtex.Tooltip.SearchCrossref}">
 									<Viewbox Margin="2">
 										<Svg Path="/Assets/crossref.svg"/>
 									</Viewbox>
 								</Button>
 								<Button Command="{CompiledBinding FindMergeByTitleCommand}"
 										CommandParameter="{CompiledBinding $parent[Window]}"
-										Margin="2" ToolTip.Tip="{DynamicResource Bibtex.Tooltip.SearchTitle}">
+										ToolTip.Tip="{DynamicResource Bibtex.Tooltip.SearchTitle}">
 									<Viewbox Margin="0">
 										<TextBlock Text="T"/>
 									</Viewbox>
 								</Button>
 								<Button Command="{CompiledBinding GetDblpFromDoiCommand}"
 										CommandParameter="{CompiledBinding $parent[Window]}"
-										Margin="2" ToolTip.Tip="{DynamicResource Bibtex.Tooltip.SuperSearch}">
+										ToolTip.Tip="{DynamicResource Bibtex.Tooltip.SuperSearch}">
 									<Viewbox Margin="0">
 										<TextBlock Text="S"/>
 									</Viewbox>
 								</Button>
-							</WrapPanel>
+							</StackPanel>
 						</Border>
 						
 						<Button Width="92" HorizontalContentAlignment="Stretch" Padding="0"

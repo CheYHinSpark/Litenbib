@@ -19,7 +19,7 @@
         <Setter Property="Background" Value="{DynamicResource InputBackground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource MainBorder}" />
         <Setter Property="BorderThickness" Value="1" />
-		<Setter Property="CornerRadius" Value="12" />
+		<Setter Property="CornerRadius" Value="8" />
 		<Setter Property="Padding" Value="2 4" />
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
