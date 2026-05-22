@@ -336,8 +336,8 @@
             </ControlTemplate>
         </Setter>
 
-        <Style Selector="^:pointerover /template/ PathIcon#DropDownGlyph">
-            <Setter Property="Foreground" Value="{DynamicResource HighlightForeground}"/>
+        <Style Selector="^:pointerover">
+            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorder}"/>
         </Style>
 
         <Style Selector="^:focus">

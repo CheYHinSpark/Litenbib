@@ -758,7 +758,9 @@ namespace Litenbib.ViewModels
             ShowingEntry = _holdShowingEntry ?? null;
             NotifyCanUndoRedo();
         }
-        private bool CanUndo() => UndoRedoManager.CanUndo && !IsFiltering;
+        private bool CanUndo() => UndoRedoManager.CanUndo
+            && UndoRedoManager.NewEditedBox == null
+            && !IsFiltering;
 
         [RelayCommand(CanExecute = nameof(CanRedo))]
         private void RedoBibtex()
@@ -769,7 +771,9 @@ namespace Litenbib.ViewModels
             ShowingEntry = _holdShowingEntry ?? null;
             NotifyCanUndoRedo();
         }
-        private bool CanRedo() => UndoRedoManager.CanRedo && !IsFiltering;
+        private bool CanRedo() => UndoRedoManager.CanRedo
+            && UndoRedoManager.NewEditedBox == null
+            && !IsFiltering;
 
         [RelayCommand(CanExecute = nameof(CanDelete))]
         private void DeleteBibtex()

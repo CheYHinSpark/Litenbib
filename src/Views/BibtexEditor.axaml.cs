@@ -166,22 +166,22 @@ public partial class BibtexEditor : UserControl, IUndoRedoTextHost
             EnableHyperlinks = false,
             EnableEmailHyperlinks = false,
         };
-        editor.Document.UndoStack.SizeLimit = 0;
         ApplyPalette(redraw: false);
         editor.TextArea.TextView.LineTransformers.Add(_colorizer);
         editor.TextArea.SelectionChanged += (_, _) => UpdateSelectionProperties();
         editor.TextArea.Caret.PositionChanged += (_, _) => UpdateSelectionProperties();
         editor.TextChanged += (_, _) => ApplyTextFromEditor();
-        editor.GotFocus += (_, _) =>
-        {
-            SetValue(FocusEx.BindToProperty, this);
-        };
-        editor.LostFocus += (_, _) =>
-        {
-            SetValue(FocusEx.BindToProperty, null);
-        };
+        editor.GotFocus += (_, _) => SetEditingHost(isFocused: true);
+        editor.LostFocus += (_, _) => SetEditingHost(isFocused: false);
+        editor.TextArea.GotFocus += (_, _) => SetEditingHost(isFocused: true);
+        editor.TextArea.LostFocus += (_, _) => SetEditingHost(isFocused: false);
         editor.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
         editor.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
+    }
+
+    private void SetEditingHost(bool isFocused)
+    {
+        SetCurrentValue(FocusEx.BindToProperty, isFocused ? this : null);
     }
 
     private void BindPaletteResources()

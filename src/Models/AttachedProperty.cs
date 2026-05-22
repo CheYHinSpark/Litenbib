@@ -40,11 +40,9 @@ namespace Litenbib.Models
             // 监听 TextBox 自身的 IsFocused 属性变化，并同步到附加属性
             TextBox.IsFocusedProperty.Changed.AddClassHandler<TextBox>((tb, e) =>
             {
-                tb.SetValue(IsFocusedProperty, e.NewValue);
-                if ((bool?)e.NewValue == true)
-                { tb.SetValue(BindToProperty, tb); }
-                else
-                { tb.SetValue(BindToProperty, null); }
+                bool isFocused = e.NewValue is true;
+                tb.SetCurrentValue(IsFocusedProperty, isFocused);
+                tb.SetCurrentValue(BindToProperty, isFocused ? tb : null);
             });
         }
     }

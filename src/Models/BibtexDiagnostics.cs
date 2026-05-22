@@ -9,7 +9,7 @@ namespace Litenbib.Models
         CitationKey,
         Doi,
         TitleYear,
-        SimilarTitle
+        SameTitle
     }
 
     public sealed class DuplicateGroup(List<BibtexEntry> entries, DuplicateKind kind, string token)
@@ -29,9 +29,16 @@ namespace Litenbib.Models
                 yield return group;
             foreach (var group in GroupByToken(list, e => NormalizeDoi(e.DOI), DuplicateKind.Doi))
                 yield return group;
-            foreach (var group in GroupByToken(list, e => NormalizeTitleYear(e.Title, e.Year), DuplicateKind.TitleYear))
+
+            var titleYearGroups = GroupByToken(list, e => NormalizeTitleYear(e.Title, e.Year), DuplicateKind.TitleYear)
+                .ToList();
+            foreach (var group in titleYearGroups)
                 yield return group;
-            foreach (var group in GroupSimilarTitles(list))
+
+            var titleYearEntrySets = titleYearGroups
+                .Select(group => GetEntrySetKey(list, group.Entries))
+                .ToHashSet(StringComparer.Ordinal);
+            foreach (var group in GroupSameTitles(list, titleYearEntrySets))
                 yield return group;
         }
 
@@ -72,26 +79,27 @@ namespace Litenbib.Models
             }
         }
 
-        private static IEnumerable<DuplicateGroup> GroupSimilarTitles(List<BibtexEntry> entries)
+        private static IEnumerable<DuplicateGroup> GroupSameTitles(
+            List<BibtexEntry> entries,
+            HashSet<string> suppressedEntrySets)
         {
-            var visited = new HashSet<BibtexEntry>();
-            foreach (var entry in entries)
+            foreach (var group in GroupByToken(entries, e => NormalizeTitle(e.Title), DuplicateKind.SameTitle))
             {
-                if (visited.Contains(entry)) continue;
-                var title = NormalizeTitle(entry.Title);
-                if (title.Length < 24) continue;
+                if (suppressedEntrySets.Contains(GetEntrySetKey(entries, group.Entries)))
+                {
+                    continue;
+                }
 
-                var similar = entries.Where(other => !ReferenceEquals(other, entry)
-                    && !visited.Contains(other)
-                    && NormalizeTitle(other.Title) == title)
-                    .ToList();
-                if (similar.Count == 0) continue;
-
-                var group = new List<BibtexEntry> { entry };
-                group.AddRange(similar);
-                foreach (var item in group) visited.Add(item);
-                yield return new DuplicateGroup(group, DuplicateKind.SimilarTitle, title);
+                yield return group;
             }
+        }
+
+        private static string GetEntrySetKey(List<BibtexEntry> entries, IEnumerable<BibtexEntry> group)
+        {
+            return string.Join(',', group
+                .Select(entry => entries.IndexOf(entry))
+                .Where(index => index >= 0)
+                .OrderBy(index => index));
         }
     }
 }

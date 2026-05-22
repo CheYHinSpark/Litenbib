@@ -40,7 +40,6 @@
             <Setter Property="AcceptsTab" Value="True"/>
             <Setter Property="TextWrapping" Value="Wrap"/>
             <Setter Property="Margin" Value="0 2"/>
-            <Setter Property="IsUndoEnabled" Value="False"/>
             <Setter Property="SelectionStart" Value="{CompiledBinding SelectionStart, Mode=OneWayToSource}"/>
             <Setter Property="SelectionEnd" Value="{CompiledBinding SelectionEnd, Mode=OneWayToSource}"/>
             <Setter Property="m:FocusEx.BindTo" Value="{CompiledBinding UndoRedoManager.NewEditedBox, Mode=OneWayToSource}"/>
@@ -493,9 +492,11 @@
 									<TextBox Theme="{StaticResource {x:Type TextBox}}" Grid.Column="1"
 											 Text="{CompiledBinding ShowingEntry.DOI}"/>
                                     <StackPanel Orientation="Horizontal" Grid.Column="2">
-                                        <Button Margin="2 0 0 0">
-                                            <!--TODO-->
-                                            <Path Data="{StaticResource ImportPath}"/>
+                                        <Button Margin="2 0 0 0" Command="{CompiledBinding FindMergeByDoiCommand}"
+                                                CommandParameter="{CompiledBinding $parent[Window]}"
+                                                ToolTip.Tip="{DynamicResource Bibtex.Tooltip.SearchDoi}">
+                                            <Path Data="{StaticResource ImportPath}" StrokeThickness="1"
+                                                  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
                                         </Button>
                                     </StackPanel>
                                 </Grid>

@@ -301,7 +301,7 @@
     <x:String x:Key="Warning.SameCitationKey">{0} entries have the same CitationKey {1}</x:String>
     <x:String x:Key="Warning.SameDoi">{0} entries have the same DOI {1}</x:String>
     <x:String x:Key="Warning.SameTitleYear">{0} entries share the same title and year</x:String>
-    <x:String x:Key="Warning.SimilarTitle">{0} entries have very similar titles</x:String>
+    <x:String x:Key="Warning.SameTitle">{0} entries have the same normalized title</x:String>
     <x:String x:Key="Warning.MissingField">1 entry missing {0}</x:String>
     <x:String x:Key="Warning.Hint">{0} warnings or errors</x:String>
 </ResourceDictionary>

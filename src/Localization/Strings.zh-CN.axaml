@@ -301,7 +301,7 @@
     <x:String x:Key="Warning.SameCitationKey">{0} 个条目具有相同引用键 {1}</x:String>
     <x:String x:Key="Warning.SameDoi">{0} 个条目具有相同 DOI {1}</x:String>
     <x:String x:Key="Warning.SameTitleYear">{0} 个条目具有相同标题和年份</x:String>
-    <x:String x:Key="Warning.SimilarTitle">{0} 个条目的标题非常相似</x:String>
+    <x:String x:Key="Warning.SameTitle">{0} 个条目的归一化标题相同</x:String>
     <x:String x:Key="Warning.MissingField">1 个条目缺少 {0}</x:String>
     <x:String x:Key="Warning.Hint">{0} 个警告或错误</x:String>
 </ResourceDictionary>
