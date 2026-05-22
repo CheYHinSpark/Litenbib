@@ -1,25 +1,28 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Color x:Key="DisabledForegroundColor">#7A8496</Color>
-    <Color x:Key="InputBackgroundColor">#F4F7FA</Color>
-    <Color x:Key="HighlightBackgroundColor">#DFE9F7</Color>
-    <Color x:Key="HighlightBorderColor">#7B93BF</Color>
-    <Color x:Key="HighlightForegroundColor">#000000</Color>
-    <Color x:Key="MainBackgroundColor">#EEF2F7</Color>
-    <Color x:Key="MainBorderColor">#D7DFEA</Color>
-	<Color x:Key="MainForegroundColor">#222222</Color>
-	<Color x:Key="TextSelectionHighlightColor">#BAFEDC</Color>
+    <Color x:Key="MainBackgroundColor">#E1EAF3</Color>
+    <Color x:Key="TabBackgroundColor">#F0F3F6</Color>
+    <Color x:Key="PanelBackgroundColor">#F3F9FF</Color>
+    <Color x:Key="BarBackgroundColor">#E7F3FF</Color>
+    <Color x:Key="InputBackgroundColor">#F9FCFF</Color>
+    <Color x:Key="ThemeBackgroundColor">#9CCCFC</Color>
+    <Color x:Key="TextSelectionHighlightColor">#9BE4C4</Color>
+    
+    <Color x:Key="MainHighlightColor">#CFDBE7</Color>
+    <Color x:Key="ThemeHighlightColor">#C3E1FF</Color>
+    <Color x:Key="WarningHighlightColor">#D24735</Color>
 
-	<Color x:Key="TabBackgroundColor">#D1E0F4</Color>
-    <Color x:Key="ThemeBackgroundColor">#DCEBFF</Color>
-    <Color x:Key="ThemeBorderColor">#4D89D8</Color>
-    <Color x:Key="ThemeHighlightColor">#C1D0E4</Color>
-    <Color x:Key="WarningBackgroundColor">#F54B4B</Color>
+    <Color x:Key="DisabledForegroundColor">#72787E</Color>
+    <Color x:Key="MainForegroundColor">#12181E</Color>
 
-    <Color x:Key="BibtexEntryTypeColor">#0369A1</Color>
-    <Color x:Key="BibtexCitationKeyColor">#A16207</Color>
-    <Color x:Key="BibtexFieldColor">#7E22CE</Color>
-    <Color x:Key="BibtexValueColor">#15803D</Color>
-    <Color x:Key="BibtexPunctuationColor">#64748B</Color>
-	<Color x:Key="BibtexCommentColor">#6B7280</Color>
+    <Color x:Key="MainBorderColor">#B1D5F9</Color>
+    <Color x:Key="BarBorderColor">#6699CC</Color>
+    <Color x:Key="ThemeBorderColor">#0369CF</Color>
+
+    <Color x:Key="BibtexEntryTypeColor">#006D97</Color>
+    <Color x:Key="BibtexCitationKeyColor">#AF6027</Color>
+    <Color x:Key="BibtexFieldColor">#8C216D</Color>
+    <Color x:Key="BibtexValueColor">#447A37</Color>
+    <Color x:Key="BibtexPunctuationColor">#6B798E</Color>
+	<Color x:Key="BibtexCommentColor">#576470</Color>
 </ResourceDictionary>

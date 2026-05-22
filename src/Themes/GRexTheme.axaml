@@ -65,47 +65,51 @@
     <PathGeometry x:Key="BatchCleanPath" Figures="M 0,10.5 1.5,10.5 2,12 3.5,11.5 4.5,13 6,12 7.5,13 8.5,11.5 10,12 10.5,10.5 12,10.5 10.5,8.5 A 7.5,7.5 0 0 1 1.5,8.5 Z
                   M 3,7 A 5,5 0 0 0 9,7 L 8,6 7,6 7,0 5,0 5,6 4,6 Z"/>
 
-    <SolidColorBrush x:Key="DisabledForeground" Color="{DynamicResource DisabledForegroundColor}"/>
-    <SolidColorBrush x:Key="HighlightBackground" Color="{DynamicResource HighlightBackgroundColor}"/>
-    <SolidColorBrush x:Key="HighlightBorder" Color="{DynamicResource HighlightBorderColor}"/>
-    <SolidColorBrush x:Key="HighlightForeground" Color="{DynamicResource HighlightForegroundColor}"/>
-    <SolidColorBrush x:Key="InputBackground" Color="{DynamicResource InputBackgroundColor}"/>
     <SolidColorBrush x:Key="MainBackground" Color="{DynamicResource MainBackgroundColor}"/>
+    <SolidColorBrush x:Key="TabBackground" Color="{DynamicResource TabBackgroundColor}"/>
+    <SolidColorBrush x:Key="PanelBackground" Color="{DynamicResource PanelBackgroundColor}"/>
+    <SolidColorBrush x:Key="BarBackground" Color="{DynamicResource BarBackgroundColor}"/>
+    <SolidColorBrush x:Key="InputBackground" Color="{DynamicResource InputBackgroundColor}"/>
+    <SolidColorBrush x:Key="ThemeBackground" Color="{DynamicResource ThemeBackgroundColor}"/>
+    <SolidColorBrush x:Key="TextSelectionHighlight" Color="{DynamicResource TextSelectionHighlightColor}"/>
+    
+    <SolidColorBrush x:Key="MainHighlight" Color="{DynamicResource MainHighlightColor}"/>
+    <SolidColorBrush x:Key="ThemeHighlight" Color="{DynamicResource ThemeHighlightColor}"/>
+    <SolidColorBrush x:Key="WarningHighlight" Color="{DynamicResource WarningHighlightColor}"/>
+    
+    <SolidColorBrush x:Key="DisabledForeground" Color="{DynamicResource DisabledForegroundColor}"/>
+    <SolidColorBrush x:Key="MainForeground" Color="{DynamicResource MainForegroundColor}"/>
+    
     <SolidColorBrush x:Key="MainBorder" Color="{DynamicResource MainBorderColor}"/>
-	<SolidColorBrush x:Key="MainForeground" Color="{DynamicResource MainForegroundColor}"/>
-	<SolidColorBrush x:Key="TextSelectionHighlight" Color="{DynamicResource TextSelectionHighlightColor}"/>
-	<SolidColorBrush x:Key="BibtexEntryTypeBrush" Color="{DynamicResource BibtexEntryTypeColor}"/>
+    <SolidColorBrush x:Key="BarBorder" Color="{DynamicResource BarBorderColor}"/>
+    <SolidColorBrush x:Key="ThemeBorder" Color="{DynamicResource ThemeBorderColor}"/>
+	
+    <SolidColorBrush x:Key="BibtexEntryTypeBrush" Color="{DynamicResource BibtexEntryTypeColor}"/>
 	<SolidColorBrush x:Key="BibtexCitationKeyBrush" Color="{DynamicResource BibtexCitationKeyColor}"/>
 	<SolidColorBrush x:Key="BibtexFieldBrush" Color="{DynamicResource BibtexFieldColor}"/>
 	<SolidColorBrush x:Key="BibtexValueBrush" Color="{DynamicResource BibtexValueColor}"/>
 	<SolidColorBrush x:Key="BibtexPunctuationBrush" Color="{DynamicResource BibtexPunctuationColor}"/>
 	<SolidColorBrush x:Key="BibtexCommentBrush" Color="{DynamicResource BibtexCommentColor}"/>
 
-	<SolidColorBrush x:Key="TabBackground" Color="{DynamicResource TabBackgroundColor}"/>
-    <SolidColorBrush x:Key="ThemeBackground" Color="{DynamicResource ThemeBackgroundColor}"/>
-    <SolidColorBrush x:Key="ThemeBorder" Color="{DynamicResource ThemeBorderColor}"/>
-    <SolidColorBrush x:Key="ThemeHighlight" Color="{DynamicResource ThemeHighlightColor}"/>
-    <SolidColorBrush x:Key="WarningBackground" Color="{DynamicResource WarningBackgroundColor}"/>
-
     <SolidColorBrush x:Key="ComboBoxItemBackgroundPointerOver" Color="{DynamicResource ThemeBackgroundColor}"/>
-    <SolidColorBrush x:Key="ComboBoxItemForegroundPointerOver" Color="{DynamicResource HighlightForegroundColor}"/>
+    <SolidColorBrush x:Key="ComboBoxItemForegroundPointerOver" Color="{DynamicResource MainForegroundColor}"/>
     <SolidColorBrush x:Key="ComboBoxItemBackgroundPressed" Color="{DynamicResource ThemeBackgroundColor}"/>
-    <SolidColorBrush x:Key="ComboBoxItemForegroundPressed" Color="{DynamicResource HighlightForegroundColor}"/>
+    <SolidColorBrush x:Key="ComboBoxItemForegroundPressed" Color="{DynamicResource MainForegroundColor}"/>
     <SolidColorBrush x:Key="ComboBoxItemBackgroundSelectedPointerOver" Color="{DynamicResource ThemeBackgroundColor}"/>
-    <SolidColorBrush x:Key="ComboBoxItemForegroundSelectedPointerOver" Color="{DynamicResource HighlightForegroundColor}"/>
+    <SolidColorBrush x:Key="ComboBoxItemForegroundSelectedPointerOver" Color="{DynamicResource MainForegroundColor}"/>
     <SolidColorBrush x:Key="ComboBoxItemBackgroundSelected" Color="{DynamicResource MainBackgroundColor}"/>
     <SolidColorBrush x:Key="ComboBoxItemBorderBrushSelected" Color="{DynamicResource ThemeBorderColor}"/>
-    <SolidColorBrush x:Key="ComboBoxItemForegroundSelected" Color="{DynamicResource HighlightForegroundColor}"/>
+    <SolidColorBrush x:Key="ComboBoxItemForegroundSelected" Color="{DynamicResource MainForegroundColor}"/>
     <SolidColorBrush x:Key="ComboBoxItemBackgroundSelectedPressed" Color="{DynamicResource ThemeBackgroundColor}"/>
-    <SolidColorBrush x:Key="ComboBoxItemForegroundSelectedPressed" Color="{DynamicResource HighlightForegroundColor}"/>
+    <SolidColorBrush x:Key="ComboBoxItemForegroundSelectedPressed" Color="{DynamicResource MainForegroundColor}"/>
 
     <SolidColorBrush x:Key="MenuFlyoutItemBackground" Color="{DynamicResource InputBackgroundColor}"/>
     <SolidColorBrush x:Key="MenuFlyoutItemForeground" Color="{DynamicResource MainForegroundColor}"/>
     <SolidColorBrush x:Key="MenuFlyoutItemForegroundDisabled" Color="{DynamicResource DisabledForegroundColor}"/>
     <SolidColorBrush x:Key="MenuFlyoutItemBackgroundPointerOver" Color="{DynamicResource ThemeBackgroundColor}"/>
-    <SolidColorBrush x:Key="MenuFlyoutItemForegroundPointerOver" Color="{DynamicResource HighlightForegroundColor}"/>
+    <SolidColorBrush x:Key="MenuFlyoutItemForegroundPointerOver" Color="{DynamicResource MainForegroundColor}"/>
     <SolidColorBrush x:Key="MenuFlyoutItemBackgroundPressed" Color="{DynamicResource ThemeBackgroundColor}"/>
-    <SolidColorBrush x:Key="MenuFlyoutItemForegroundPressed" Color="{DynamicResource HighlightForegroundColor}"/>
+    <SolidColorBrush x:Key="MenuFlyoutItemForegroundPressed" Color="{DynamicResource MainForegroundColor}"/>
     <SolidColorBrush x:Key="MenuFlyoutPresenterBackground" Color="{DynamicResource InputBackgroundColor}"/>
     <SolidColorBrush x:Key="MenuFlyoutPresenterBorderBrush" Color="{DynamicResource MainBorderColor}"/>
 
@@ -141,15 +145,13 @@
         </Setter>
 
         <Style Selector="^:pointerover">
-            <Setter Property="Background" Value="{DynamicResource HighlightBackground}"/>
-            <Setter Property="Foreground" Value="{DynamicResource HighlightForeground}"/>
+            <Setter Property="Background" Value="{DynamicResource MainHighlight}"/>
             <Setter Property="CornerRadius" Value="4"/>
 			<Setter Property="RenderTransform" Value="scale(1.03)" />
 		</Style>
 
         <Style Selector="^.warning:pointerover">
-            <Setter Property="Background" Value="{DynamicResource WarningBackground}"/>
-            <Setter Property="Foreground" Value="{DynamicResource HighlightForeground}"/>
+            <Setter Property="Background" Value="{DynamicResource WarningHighlight}"/>
             <Setter Property="CornerRadius" Value="4"/>
 			<Setter Property="RenderTransform" Value="scale(1.03)" />
         </Style>
@@ -209,9 +211,7 @@
         
         <!-- Unchecked PointerOver State -->
         <Style Selector="^:pointerover">
-            <Setter Property="Foreground" Value="{DynamicResource HighlightForeground}"/>
-            <Setter Property="Background" Value="{DynamicResource HighlightBackground}"/>
-            <Setter Property="BorderBrush" Value="{DynamicResource HighlightForeground}"/>
+            <Setter Property="Background" Value="{DynamicResource MainHighlight}"/>
         </Style>
 
         <!-- Unchecked Disabled state -->
@@ -336,11 +336,8 @@
             </ControlTemplate>
         </Setter>
 
-        <Style Selector="^:pointerover">
-            <Setter Property="BorderBrush" Value="{DynamicResource HighlightBorder}"/>
-            <Style Selector="^ /template/ PathIcon#DropDownGlyph">
-                <Setter Property="Foreground" Value="{DynamicResource HighlightForeground}"/>
-            </Style>
+        <Style Selector="^:pointerover /template/ PathIcon#DropDownGlyph">
+            <Setter Property="Foreground" Value="{DynamicResource HighlightForeground}"/>
         </Style>
 
         <Style Selector="^:focus">
@@ -370,7 +367,7 @@
             </ControlTemplate>
         </Setter>
 		<Style Selector="^:pointerover">
-			<Setter Property="Background" Value="{DynamicResource HighlightBackground}"/>
+			<Setter Property="Background" Value="{DynamicResource MainHighlight}"/>
 		</Style>
 		<Style Selector="^:pressed">
 			<Setter Property="Background" Value="{DynamicResource ThemeHighlight}"/>
@@ -450,7 +447,7 @@
         </Setter>
 
         <Style Selector="^:pointerover">
-            <Setter Property="BorderBrush" Value="{DynamicResource HighlightBorder}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorder}"/>
         </Style>
 
         <Style Selector="^:focus">
@@ -489,7 +486,7 @@
         </Setter>
 
         <Style Selector="^:pointerover">
-            <Setter Property="BorderBrush" Value="{DynamicResource HighlightBorder}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorder}"/>
         </Style>
 
         <Style Selector="^:focus-within">
@@ -569,7 +566,7 @@
         </Setter>
 
         <Style Selector="^:pointerover">
-            <Setter Property="BorderBrush" Value="{DynamicResource HighlightBorder}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorder}"/>
         </Style>
 
         <Style Selector="^:focus">
@@ -610,9 +607,8 @@
         </Setter>
 
         <Style Selector="^:pointerover">
-            <Setter Property="Foreground" Value="{DynamicResource HighlightForeground}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource HighlightBackground}" />
-            <Setter Property="Background" Value="{DynamicResource HighlightBackground}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorder}" />
+            <Setter Property="Background" Value="{DynamicResource MainHighlight}" />
         </Style>
 
         <Style Selector="^:pressed">
@@ -673,11 +669,8 @@
             </ControlTemplate>
         </Setter>
 
-        <Style Selector="^:pointerover">
-            <Setter Property="Foreground" Value="{DynamicResource HighlightForeground}" />
-            <Style Selector="^ /template/ Border#PART_Highlight">
-                <Setter Property="Background" Value="{DynamicResource HighlightBackground}"/>
-            </Style>
+        <Style Selector="^:pointerover /template/ Border#PART_Highlight">
+            <Setter Property="Background" Value="{DynamicResource MainHighlight}"/>
         </Style>
 
         <Style Selector="^:pressed">

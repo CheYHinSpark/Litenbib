@@ -1,5 +1,20 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.PreviewWith>
+        <Border Width="100" Height="80">
+            <ScrollViewer>
+                <StackPanel>
+                    <TextBlock Text="123"/>
+                    <TextBlock Text="123"/>
+                    <TextBlock Text="123"/>
+                    <TextBlock Text="123"/>
+                    <TextBlock Text="123"/>
+                    <TextBlock Text="123"/>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+    </Design.PreviewWith>
+
     <x:Double x:Key="ScrollBarSize">12</x:Double>
     <CornerRadius x:Key="ScrollBarCornerRadius">4</CornerRadius>
     

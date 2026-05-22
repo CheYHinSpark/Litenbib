@@ -55,8 +55,7 @@
 
 		<!--PointerOver state-->
 		<Style Selector="^:pointerover">
-			<Setter Property="Background" Value="{DynamicResource HighlightBackground}" />
-			<Setter Property="TextElement.Foreground" Value="{DynamicResource HighlightForeground}" />
+			<Setter Property="Background" Value="{DynamicResource MainHighlight}" />
 		</Style>
 
 		<!--  Selected PointerOver state  -->

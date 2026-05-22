@@ -28,15 +28,8 @@
         </Style>
     </Style>
 
-    <Style Selector="Border.section-card">
-        <Setter Property="Background" Value="{DynamicResource TabBackground}"/>
-        <Setter Property="CornerRadius" Value="8"/>
-        <Setter Property="Padding" Value="8"/>
-        <Setter Property="Margin" Value="0 0 0 8"/>
-    </Style>
-
     <Style Selector="Button.in_section">
-        <Setter Property="Background" Value="{DynamicResource TabBackground}"/>
+        <Setter Property="Background" Value="{DynamicResource BarBackground}"/>
         <Setter Property="Transitions">
             <Transitions>
                 <BrushTransition Property="Background" Duration="0:0:0.1"/>
@@ -44,7 +37,7 @@
             </Transitions>
         </Setter>
         <Style Selector="^:pointerover">
-            <Setter Property="Background" Value="{DynamicResource HighlightBackground}"/>
+            <Setter Property="Background" Value="{DynamicResource MainHighlight}"/>
         </Style>
 		</Style>
 
@@ -65,7 +58,7 @@
         <Setter Property="Width" Value="20"/>
         <Setter Property="Background" Value="Transparent"/>
         <Style Selector="^:pointerover">
-            <Setter Property="Background" Value="{DynamicResource WarningBackground}"/>
+            <Setter Property="Background" Value="{DynamicResource WarningHighlight}"/>
         </Style>
     </Style>
     
@@ -124,7 +117,7 @@
             <Setter Property="Background" Value="{DynamicResource MainBackground}"/>
         </Style>
         <Style Selector="^:pointerover /template/ Border#PART_LayoutRoot">
-            <Setter Property="Background" Value="{DynamicResource HighlightBackground}"/>
+            <Setter Property="Background" Value="{DynamicResource MainHighlight}"/>
         </Style>
 
         <Style Selector="^:pressed">
@@ -155,20 +148,6 @@
 			</Transitions>
 		</Setter>
     </Style>
-
-	<!--<Style Selector="TabItem">
-		<Setter Property="Transitions">
-			<Transitions>
-				<TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.1"/>
-			</Transitions>
-		</Setter>
-	</Style>
-	<Style Selector="TabItem:pressed">
-		<Setter Property="Transitions">
-			<Transitions>
-			</Transitions>
-		</Setter>
-	</Style>-->
 
 	<Style Selector="Window">
         <Setter Property="Background" Value="{DynamicResource MainBackground}"/>

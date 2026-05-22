@@ -27,7 +27,7 @@
 			<Setter Property="HorizontalContentAlignment" Value="Center"/>
             <Setter Property="Margin" Value="8 2"/>
 			<Style Selector="^:pointerover">
-				<Setter Property="Background" Value="{DynamicResource HighlightBackground}"/>
+				<Setter Property="Background" Value="{DynamicResource MainHighlight}"/>
 			</Style>
         </Style>
 		<Style Selector="TextBlock">

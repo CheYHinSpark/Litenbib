@@ -115,8 +115,7 @@
                     </Setter>
 
                     <Style Selector="^:pointerover:not(:selected)">
-                        <Setter Property="Background" Value="{DynamicResource HighlightBackground}"/>
-                        <Setter Property="Foreground" Value="{DynamicResource HighlightForeground}"/>
+                        <Setter Property="Background" Value="{DynamicResource MainHighlight}"/>
                     </Style>
                     <Style Selector="^:selected">
                         <Setter Property="Background" Value="{DynamicResource TabBackground}"/>
@@ -134,7 +133,7 @@
             <TabItem Header="{DynamicResource Settings.General}">
                 <ScrollViewer Padding="8">
                     <StackPanel Spacing="4">
-                        <Border Classes="section-card">
+                        <Border>
                             <Grid ColumnDefinitions="Auto,*" Margin="4"
                                   RowDefinitions="Auto,Auto,Auto,Auto,Auto">
                                 <TextBlock Text="{DynamicResource Settings.General}"
@@ -172,7 +171,7 @@
             <TabItem Header="{DynamicResource Settings.BibtexEditing}">
                 <ScrollViewer Padding="8">
                     <StackPanel Spacing="4">
-                        <Border Classes="section-card">
+                        <Border>
                             <Grid ColumnDefinitions="Auto,*" Margin="4"
                                   RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto">
                                 <TextBlock Text="{DynamicResource Settings.BibtexEditing}"
@@ -225,7 +224,7 @@
                             </Grid>
                         </Border>
 
-                        <Border Classes="section-card">
+                        <Border>
                             <Grid ColumnDefinitions="Auto,*" Margin="4"
                                   RowDefinitions="Auto,Auto,Auto">
                                 <TextBlock Text="{DynamicResource Settings.PdfImport}"
@@ -251,7 +250,7 @@
             <TabItem Header="{DynamicResource Settings.NetworkAi}">
                 <ScrollViewer Padding="8">
                     <StackPanel Spacing="4">
-                        <Border Classes="section-card">
+                        <Border>
                             <Grid ColumnDefinitions="Auto,*" Margin="4"
                                   RowDefinitions="Auto,Auto,Auto,Auto,Auto">
                                 <TextBlock Text="{DynamicResource Settings.NetworkAi}"
@@ -290,7 +289,7 @@
             <TabItem Header="{DynamicResource Settings.ExportDefaults}">
                 <ScrollViewer Padding="8">
                     <StackPanel Spacing="4">
-                        <Border Classes="section-card">
+                        <Border>
                             <Grid ColumnDefinitions="Auto,*,*" Margin="4"
                                   RowDefinitions="Auto,Auto,Auto,Auto">
                                 <TextBlock Text="{DynamicResource Settings.ExportDefaults}"
@@ -350,7 +349,7 @@
             <TabItem Header="{DynamicResource Settings.Advanced}">
                 <ScrollViewer Padding="8">
                     <StackPanel Spacing="4">
-                        <Border Classes="section-card">
+                        <Border>
                             <Grid ColumnDefinitions="Auto,*" Margin="4"
                                   RowDefinitions="Auto,Auto,Auto,Auto">
                                 <TextBlock Text="{DynamicResource Settings.Advanced}"

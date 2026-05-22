@@ -40,7 +40,7 @@
                 <ItemsControl ItemsSource="{CompiledBinding Items}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="vm:VenueNameNormalizationItemViewModel">
-                            <Border Margin="0 2" Padding="6" CornerRadius="4" Classes="section-card"
+                            <Border Margin="0 2" Padding="6" CornerRadius="4"
                                     Background="{DynamicResource InputBackground}">
                                 <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="120,*">
                                     <TextBlock Text="{CompiledBinding CitationKey}" Margin="2"

@@ -1,19 +1,19 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-
+    
     <SolidColorBrush x:Key="DataGridGridLinesBrush" Color="Transparent"/>
 	
     <ControlTheme x:Key="{x:Type DataGridColumnHeader}" TargetType="DataGridColumnHeader">
-		<Setter Property="Background" Value="{DynamicResource InputBackground}"/>
+		<Setter Property="Background" Value="{DynamicResource BarBackground}"/>
 		<Setter Property="Foreground" Value="{DynamicResource MainForeground}"/>
         <Setter Property="Padding" Value="0 8"/>
 		<Setter Property="AreSeparatorsVisible" Value="False"/>
-		<Setter Property="SeparatorBrush" Value="{DynamicResource MainBorder}"/>
-        <Setter Property="BorderBrush" Value="{DynamicResource MainBorder}"/>
+		<Setter Property="SeparatorBrush" Value="{DynamicResource BarBorder}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource BarBorder}"/>
         <Setter Property="BorderThickness" Value="0 1"/>
 		<Setter Property="Template">
             <ControlTemplate>
-                <Grid Name="PART_ColumnHeaderRoot" ColumnDefinitions="*,Auto">
+                <Grid Name="PART_ColumnHeaderRoot" ColumnDefinitions="*,1">
 					<Border Name="PART_Border"
 							Grid.ColumnSpan="2"
 							Background="{TemplateBinding Background}"
@@ -24,9 +24,8 @@
                     <ContentPresenter Margin="{TemplateBinding Padding}"
                                       Content="{TemplateBinding Content}"
                                       ContentTemplate="{TemplateBinding ContentTemplate}"/>
-                    <Path Name="SortIcon" Fill="{TemplateBinding Foreground}"
-                          HorizontalAlignment="Right" VerticalAlignment="Center"
-                          Stretch="Uniform" Grid.Column="1"/>
+                    <Border Name="PART_SortBorder" Background="{DynamicResource ThemeBorder}"
+                            HorizontalAlignment="Stretch" Margin="8 1" Height="2" CornerRadius="1"/>
                     <Rectangle Name="VerticalSeparator" Grid.Column="1" Width="1"
                                VerticalAlignment="Stretch" Fill="{TemplateBinding SeparatorBrush}"
                                IsVisible="{TemplateBinding AreSeparatorsVisible}"/>
@@ -35,30 +34,27 @@
         </Setter>
 
 		<Style Selector="^:nth-child(1)">
-			<Setter Property="CornerRadius" Value="8 0 0 8"/>
+			<Setter Property="CornerRadius" Value="0 0 0 8"/>
             <Setter Property="BorderThickness" Value="1 1 0 1"/>
 		</Style>
 
 		<Style Selector="^:nth-last-child(1)">
-			<Setter Property="CornerRadius" Value="0 8 8 0"/>
+			<Setter Property="CornerRadius" Value="0 0 8 0"/>
             <Setter Property="BorderThickness" Value="0 1 1 1"/>
 		</Style>
 
-		<Style Selector="^:sortascending /template/ Path#SortIcon">
-			<Setter Property="Data" Value="{StaticResource DataGridSortIconAscendingPath}" />
-            <Setter Property="Margin" Value="0 0 4 0"/>
-            <Setter Property="Width" Value="12"/>
+		<Style Selector="^:sortascending /template/ Border#PART_SortBorder">
+            <Setter Property="IsVisible" Value="True"/>
+            <Setter Property="VerticalAlignment" Value="Top"/>
 		</Style>
 
-		<Style Selector="^:sortdescending /template/ Path#SortIcon">
-			<Setter Property="Data" Value="{StaticResource DataGridSortIconDescendingPath}" />
-            <Setter Property="Margin" Value="0 0 4 0"/>
-            <Setter Property="Width" Value="12"/>
+		<Style Selector="^:sortdescending /template/ Border#PART_SortBorder">
+            <Setter Property="IsVisible" Value="True"/>
+            <Setter Property="VerticalAlignment" Value="Bottom"/>
 		</Style>
 
-        <Style Selector="^:not(:sortascending):not(:sortdescending) /template/ Path#SortIcon">
-            <Setter Property="Margin" Value="0"/>
-            <Setter Property="Width" Value="0"/>
+        <Style Selector="^:not(:sortascending):not(:sortdescending) /template/ Border#PART_SortBorder">
+            <Setter Property="IsVisible" Value="False"/>
         </Style>
     </ControlTheme>
 
@@ -75,11 +71,11 @@
 							Opacity="1">
 					</Border>
 					<ContentPresenter Margin="{TemplateBinding Padding}"
-										  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-										  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-										  Content="{TemplateBinding Content}"
-										  ContentTemplate="{TemplateBinding ContentTemplate}"
-										  Foreground="{TemplateBinding Foreground}" />
+									  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+									  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+									  Content="{TemplateBinding Content}"
+									  ContentTemplate="{TemplateBinding ContentTemplate}"
+									  Foreground="{TemplateBinding Foreground}" />
 				</Grid>
             </ControlTemplate>
         </Setter>
@@ -94,11 +90,12 @@
                                     RowDefinitions="*,Auto">
                     <Border Name="BackgroundBorder" MinHeight="32" CornerRadius="8"
                             Margin="0 2" Grid.RowSpan="2" Grid.ColumnSpan="2"
-                            Background="{DynamicResource MainBackground}"
-                            BorderBrush="{DynamicResource MainBackground}"
-                            BorderThickness="1">
+                            Background="{DynamicResource ThemeHighlight}"
+                            BorderBrush="{DynamicResource ThemeHighlight}"
+                            BorderThickness="1" Opacity="0">
                         <Border.Transitions>
                             <Transitions>
+                                <DoubleTransition Property="Opacity" Duration="0:0:0.15"/>
                                 <BrushTransition Property="Background" Duration="0:0:0.15"/>
                                 <BrushTransition Property="BorderBrush" Duration="0:0:0.15"/>
                             </Transitions>
@@ -117,29 +114,13 @@
                 </DataGridFrozenGrid>
             </ControlTemplate>
         </Setter>
-		
-		<!--<Style Selector="^[IsVisible=True]">
-			<Style.Animations>
-				<Animation Duration="0:0:0.3">
-					<KeyFrame Cue="0%">
-						<Setter Property="Opacity" Value="0.0"/>
-					</KeyFrame>
-					<KeyFrame Cue="100%">
-						<Setter Property="Opacity" Value="1.0"/>
-					</KeyFrame>
-				</Animation>
-			</Style.Animations>
-		</Style>-->
-
-     
 
 		<Style Selector="^:pointerover /template/ Border#BackgroundBorder">
-			<Setter Property="Background" Value="{DynamicResource HighlightBackground}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource HighlightBackground}" />
+            <Setter Property="Opacity" Value="0.8"/>
 		</Style>
 
         <Style Selector="^:selected /template/ Border#BackgroundBorder">
-			<Setter Property="Background" Value="{DynamicResource ThemeBackground}" />
+            <Setter Property="Opacity" Value="1"/>
             <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorder}" />
         </Style>
     </ControlTheme>

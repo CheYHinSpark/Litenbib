@@ -3,7 +3,7 @@
     <!-- Add Resources Here -->
     <ControlTheme x:Key="{x:Type Expander}" TargetType="Expander">
         <Setter Property="IsTabStop" Value="False"/>
-        <Setter Property="CornerRadius" Value="12"/>
+        <Setter Property="CornerRadius" Value="8"/>
         <Setter Property="Margin" Value="0 4"/>
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="VerticalAlignment" Value="Stretch" />
@@ -13,6 +13,7 @@
                 <Grid RowDefinitions="Auto,Auto,Auto">
                     <ToggleButton x:Name="ExpanderHeader"
 								  Background="{DynamicResource InputBackground}"
+                                  Foreground="{DynamicResource MainForeground}"
                                   MinHeight="{TemplateBinding MinHeight}"
                                   Margin="0 0 0 4"
 								  BorderBrush="{DynamicResource MainBorder}"
@@ -55,11 +56,12 @@
 		<Style Selector="^ /template/ Path#PART_Icon">
 			<Setter Property="RenderTransform" Value="rotate(0)"/>
 		</Style>
+
 		<Style Selector="^:expanded /template/ Path#PART_Icon">
 			<Setter Property="RenderTransform" Value="rotate(90deg)"/>
 		</Style>
-		<Style Selector="^:expanded /template/ ToggleButton#ExpanderHeader">
-			<Setter Property="Background" Value="{DynamicResource HighlightBackground}"/>
+		
+        <Style Selector="^:expanded /template/ ToggleButton#ExpanderHeader">
 			<Setter Property="BorderBrush" Value="{DynamicResource ThemeBorder}"/>
 		</Style>
     </ControlTheme>
