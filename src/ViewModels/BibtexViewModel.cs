@@ -935,7 +935,7 @@ namespace Litenbib.ViewModels
             if (result == true)
             {
                 if (dialog.DataContext is not CompareEntryViewModel cevm) { return; }
-                if (!ReplaceEntriesWithMerged([targetEntry], cevm.MergedEntry))
+                if (!ApplyMergedEntryToExisting(targetEntry, cevm.MergedEntry))
                 {
                     NotificationCenter.Error(I18n.Get("Message.MergeCanceledOriginalRemoved"));
                     return;
@@ -959,6 +959,42 @@ namespace Litenbib.ViewModels
                     NotificationCenter.Error(I18n.Get("Message.MergeCanceledOriginalRemoved"));
                 }
             }
+        }
+
+        private bool ApplyMergedEntryToExisting(BibtexEntry targetEntry, BibtexEntry mergedEntry)
+        {
+            if (!BibtexEntries.Contains(targetEntry))
+            {
+                return false;
+            }
+
+            List<EntryFieldChange> changes =
+            [
+                new(targetEntry, nameof(BibtexEntry.EntryType), targetEntry.EntryType, mergedEntry.EntryType),
+                new(targetEntry, nameof(BibtexEntry.CitationKey), targetEntry.CitationKey, mergedEntry.CitationKey),
+            ];
+
+            foreach (var fieldName in targetEntry.Fields.Keys
+                .Concat(mergedEntry.Fields.Keys)
+                .Distinct(StringComparer.OrdinalIgnoreCase))
+            {
+                targetEntry.Fields.TryGetValue(fieldName, out string? oldValue);
+                mergedEntry.Fields.TryGetValue(fieldName, out string? newValue);
+                changes.Add(new EntryFieldChange(
+                    targetEntry,
+                    BibtexBatchOperations.GetPropertyNameForField(fieldName),
+                    oldValue,
+                    newValue));
+            }
+
+            EntryFieldsChangeAction action = new(changes);
+            if (action.HasChanges)
+            {
+                ApplyEntryFieldsChangeAction(action);
+            }
+
+            ShowingEntry = targetEntry;
+            return true;
         }
 
         private bool ReplaceEntriesWithMerged(IReadOnlyList<BibtexEntry> oldEntries, BibtexEntry mergedEntry)

@@ -22,9 +22,7 @@ namespace Litenbib.Models
         /// <summary> 错误：相同 DOI </summary>
         SameDoi = 4,
         /// <summary> 警告：标题和年份重复 </summary>
-        SameTitleYear = -3,
-        /// <summary> 警告：归一化标题重复 </summary>
-        SameTitle = -4
+        SameTitleYear = -3
     }
 
     /// <summary>
@@ -53,10 +51,6 @@ namespace Litenbib.Models
                 if (Class == WarningErrorClass.SameTitleYear)
                 {
                     return I18n.Format("Warning.SameTitleYear", SourceEntries.Count);
-                }
-                if (Class == WarningErrorClass.SameTitle)
-                {
-                    return I18n.Format("Warning.SameTitle", SourceEntries.Count);
                 }
                 return I18n.Format("Warning.MissingField", FieldName);
             }
@@ -119,9 +113,6 @@ namespace Litenbib.Models
                             break;
                         case DuplicateKind.TitleYear:
                             result.Add(new WarningError(duplicate.Entries, WarningErrorClass.SameTitleYear, duplicate.Token));
-                            break;
-                        case DuplicateKind.SameTitle:
-                            result.Add(new WarningError(duplicate.Entries, WarningErrorClass.SameTitle, duplicate.Token));
                             break;
                     }
                 }

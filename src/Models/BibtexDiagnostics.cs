@@ -8,8 +8,7 @@ namespace Litenbib.Models
     {
         CitationKey,
         Doi,
-        TitleYear,
-        SameTitle
+        TitleYear
     }
 
     public sealed class DuplicateGroup(List<BibtexEntry> entries, DuplicateKind kind, string token)
@@ -30,15 +29,7 @@ namespace Litenbib.Models
             foreach (var group in GroupByToken(list, e => NormalizeDoi(e.DOI), DuplicateKind.Doi))
                 yield return group;
 
-            var titleYearGroups = GroupByToken(list, e => NormalizeTitleYear(e.Title, e.Year), DuplicateKind.TitleYear)
-                .ToList();
-            foreach (var group in titleYearGroups)
-                yield return group;
-
-            var titleYearEntrySets = titleYearGroups
-                .Select(group => GetEntrySetKey(list, group.Entries))
-                .ToHashSet(StringComparer.Ordinal);
-            foreach (var group in GroupSameTitles(list, titleYearEntrySets))
+            foreach (var group in GroupByToken(list, e => NormalizeTitleYear(e.Title, e.Year), DuplicateKind.TitleYear))
                 yield return group;
         }
 
@@ -79,27 +70,5 @@ namespace Litenbib.Models
             }
         }
 
-        private static IEnumerable<DuplicateGroup> GroupSameTitles(
-            List<BibtexEntry> entries,
-            HashSet<string> suppressedEntrySets)
-        {
-            foreach (var group in GroupByToken(entries, e => NormalizeTitle(e.Title), DuplicateKind.SameTitle))
-            {
-                if (suppressedEntrySets.Contains(GetEntrySetKey(entries, group.Entries)))
-                {
-                    continue;
-                }
-
-                yield return group;
-            }
-        }
-
-        private static string GetEntrySetKey(List<BibtexEntry> entries, IEnumerable<BibtexEntry> group)
-        {
-            return string.Join(',', group
-                .Select(entry => entries.IndexOf(entry))
-                .Where(index => index >= 0)
-                .OrderBy(index => index));
-        }
     }
 }
