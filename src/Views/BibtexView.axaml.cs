@@ -51,6 +51,8 @@ public partial class BibtexView : UserControl
         changingInside = true;
         DataGridView.SelectAll();
         changingInside = false;
+        viewModel.SetSelectedItems(DataGridView.SelectedItems.Cast<BibtexEntry>());
+        UpdateSelectAllState();
     }
 
     private void FocusEntry(BibtexEntry entry)
@@ -61,6 +63,7 @@ public partial class BibtexView : UserControl
             DataGridView.SelectedItem = entry;
             changingInside = false;
             viewModel.SetSelectedItems([entry]);
+            UpdateSelectAllState();
             ShowDetail();
             DataGridView.ScrollIntoView(entry, null);
         });
@@ -139,7 +142,55 @@ public partial class BibtexView : UserControl
             }
             ShowDetail();
             viewModel.SetSelectedItems(grid.SelectedItems.Cast<BibtexEntry>());
+            UpdateSelectAllState();
         }
+    }
+
+    private void SelectAllCheckBox_Click(object? sender, RoutedEventArgs e)
+    {
+        if (changingInside) { return; }
+
+        if (SelectAllCheckBox.IsChecked == true)
+        {
+            changingInside = true;
+            DataGridView.SelectAll();
+            changingInside = false;
+            viewModel.SetSelectedItems(DataGridView.SelectedItems.Cast<BibtexEntry>());
+            UpdateSelectAllState();
+        }
+        else
+        {
+            changingInside = true;
+            DataGridView.SelectedItems.Clear();
+            changingInside = false;
+            viewModel.SetSelectedItems([]);
+            UpdateSelectAllState();
+        }
+    }
+
+    private void UpdateSelectAllState()
+    {
+        if (viewModel == null)
+        {
+            return;
+        }
+
+        int itemCount = viewModel.BibtexView.Count;
+        int selectedCount = DataGridView.SelectedItems.Count;
+        bool? isChecked = selectedCount == 0 || itemCount == 0
+            ? false
+            : selectedCount >= itemCount
+                ? true
+                : null;
+
+        if (SelectAllCheckBox.IsChecked == isChecked)
+        {
+            return;
+        }
+
+        changingInside = true;
+        SelectAllCheckBox.IsChecked = isChecked;
+        changingInside = false;
     }
 
     private void CheckExternalChanges()

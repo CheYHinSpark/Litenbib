@@ -186,7 +186,7 @@
         <Setter Property="MaxWidth" Value="20" />
         <Setter Property="Background" Value="{DynamicResource InputBackground}" />
         <Setter Property="Foreground" Value="{DynamicResource MainForeground}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource MainForeground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource MainBorder}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="4" />
         <Setter Property="Template">
@@ -196,11 +196,15 @@
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{TemplateBinding CornerRadius}">
+                    <Border.Transitions>
+                        <Transitions>
+                            <BrushTransition Property="BorderBrush" Duration="0:0:0.15"/>
+                        </Transitions>
+                    </Border.Transitions>
                     <Viewbox UseLayoutRounding="False"
                              Width="15" Height="15">
-                            <Path x:Name="CheckGlyph"
+                            <Path x:Name="CheckGlyph" StrokeThickness="0"
                                   Opacity="0"
-                                  Fill="{DynamicResource ThemeBorder}"
                                   Stretch="Uniform"
                                   VerticalAlignment="Center"
                                   FlowDirection="LeftToRight" />
@@ -211,41 +215,45 @@
         
         <!-- Unchecked PointerOver State -->
         <Style Selector="^:pointerover">
-            <Setter Property="Background" Value="{DynamicResource MainHighlight}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorder}"/>
         </Style>
 
         <!-- Unchecked Disabled state -->
         <Style Selector="^:disabled">
             <Setter Property="Foreground" Value="{DynamicResource DisabledForeground}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource DisabledForeground}"/>
         </Style>
 
         <Style Selector="^:checked">
             <!-- Checked Normal State -->
-            <Setter Property="Background" Value="{DynamicResource ThemeBackground}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorder}" />
             <Setter Property="BorderThickness" Value="2"/>
             <Style Selector="^ /template/ Path#CheckGlyph">
                 <Setter Property="Data" Value="{StaticResource CheckMarkPathData}" />
+                <Setter Property="Fill" Value="{DynamicResource ThemeBorder}"/>
                 <Setter Property="Opacity" Value="1" />
             </Style>
 
             <!-- Checked PointerOver State -->
             <Style Selector="^:pointerover">
-                <Setter Property="Background" Value="{DynamicResource ThemeHighlight}" />
+                <Setter Property="Background" Value="{DynamicResource MainHighlight}" />
             </Style>
         </Style>
 
         <Style Selector="^:indeterminate">
             <!-- Indeterminate Normal State -->
-            <Setter Property="Background" Value="{DynamicResource ThemeBackground}" />
-            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorder}" />
+            <Setter Property="BorderThickness" Value="1"/>
             <Style Selector="^ /template/ Path#CheckGlyph">
-                <Setter Property="Data" Value="M1536 1536v-1024h-1024v1024h1024z" />
-                <Setter Property="Opacity" Value="1" />
+                <Setter Property="Data" Value="M 4,0 A 4,4 0 0 0 0,4 L 0,12
+                A 4,4 0 0 0 4,16 L 12,16 A 4,4, 0 0 0 16,12 L 16,4 A 4,4 0 0 0 12,0 Z" />
+                <Setter Property="Fill" Value="{DynamicResource ThemeBackground}"/>
+                <Setter Property="Opacity" Value="0.5" />
             </Style>
 
             <!-- Indeterminate PointerOver State -->
             <Style Selector="^:pointerover">
-                <Setter Property="Background" Value="{DynamicResource ThemeHighlight}" />
+                <Setter Property="Background" Value="{DynamicResource MainHighlight}" />
             </Style>
         </Style>
     </ControlTheme>

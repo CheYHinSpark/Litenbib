@@ -94,6 +94,7 @@
     <x:String x:Key="Bibtex.Column.Venue">期刊/会议</x:String>
     <x:String x:Key="Bibtex.Column.Year">年份</x:String>
     <x:String x:Key="Bibtex.Entries">条目</x:String>
+    <x:String x:Key="Bibtex.SelectAll">全选</x:String>
     <x:String x:Key="Bibtex.Detail.Citekey">引用键</x:String>
     <x:String x:Key="Bibtex.Section.Required">必填</x:String>
     <x:String x:Key="Bibtex.Section.Optional">可选</x:String>

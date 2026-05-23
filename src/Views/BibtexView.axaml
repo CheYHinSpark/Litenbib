@@ -193,6 +193,16 @@
                 </Border.Styles>
                 <StackPanel Orientation="Horizontal" Height="{DynamicResource HintBarHeight}"
                             VerticalAlignment="Bottom" Spacing="4">
+                    <!--全选按钮-->
+                    <CheckBox x:Name="SelectAllCheckBox"
+                              VerticalAlignment="Center"
+                              IsThreeState="True"
+                              Click="SelectAllCheckBox_Click"/>
+                    <!--全选文字-->
+                    <TextBlock Margin="0 0 8 0"
+                               Text="{DynamicResource Bibtex.SelectAll}"
+                               Opacity="0.8"/>
+
 				    <TextBlock Margin="8 0 0 0" Text="{CompiledBinding BibtexView.Count}"/>
                     <TextBlock Margin="0 0 8 0" Text="{DynamicResource Bibtex.Entries}" Opacity="0.8"/>
                     

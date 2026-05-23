@@ -6,11 +6,11 @@
     <Color x:Key="BarBackgroundColor">#E7F3FF</Color>
     <Color x:Key="InputBackgroundColor">#F9FCFF</Color>
     <Color x:Key="ThemeBackgroundColor">#9CCCFC</Color>
-    <Color x:Key="TextSelectionHighlightColor">#9BE4C4</Color>
+    <Color x:Key="TextSelectionHighlightColor">#9CE4C6</Color>
     
     <Color x:Key="MainHighlightColor">#CFDBE7</Color>
-    <Color x:Key="ThemeHighlightColor">#C3E1FF</Color>
-    <Color x:Key="WarningHighlightColor">#D24735</Color>
+    <Color x:Key="ThemeHighlightColor">#C9E4FF</Color>
+    <Color x:Key="WarningHighlightColor">#D54836</Color>
 
     <Color x:Key="DisabledForegroundColor">#72787E</Color>
     <Color x:Key="MainForegroundColor">#12181E</Color>
@@ -19,10 +19,10 @@
     <Color x:Key="BarBorderColor">#6699CC</Color>
     <Color x:Key="ThemeBorderColor">#0369CF</Color>
 
-    <Color x:Key="BibtexEntryTypeColor">#006D97</Color>
-    <Color x:Key="BibtexCitationKeyColor">#AF6027</Color>
-    <Color x:Key="BibtexFieldColor">#8C216D</Color>
-    <Color x:Key="BibtexValueColor">#447A37</Color>
-    <Color x:Key="BibtexPunctuationColor">#6B798E</Color>
-	<Color x:Key="BibtexCommentColor">#576470</Color>
+    <Color x:Key="BibtexEntryTypeColor">#006F99</Color>
+    <Color x:Key="BibtexCitationKeyColor">#B16027</Color>
+    <Color x:Key="BibtexFieldColor">#8D216F</Color>
+    <Color x:Key="BibtexValueColor">#457B39</Color>
+    <Color x:Key="BibtexPunctuationColor">#7B8187</Color>
+	<Color x:Key="BibtexCommentColor">#5D6369</Color>
 </ResourceDictionary>

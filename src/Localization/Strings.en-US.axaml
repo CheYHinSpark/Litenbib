@@ -94,6 +94,7 @@
     <x:String x:Key="Bibtex.Column.Venue">Journal/Booktitle</x:String>
     <x:String x:Key="Bibtex.Column.Year">Year</x:String>
     <x:String x:Key="Bibtex.Entries">entries</x:String>
+    <x:String x:Key="Bibtex.SelectAll">Select all</x:String>
     <x:String x:Key="Bibtex.Detail.Citekey">Citekey</x:String>
     <x:String x:Key="Bibtex.Section.Required">Required</x:String>
     <x:String x:Key="Bibtex.Section.Optional">Optional</x:String>
