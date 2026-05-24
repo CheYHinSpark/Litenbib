@@ -7,6 +7,7 @@ using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using Avalonia.Styling;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using Litenbib.Models;
 using Litenbib.ViewModels;
 using System;
@@ -14,12 +15,55 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Litenbib.Views;
 
 public partial class BibtexView : UserControl
 {
-    private bool isColumns = true;
+    private const double RightDetailOpenMinWidth = 500;
+
+    private const double RightDetailOpenMaxWidth = 800;
+
+    private const double BottomDetailOpenMinHeight = 300;
+
+    private const double BottomDetailOpenMaxHeight = 480;
+
+    public static readonly StyledProperty<double> DetailColumnMinWidthProperty =
+        AvaloniaProperty.Register<BibtexView, double>(nameof(DetailColumnMinWidth));
+
+    public static readonly StyledProperty<double> DetailColumnMaxWidthProperty =
+        AvaloniaProperty.Register<BibtexView, double>(nameof(DetailColumnMaxWidth));
+
+    public static readonly StyledProperty<double> DetailRowMinHeightProperty =
+        AvaloniaProperty.Register<BibtexView, double>(nameof(DetailRowMinHeight));
+
+    public static readonly StyledProperty<double> DetailRowMaxHeightProperty =
+        AvaloniaProperty.Register<BibtexView, double>(nameof(DetailRowMaxHeight));
+
+    public double DetailColumnMinWidth
+    {
+        get => GetValue(DetailColumnMinWidthProperty);
+        private set => SetValue(DetailColumnMinWidthProperty, value);
+    }
+
+    public double DetailColumnMaxWidth
+    {
+        get => GetValue(DetailColumnMaxWidthProperty);
+        private set => SetValue(DetailColumnMaxWidthProperty, value);
+    }
+
+    public double DetailRowMinHeight
+    {
+        get => GetValue(DetailRowMinHeightProperty);
+        private set => SetValue(DetailRowMinHeightProperty, value);
+    }
+
+    public double DetailRowMaxHeight
+    {
+        get => GetValue(DetailRowMaxHeightProperty);
+        private set => SetValue(DetailRowMaxHeightProperty, value);
+    }
 
     private bool isDetailShowing = false;
 
@@ -31,7 +75,33 @@ public partial class BibtexView : UserControl
     {
         InitializeComponent();
         SetPopup();
-        AttachedToVisualTree += (_, _) => CheckExternalChanges();
+        ApplyDetailLayout();
+        AttachedToVisualTree += OnAttachedToVisualTree;
+        DetachedFromVisualTree += OnDetachedFromVisualTree;
+    }
+
+    private void OnAttachedToVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
+    {
+        AppSettingsState.SettingsChanged -= AppSettingsState_SettingsChanged;
+        AppSettingsState.SettingsChanged += AppSettingsState_SettingsChanged;
+        ApplyDetailLayout();
+        CheckExternalChanges();
+    }
+
+    private void OnDetachedFromVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
+    {
+        AppSettingsState.SettingsChanged -= AppSettingsState_SettingsChanged;
+    }
+
+    private void AppSettingsState_SettingsChanged(object? sender, EventArgs e)
+    {
+        if (Dispatcher.UIThread.CheckAccess())
+        {
+            ApplyDetailLayout();
+            return;
+        }
+
+        Dispatcher.UIThread.Post(ApplyDetailLayout);
     }
 
     protected override void OnInitialized()
@@ -206,70 +276,26 @@ public partial class BibtexView : UserControl
 
     private void ShowDetail()
     {
-        if (isColumns)
-        {
-            RootGrid.RowDefinitions[2].MinHeight = 0;
-            RootGrid.RowDefinitions[2].MaxHeight = 0;
-            RootGrid.ColumnDefinitions[2].MinWidth = 500;
-            RootGrid.ColumnDefinitions[2].MaxWidth = 800;
-            Grid.SetRow(Splitter, 0);
-            Grid.SetRow(DetailPanel, 0);
-            Grid.SetColumn(Splitter, 1);
-            Grid.SetColumn(DetailPanel, 2);
-            Splitter.Margin = Thickness.Parse("2 8");
-            MainGrid.Margin = Thickness.Parse("8 8 0 8");
-            DetailPanel.CornerRadius = CornerRadius.Parse("8 0 0 0");
-            DetailPanel.BorderThickness = Thickness.Parse("1 1 0 0");
-            DetailPanel.Margin = Thickness.Parse("0 8 0 0");
-            Grid.SetRow(BibtexSection, 2);
-            Grid.SetRowSpan(BibtexSection, 1);
-            Grid.SetColumn(BibtexSection, 1);
-            BibtexSection.CornerRadius = CornerRadius.Parse("8 0 0 0");
-            BibtexSection.BorderThickness = Thickness.Parse("1 1 0 0");
-            BibtexSection.Padding = Thickness.Parse("4 4 14 4");
-            BibtexSection.Margin = Thickness.Parse("0");
-        }
-        else
-        {
-            RootGrid.RowDefinitions[2].MinHeight = 300;
-            RootGrid.RowDefinitions[2].MaxHeight = 480;
-            RootGrid.ColumnDefinitions[2].MinWidth = 0;
-            RootGrid.ColumnDefinitions[2].MaxWidth = 0;
-            Grid.SetRow(Splitter, 1);
-            Grid.SetRow(DetailPanel, 2);
-            Grid.SetColumn(Splitter, 0);
-            Grid.SetColumn(DetailPanel, 0);
-            Splitter.Margin = Thickness.Parse("8 2");
-            MainGrid.Margin = Thickness.Parse("8 8 8 0");
-            DetailPanel.CornerRadius = CornerRadius.Parse("8 8 0 0");
-            DetailPanel.BorderThickness = Thickness.Parse("0 1 0 0");
-            DetailPanel.Margin = Thickness.Parse("0");
-            Grid.SetRow(BibtexSection, 0);
-            Grid.SetRowSpan(BibtexSection, 2);
-            Grid.SetColumn(BibtexSection, 0);
-            BibtexSection.CornerRadius = CornerRadius.Parse("0 8 0 0");
-            BibtexSection.BorderThickness = Thickness.Parse("0 1 1 0");
-            BibtexSection.Padding = Thickness.Parse("4");
-            BibtexSection.Margin = Thickness.Parse("0 0 10 0");
-        }
         isDetailShowing = true;
-        RightPath.IsVisible = isColumns;
-        BottomPath.IsVisible = !isColumns;
+        ApplyDetailLayout();
     }
 
     private void CloseDetail()
     {
-        RootGrid.RowDefinitions[2].MinHeight = 0;
-        RootGrid.RowDefinitions[2].MaxHeight = 0;
-        RootGrid.ColumnDefinitions[2].MinWidth = 0;
-        RootGrid.ColumnDefinitions[2].MaxWidth = 0;
         isDetailShowing = false;
+        ApplyDetailLayout();
     }
 
     private void ChangeButton_Click(object? sender, RoutedEventArgs e)
     {
-        isColumns = !isColumns;
-        ShowDetail();
+        isDetailShowing = true;
+
+        AppSettings settings = AppSettingsState.Current.Copy();
+        settings.BibtexDetailPlacement = IsDetailLayoutRight
+            ? BibtexDetailPlacements.Bottom
+            : BibtexDetailPlacements.Right;
+        AppSettingsState.Apply(settings);
+        _ = SaveLayoutPreferenceAsync();
     }
     private void CloseButton_Click(object? sender, RoutedEventArgs e)
     {
@@ -278,7 +304,7 @@ public partial class BibtexView : UserControl
 
     private void GridSplitter_DragDelta(object? sender, VectorEventArgs e)
     {
-        if (isColumns)
+        if (IsDetailLayoutRight)
         {
             if (isDetailShowing)
             { if (e.Vector.X > 400 * 0.6) { CloseDetail(); } }
@@ -292,5 +318,41 @@ public partial class BibtexView : UserControl
             else
             { if (e.Vector.Y < -200 * 0.6) { ShowDetail(); } }
         }
+    }
+
+    private bool IsDetailLayoutRight =>
+        AppSettingsState.Current.BibtexDetailPlacement == BibtexDetailPlacements.Right;
+
+    private void ApplyDetailLayout()
+    {
+        bool isRight = IsDetailLayoutRight;
+        ApplyDetailPlacementClass(MainGrid, isRight);
+        ApplyDetailPlacementClass(Splitter, isRight);
+        ApplyDetailPlacementClass(DetailPanel, isRight);
+        ApplyDetailPlacementClass(BibtexSection, isRight);
+        ApplyDetailPlacementClass(RightPath, isRight);
+        ApplyDetailPlacementClass(BottomPath, isRight);
+
+        DetailColumnMinWidth = isDetailShowing && isRight ? RightDetailOpenMinWidth : 0;
+        DetailColumnMaxWidth = isDetailShowing && isRight ? RightDetailOpenMaxWidth : 0;
+        DetailRowMinHeight = isDetailShowing && !isRight ? BottomDetailOpenMinHeight : 0;
+        DetailRowMaxHeight = isDetailShowing && !isRight ? BottomDetailOpenMaxHeight : 0;
+    }
+
+    private static void ApplyDetailPlacementClass(StyledElement element, bool isRight)
+    {
+        element.Classes.Set("detail-right", isRight);
+        element.Classes.Set("detail-bottom", !isRight);
+    }
+
+    private async Task SaveLayoutPreferenceAsync()
+    {
+        if (TopLevel.GetTopLevel(this) is not Window window
+            || window.DataContext is not MainWindowViewModel mainWindowViewModel)
+        {
+            return;
+        }
+
+        await mainWindowViewModel.SaveLocalConfig(window);
     }
 }

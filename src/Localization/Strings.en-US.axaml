@@ -29,6 +29,9 @@
     <x:String x:Key="Settings.IndentSpaces">Indent spaces</x:String>
     <x:String x:Key="Settings.UndoRedoMaxSteps">Undo/redo history limit</x:String>
     <x:String x:Key="Settings.EntryTypeCase">Entry type case</x:String>
+    <x:String x:Key="Settings.DetailLayout">Detail panel layout</x:String>
+    <x:String x:Key="Settings.DetailLayout.Right">Right side</x:String>
+    <x:String x:Key="Settings.DetailLayout.Bottom">Bottom</x:String>
     <x:String x:Key="Settings.PdfFilePath">PDF file path</x:String>
     <x:String x:Key="Settings.CitationKeyTemplate">Citation key&#10;     template</x:String>
     <x:String x:Key="Settings.DuplicateSuffix">Duplicate suffix</x:String>

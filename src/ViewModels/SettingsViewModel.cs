@@ -32,11 +32,20 @@ namespace Litenbib.ViewModels
             new(ThemeModes.Light, "Settings.Theme.Light"),
         ];
 
+        public static ObservableCollection<LocalizedOption> BibtexDetailPlacementList { get; } =
+        [
+            new(BibtexDetailPlacements.Right, "Settings.DetailLayout.Right"),
+            new(BibtexDetailPlacements.Bottom, "Settings.DetailLayout.Bottom"),
+        ];
+
         [ObservableProperty]
         private LocalizedOption _selectedLanguage = LocalizationManager.GetLanguageOption(null);
 
         [ObservableProperty]
         private LocalizedOption _selectedThemeMode = GetThemeModeOption(null);
+
+        [ObservableProperty]
+        private LocalizedOption _selectedBibtexDetailPlacement = GetBibtexDetailPlacementOption(null);
 
         [ObservableProperty]
         private bool _restoreLastSessionFiles;
@@ -104,6 +113,7 @@ namespace Litenbib.ViewModels
             AppSettings normalized = AppSettings.Normalize(settings);
             SelectedLanguage = LocalizationManager.GetLanguageOption(normalized.LanguageCode);
             SelectedThemeMode = GetThemeModeOption(normalized.ThemeMode);
+            SelectedBibtexDetailPlacement = GetBibtexDetailPlacementOption(normalized.BibtexDetailPlacement);
             RestoreLastSessionFiles = normalized.RestoreLastSessionFiles;
             RecentFilesLimit = normalized.RecentFilesLimit.ToString();
             OnlineLookupTimeoutSeconds = normalized.OnlineLookupTimeoutSeconds.ToString();
@@ -130,6 +140,12 @@ namespace Litenbib.ViewModels
                 ?? ThemeModeList[0];
         }
 
+        private static LocalizedOption GetBibtexDetailPlacementOption(string? value)
+        {
+            return BibtexDetailPlacementList.FirstOrDefault(option => option.Value == value)
+                ?? BibtexDetailPlacementList[0];
+        }
+
         public AppSettings ToSettings()
         {
             int timeoutSeconds = AppSettingsState.Current.OnlineLookupTimeoutSeconds;
@@ -152,6 +168,7 @@ namespace Litenbib.ViewModels
                 UndoRedoMaxSteps = undoRedoMaxSteps,
                 LanguageCode = SelectedLanguage.Value,
                 ThemeMode = SelectedThemeMode.Value,
+                BibtexDetailPlacement = SelectedBibtexDetailPlacement.Value,
                 RestoreLastSessionFiles = RestoreLastSessionFiles,
                 RecentFilesLimit = recentFilesLimit,
                 EntryTypeCaseStyle = EntryTypeCaseStyle,

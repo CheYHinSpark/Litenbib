@@ -29,6 +29,9 @@
     <x:String x:Key="Settings.IndentSpaces">缩进空格数</x:String>
     <x:String x:Key="Settings.UndoRedoMaxSteps">撤销/重做历史上限</x:String>
     <x:String x:Key="Settings.EntryTypeCase">条目类型大小写</x:String>
+    <x:String x:Key="Settings.DetailLayout">详情面板布局</x:String>
+    <x:String x:Key="Settings.DetailLayout.Right">右侧</x:String>
+    <x:String x:Key="Settings.DetailLayout.Bottom">底部</x:String>
     <x:String x:Key="Settings.PdfFilePath">PDF 文件路径</x:String>
     <x:String x:Key="Settings.CitationKeyTemplate">引用键模板</x:String>
     <x:String x:Key="Settings.DuplicateSuffix">重复后缀</x:String>

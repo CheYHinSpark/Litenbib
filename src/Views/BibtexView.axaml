@@ -44,21 +44,79 @@
             <Setter Property="SelectionEnd" Value="{CompiledBinding SelectionEnd, Mode=OneWayToSource}"/>
             <Setter Property="m:FocusEx.BindTo" Value="{CompiledBinding UndoRedoManager.NewEditedBox, Mode=OneWayToSource}"/>
         </Style>
+        <Style Selector="Grid.detail-main.detail-right">
+            <Setter Property="Margin" Value="8 8 0 8"/>
+        </Style>
+        <Style Selector="Grid.detail-main.detail-bottom">
+            <Setter Property="Margin" Value="8 8 8 0"/>
+        </Style>
+        <Style Selector="GridSplitter.detail-splitter.detail-right">
+            <Setter Property="Grid.Row" Value="0"/>
+            <Setter Property="Grid.Column" Value="1"/>
+            <Setter Property="Margin" Value="2 8"/>
+        </Style>
+        <Style Selector="GridSplitter.detail-splitter.detail-bottom">
+            <Setter Property="Grid.Row" Value="1"/>
+            <Setter Property="Grid.Column" Value="0"/>
+            <Setter Property="Margin" Value="8 2"/>
+        </Style>
+        <Style Selector="Border.detail-panel.detail-right">
+            <Setter Property="Grid.Row" Value="0"/>
+            <Setter Property="Grid.Column" Value="2"/>
+            <Setter Property="CornerRadius" Value="8 0 0 0"/>
+            <Setter Property="BorderThickness" Value="1 1 0 0"/>
+            <Setter Property="Margin" Value="0 8 0 0"/>
+        </Style>
+        <Style Selector="Border.detail-panel.detail-bottom">
+            <Setter Property="Grid.Row" Value="2"/>
+            <Setter Property="Grid.Column" Value="0"/>
+            <Setter Property="CornerRadius" Value="8 8 0 0"/>
+            <Setter Property="BorderThickness" Value="0 1 0 0"/>
+            <Setter Property="Margin" Value="0"/>
+        </Style>
+        <Style Selector="Border.bibtex-section.detail-right">
+            <Setter Property="Grid.Row" Value="2"/>
+            <Setter Property="Grid.RowSpan" Value="1"/>
+            <Setter Property="Grid.Column" Value="1"/>
+            <Setter Property="CornerRadius" Value="8 0 0 0"/>
+            <Setter Property="BorderThickness" Value="1 1 0 0"/>
+            <Setter Property="Padding" Value="4 4 14 4"/>
+            <Setter Property="Margin" Value="0"/>
+        </Style>
+        <Style Selector="Border.bibtex-section.detail-bottom">
+            <Setter Property="Grid.Row" Value="0"/>
+            <Setter Property="Grid.RowSpan" Value="2"/>
+            <Setter Property="Grid.Column" Value="0"/>
+            <Setter Property="CornerRadius" Value="0 8 0 0"/>
+            <Setter Property="BorderThickness" Value="0 1 1 0"/>
+            <Setter Property="Padding" Value="4"/>
+            <Setter Property="Margin" Value="0 0 10 0"/>
+        </Style>
+        <Style Selector="Path.detail-right-icon.detail-bottom">
+            <Setter Property="IsVisible" Value="False"/>
+        </Style>
+        <Style Selector="Path.detail-bottom-icon.detail-right">
+            <Setter Property="IsVisible" Value="False"/>
+        </Style>
     </UserControl.Styles>
 
     <Grid Name="RootGrid" Background="{DynamicResource TabBackground}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="0" MaxWidth="0" MinWidth="0"/>
+            <ColumnDefinition Width="0"
+                              MinWidth="{CompiledBinding #BibtexViewRoot.DetailColumnMinWidth}"
+                              MaxWidth="{CompiledBinding #BibtexViewRoot.DetailColumnMaxWidth}"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="0" MaxHeight="0" MinHeight="0"/>
+            <RowDefinition Height="0"
+                           MinHeight="{CompiledBinding #BibtexViewRoot.DetailRowMinHeight}"
+                           MaxHeight="{CompiledBinding #BibtexViewRoot.DetailRowMaxHeight}"/>
         </Grid.RowDefinitions>
 
-        <Grid Name="MainGrid" RowDefinitions="Auto,*" Margin="8 8 0 8">
+        <Grid Name="MainGrid" Classes="detail-main detail-right" RowDefinitions="Auto,*">
             <Border Grid.Row="1" CornerRadius="0 0 8 8"
                     Background="{DynamicResource PanelBackground}"
                     BorderBrush="{DynamicResource MainBorder}"
@@ -302,12 +360,12 @@
             </Border>
         </Grid>
 
-        <GridSplitter Name="Splitter" Grid.Column="1" Margin="2 8"
+        <GridSplitter Name="Splitter" Classes="detail-splitter detail-right"
                       DragDelta="GridSplitter_DragDelta"/>
         
-        <Border Name="DetailPanel" Background="{DynamicResource PanelBackground}" Grid.Column="2"
-                BorderBrush="{DynamicResource MainBorder}" BorderThickness="1 1 0 0"
-                CornerRadius="8" Padding="-1">
+        <Border Name="DetailPanel" Classes="detail-panel detail-right"
+                Background="{DynamicResource PanelBackground}"
+                BorderBrush="{DynamicResource MainBorder}" Padding="-1">
             <Border.Styles>
                 <Style Selector="TextBlock.right">
                     <Setter Property="Margin" Value="0 0 4 0"/>
@@ -334,9 +392,11 @@
                                     <Grid>
                                         <Path Data="{StaticResource MaximizePath}" StrokeThickness="1"
                                               Stroke="{CompiledBinding $parent[Button].Foreground}"/>
-                                        <Path Name="RightPath" Data="{StaticResource RightLayoutPath}"
+                                        <Path Name="RightPath" Classes="detail-right-icon detail-right"
+                                              Data="{StaticResource RightLayoutPath}"
                                               Fill="{CompiledBinding $parent[Button].Foreground}"/>
-                                        <Path Name="BottomPath" Data="{StaticResource BottomLayoutPath}"
+                                        <Path Name="BottomPath" Classes="detail-bottom-icon detail-right"
+                                              Data="{StaticResource BottomLayoutPath}"
                                               Fill="{CompiledBinding $parent[Button].Foreground}"/>
                                     </Grid>
                                 </Button>
@@ -568,9 +628,10 @@
                     </StackPanel>
                 </ScrollViewer>
 
-				<Border Name="BibtexSection" Padding="4 4 14 4" MaxHeight="480" MaxWidth="800"
-                        BorderBrush="{DynamicResource BarBorder}" BorderThickness="1 1 0 0"
-                        CornerRadius="8 0 0 0" Background="{DynamicResource BarBackground}">
+				<Border Name="BibtexSection" Classes="bibtex-section detail-right"
+                        MaxHeight="480" MaxWidth="800"
+                        BorderBrush="{DynamicResource BarBorder}"
+                        Background="{DynamicResource BarBackground}">
 					<Grid RowDefinitions="Auto,*" ColumnDefinitions="Auto,*">
                         <StackPanel Grid.ColumnSpan="2" Margin="2 2 2 4" Spacing="2"
 								    Orientation="Horizontal" HorizontalAlignment="Center">
@@ -630,11 +691,10 @@
 							</Grid>
 						</Button>
 						<v:BibtexEditor Grid.Column="1" Grid.Row="1"
-										 Text="{CompiledBinding ShowingEntry.BibTeX, Mode=TwoWay}"
-										 SelectionStart="{CompiledBinding SelectionStart, Mode=OneWayToSource}"
-										 SelectionEnd="{CompiledBinding SelectionEnd, Mode=OneWayToSource}"
-										 m:FocusEx.BindTo="{CompiledBinding UndoRedoManager.NewEditedBox, Mode=OneWayToSource}"
-										 MinHeight="180"/>
+										Text="{CompiledBinding ShowingEntry.BibTeX, Mode=TwoWay}"
+										SelectionStart="{CompiledBinding SelectionStart, Mode=OneWayToSource}"
+										SelectionEnd="{CompiledBinding SelectionEnd, Mode=OneWayToSource}"
+										m:FocusEx.BindTo="{CompiledBinding UndoRedoManager.NewEditedBox, Mode=OneWayToSource}"/>
 					</Grid>
 				</Border>
             </Grid>

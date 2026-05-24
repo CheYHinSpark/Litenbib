@@ -173,7 +173,7 @@
                     <StackPanel Spacing="4">
                         <Border>
                             <Grid ColumnDefinitions="Auto,*" Margin="4"
-                                  RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto">
+                                  RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto">
                                 <TextBlock Text="{DynamicResource Settings.BibtexEditing}"
                                            FontWeight="SemiBold" Margin="0 0 0 8"/>
 
@@ -195,9 +195,15 @@
                                                   ItemsSource="{CompiledBinding EntryTypeCaseStyleList}"
                                                   SelectedItem="{CompiledBinding EntryTypeCaseStyle}"/>
 
-                                <TextBlock Text="{DynamicResource Settings.CitationKeyTemplate}" Classes="right"
+                                <TextBlock Text="{DynamicResource Settings.DetailLayout}" Classes="right"
                                            Grid.Row="4"/>
-                                <Grid Grid.Row="4" Grid.Column="1" ColumnDefinitions="*,Auto,Auto"
+                                <local:ExComboBox Grid.Row="4" Grid.Column="1" Margin="0 2"
+                                                  ItemsSource="{CompiledBinding BibtexDetailPlacementList}"
+                                                  SelectedItem="{CompiledBinding SelectedBibtexDetailPlacement}"/>
+
+                                <TextBlock Text="{DynamicResource Settings.CitationKeyTemplate}" Classes="right"
+                                           Grid.Row="5"/>
+                                <Grid Grid.Row="5" Grid.Column="1" ColumnDefinitions="*,Auto,Auto"
                                       RowDefinitions="Auto,Auto">
                                     <TextBox Text="{CompiledBinding CitationKeyTemplate}"
                                              PlaceholderText="{}{family}{year}{title}"/>
@@ -216,9 +222,9 @@
                                                Opacity="0.65"/>
                                 </Grid>
 
-                                <CheckBox Margin="4" Grid.Row="5" HorizontalAlignment="Right"
+                                <CheckBox Margin="4" Grid.Row="6" HorizontalAlignment="Right"
                                           IsChecked="{CompiledBinding RequireBatchOperationConfirmation}"/>
-                                <TextBlock Grid.Row="5" Grid.Column="1"
+                                <TextBlock Grid.Row="6" Grid.Column="1"
                                            Text="{DynamicResource Settings.ConfirmBatchOperations}"
                                            Margin="4 0" VerticalAlignment="Center"/>
                             </Grid>

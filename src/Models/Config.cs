@@ -64,6 +64,8 @@ namespace Litenbib.Models
 
         public const int DefaultUndoRedoMaxSteps = 100;
 
+        public const string DefaultBibtexDetailPlacement = BibtexDetailPlacements.Right;
+
         private static readonly Regex CitationKeyTemplateTokenRegex = new(@"\{([^{}]+)\}", RegexOptions.Compiled);
 
         private static readonly Regex CitationKeyDuplicateSuffixRegex = new(@"^[A-Za-z0-9:_-]*(?:1|a)$", RegexOptions.Compiled);
@@ -116,6 +118,8 @@ namespace Litenbib.Models
 
         public bool UseAiPdfImportFallback { get; set; }
 
+        public string BibtexDetailPlacement { get; set; } = DefaultBibtexDetailPlacement;
+
         public AppSettings Copy()
         {
             return new AppSettings
@@ -140,6 +144,7 @@ namespace Litenbib.Models
                 AiApiKey = AiApiKey,
                 AiModelName = AiModelName,
                 UseAiPdfImportFallback = UseAiPdfImportFallback,
+                BibtexDetailPlacement = BibtexDetailPlacement,
             };
         }
 
@@ -174,6 +179,9 @@ namespace Litenbib.Models
                 AiApiKey = settings.AiApiKey?.Trim() ?? string.Empty,
                 AiModelName = settings.AiModelName?.Trim() ?? string.Empty,
                 UseAiPdfImportFallback = settings.UseAiPdfImportFallback,
+                BibtexDetailPlacement = BibtexDetailPlacements.IsSupported(settings.BibtexDetailPlacement)
+                    ? settings.BibtexDetailPlacement
+                    : DefaultBibtexDetailPlacement,
             };
         }
 
@@ -256,13 +264,27 @@ namespace Litenbib.Models
         }
     }
 
+    public static class BibtexDetailPlacements
+    {
+        public const string Right = "right";
+        public const string Bottom = "bottom";
+
+        public static bool IsSupported(string? value)
+        {
+            return value == Right || value == Bottom;
+        }
+    }
+
     public static class AppSettingsState
     {
         public static AppSettings Current { get; private set; } = new();
 
+        public static event EventHandler? SettingsChanged;
+
         public static void Apply(AppSettings? settings)
         {
             Current = AppSettings.Normalize(settings);
+            SettingsChanged?.Invoke(null, EventArgs.Empty);
         }
     }
 }
