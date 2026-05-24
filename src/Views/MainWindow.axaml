@@ -110,14 +110,16 @@
                                   Command="{CompiledBinding OpenFileCommand}"
                                   CommandParameter="{CompiledBinding $parent[Window]}"/>
                         <MenuItem Header="{DynamicResource Main.Menu.OpenRecent}" ItemsSource="{CompiledBinding RecentFiles}">
-                            <MenuItem.ItemTemplate>
-                                <DataTemplate x:DataType="m:RecentFileState">
-                                    <MenuItem Header="{CompiledBinding FileName}"
-                                              ToolTip.Tip="{CompiledBinding FilePath}"
-                                              Command="{CompiledBinding #LitbibMainWindow.DataContext.OpenRecentFileCommand}"
-                                              CommandParameter="{CompiledBinding .}"/>
-                                </DataTemplate>
-                            </MenuItem.ItemTemplate>
+                            <MenuItem.ItemContainerTheme>
+                                <ControlTheme TargetType="MenuItem"
+                                              BasedOn="{StaticResource {x:Type MenuItem}}">
+                                    <Setter Property="Header" Value="{ReflectionBinding FileName}"/>
+                                    <Setter Property="ToolTip.Tip" Value="{ReflectionBinding FilePath}"/>
+                                    <Setter Property="Command"
+                                            Value="{Binding #LitbibMainWindow.DataContext.OpenRecentFileCommand}"/>
+                                    <Setter Property="CommandParameter" Value="{ReflectionBinding .}"/>
+                                </ControlTheme>
+                            </MenuItem.ItemContainerTheme>
                         </MenuItem>
                         <MenuItem Header="{DynamicResource Main.Menu.SaveAs}"
                                   Command="{CompiledBinding SaveFileAsCommand}"

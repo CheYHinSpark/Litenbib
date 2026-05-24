@@ -216,6 +216,35 @@ public partial class BibtexView : UserControl
         }
     }
 
+    private void DataGridView_PointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (!e.GetCurrentPoint(DataGridView).Properties.IsRightButtonPressed)
+        {
+            return;
+        }
+
+        if (e.Source is not Control source
+            || source.FindAncestorOfType<DataGridRow>() is not { DataContext: BibtexEntry entry })
+        {
+            return;
+        }
+
+        bool alreadySelected = DataGridView.SelectedItems.Contains(entry);
+        changingInside = true;
+        if (!alreadySelected)
+        {
+            DataGridView.SelectedItems.Clear();
+            DataGridView.SelectedItems.Add(entry);
+            DataGridView.SelectedItem = entry;
+        }
+        changingInside = false;
+
+        viewModel.ShowingEntry = entry;
+        viewModel.SetSelectedItems(DataGridView.SelectedItems.Cast<BibtexEntry>());
+        UpdateSelectAllState();
+        ShowDetail();
+    }
+
     private void SelectAllCheckBox_Click(object? sender, RoutedEventArgs e)
     {
         if (changingInside) { return; }

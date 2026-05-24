@@ -125,7 +125,8 @@
                       ItemsSource="{CompiledBinding BibtexView}"
                       CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True"
                       SelectedItem="{CompiledBinding ShowingEntry}"
-                      SelectionChanged="DataGrid_SelectionChanged">
+                      SelectionChanged="DataGrid_SelectionChanged"
+                      PointerPressed="DataGridView_PointerPressed">
                 <DataGrid.Columns>
                     <DataGridTemplateColumn Header="{DynamicResource Bibtex.Column.File}" Width="Auto" CanUserResize="False" CanUserSort="False">
                         <DataGridTemplateColumn.CellTemplate>
@@ -133,6 +134,7 @@
                                 <Button Command="{CompiledBinding #BibtexViewRoot.DataContext.ToFileCommand}"
                                         CommandParameter="{CompiledBinding .}"
                                         Classes="link_in_row"
+                                        ToolTip.Tip="{DynamicResource Bibtex.Context.OpenFile}"
                                         IsVisible="{CompiledBinding File, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
                                     <Path Data="{DynamicResource FilePath}" StrokeThickness="1"
                                           Stroke="{CompiledBinding $parent[Button].Foreground}"/>
@@ -143,9 +145,10 @@
                     <DataGridTemplateColumn Header="{DynamicResource Bibtex.Column.Link}" Width="Auto" CanUserResize="False" CanUserSort="False">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate x:DataType="m:BibtexEntry">
-							<Button Command="{CompiledBinding #BibtexViewRoot.DataContext.ToLinkCommand}"
-                                    CommandParameter="{CompiledBinding .}"
-                                    Classes="link_in_row">
+                                <Button Command="{CompiledBinding #BibtexViewRoot.DataContext.ToLinkCommand}"
+                                        CommandParameter="{CompiledBinding .}"
+                                        ToolTip.Tip="{DynamicResource Bibtex.Context.OpenLink}"
+                                        Classes="link_in_row">
                                     <Button.IsVisible>
                                         <MultiBinding Converter="{x:Static BoolConverters.Or}">
                                             <Binding Path="DOI" Converter="{x:Static StringConverters.IsNotNullOrEmpty}"/>
@@ -231,8 +234,58 @@
 						<Setter Property="ContextMenu">
 							<Setter.Value>
 								<ContextMenu>
-									<MenuItem Header="{DynamicResource Main.Tooltip.DeleteEntry}"
-											  Command="{CompiledBinding #BibtexViewRoot.DataContext.DeleteBibtexCommand}"/>
+                                    <MenuItem Header="{DynamicResource Bibtex.Context.CopyCitationKey}"
+                                              Command="{CompiledBinding #BibtexViewRoot.DataContext.CopyCitationKeyCommand}"
+                                              CommandParameter="{CompiledBinding #BibtexViewRoot}"/>
+                                    <MenuItem Header="{DynamicResource Bibtex.Context.CopyBibtex}"
+                                              Command="{CompiledBinding #BibtexViewRoot.DataContext.CopySelectedBibtexTextCommand}"
+                                              CommandParameter="{CompiledBinding #BibtexViewRoot}"/>
+                                    <Separator/>
+                                    <MenuItem Header="{DynamicResource Bibtex.Context.CopyEntries}"
+                                              Command="{CompiledBinding #BibtexViewRoot.DataContext.CopyBibtexCommand}"
+                                              CommandParameter="{CompiledBinding #BibtexViewRoot}"/>
+                                    <MenuItem Header="{DynamicResource Bibtex.Context.CutEntries}"
+                                              Command="{CompiledBinding #BibtexViewRoot.DataContext.CutBibtexCommand}"
+                                              CommandParameter="{CompiledBinding #BibtexViewRoot}"/>
+                                    <MenuItem Header="{DynamicResource Bibtex.Context.PasteEntriesAfter}"
+                                              Command="{CompiledBinding #BibtexViewRoot.DataContext.PasteBibtexCommand}"
+                                              CommandParameter="{CompiledBinding #BibtexViewRoot}"/>
+                                    <Separator/>
+                                    <MenuItem Header="{DynamicResource Bibtex.Context.GenerateCitationKeys}"
+                                              Command="{CompiledBinding #BibtexViewRoot.DataContext.GenerateSelectedCitationKeysCommand}"/>
+                                    <MenuItem Header="{DynamicResource Bibtex.Context.CleanSelected}"
+                                              Command="{CompiledBinding #BibtexViewRoot.DataContext.CleanupSelectedEntriesCommand}"
+                                              CommandParameter="{CompiledBinding #BibtexViewRoot}"/>
+                                    <MenuItem Header="{DynamicResource Bibtex.Context.DeleteFields}"
+                                              Command="{CompiledBinding #BibtexViewRoot.DataContext.ApplyBatchFieldDeleteCommand}"
+                                              CommandParameter="{CompiledBinding #BibtexViewRoot}"/>
+                                    <MenuItem Header="{DynamicResource Bibtex.Context.NormalizeVenues}"
+                                              Command="{CompiledBinding #BibtexViewRoot.DataContext.NormalizeSelectedVenueNamesCommand}"
+                                              CommandParameter="{CompiledBinding #BibtexViewRoot}"/>
+                                    <Separator/>
+                                    <MenuItem Header="{DynamicResource Bibtex.Context.MergeEntries}"
+                                              Command="{CompiledBinding #BibtexViewRoot.DataContext.MergeEntriesCommand}"
+                                              CommandParameter="{CompiledBinding #BibtexViewRoot}"/>
+                                    <MenuItem Header="{DynamicResource Bibtex.Context.FindMetadata}">
+                                        <MenuItem Header="{DynamicResource Bibtex.Context.FindByDoi}"
+                                                  Command="{CompiledBinding #BibtexViewRoot.DataContext.FindMergeByDoiCommand}"
+                                                  CommandParameter="{CompiledBinding #BibtexViewRoot}"/>
+                                        <MenuItem Header="{DynamicResource Bibtex.Context.FindByDblp}"
+                                                  Command="{CompiledBinding #BibtexViewRoot.DataContext.FindMergeByDblpCommand}"
+                                                  CommandParameter="{CompiledBinding #BibtexViewRoot}"/>
+                                        <MenuItem Header="{DynamicResource Bibtex.Context.FindByCrossref}"
+                                                  Command="{CompiledBinding #BibtexViewRoot.DataContext.FindMergeByCrossrefCommand}"
+                                                  CommandParameter="{CompiledBinding #BibtexViewRoot}"/>
+                                        <MenuItem Header="{DynamicResource Bibtex.Context.FindByTitle}"
+                                                  Command="{CompiledBinding #BibtexViewRoot.DataContext.FindMergeByTitleCommand}"
+                                                  CommandParameter="{CompiledBinding #BibtexViewRoot}"/>
+                                        <MenuItem Header="{DynamicResource Bibtex.Context.FindBest}"
+                                                  Command="{CompiledBinding #BibtexViewRoot.DataContext.GetDblpFromDoiCommand}"
+                                                  CommandParameter="{CompiledBinding #BibtexViewRoot}"/>
+                                    </MenuItem>
+                                    <Separator/>
+                                    <MenuItem Header="{DynamicResource Bibtex.Context.DeleteEntries}"
+                                              Command="{CompiledBinding #BibtexViewRoot.DataContext.DeleteBibtexCommand}"/>
 								</ContextMenu>
 							</Setter.Value>
 						</Setter>
@@ -604,6 +657,7 @@
 											 Text="{CompiledBinding ShowingEntry.File}"/>
                                     <Button Grid.Column="2" Margin="2 0 0 0"
                                             HorizontalAlignment="Center" VerticalAlignment="Center"
+                                            ToolTip.Tip="{DynamicResource Bibtex.Context.OpenFolder}"
                                             Command="{CompiledBinding ToFolderCommand}"
                                             CommandParameter="{CompiledBinding ShowingEntry}">
                                         <Path Data="{StaticResource FolderPath}" StrokeThickness="1"

@@ -96,6 +96,70 @@ namespace Litenbib.ViewModels
             SelectedIndexItems = [];
             foreach (var e in entries)
             { SelectedIndexItems.Add((BibtexEntries.IndexOf(e), e)); }
+            NotifySelectedEntryCommandsCanExecuteChanged();
+        }
+
+        private bool HasSelectedEntries()
+        { return SelectedIndexItems is { Count: > 0 }; }
+
+        private bool CanMergeSelectedEntries()
+        { return SelectedIndexItems is { Count: >= 2 }; }
+
+        private List<BibtexEntry> GetSelectedEntriesInOrder()
+        {
+            return SelectedIndexItems?
+                .Where(item => item.Item1 >= 0)
+                .OrderBy(item => item.Item1)
+                .Select(item => item.Item2)
+                .ToList() ?? [];
+        }
+
+        private void NotifySelectedEntryCommandsCanExecuteChanged()
+        {
+            CopyBibtexCommand.NotifyCanExecuteChanged();
+            CutBibtexCommand.NotifyCanExecuteChanged();
+            CopySelectedBibtexTextCommand.NotifyCanExecuteChanged();
+            ApplyBatchFieldDeleteCommand.NotifyCanExecuteChanged();
+            NormalizeSelectedVenueNamesCommand.NotifyCanExecuteChanged();
+            CleanupSelectedEntriesCommand.NotifyCanExecuteChanged();
+            GenerateSelectedCitationKeysCommand.NotifyCanExecuteChanged();
+            MergeEntriesCommand.NotifyCanExecuteChanged();
+        }
+
+        private static bool TryGetWindow(object? sender, out Window window)
+        {
+            if (sender is Window directWindow)
+            {
+                window = directWindow;
+                return true;
+            }
+
+            if (sender is Control control && TopLevel.GetTopLevel(control) is Window controlWindow)
+            {
+                window = controlWindow;
+                return true;
+            }
+
+            window = null!;
+            return false;
+        }
+
+        private static bool TryGetMainWindowViewModel(object? sender, out MainWindowViewModel mainWindowViewModel)
+        {
+            if (sender is MainWindowViewModel directViewModel)
+            {
+                mainWindowViewModel = directViewModel;
+                return true;
+            }
+
+            if (TryGetWindow(sender, out Window window) && window.DataContext is MainWindowViewModel windowViewModel)
+            {
+                mainWindowViewModel = windowViewModel;
+                return true;
+            }
+
+            mainWindowViewModel = null!;
+            return false;
         }
 
         private string[] filters = [];
@@ -830,18 +894,28 @@ namespace Litenbib.ViewModels
             IsChecking = false;
         }
 
-        [RelayCommand(CanExecute = nameof(CanCopyPasteCutBibtex))]
+        [RelayCommand(CanExecute = nameof(CanCopySelectedBibtexEntries))]
         private async Task CopyBibtex(object? sender)
         {
-            if (SelectedIndexItems != null && sender is MainWindowViewModel mwvm)
-            { await mwvm.CopyBibtexEntries(SelectedIndexItems.Select(t => t.Item2)); }
+            if (!TryGetMainWindowViewModel(sender, out MainWindowViewModel mwvm)) { return; }
+
+            List<BibtexEntry> selectedEntries = GetSelectedEntriesInOrder();
+            if (selectedEntries.Count == 0) { return; }
+
+            await mwvm.CopyBibtexEntries(selectedEntries);
+            ShowStatus(I18n.Format("Message.CopiedSelectedEntries", selectedEntries.Count));
         }
 
         [RelayCommand(CanExecute = nameof(CanCopyPasteCutBibtex))]
         private void PasteBibtex(object? sender)
         {
-            if (sender is not MainWindowViewModel mwvm)
-            { return; }
+            if (!TryGetMainWindowViewModel(sender, out MainWindowViewModel mwvm)) { return; }
+            if (mwvm.CopiedBibtex.Count == 0)
+            {
+                ShowStatus(I18n.Get("Message.NoCopiedEntries"));
+                return;
+            }
+
             int c = ShowingEntry != null ? BibtexEntries.IndexOf(ShowingEntry) + 1 : BibtexEntries.Count;
             List<(int, BibtexEntry)> index_entries = [];
             foreach (var entry in mwvm.CopiedBibtex)
@@ -849,23 +923,46 @@ namespace Litenbib.ViewModels
                 BibtexEntry e = BibtexEntry.CopyFrom(entry);
                 index_entries.Add((c, e));
                 BibtexEntries.Insert(c, e);
+                e.UndoRedoPropertyChanged += OnEntryPropertyChanged;
                 c++;
             }
             UndoRedoManager.AddAction(new AddEntriesAction(BibtexEntries, index_entries));
             NotifyCanUndoRedo();
+            ShowStatus(I18n.Format("Message.PastedEntries", index_entries.Count));
         }
 
-        [RelayCommand(CanExecute = nameof(CanCopyPasteCutBibtex))]
+        [RelayCommand(CanExecute = nameof(CanCopySelectedBibtexEntries))]
         private void CutBibtex(object? sender)
         {
-            if (SelectedIndexItems != null && sender is MainWindowViewModel mwvm)
-            {
-                mwvm.CopiedBibtex = [.. SelectedIndexItems.Select(t => BibtexEntry.CopyFrom(t.Item2))];
-                Delete();
-            }
+            if (!TryGetMainWindowViewModel(sender, out MainWindowViewModel mwvm)) { return; }
+
+            List<BibtexEntry> selectedEntries = GetSelectedEntriesInOrder();
+            if (selectedEntries.Count == 0) { return; }
+
+            mwvm.CopiedBibtex = [.. selectedEntries.Select(BibtexEntry.CopyFrom)];
+            Delete();
+            ShowStatus(I18n.Format("Message.CutSelectedEntries", selectedEntries.Count));
         }
 
         private bool CanCopyPasteCutBibtex() => !(IsFiltering || UndoRedoManager.NewEditedBox != null);
+
+        private bool CanCopySelectedBibtexEntries()
+        { return CanCopyPasteCutBibtex() && HasSelectedEntries(); }
+
+        [RelayCommand(CanExecute = nameof(HasSelectedEntries))]
+        private async Task CopySelectedBibtexText(object? o)
+        {
+            List<BibtexEntry> selectedEntries = GetSelectedEntriesInOrder();
+            if (selectedEntries.Count == 0) { return; }
+
+            string text = string.Join(
+                Environment.NewLine,
+                selectedEntries.Select(entry => entry.BibTeX.TrimEnd()));
+            await CopyToClipboardAsync(
+                o,
+                text,
+                I18n.Format("Message.CopiedSelectedBibtexToClipboard", selectedEntries.Count));
+        }
 
         [RelayCommand]
         private async Task GetDblpFromDoi(object? sender)
@@ -899,7 +996,7 @@ namespace Litenbib.ViewModels
 
         private async Task OpenMergeCandidatesDialog(object? sender, MergeSearchSource source)
         {
-            if (ShowingEntry == null || sender is not MainWindow window) { return; }
+            if (ShowingEntry == null || !TryGetWindow(sender, out Window window)) { return; }
             var targetEntry = ShowingEntry;
             string sourceName = source switch
             {
@@ -939,10 +1036,10 @@ namespace Litenbib.ViewModels
             }
         }
 
-        [RelayCommand]
+        [RelayCommand(CanExecute = nameof(CanMergeSelectedEntries))]
         private async Task MergeEntries(object? sender)
         {
-            if (sender is not MainWindow window) { return; }
+            if (!TryGetWindow(sender, out Window window)) { return; }
             if (SelectedIndexItems == null || SelectedIndexItems.Count < 2) { return; }
             var list = SelectedIndexItems.Select(t => t.Item2).ToList();
             CompareEntryView dialog = new(list);
@@ -1019,10 +1116,10 @@ namespace Litenbib.ViewModels
             return true;
         }
 
-        [RelayCommand]
+        [RelayCommand(CanExecute = nameof(HasSelectedEntries))]
         private async Task ApplyBatchFieldDelete(object? sender)
         {
-            if (sender is not MainWindow window || SelectedIndexItems == null || SelectedIndexItems.Count == 0) { return; }
+            if (!TryGetWindow(sender, out Window window) || SelectedIndexItems == null || SelectedIndexItems.Count == 0) { return; }
             var selectedEntries = SelectedIndexItems.Select(t => t.Item2).ToList();
             BatchFieldDeleteViewModel batchFieldDeleteViewModel = new();
             TaskDialogView dialog = new(batchFieldDeleteViewModel);
@@ -1069,10 +1166,10 @@ namespace Litenbib.ViewModels
                 : I18n.Format("Message.DeletedFieldValues", changes.Count, selectedEntries.Count));
         }
 
-        [RelayCommand]
+        [RelayCommand(CanExecute = nameof(HasSelectedEntries))]
         private async Task NormalizeSelectedVenueNames(object? sender)
         {
-            if (sender is not MainWindow window || SelectedIndexItems == null || SelectedIndexItems.Count == 0) { return; }
+            if (!TryGetWindow(sender, out Window window) || SelectedIndexItems == null || SelectedIndexItems.Count == 0) { return; }
             var selectedEntries = SelectedIndexItems
                 .OrderBy(item => item.Item1)
                 .Select(item => item.Item2)
@@ -1095,10 +1192,10 @@ namespace Litenbib.ViewModels
             ShowStatus(I18n.Format("Message.UpdatedVenueNames", changes.Count));
         }
 
-        [RelayCommand]
+        [RelayCommand(CanExecute = nameof(HasSelectedEntries))]
         private async Task CleanupSelectedEntries(object? sender)
         {
-            if (sender is not Window window || SelectedIndexItems == null || SelectedIndexItems.Count == 0) { return; }
+            if (!TryGetWindow(sender, out Window window) || SelectedIndexItems == null || SelectedIndexItems.Count == 0) { return; }
 
             var selectedEntries = SelectedIndexItems
                 .OrderBy(item => item.Item1)
@@ -1125,7 +1222,7 @@ namespace Litenbib.ViewModels
             ShowStatus(I18n.Format("Message.CleanedSelectedEntries", selectedEntries.Count));
         }
 
-        [RelayCommand]
+        [RelayCommand(CanExecute = nameof(HasSelectedEntries))]
         private async Task GenerateSelectedCitationKeys()
         {
             if (SelectedIndexItems == null || SelectedIndexItems.Count == 0) { return; }
@@ -1177,9 +1274,9 @@ namespace Litenbib.ViewModels
         private void ToShowingLink(string s)
         {
             if (ShowingEntry == null) { return; }
-            if (s == "DOI")
+            if (s == "DOI" && !string.IsNullOrWhiteSpace(ShowingEntry.DOI))
             { UriProcessor.StartProcess("https://doi.org/" + ShowingEntry.DOI); }
-            else if (s == "Url")
+            else if (s == "Url" && !string.IsNullOrWhiteSpace(ShowingEntry.Url))
             { UriProcessor.StartProcess(ShowingEntry.Url); }
         }
 
@@ -1187,7 +1284,16 @@ namespace Litenbib.ViewModels
         private static void ToLink(object o)
         {
             if (o is not BibtexEntry entry) { return; }
-            UriProcessor.StartProcess(entry.DOI == "" ? entry.Url : "https://doi.org/" + entry.DOI);
+            if (!string.IsNullOrWhiteSpace(entry.DOI))
+            {
+                UriProcessor.StartProcess("https://doi.org/" + entry.DOI);
+                return;
+            }
+
+            if (!string.IsNullOrWhiteSpace(entry.Url))
+            {
+                UriProcessor.StartProcess(entry.Url);
+            }
         }
 
         [RelayCommand]
@@ -1226,7 +1332,7 @@ namespace Litenbib.ViewModels
 
         private async Task CopyToClipboardAsync(object? o, string? text, string successMessage)
         {
-            if (o is not Window window || window.Clipboard is not IClipboard clipboard)
+            if (!TryGetWindow(o, out Window window) || window.Clipboard is not IClipboard clipboard)
             {
                 ShowStatus(I18n.Get("Message.ClipboardUnavailable"));
                 return;

@@ -115,8 +115,7 @@
 
 
     <Thickness x:Key="ComboBoxDropdownContentMargin">3</Thickness>
-    <Thickness x:Key="MenuFlyoutItemThemePaddingNarrow">6</Thickness>
-    <Thickness x:Key="MenuFlyoutPresenterThemePadding">6</Thickness>
+    <Thickness x:Key="MenuFlyoutPresenterThemePadding">4 2</Thickness>
     <Thickness x:Key="TabControlTopPlacementItemMargin">0</Thickness>
 
     <CornerRadius x:Key="OverlayCornerRadius">8</CornerRadius>

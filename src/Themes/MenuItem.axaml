@@ -16,8 +16,7 @@
 	<ControlTheme x:Key="{x:Type MenuItem}" TargetType="MenuItem">
 		<Setter Property="Background" Value="{DynamicResource InputBackground}" />
 		<Setter Property="Foreground" Value="{DynamicResource MainForeground}" />
-		<!--  Narrow padding should be used for mouse input, when non-narrow one should be used for touch input in future.  -->
-		<Setter Property="Padding" Value="{DynamicResource MenuFlyoutItemThemePaddingNarrow}" />
+		<Setter Property="Padding" Value="4" />
 		<Setter Property="Template">
 			<ControlTemplate>
 				<Panel>
@@ -97,7 +96,7 @@
 						<Border Background="{DynamicResource MenuFlyoutPresenterBackground}"
 								BorderBrush="{DynamicResource MenuFlyoutPresenterBorderBrush}"
 								BorderThickness="1"
-								Padding="8 2"
+								Padding="4 2"
 								MaxWidth="{DynamicResource FlyoutThemeMaxWidth}"
 								MinHeight="{DynamicResource MenuFlyoutThemeMinHeight}"
 								HorizontalAlignment="Stretch"
@@ -182,7 +181,6 @@
 	<ControlTheme x:Key="FluentTopLevelMenuItem" TargetType="MenuItem">
 		<Setter Property="Background" Value="{DynamicResource MainBackground}" />
 		<Setter Property="Foreground" Value="{DynamicResource MainForeground}" />
-		<!--  Narrow padding should be used for mouse input, when non-narrow one should be used for touch input in future.  -->
 		<Setter Property="Padding" Value="{DynamicResource MenuBarItemPadding}" />
 		<Setter Property="Template">
 			<ControlTemplate>
@@ -237,7 +235,7 @@
 							<Border Background="{DynamicResource InputBackground}"
 									BorderBrush="{DynamicResource MainBorder}"
 									BorderThickness="1"
-									Padding="8 2"
+									Padding="4 2"
 									MaxWidth="{DynamicResource FlyoutThemeMaxWidth}"
 									MinHeight="{DynamicResource MenuFlyoutThemeMinHeight}"
 									HorizontalAlignment="Stretch"
