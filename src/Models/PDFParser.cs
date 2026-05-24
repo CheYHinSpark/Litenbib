@@ -16,20 +16,13 @@ namespace Litenbib.Models
         public string RawText { get; set; } = string.Empty;
     }
 
-    public class PdfImportResult
+    public class PdfImportResult(string pdfFilePath, ExtractedMetadata metadata)
     {
-        public PdfImportResult(string pdfFilePath, ExtractedMetadata metadata)
-        {
-            PdfFilePath = pdfFilePath;
-            Metadata = metadata;
-            LookupQuery = CreateLookupQuery(metadata);
-        }
+        public string PdfFilePath { get; } = pdfFilePath;
 
-        public string PdfFilePath { get; }
+        public ExtractedMetadata Metadata { get; } = metadata;
 
-        public ExtractedMetadata Metadata { get; }
-
-        public string LookupQuery { get; }
+        public string LookupQuery { get; } = CreateLookupQuery(metadata);
 
         public string RawText => Metadata.RawText;
 

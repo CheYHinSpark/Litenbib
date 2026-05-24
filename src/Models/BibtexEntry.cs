@@ -166,14 +166,6 @@ namespace Litenbib.Models
             Debug.WriteLine("Changing " + propertyName);
         }
 
-        private int MaxFieldLength()
-        {
-            int maxFieldLength = 0;
-            foreach (var k in Fields.Keys)
-            { maxFieldLength = Math.Max(maxFieldLength, k.Length); }
-            return maxFieldLength;
-        }
-
         // 如果不是直接更新BibTeX，表示从其他属性修改的。不触发BibTeX的Undo
         public void UpdateBibtex(string? newBibtex = null, bool isSilent = false)
         {
@@ -196,7 +188,10 @@ namespace Litenbib.Models
 
         public string BuildBibtex(bool formatAuthor = false, int authorFormat = 0, int maxAuthors = -1, string ending = "")
         {
-            int maxFieldLength = MaxFieldLength();
+            int maxFieldLength = 0;
+            foreach (var k in Fields.Keys)
+            { maxFieldLength = Math.Max(maxFieldLength, k.Length); }
+            
             string indent = new(' ', AppSettingsState.Current.FieldIndentSpaces);
             StringBuilder builder = new();
             builder.Append('@').Append(FormatEntryType(entryType)).Append('{').Append(citationKey).Append(",\n");

@@ -67,12 +67,6 @@ namespace Litenbib.Models
             return await client.GetAsync(url, cts.Token);
         }
 
-        public static async Task<string> GetBibTeXAsync(string input)
-        {
-            var result = await ResolveAsync(input, maxCandidates: 1);
-            return result.Candidates.FirstOrDefault()?.BibTeX ?? string.Empty;
-        }
-
         public static async Task<BibliographyResolveResult> ResolveAsync(string input, int maxCandidates = 5)
         {
             BibliographyResolveResult result = new();
@@ -129,11 +123,6 @@ namespace Litenbib.Models
                 .Where(c => c.Entry != null)
                 .Select(c => BibtexEntry.CopyFrom(c.Entry!))
                 .ToList();
-        }
-
-        public static async Task<List<BibtexEntry>> SearchMergeCandidatesAsync(BibtexEntry entry, int maxCandidates = 8)
-        {
-            return await SearchMergeCandidatesAsync(entry, MergeSearchSource.Super, maxCandidates);
         }
 
         public static async Task<List<BibtexEntry>> SearchMergeCandidatesAsync(BibtexEntry entry, MergeSearchSource source, int maxCandidates = 8)

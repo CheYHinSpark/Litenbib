@@ -654,13 +654,9 @@ namespace Litenbib.ViewModels
             }
         }
 
-        public async Task<bool> SaveCurrentAsync()
+        public async Task<bool> SaveBibtexToPath(string? targetPath = null)
         {
-            return await SaveBibtexToPath(FullPath);
-        }
-
-        private async Task<bool> SaveBibtexToPath(string targetPath)
-        {
+            targetPath ??= FullPath;
             if (!TryGetValidatedSavePath(targetPath, out string validatedPath, out string errorMessage))
             {
                 NotificationCenter.Error(errorMessage);
@@ -746,7 +742,7 @@ namespace Litenbib.ViewModels
         [RelayCommand(CanExecute = nameof(Edited))]
         private async Task SaveBibtex()
         {
-            await SaveCurrentAsync();
+            await SaveBibtexToPath();
         }
 
         [RelayCommand(CanExecute = nameof(CanUndo))]

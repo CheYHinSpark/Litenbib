@@ -473,7 +473,7 @@ namespace Litenbib.ViewModels
 
             if (result == ButtonResult.Yes)
             {
-                return await tab.SaveCurrentAsync();
+                return await tab.SaveBibtexToPath();
             }
 
             return true;
@@ -719,7 +719,7 @@ namespace Litenbib.ViewModels
             {
                 if (item.Edited)
                 {
-                    if (!await item.SaveCurrentAsync())
+                    if (!await item.SaveBibtexToPath())
                     {
                         return false;
                     }

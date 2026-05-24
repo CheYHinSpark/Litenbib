@@ -153,13 +153,9 @@ namespace Litenbib.Models
             while (_undoList.Count > maxSteps)
             {
                 _undoList.RemoveFirst();
-                if (savedStep > 0)
+                if (savedStep >= 0)
                 {
                     --savedStep;
-                }
-                else if (savedStep == 0)
-                {
-                    savedStep = -1;
                 }
             }
         }

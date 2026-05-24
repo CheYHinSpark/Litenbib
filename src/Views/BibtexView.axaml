@@ -243,7 +243,8 @@
                     </Button>
                     <Button Command="{CompiledBinding AddBibtexEntryCommand}"
                             CommandParameter="{CompiledBinding $parent[Window]}"
-                            ToolTip.Tip="{DynamicResource Bibtex.Tooltip.AddEntry}">
+                            ToolTip.Tip="{DynamicResource Bibtex.Tooltip.AddEntry}"
+                            Foreground="{DynamicResource ThemeBorder}">
                         <Path Data="{StaticResource AddPath}"
                               Fill="{CompiledBinding $parent[Button].Foreground}"/>
                     </Button>

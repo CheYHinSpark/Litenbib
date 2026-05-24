@@ -34,6 +34,7 @@ namespace Litenbib.Models
         public WarningErrorClass Class = _class;
         public string FieldName = _field;
 
+        // 绑定用
         public int WarningClass { get => (int)Class; }
 
         public string HintString
