@@ -1,26 +1,21 @@
-<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:vm="using:Litenbib.ViewModels"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d"
-        Width="800" Height="560"
-        WindowStartupLocation="CenterOwner"
-        x:Class="Litenbib.Views.VenueNameNormalizationView"
-        x:DataType="vm:VenueNameNormalizationViewModel"
-        Title="{DynamicResource VenueNormalize.Title}">
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:vm="using:Litenbib.ViewModels"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="Litenbib.Views.VenueNameNormalizationView"
+             x:DataType="vm:VenueNameNormalizationViewModel">
     <Design.DataContext>
         <vm:VenueNameNormalizationViewModel/>
     </Design.DataContext>
 
-    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto" Margin="12">
-        <TextBlock Text="{DynamicResource VenueNormalize.Heading}" FontSize="18" FontWeight="SemiBold"/>
-        
-        <TextBlock Grid.Row="1" Margin="0 4"
+    <Grid RowDefinitions="Auto,Auto,*">
+        <TextBlock Margin="0 0 0 4"
                    VerticalAlignment="Center"
                    Text="{CompiledBinding StatusMessage}"/>
 
-        <Grid Grid.Row="2" ColumnDefinitions="Auto,Auto" Margin="0 8"
+        <Grid Grid.Row="1" ColumnDefinitions="Auto,Auto" Margin="0 4 0 8"
               HorizontalAlignment="Right">
             <Button Height="28" Margin="4" Padding="2"
                     Command="{CompiledBinding ExpandVenuesCommand}"
@@ -34,7 +29,7 @@
             </Button>
         </Grid>
 
-        <Border Grid.Row="3" BorderThickness="1" BorderBrush="{DynamicResource ThemeBorder}"
+        <Border Grid.Row="2" BorderThickness="1" BorderBrush="{DynamicResource ThemeBorder}"
                 CornerRadius="8" Padding="4">
             <ScrollViewer Padding="4 4 4 -8">
                 <ItemsControl ItemsSource="{CompiledBinding Items}">
@@ -57,11 +52,11 @@
                                     <Grid Grid.Row="1" Grid.Column="1" ColumnDefinitions="*,Auto,*"
                                           IsVisible="{CompiledBinding HasVenue}">
                                         <TextBox Grid.Column="0" Margin="4 0" IsReadOnly="True"
-                                             Text="{CompiledBinding OriginalValue}"
-                                             TextWrapping="Wrap"
-                                             BorderBrush="Transparent"
-                                             BorderThickness="0"
-                                             Background="Transparent"/>
+                                                 Text="{CompiledBinding OriginalValue}"
+                                                 TextWrapping="Wrap"
+                                                 BorderBrush="Transparent"
+                                                 BorderThickness="0"
+                                                 Background="Transparent"/>
                                         <Button Grid.Column="1" Width="24" Height="24" Classes="in_section"
                                                 VerticalAlignment="Center" ToolTip.Tip="{DynamicResource Common.Reset}"
                                                 Command="{CompiledBinding ResetSuggestionCommand}">
@@ -84,11 +79,5 @@
                 </ItemsControl>
             </ScrollViewer>
         </Border>
-
-        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right"
-                    Height="28" Spacing="8" Margin="0 8 0 0">
-            <Button Click="CancelButton_Click" Content="{DynamicResource Common.Cancel}"/>
-            <Button Click="ApplyButton_Click" Content="{DynamicResource Common.Apply}"/>
-        </StackPanel>
     </Grid>
-</Window>
+</UserControl>

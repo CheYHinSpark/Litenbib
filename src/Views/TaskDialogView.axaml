@@ -1,0 +1,44 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:v="using:Litenbib.Views"
+        xmlns:vm="using:Litenbib.ViewModels"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Width="820" Height="560"
+        WindowStartupLocation="CenterOwner"
+        x:Class="Litenbib.Views.TaskDialogView"
+        x:DataType="vm:TaskDialogViewModel"
+        Title="{CompiledBinding Title}">
+    <Design.DataContext>
+        <vm:TaskDialogViewModel/>
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto,*,Auto" Margin="12">
+        <TextBlock Text="{CompiledBinding Heading}" FontSize="18"
+                   FontWeight="SemiBold"/>
+
+        <ContentControl Grid.Row="1" Margin="0 8 0 0"
+                        Content="{CompiledBinding Content}">
+            <ContentControl.DataTemplates>
+                <DataTemplate DataType="{x:Type vm:CleanupViewModel}">
+                    <v:CleanupView/>
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type vm:BatchFieldDeleteViewModel}">
+                    <v:BatchFieldDeleteView/>
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type vm:VenueNameNormalizationViewModel}">
+                    <v:VenueNameNormalizationView/>
+                </DataTemplate>
+            </ContentControl.DataTemplates>
+        </ContentControl>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Height="28" Margin="0 8 0 0"
+                    HorizontalAlignment="Right" Spacing="8">
+            <Button Click="CancelButton_Click" Content="{DynamicResource Common.Cancel}"/>
+            <Button Click="ApplyButton_Click"
+                    IsEnabled="{CompiledBinding CanApply}"
+                    Content="{DynamicResource Common.Apply}"/>
+        </StackPanel>
+    </Grid>
+</Window>

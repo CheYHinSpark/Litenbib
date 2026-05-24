@@ -62,7 +62,7 @@ namespace Litenbib.ViewModels
         }
     }
 
-    public partial class CleanupViewModel : ViewModelBase
+    public partial class CleanupViewModel : ViewModelBase, ITaskDialogContentViewModel
     {
         private readonly IReadOnlyList<BibtexEntry> entries;
 
@@ -70,11 +70,15 @@ namespace Litenbib.ViewModels
 
         public ObservableCollection<CleanupChangePreviewViewModel> PreviewChanges { get; } = [];
 
+        public string Title => I18n.Get("Cleanup.Title");
+
         public string Heading => I18n.Get("Cleanup.Heading");
 
         public string StatusMessage => I18n.Format("Cleanup.Status", entries.Count, PreviewChanges.Count);
 
         public bool HasChanges => PreviewChanges.Count > 0;
+
+        public bool CanApply => HasChanges;
 
         public CleanupViewModel() : this([]) { }
 
@@ -104,6 +108,7 @@ namespace Litenbib.ViewModels
 
             OnPropertyChanged(nameof(StatusMessage));
             OnPropertyChanged(nameof(HasChanges));
+            OnPropertyChanged(nameof(CanApply));
         }
 
         private IEnumerable<string> GetSelectedRuleIds()

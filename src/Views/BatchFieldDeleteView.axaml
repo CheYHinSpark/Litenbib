@@ -1,23 +1,18 @@
-<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:local="using:Litenbib.Views"
-        xmlns:vm="using:Litenbib.ViewModels"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d"
-        Width="400" Height="400"
-        WindowStartupLocation="CenterOwner"
-        x:Class="Litenbib.Views.BatchFieldDeleteView"
-        x:DataType="vm:BatchFieldDeleteViewModel"
-        Title="{DynamicResource BatchDelete.Title}">
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="using:Litenbib.Views"
+             xmlns:vm="using:Litenbib.ViewModels"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="Litenbib.Views.BatchFieldDeleteView"
+             x:DataType="vm:BatchFieldDeleteViewModel">
     <Design.DataContext>
         <vm:BatchFieldDeleteViewModel/>
     </Design.DataContext>
-    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto" Margin="8">
-        <TextBlock Text="{DynamicResource BatchDelete.Heading}" FontSize="18"
-                   FontWeight="SemiBold" Margin="2"/>
-        
-        <Grid Grid.Row="1" ColumnDefinitions="*,*">
+
+    <Grid RowDefinitions="Auto,Auto,*">
+        <Grid ColumnDefinitions="*,*">
             <RadioButton Margin="2" GroupName="BatchFieldMode"
                          IsChecked="{CompiledBinding DeleteSelectedFields, Mode=TwoWay}">
                 <TextBlock Text="{DynamicResource BatchDelete.DeleteSelected}"/>
@@ -28,17 +23,17 @@
             </RadioButton>
         </Grid>
 
-        <Grid Grid.Row="2" ColumnDefinitions="*,Auto" Margin="4 0 8 0">
+        <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="4 8 8 0">
             <TextBlock Text="{DynamicResource BatchDelete.Fields}" VerticalAlignment="Center"/>
             <Button Grid.Column="1" Width="28" Height="28"
                     ToolTip.Tip="{DynamicResource BatchDelete.Tooltip.AddField}"
                     Command="{CompiledBinding AddFieldCommand}">
                 <Path Data="{StaticResource AddPath}"
-                        Fill="{CompiledBinding $parent[Button].Foreground}"/>
+                      Fill="{CompiledBinding $parent[Button].Foreground}"/>
             </Button>
         </Grid>
 
-        <Border Grid.Row="3" CornerRadius="8" Padding="4" Margin="4"
+        <Border Grid.Row="2" CornerRadius="8" Padding="4" Margin="4"
                 BorderThickness="1" BorderBrush="{DynamicResource ThemeBorder}">
             <ScrollViewer>
                 <ItemsControl ItemsSource="{CompiledBinding FieldRows}">
@@ -46,9 +41,10 @@
                         <DataTemplate x:DataType="vm:BatchFieldDeleteRowViewModel">
                             <Grid ColumnDefinitions="*,Auto" Margin="0 2">
                                 <local:ExComboBox ItemsSource="{CompiledBinding SupportedFields}"
-                                                    SelectedItem="{CompiledBinding FieldName}"/>
+                                                  SelectedItem="{CompiledBinding FieldName}"/>
                                 <Button Grid.Column="1" Margin="4 0"
-                                        Height="28" Width="28"                                           ToolTip.Tip="{DynamicResource BatchDelete.Tooltip.RemoveFieldRow}"
+                                        Height="28" Width="28"
+                                        ToolTip.Tip="{DynamicResource BatchDelete.Tooltip.RemoveFieldRow}"
                                         Command="{CompiledBinding RemoveCommand}">
                                     <Path Data="{StaticResource xPath}" StrokeThickness="1"
                                           Stroke="{CompiledBinding $parent[Button].Foreground}"/>
@@ -59,11 +55,5 @@
                 </ItemsControl>
             </ScrollViewer>
         </Border>
-
-        <StackPanel Grid.Row="4" Orientation="Horizontal" Height="28" Margin="0 4 4 0"
-                    HorizontalAlignment="Right" Spacing="8">
-            <Button Click="CancelButton_Click" Content="{DynamicResource Common.Cancel}"/>
-            <Button Click="ApplyButton_Click" Content="{DynamicResource Common.Apply}"/>
-        </StackPanel>
     </Grid>
-</Window>
+</UserControl>

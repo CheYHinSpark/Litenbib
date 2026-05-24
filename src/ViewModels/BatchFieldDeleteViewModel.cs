@@ -27,7 +27,7 @@ namespace Litenbib.ViewModels
         }
     }
 
-    public partial class BatchFieldDeleteViewModel : ViewModelBase
+    public partial class BatchFieldDeleteViewModel : ViewModelBase, ITaskDialogContentViewModel
     {
         public static IReadOnlyList<string> SupportedFields { get; } =
         [
@@ -66,6 +66,12 @@ namespace Litenbib.ViewModels
         ];
 
         public ObservableCollection<BatchFieldDeleteRowViewModel> FieldRows { get; } = [];
+
+        public string Title => I18n.Get("BatchDelete.Title");
+
+        public string Heading => I18n.Get("BatchDelete.Heading");
+
+        public bool CanApply => true;
 
         [ObservableProperty]
         private bool _keepSelectedFieldsOnly;

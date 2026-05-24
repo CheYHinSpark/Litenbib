@@ -59,9 +59,15 @@ namespace Litenbib.ViewModels
         }
     }
 
-    public partial class VenueNameNormalizationViewModel : ViewModelBase
+    public partial class VenueNameNormalizationViewModel : ViewModelBase, ITaskDialogContentViewModel
     {
         public ObservableCollection<VenueNameNormalizationItemViewModel> Items { get; }
+
+        public string Title => I18n.Get("VenueNormalize.Title");
+
+        public string Heading => I18n.Get("VenueNormalize.Heading");
+
+        public bool CanApply => !IsBusy;
 
         [ObservableProperty]
         private string _statusMessage = string.Empty;
@@ -78,6 +84,11 @@ namespace Litenbib.ViewModels
             StatusMessage = Items.Count == 0
                 ? I18n.Get("VenueNormalize.Status.NoEntriesSelected")
                 : I18n.Format("VenueNormalize.Status.SelectedEntries", Items.Count);
+        }
+
+        partial void OnIsBusyChanged(bool value)
+        {
+            OnPropertyChanged(nameof(CanApply));
         }
 
         [RelayCommand]

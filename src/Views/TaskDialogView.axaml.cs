@@ -1,23 +1,24 @@
 using Avalonia.Interactivity;
-using Litenbib.Models;
 using Litenbib.ViewModels;
-using System.Collections.Generic;
 
 namespace Litenbib.Views;
 
-public partial class VenueNameNormalizationView : StyledWindow
+public partial class TaskDialogView : StyledWindow
 {
-    public VenueNameNormalizationView()
+    public TaskDialogView()
     {
         InitializeComponent();
-        DataContext = new VenueNameNormalizationViewModel();
+        DataContext = new TaskDialogViewModel();
     }
 
-    public VenueNameNormalizationView(IEnumerable<BibtexEntry> entries)
+    public TaskDialogView(ITaskDialogContentViewModel content)
     {
         InitializeComponent();
-        DataContext = new VenueNameNormalizationViewModel(entries);
+        DataContext = new TaskDialogViewModel(content);
     }
+
+    public ITaskDialogContentViewModel? ContentViewModel =>
+        (DataContext as TaskDialogViewModel)?.Content;
 
     private void CancelButton_Click(object? sender, RoutedEventArgs e)
     {

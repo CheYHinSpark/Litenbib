@@ -1024,9 +1024,11 @@ namespace Litenbib.ViewModels
         {
             if (sender is not MainWindow window || SelectedIndexItems == null || SelectedIndexItems.Count == 0) { return; }
             var selectedEntries = SelectedIndexItems.Select(t => t.Item2).ToList();
-            BatchFieldDeleteView dialog = new();
+            BatchFieldDeleteViewModel batchFieldDeleteViewModel = new();
+            TaskDialogView dialog = new(batchFieldDeleteViewModel);
             var result = await dialog.ShowDialog<bool>(window);
-            if (result != true || dialog.DataContext is not BatchFieldDeleteViewModel vm) { return; }
+            if (result != true) { return; }
+            BatchFieldDeleteViewModel vm = batchFieldDeleteViewModel;
 
             List<string> selectedFields = vm.GetSelectedFieldNames();
             if (selectedFields.Count == 0)
@@ -1076,11 +1078,12 @@ namespace Litenbib.ViewModels
                 .Select(item => item.Item2)
                 .ToList();
 
-            VenueNameNormalizationView dialog = new(selectedEntries);
+            VenueNameNormalizationViewModel venueNameNormalizationViewModel = new(selectedEntries);
+            TaskDialogView dialog = new(venueNameNormalizationViewModel);
             var result = await dialog.ShowDialog<bool>(window);
-            if (result != true || dialog.DataContext is not VenueNameNormalizationViewModel vm) { return; }
+            if (result != true) { return; }
 
-            List<EntryFieldChange> changes = vm.CreateChanges();
+            List<EntryFieldChange> changes = venueNameNormalizationViewModel.CreateChanges();
             EntryFieldsChangeAction action = new(changes);
             if (!action.HasChanges)
             {
@@ -1101,14 +1104,15 @@ namespace Litenbib.ViewModels
                 .OrderBy(item => item.Item1)
                 .Select(t => t.Item2)
                 .ToList();
-            CleanupView dialog = new(selectedEntries);
+            CleanupViewModel cleanupViewModel = new(selectedEntries);
+            TaskDialogView dialog = new(cleanupViewModel);
             var result = await dialog.ShowDialog<bool>(window);
-            if (result != true || dialog.DataContext is not CleanupViewModel vm)
+            if (result != true)
             {
                 return;
             }
 
-            List<EntryFieldChange> changes = vm.CreateChanges();
+            List<EntryFieldChange> changes = cleanupViewModel.CreateChanges();
 
             EntryFieldsChangeAction action = new(changes);
             if (!action.HasChanges)

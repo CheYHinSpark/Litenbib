@@ -1,26 +1,20 @@
-<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:vm="using:Litenbib.ViewModels"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d"
-        Width="820" Height="560"
-        WindowStartupLocation="CenterOwner"
-        x:Class="Litenbib.Views.CleanupView"
-        x:DataType="vm:CleanupViewModel"
-        Title="{DynamicResource Cleanup.Title}">
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:vm="using:Litenbib.ViewModels"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="Litenbib.Views.CleanupView"
+             x:DataType="vm:CleanupViewModel">
     <Design.DataContext>
         <vm:CleanupViewModel/>
     </Design.DataContext>
 
-    <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="12">
-        <TextBlock Text="{CompiledBinding Heading}" FontSize="18"
-                   FontWeight="SemiBold"/>
-
-        <TextBlock Grid.Row="1" Margin="0 4"
+    <Grid RowDefinitions="Auto,*">
+        <TextBlock Margin="0 0 0 4"
                    Text="{CompiledBinding StatusMessage}"/>
 
-        <Grid Grid.Row="2" ColumnDefinitions="300,*" Margin="0 8 0 0">
+        <Grid Grid.Row="1" ColumnDefinitions="300,*">
             <Border BorderThickness="1" BorderBrush="{DynamicResource ThemeBorder}"
                     CornerRadius="8" Padding="8">
                 <Grid RowDefinitions="Auto,*">
@@ -101,13 +95,5 @@
                 </Grid>
             </Border>
         </Grid>
-
-        <StackPanel Grid.Row="3" Orientation="Horizontal" Height="28" Margin="0 4 0 0"
-                    HorizontalAlignment="Right" Spacing="8">
-            <Button Click="CancelButton_Click" Content="{DynamicResource Common.Cancel}"/>
-            <Button Click="ApplyButton_Click"
-                    IsEnabled="{CompiledBinding HasChanges}"
-                    Content="{DynamicResource Common.Apply}"/>
-        </StackPanel>
     </Grid>
-</Window>
+</UserControl>
