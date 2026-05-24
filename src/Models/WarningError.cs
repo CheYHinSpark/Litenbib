@@ -22,7 +22,11 @@ namespace Litenbib.Models
         /// <summary> 错误：相同 DOI </summary>
         SameDoi = 4,
         /// <summary> 警告：标题和年份重复 </summary>
-        SameTitleYear = -3
+        SameTitleYear = -3,
+        /// <summary> 警告：未转义的 & </summary>
+        UnescapedAmpersand = -4,
+        /// <summary> 警告：HTML &amp; 实体 </summary>
+        HtmlAmpersandEntity = -5
     }
 
     /// <summary>
@@ -52,6 +56,14 @@ namespace Litenbib.Models
                 if (Class == WarningErrorClass.SameTitleYear)
                 {
                     return I18n.Format("Warning.SameTitleYear", SourceEntries.Count);
+                }
+                if (Class == WarningErrorClass.UnescapedAmpersand)
+                {
+                    return I18n.Format("Warning.UnescapedAmpersand", FieldName);
+                }
+                if (Class == WarningErrorClass.HtmlAmpersandEntity)
+                {
+                    return I18n.Format("Warning.HtmlAmpersandEntity", FieldName);
                 }
                 return I18n.Format("Warning.MissingField", FieldName);
             }
@@ -97,6 +109,28 @@ namespace Litenbib.Models
                     if (string.IsNullOrWhiteSpace(entry.Author) && string.IsNullOrWhiteSpace(entry.Editor))
                     {
                         result.Add(new WarningError([entry], WarningErrorClass.MissingNecessaryField, "author or editor"));
+                    }
+
+                    foreach (var field in entry.Fields)
+                    {
+                        if (!BibtexAmpersand.ShouldWarnField(field.Key))
+                        {
+                            continue;
+                        }
+
+                        BibtexAmpersandIssueKind issueKind = BibtexAmpersand.GetIssueKind(field.Value);
+                        if (issueKind == BibtexAmpersandIssueKind.None)
+                        {
+                            continue;
+                        }
+
+                        WarningErrorClass warningClass = issueKind == BibtexAmpersandIssueKind.HtmlEntity
+                            ? WarningErrorClass.HtmlAmpersandEntity
+                            : WarningErrorClass.UnescapedAmpersand;
+                        result.Add(new WarningError(
+                            [entry],
+                            warningClass,
+                            BibtexBatchOperations.GetPropertyNameForField(field.Key)));
                     }
                 }
 

@@ -1093,23 +1093,27 @@ namespace Litenbib.ViewModels
         }
 
         [RelayCommand]
-        private async Task CleanupSelectedEntries()
+        private async Task CleanupSelectedEntries(object? sender)
         {
-            if (SelectedIndexItems == null || SelectedIndexItems.Count == 0) { return; }
-            var selectedEntries = SelectedIndexItems.Select(t => t.Item2).ToList();
-            List<EntryFieldChange> changes = BibtexBatchOperations.CreateCleanupChanges(selectedEntries);
+            if (sender is not Window window || SelectedIndexItems == null || SelectedIndexItems.Count == 0) { return; }
+
+            var selectedEntries = SelectedIndexItems
+                .OrderBy(item => item.Item1)
+                .Select(t => t.Item2)
+                .ToList();
+            CleanupView dialog = new(selectedEntries);
+            var result = await dialog.ShowDialog<bool>(window);
+            if (result != true || dialog.DataContext is not CleanupViewModel vm)
+            {
+                return;
+            }
+
+            List<EntryFieldChange> changes = vm.CreateChanges();
 
             EntryFieldsChangeAction action = new(changes);
             if (!action.HasChanges)
             {
                 ShowStatus(I18n.Get("Message.NoSelectedEntriesNeededCleanup"));
-                return;
-            }
-            if (!await ConfirmSelectedEntryBatchOperationAsync(
-                I18n.Get("Dialog.CleanSelectedEntries.Title"),
-                I18n.Format("Dialog.CleanSelectedEntries.Message", selectedEntries.Count)))
-            {
-                ShowStatus(I18n.Get("Message.CleanCanceled"));
                 return;
             }
 
@@ -1203,17 +1207,36 @@ namespace Litenbib.ViewModels
         }
 
         [RelayCommand]
-        private void CopyBibtexText(object o)
+        private async Task CopyBibtexText(object? o)
         {
             if (ShowingEntry == null) { return; }
-            if (o is Window w) { w.Clipboard?.SetTextAsync(ShowingEntry.BibTeX); }
+            await CopyToClipboardAsync(o, ShowingEntry.BibTeX, I18n.Get("Message.CopiedBibtexToClipboard"));
         }
 
         [RelayCommand]
-        private void CopyCitationKey(object? o)
+        private async Task CopyCitationKey(object? o)
         {
             if (ShowingEntry == null) { return; }
-            if (o is Window w) { w.Clipboard?.SetTextAsync(ShowingEntry.CitationKey); }
+            await CopyToClipboardAsync(o, ShowingEntry.CitationKey, I18n.Get("Message.CopiedCitationKeyToClipboard"));
+        }
+
+        private async Task CopyToClipboardAsync(object? o, string? text, string successMessage)
+        {
+            if (o is not Window window || window.Clipboard is not IClipboard clipboard)
+            {
+                ShowStatus(I18n.Get("Message.ClipboardUnavailable"));
+                return;
+            }
+
+            try
+            {
+                await clipboard.SetTextAsync(text ?? string.Empty);
+                ShowStatus(successMessage);
+            }
+            catch (Exception ex)
+            {
+                NotificationCenter.Error(I18n.Format("Message.CouldNotCopyToClipboard", ex.Message));
+            }
         }
         #endregion Command
     }

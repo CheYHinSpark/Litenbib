@@ -65,7 +65,7 @@
     <x:String x:Key="Main.Menu.Cut">_Cut</x:String>
     <x:String x:Key="Main.Menu.BatchDeleteFields">Batch Delete _Fields...</x:String>
     <x:String x:Key="Main.Menu.NormalizeVenues">Normalize _Venues with AI...</x:String>
-    <x:String x:Key="Main.Menu.CleanSelected">_Clean Selected</x:String>
+    <x:String x:Key="Main.Menu.CleanSelected">_Clean Selected...</x:String>
     <x:String x:Key="Main.Menu.ReloadFromDisk">_Reload From Disk</x:String>
     <x:String x:Key="Main.Context.Duplicate">Duplicate</x:String>
     <x:String x:Key="Main.Context.OpenInFileManager">Open in File Manager</x:String>
@@ -108,7 +108,7 @@
     <x:String x:Key="Bibtex.Tooltip.DeleteFields">Delete fields from selected entries</x:String>
     <x:String x:Key="Bibtex.Tooltip.NormalizeVenues">Normalize journal/booktitle names with AI</x:String>
     <x:String x:Key="Bibtex.Tooltip.GenerateCitationKeys">Generate citation keys for selected entries</x:String>
-    <x:String x:Key="Bibtex.Tooltip.CleanSelected">Clean selected entries: trim whitespace, collapse spaces/line breaks, normalize DOI, remove empty fields</x:String>
+    <x:String x:Key="Bibtex.Tooltip.CleanSelected">Choose cleanup rules for selected entries</x:String>
     <x:String x:Key="Bibtex.Tooltip.SwitchDetailLayout">Switch detail layout</x:String>
     <x:String x:Key="Bibtex.Tooltip.HideDetailPanel">Hide detail panel</x:String>
     <x:String x:Key="Bibtex.Tooltip.SearchDoi">Search from DOI</x:String>
@@ -140,6 +140,21 @@
     <x:String x:Key="BatchDelete.Fields">Fields</x:String>
     <x:String x:Key="BatchDelete.Tooltip.AddField">Add field</x:String>
     <x:String x:Key="BatchDelete.Tooltip.RemoveFieldRow">Remove field row</x:String>
+
+    <x:String x:Key="Cleanup.Title">Clean Selected Entries</x:String>
+    <x:String x:Key="Cleanup.Heading">Clean selected entries</x:String>
+    <x:String x:Key="Cleanup.Rules">Rules</x:String>
+    <x:String x:Key="Cleanup.Preview">Preview</x:String>
+    <x:String x:Key="Cleanup.NoChanges">No changes to apply</x:String>
+    <x:String x:Key="Cleanup.Status">{0} selected entries, {1} field changes</x:String>
+    <x:String x:Key="Cleanup.Rule.Whitespace">Whitespace</x:String>
+    <x:String x:Key="Cleanup.Rule.Whitespace.Description">Trim fields, collapse repeated spaces and line breaks, and remove empty fields.</x:String>
+    <x:String x:Key="Cleanup.Rule.Doi">Normalize DOI</x:String>
+    <x:String x:Key="Cleanup.Rule.Doi.Description">Remove DOI URL prefixes and keep the canonical DOI value.</x:String>
+    <x:String x:Key="Cleanup.Rule.UrlTrim">Trim URL</x:String>
+    <x:String x:Key="Cleanup.Rule.UrlTrim.Description">Trim leading and trailing spaces in URL fields without changing the URL itself.</x:String>
+    <x:String x:Key="Cleanup.Rule.LatexAmpersand">LaTeX ampersands</x:String>
+    <x:String x:Key="Cleanup.Rule.LatexAmpersand.Description">Convert text-field &amp; / &amp;amp; to \&amp;; URL, DOI, File, Author, and Editor are left unchanged.</x:String>
 
     <x:String x:Key="Export.Title">Export</x:String>
     <x:String x:Key="Export.Heading">Export bibliography</x:String>
@@ -252,6 +267,10 @@
     <x:String x:Key="Message.FileChangedOnDisk">This file has changed on disk since it was opened or last saved. Saving now will overwrite those external changes.&#10;&#10;Do you want to overwrite the disk file?</x:String>
     <x:String x:Key="Message.FileChangedOnDiskStatus">File changed on disk</x:String>
     <x:String x:Key="Message.SaveCanceledExternalChange">Save canceled: file changed on disk</x:String>
+    <x:String x:Key="Message.CopiedBibtexToClipboard">Copied BibTeX to clipboard</x:String>
+    <x:String x:Key="Message.CopiedCitationKeyToClipboard">Copied citation key to clipboard</x:String>
+    <x:String x:Key="Message.ClipboardUnavailable">Clipboard is not available</x:String>
+    <x:String x:Key="Message.CouldNotCopyToClipboard">Could not copy to clipboard: {0}</x:String>
     <x:String x:Key="Save.Validation.EmptyPath">The file path is empty.</x:String>
     <x:String x:Key="Save.Validation.InvalidPath">The file path is invalid.</x:String>
     <x:String x:Key="Save.Validation.InvalidDirectory">The target directory is invalid.</x:String>
@@ -306,5 +325,7 @@
     <x:String x:Key="Warning.SameDoi">{0} entries have the same DOI {1}</x:String>
     <x:String x:Key="Warning.SameTitleYear">{0} entries share the same title and year</x:String>
     <x:String x:Key="Warning.MissingField">1 entry missing {0}</x:String>
+    <x:String x:Key="Warning.UnescapedAmpersand">1 entry has an unescaped &amp; in {0}; use \&amp;</x:String>
+    <x:String x:Key="Warning.HtmlAmpersandEntity">1 entry has HTML &amp;amp; in {0}; use \&amp;</x:String>
     <x:String x:Key="Warning.Hint">{0} warnings or errors</x:String>
 </ResourceDictionary>

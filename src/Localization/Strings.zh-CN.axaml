@@ -65,7 +65,7 @@
     <x:String x:Key="Main.Menu.Cut">剪切(_X)</x:String>
     <x:String x:Key="Main.Menu.BatchDeleteFields">批量删除字段(_F)...</x:String>
     <x:String x:Key="Main.Menu.NormalizeVenues">用 AI 规范化期刊/会议名(_V)...</x:String>
-    <x:String x:Key="Main.Menu.CleanSelected">清理所选条目(_C)</x:String>
+    <x:String x:Key="Main.Menu.CleanSelected">清理所选条目(_C)...</x:String>
     <x:String x:Key="Main.Menu.ReloadFromDisk">从磁盘重新加载(_R)</x:String>
     <x:String x:Key="Main.Context.Duplicate">复制文件</x:String>
     <x:String x:Key="Main.Context.OpenInFileManager">在文件管理器中打开</x:String>
@@ -108,7 +108,7 @@
     <x:String x:Key="Bibtex.Tooltip.DeleteFields">从所选条目删除字段</x:String>
     <x:String x:Key="Bibtex.Tooltip.NormalizeVenues">用 AI 规范化 journal/booktitle 名称</x:String>
     <x:String x:Key="Bibtex.Tooltip.GenerateCitationKeys">为所选条目生成引用键</x:String>
-    <x:String x:Key="Bibtex.Tooltip.CleanSelected">清理所选条目：裁剪空白、合并空格/换行、规范化 DOI、删除空字段</x:String>
+    <x:String x:Key="Bibtex.Tooltip.CleanSelected">为所选条目选择清理规则</x:String>
     <x:String x:Key="Bibtex.Tooltip.SwitchDetailLayout">切换详情布局</x:String>
     <x:String x:Key="Bibtex.Tooltip.HideDetailPanel">隐藏详情面板</x:String>
     <x:String x:Key="Bibtex.Tooltip.SearchDoi">从 DOI 搜索</x:String>
@@ -140,6 +140,21 @@
     <x:String x:Key="BatchDelete.Fields">字段</x:String>
     <x:String x:Key="BatchDelete.Tooltip.AddField">添加字段</x:String>
     <x:String x:Key="BatchDelete.Tooltip.RemoveFieldRow">移除字段行</x:String>
+
+    <x:String x:Key="Cleanup.Title">清理所选条目</x:String>
+    <x:String x:Key="Cleanup.Heading">清理所选条目</x:String>
+    <x:String x:Key="Cleanup.Rules">规则</x:String>
+    <x:String x:Key="Cleanup.Preview">预览</x:String>
+    <x:String x:Key="Cleanup.NoChanges">没有可应用的更改</x:String>
+    <x:String x:Key="Cleanup.Status">已选择 {0} 个条目，{1} 个字段将改变</x:String>
+    <x:String x:Key="Cleanup.Rule.Whitespace">空白字符</x:String>
+    <x:String x:Key="Cleanup.Rule.Whitespace.Description">裁剪字段首尾空白，合并重复空格和换行，并删除空字段。</x:String>
+    <x:String x:Key="Cleanup.Rule.Doi">规范化 DOI</x:String>
+    <x:String x:Key="Cleanup.Rule.Doi.Description">移除 DOI URL 前缀，保留规范 DOI 值。</x:String>
+    <x:String x:Key="Cleanup.Rule.UrlTrim">裁剪 URL</x:String>
+    <x:String x:Key="Cleanup.Rule.UrlTrim.Description">裁剪 URL 字段首尾空白，不改变 URL 本身。</x:String>
+    <x:String x:Key="Cleanup.Rule.LatexAmpersand">LaTeX &amp; 符号</x:String>
+    <x:String x:Key="Cleanup.Rule.LatexAmpersand.Description">将文本字段中的 &amp; / &amp;amp; 转为 \&amp;；URL、DOI、File、Author、Editor 保持不变。</x:String>
 
     <x:String x:Key="Export.Title">导出</x:String>
     <x:String x:Key="Export.Heading">导出文献库</x:String>
@@ -252,6 +267,10 @@
     <x:String x:Key="Message.FileChangedOnDisk">此文件在打开或上次保存后已在磁盘上发生变化。现在保存会覆盖这些外部更改。&#10;&#10;要覆盖磁盘文件吗？</x:String>
     <x:String x:Key="Message.FileChangedOnDiskStatus">磁盘文件已改变</x:String>
     <x:String x:Key="Message.SaveCanceledExternalChange">保存已取消：磁盘文件已改变</x:String>
+    <x:String x:Key="Message.CopiedBibtexToClipboard">已将 BibTeX 复制到剪贴板</x:String>
+    <x:String x:Key="Message.CopiedCitationKeyToClipboard">已将引用键复制到剪贴板</x:String>
+    <x:String x:Key="Message.ClipboardUnavailable">剪贴板不可用</x:String>
+    <x:String x:Key="Message.CouldNotCopyToClipboard">无法复制到剪贴板：{0}</x:String>
     <x:String x:Key="Save.Validation.EmptyPath">文件路径为空。</x:String>
     <x:String x:Key="Save.Validation.InvalidPath">文件路径无效。</x:String>
     <x:String x:Key="Save.Validation.InvalidDirectory">目标目录无效。</x:String>
@@ -306,5 +325,7 @@
     <x:String x:Key="Warning.SameDoi">{0} 个条目具有相同 DOI {1}</x:String>
     <x:String x:Key="Warning.SameTitleYear">{0} 个条目具有相同标题和年份</x:String>
     <x:String x:Key="Warning.MissingField">1 个条目缺少 {0}</x:String>
+    <x:String x:Key="Warning.UnescapedAmpersand">1 个条目的 {0} 包含未转义的 &amp;，请使用 \&amp;</x:String>
+    <x:String x:Key="Warning.HtmlAmpersandEntity">1 个条目的 {0} 包含 HTML &amp;amp;，请使用 \&amp;</x:String>
     <x:String x:Key="Warning.Hint">{0} 个警告或错误</x:String>
 </ResourceDictionary>

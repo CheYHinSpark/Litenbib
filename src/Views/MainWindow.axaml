@@ -148,7 +148,8 @@
                                   Command="{CompiledBinding SelectedFile.NormalizeSelectedVenueNamesCommand}"
                                   CommandParameter="{CompiledBinding $parent[Window]}"/>
                         <MenuItem Header="{DynamicResource Main.Menu.CleanSelected}"
-                                  Command="{CompiledBinding SelectedFile.CleanupSelectedEntriesCommand}"/>
+                                  Command="{CompiledBinding SelectedFile.CleanupSelectedEntriesCommand}"
+                                  CommandParameter="{CompiledBinding $parent[Window]}"/>
                         <MenuItem Header="{DynamicResource Main.Menu.ReloadFromDisk}"
                                   Command="{CompiledBinding SelectedFile.ReloadFromDiskCommand}"/>
                     </MenuItem>

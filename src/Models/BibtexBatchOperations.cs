@@ -5,14 +5,62 @@ using System.Text;
 
 namespace Litenbib.Models
 {
+    public sealed record BibtexCleanupRuleDefinition(
+        string Id,
+        string DisplayNameKey,
+        string DescriptionKey,
+        bool DefaultEnabled);
+
+    public static class BibtexCleanupRuleIds
+    {
+        public const string Whitespace = "whitespace";
+        public const string Doi = "doi";
+        public const string UrlTrim = "url-trim";
+        public const string LatexAmpersand = "latex-ampersand";
+    }
+
     public static class BibtexBatchOperations
     {
+        public static IReadOnlyList<BibtexCleanupRuleDefinition> CleanupRules { get; } =
+        [
+            new(
+                BibtexCleanupRuleIds.Whitespace,
+                "Cleanup.Rule.Whitespace",
+                "Cleanup.Rule.Whitespace.Description",
+                true),
+            new(
+                BibtexCleanupRuleIds.Doi,
+                "Cleanup.Rule.Doi",
+                "Cleanup.Rule.Doi.Description",
+                true),
+            new(
+                BibtexCleanupRuleIds.UrlTrim,
+                "Cleanup.Rule.UrlTrim",
+                "Cleanup.Rule.UrlTrim.Description",
+                true),
+            new(
+                BibtexCleanupRuleIds.LatexAmpersand,
+                "Cleanup.Rule.LatexAmpersand",
+                "Cleanup.Rule.LatexAmpersand.Description",
+                true),
+        ];
+
         public static List<EntryFieldChange> CreateCleanupChanges(IEnumerable<BibtexEntry> entries)
         {
+            return CreateCleanupChanges(
+                entries,
+                CleanupRules.Where(rule => rule.DefaultEnabled).Select(rule => rule.Id));
+        }
+
+        public static List<EntryFieldChange> CreateCleanupChanges(
+            IEnumerable<BibtexEntry> entries,
+            IEnumerable<string> enabledRuleIds)
+        {
             List<EntryFieldChange> changes = [];
+            HashSet<string> enabledRules = new(enabledRuleIds, StringComparer.OrdinalIgnoreCase);
             foreach (var entry in entries)
             {
-                changes.AddRange(CreateCleanupChanges(entry));
+                changes.AddRange(CreateCleanupChanges(entry, enabledRules));
             }
 
             return changes;
@@ -53,7 +101,7 @@ namespace Litenbib.Models
             return changes;
         }
 
-        private static List<EntryFieldChange> CreateCleanupChanges(BibtexEntry entry)
+        private static List<EntryFieldChange> CreateCleanupChanges(BibtexEntry entry, ISet<string> enabledRules)
         {
             List<EntryFieldChange> changes = [];
             var keys = entry.Fields.Keys.ToList();
@@ -61,22 +109,34 @@ namespace Litenbib.Models
             {
                 var oldValue = entry.Fields[key];
                 var value = oldValue;
-                value = value.Replace("\r", " ").Replace("\n", " ").Trim();
-                while (value.Contains("  "))
+                if (enabledRules.Contains(BibtexCleanupRuleIds.Whitespace))
                 {
-                    value = value.Replace("  ", " ");
+                    value = value.Replace("\r", " ").Replace("\n", " ").Trim();
+                    while (value.Contains("  "))
+                    {
+                        value = value.Replace("  ", " ");
+                    }
                 }
 
-                if (key.Equals("doi", StringComparison.OrdinalIgnoreCase))
+                if (enabledRules.Contains(BibtexCleanupRuleIds.Doi)
+                    && key.Equals("doi", StringComparison.OrdinalIgnoreCase))
                 {
                     value = BibtexDiagnostics.NormalizeDoi(value);
                 }
-                if (key.Equals("url", StringComparison.OrdinalIgnoreCase))
+                if (enabledRules.Contains(BibtexCleanupRuleIds.UrlTrim)
+                    && key.Equals("url", StringComparison.OrdinalIgnoreCase))
                 {
                     value = value.Trim();
                 }
+                if (enabledRules.Contains(BibtexCleanupRuleIds.LatexAmpersand)
+                    && BibtexAmpersand.ShouldCleanupField(key))
+                {
+                    value = BibtexAmpersand.Normalize(value);
+                }
 
-                string? newValue = string.IsNullOrWhiteSpace(value) ? null : value;
+                string? newValue = enabledRules.Contains(BibtexCleanupRuleIds.Whitespace) && string.IsNullOrWhiteSpace(value)
+                    ? null
+                    : value;
                 if (string.Equals(oldValue, newValue, StringComparison.Ordinal))
                 {
                     continue;

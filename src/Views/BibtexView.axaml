@@ -289,7 +289,8 @@
                               Fill="{CompiledBinding $parent[Button].Foreground}"/>
                     </Button>
                     <Button ToolTip.Tip="{DynamicResource Bibtex.Tooltip.CleanSelected}"
-                            Command="{CompiledBinding CleanupSelectedEntriesCommand}">
+                            Command="{CompiledBinding CleanupSelectedEntriesCommand}"
+                            CommandParameter="{CompiledBinding $parent[Window]}">
                         <Path Data="{StaticResource BatchCleanPath}" StrokeThickness="1"
                               Fill="{CompiledBinding $parent[Button].Foreground}"/>
                     </Button>
