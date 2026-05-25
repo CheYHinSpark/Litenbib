@@ -5,6 +5,8 @@ namespace Litenbib.Views;
 
 public partial class AddEntryView : StyledWindow
 {
+    protected override bool CancelOnEscape => true;
+
     public AddEntryView()
     {
         InitializeComponent();

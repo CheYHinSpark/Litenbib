@@ -7,6 +7,8 @@ namespace Litenbib.Views;
 
 public partial class ExportView : StyledWindow
 {
+    protected override bool CancelOnEscape => true;
+
     public ExportView()
     {
         InitializeComponent();

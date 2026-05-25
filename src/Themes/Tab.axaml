@@ -1,70 +1,70 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-	<Design.PreviewWith>
-		<Path Data="M 8,8 L 8,4 A 4,4 0 0 0 4,0 L 0,0 M 3,-3 L 0,0 L 3,3 M 0,12 A 12,12 0 0 0 12,0 L 12,12"
-			  StrokeThickness="1"
+    <Design.PreviewWith>
+        <Path Data="M 8,8 L 8,4 A 4,4 0 0 0 4,0 L 0,0 M 3,-3 L 0,0 L 3,3 M 0,12 A 12,12 0 0 0 12,0 L 12,12"
+              StrokeThickness="1"
               Stroke="{DynamicResource InputBackground}"/>
-	</Design.PreviewWith>
+    </Design.PreviewWith>
 
-	<ControlTheme x:Key="{x:Type TabStripItem}" TargetType="TabStripItem">
-		<Setter Property="Background" Value="Transparent" />
-		<Setter Property="Foreground" Value="{DynamicResource MainForeground}" />
-		<Setter Property="Padding" Value="6" />
-		<Setter Property="Margin" Value="-8 0"/>
-		<Setter Property="CornerRadius" Value="8" />
-		<Setter Property="VerticalContentAlignment" Value="Center" />
-		<Setter Property="Template">
-			<ControlTemplate>
-				<Grid ColumnDefinitions="8,*,8">
-					<Path Data="M 0,8 A 8,8 0 0 0 8,0 L 8,8 Z"
+    <ControlTheme x:Key="{x:Type TabStripItem}" TargetType="TabStripItem">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{DynamicResource MainForeground}" />
+        <Setter Property="Padding" Value="6" />
+        <Setter Property="Margin" Value="-8 0"/>
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Grid ColumnDefinitions="8,*,8">
+                    <Path Data="M 0,8 A 8,8 0 0 0 8,0 L 8,8 Z"
                           VerticalAlignment="Bottom"
                           Fill="{TemplateBinding Background}"
                           IsVisible="False"/>
-					<Border Name="PART_LayoutRoot" Grid.Column="1"
+                    <Border Name="PART_LayoutRoot" Grid.Column="1"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="{TemplateBinding CornerRadius}"
                             Padding="{TemplateBinding Padding}">
-						<ContentPresenter Name="PART_ContentPresenter"
+                        <ContentPresenter Name="PART_ContentPresenter"
                                           HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                           Content="{TemplateBinding Content}"
                                           ContentTemplate="{TemplateBinding ContentTemplate}"
                                           RecognizesAccessKey="True" />
-					</Border>
-					<Path Data="M 8,8 A 8,8 0 0 1 0,0 L 0,8 Z"
+                    </Border>
+                    <Path Data="M 8,8 A 8,8 0 0 1 0,0 L 0,8 Z"
                           Grid.Column="2"
                           VerticalAlignment="Bottom"
                           Fill="{TemplateBinding Background}"
                           IsVisible="False"/>
-				</Grid>
+                </Grid>
 
-			</ControlTemplate>
-		</Setter>
+            </ControlTemplate>
+        </Setter>
 
-		<!--Selected state-->
-		<!--We don't use selector to PART_LayoutRoot, so developer can override selected item background with TabStripItem.Background-->
-		<Style Selector="^:selected">
-			<Setter Property="Background" Value="{DynamicResource TabBackground}" />
-			<Setter Property="CornerRadius" Value="8 8 0 0" />
-			<Style Selector="^ /template/ Path">
-				<Setter Property="IsVisible" Value="True"/>
-			</Style>
-		</Style>
+        <!--Selected state-->
+        <!--We don't use selector to PART_LayoutRoot, so developer can override selected item background with TabStripItem.Background-->
+        <Style Selector="^:selected">
+            <Setter Property="Background" Value="{DynamicResource TabBackground}" />
+            <Setter Property="CornerRadius" Value="8 8 0 0" />
+            <Style Selector="^ /template/ Path">
+                <Setter Property="IsVisible" Value="True"/>
+            </Style>
+        </Style>
 
-		<!--PointerOver state-->
-		<Style Selector="^:pointerover">
-			<Setter Property="Background" Value="{DynamicResource MainHighlight}" />
-		</Style>
+        <!--PointerOver state-->
+        <Style Selector="^:pointerover">
+            <Setter Property="Background" Value="{DynamicResource MainHighlight}" />
+        </Style>
 
-		<!--  Selected PointerOver state  -->
-		<Style Selector="^:selected:pointerover">
-			<Setter Property="Background" Value="{DynamicResource TabBackground}" />
-			<Setter Property="CornerRadius" Value="8 8 0 0" />
-			<Style Selector="^ /template/ Path">
-				<Setter Property="IsVisible" Value="True"/>
-			</Style>
-		</Style>
-	</ControlTheme>
+        <!--  Selected PointerOver state  -->
+        <Style Selector="^:selected:pointerover">
+            <Setter Property="Background" Value="{DynamicResource TabBackground}" />
+            <Setter Property="CornerRadius" Value="8 8 0 0" />
+            <Style Selector="^ /template/ Path">
+                <Setter Property="IsVisible" Value="True"/>
+            </Style>
+        </Style>
+    </ControlTheme>
 </ResourceDictionary>

@@ -116,12 +116,14 @@
     <x:String x:Key="Bibtex.Tooltip.SearchCrossref">从 Crossref 搜索</x:String>
     <x:String x:Key="Bibtex.Tooltip.SearchTitle">按标题搜索</x:String>
     <x:String x:Key="Bibtex.Tooltip.SuperSearch">超级搜索</x:String>
+    <x:String x:Key="Bibtex.Tooltip.ChoosePdfFile">选择 PDF 文件</x:String>
     <x:String x:Key="Bibtex.Tooltip.AddEntry">添加条目</x:String>
     <x:String x:Key="Bibtex.Tooltip.MergeEntries">合并所选条目</x:String>
     <x:String x:Key="Bibtex.Context.OpenFile">打开文件</x:String>
     <x:String x:Key="Bibtex.Context.OpenFolder">打开所在文件夹</x:String>
     <x:String x:Key="Bibtex.Context.OpenLink">打开 DOI/URL</x:String>
     <x:String x:Key="Bibtex.Context.CopyCitationKey">复制引用键</x:String>
+    <x:String x:Key="Bibtex.Context.CopyTitle">复制标题</x:String>
     <x:String x:Key="Bibtex.Context.CopyBibtex">复制 BibTeX 文本</x:String>
     <x:String x:Key="Bibtex.Context.CopyEntries">复制所选条目</x:String>
     <x:String x:Key="Bibtex.Context.CutEntries">剪切所选条目</x:String>
@@ -218,7 +220,9 @@
     <x:String x:Key="Picker.OpenBibtexFile">打开 BibTeX 文件</x:String>
     <x:String x:Key="Picker.SaveBibtexFileAs">另存 BibTeX 文件</x:String>
     <x:String x:Key="Picker.ChooseExportPath">选择导出路径</x:String>
+    <x:String x:Key="Picker.ChoosePdfFile">选择 PDF 文件</x:String>
     <x:String x:Key="FileType.BibtexFiles">BibTeX 文件</x:String>
+    <x:String x:Key="FileType.PdfFiles">PDF 文件</x:String>
 
     <x:String x:Key="Message.SettingsSaved">设置已保存</x:String>
     <x:String x:Key="Message.CouldNotReadLocalConfig">无法读取本地配置：{0}</x:String>
@@ -290,6 +294,7 @@
     <x:String x:Key="Message.CopiedBibtexToClipboard">已将 BibTeX 复制到剪贴板</x:String>
     <x:String x:Key="Message.CopiedSelectedBibtexToClipboard">已将 {0} 个 BibTeX 条目复制到剪贴板</x:String>
     <x:String x:Key="Message.CopiedCitationKeyToClipboard">已将引用键复制到剪贴板</x:String>
+    <x:String x:Key="Message.CopiedTitleToClipboard">已将标题复制到剪贴板</x:String>
     <x:String x:Key="Message.ClipboardUnavailable">剪贴板不可用</x:String>
     <x:String x:Key="Message.CouldNotCopyToClipboard">无法复制到剪贴板：{0}</x:String>
     <x:String x:Key="Message.CopiedSelectedEntries">已复制 {0} 个条目</x:String>

@@ -6,6 +6,8 @@ namespace Litenbib.Views;
 
 public partial class SettingsView : StyledWindow
 {
+    protected override bool CancelOnEscape => true;
+
     public SettingsView()
     {
         InitializeComponent();

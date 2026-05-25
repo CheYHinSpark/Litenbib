@@ -1281,6 +1281,52 @@ namespace Litenbib.ViewModels
         }
 
         [RelayCommand]
+        private async Task ChoosePdfFile(object? sender)
+        {
+            if (ShowingEntry == null || !TryGetWindow(sender, out Window window))
+            {
+                return;
+            }
+
+            var files = await window.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+            {
+                Title = I18n.Get("Picker.ChoosePdfFile"),
+                AllowMultiple = false,
+                FileTypeFilter =
+                [
+                    new FilePickerFileType(I18n.Get("FileType.PdfFiles"))
+                    {
+                        Patterns = ["*.pdf"],
+                        MimeTypes = ["application/pdf"]
+                    }
+                ]
+            });
+
+            IStorageFile? file = files.FirstOrDefault();
+            if (file == null)
+            {
+                return;
+            }
+
+            string path = GetStoragePath(file);
+            ShowingEntry.File = FormatSelectedPdfFileValue(path);
+        }
+
+        private static string GetStoragePath(IStorageItem file)
+        {
+            return file.Path.IsFile
+                ? file.Path.LocalPath
+                : Uri.UnescapeDataString(file.Path.AbsolutePath);
+        }
+
+        private static string FormatSelectedPdfFileValue(string pdfFile)
+        {
+            return AppSettingsState.Current.PdfFilePathStyle == PdfFilePathStyles.JabRef
+                ? $":{pdfFile.Replace(":", "\\:").Replace(";", "\\;")}:PDF"
+                : pdfFile;
+        }
+
+        [RelayCommand]
         private static void ToLink(object o)
         {
             if (o is not BibtexEntry entry) { return; }
@@ -1328,6 +1374,13 @@ namespace Litenbib.ViewModels
         {
             if (ShowingEntry == null) { return; }
             await CopyToClipboardAsync(o, ShowingEntry.CitationKey, I18n.Get("Message.CopiedCitationKeyToClipboard"));
+        }
+
+        [RelayCommand]
+        private async Task CopyTitle(object? o)
+        {
+            if (ShowingEntry == null) { return; }
+            await CopyToClipboardAsync(o, ShowingEntry.Title, I18n.Get("Message.CopiedTitleToClipboard"));
         }
 
         private async Task CopyToClipboardAsync(object? o, string? text, string successMessage)

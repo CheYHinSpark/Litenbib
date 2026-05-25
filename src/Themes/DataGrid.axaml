@@ -2,25 +2,25 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     
     <SolidColorBrush x:Key="DataGridGridLinesBrush" Color="Transparent"/>
-	
+    
     <ControlTheme x:Key="{x:Type DataGridColumnHeader}" TargetType="DataGridColumnHeader">
-		<Setter Property="Background" Value="{DynamicResource BarBackground}"/>
-		<Setter Property="Foreground" Value="{DynamicResource MainForeground}"/>
+        <Setter Property="Background" Value="{DynamicResource BarBackground}"/>
+        <Setter Property="Foreground" Value="{DynamicResource MainForeground}"/>
         <Setter Property="Padding" Value="0 8"/>
-		<Setter Property="AreSeparatorsVisible" Value="False"/>
-		<Setter Property="SeparatorBrush" Value="{DynamicResource BarBorder}"/>
+        <Setter Property="AreSeparatorsVisible" Value="False"/>
+        <Setter Property="SeparatorBrush" Value="{DynamicResource BarBorder}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource BarBorder}"/>
         <Setter Property="BorderThickness" Value="0 1"/>
-		<Setter Property="Template">
+        <Setter Property="Template">
             <ControlTemplate>
                 <Grid Name="PART_ColumnHeaderRoot" ColumnDefinitions="*,1">
-					<Border Name="PART_Border"
-							Grid.ColumnSpan="2"
-							Background="{TemplateBinding Background}"
-							Opacity="0.95"
-							BorderBrush="{TemplateBinding BorderBrush}"
-							BorderThickness="{TemplateBinding BorderThickness}"
-							CornerRadius="{TemplateBinding CornerRadius}"/>
+                    <Border Name="PART_Border"
+                            Grid.ColumnSpan="2"
+                            Background="{TemplateBinding Background}"
+                            Opacity="0.95"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}"/>
                     <ContentPresenter Margin="{TemplateBinding Padding}"
                                       Content="{TemplateBinding Content}"
                                       ContentTemplate="{TemplateBinding ContentTemplate}"/>
@@ -33,25 +33,25 @@
             </ControlTemplate>
         </Setter>
 
-		<Style Selector="^:nth-child(1)">
-			<Setter Property="CornerRadius" Value="0 0 0 8"/>
+        <Style Selector="^:nth-child(1)">
+            <Setter Property="CornerRadius" Value="0 0 0 8"/>
             <Setter Property="BorderThickness" Value="1 1 0 1"/>
-		</Style>
+        </Style>
 
-		<Style Selector="^:nth-last-child(1)">
-			<Setter Property="CornerRadius" Value="0 0 8 0"/>
+        <Style Selector="^:nth-last-child(1)">
+            <Setter Property="CornerRadius" Value="0 0 8 0"/>
             <Setter Property="BorderThickness" Value="0 1 1 1"/>
-		</Style>
+        </Style>
 
-		<Style Selector="^:sortascending /template/ Border#PART_SortBorder">
+        <Style Selector="^:sortascending /template/ Border#PART_SortBorder">
             <Setter Property="IsVisible" Value="True"/>
             <Setter Property="VerticalAlignment" Value="Top"/>
-		</Style>
+        </Style>
 
-		<Style Selector="^:sortdescending /template/ Border#PART_SortBorder">
+        <Style Selector="^:sortdescending /template/ Border#PART_SortBorder">
             <Setter Property="IsVisible" Value="True"/>
             <Setter Property="VerticalAlignment" Value="Bottom"/>
-		</Style>
+        </Style>
 
         <Style Selector="^:not(:sortascending):not(:sortdescending) /template/ Border#PART_SortBorder">
             <Setter Property="IsVisible" Value="False"/>
@@ -62,21 +62,21 @@
         <Setter Property="Padding" Value="0"/>
         <Setter Property="Template">
             <ControlTemplate>
-				<Grid>
-					<Border x:Name="CellBorder"
+                <Grid>
+                    <Border x:Name="CellBorder"
                             Background="Transparent"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="{TemplateBinding CornerRadius}"
-							Opacity="1">
-					</Border>
-					<ContentPresenter Margin="{TemplateBinding Padding}"
-									  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-									  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-									  Content="{TemplateBinding Content}"
-									  ContentTemplate="{TemplateBinding ContentTemplate}"
-									  Foreground="{TemplateBinding Foreground}" />
-				</Grid>
+                            Opacity="1">
+                    </Border>
+                    <ContentPresenter Margin="{TemplateBinding Padding}"
+                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                      Content="{TemplateBinding Content}"
+                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                      Foreground="{TemplateBinding Foreground}" />
+                </Grid>
             </ControlTemplate>
         </Setter>
     </ControlTheme>
@@ -86,7 +86,7 @@
             <ControlTemplate>
                 <DataGridFrozenGrid Name="PART_Root"
                                     ColumnDefinitions="Auto,*"
-									Background="{TemplateBinding Background}"
+                                    Background="{TemplateBinding Background}"
                                     RowDefinitions="*,Auto">
                     <Border Name="BackgroundBorder" MinHeight="32" CornerRadius="8"
                             Margin="0 2" Grid.RowSpan="2" Grid.ColumnSpan="2"
@@ -115,9 +115,9 @@
             </ControlTemplate>
         </Setter>
 
-		<Style Selector="^:pointerover /template/ Border#BackgroundBorder">
+        <Style Selector="^:pointerover /template/ Border#BackgroundBorder">
             <Setter Property="Opacity" Value="0.8"/>
-		</Style>
+        </Style>
 
         <Style Selector="^:selected /template/ Border#BackgroundBorder">
             <Setter Property="Opacity" Value="1"/>

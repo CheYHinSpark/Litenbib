@@ -19,8 +19,8 @@
         <Setter Property="Background" Value="{DynamicResource InputBackground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource MainBorder}" />
         <Setter Property="BorderThickness" Value="1" />
-		<Setter Property="CornerRadius" Value="8" />
-		<Setter Property="Padding" Value="2" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Padding" Value="2" />
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
         <Setter Property="ScrollViewer.IsScrollChainingEnabled" Value="True" />
@@ -33,7 +33,7 @@
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{TemplateBinding CornerRadius}"
-						Padding="{TemplateBinding Padding}">
+                        Padding="{TemplateBinding Padding}">
                     <ScrollViewer Name="PART_ScrollViewer"
                                   VerticalSnapPointsType="{TemplateBinding (ScrollViewer.VerticalSnapPointsType)}"
                                   HorizontalSnapPointsType="{TemplateBinding (ScrollViewer.HorizontalSnapPointsType)}"
@@ -52,10 +52,10 @@
             </ControlTemplate>
         </Setter>
     </ControlTheme>
-	
+    
     <ControlTheme x:Key="{x:Type ListBoxItem}" TargetType="ListBoxItem">
         <Setter Property="Background" Value="Transparent" />
-		<Setter Property="CornerRadius" Value="4" />
+        <Setter Property="CornerRadius" Value="4" />
         <Setter Property="Template">
             <ControlTemplate>
                 <ContentPresenter Name="PART_ContentPresenter"
@@ -81,13 +81,13 @@
         </Style>
 
         <!--  Pressed State  -->
-		<Style Selector="^:pressed">
-			<Setter Property="RenderTransform" Value="scale(0.98)" />
-		</Style>
+        <Style Selector="^:pressed">
+            <Setter Property="RenderTransform" Value="scale(0.98)" />
+        </Style>
 
         <!--  Selected State  -->
         <Style Selector="^:selected">
-			<Setter Property="Background" Value="{DynamicResource ThemeBackground}" />
+            <Setter Property="Background" Value="{DynamicResource ThemeBackground}" />
 
             <!--  Selected Unfocused State  -->
             <Style Selector="^:not(:focus) /template/ ContentPresenter#PART_ContentPresenter">
@@ -97,7 +97,7 @@
 
             <!--  Selected PointerOver State  -->
             <Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-				<Setter Property="Background" Value="{DynamicResource ThemeBackground}" />
+                <Setter Property="Background" Value="{DynamicResource ThemeBackground}" />
             </Style>
 
         </Style>

@@ -4,6 +4,7 @@ using Avalonia.Animation.Easings;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
@@ -38,6 +39,7 @@ namespace Litenbib.Views
             MainTabControl.AddHandler(DragDrop.DragEnterEvent, OnDragOver);
             MainTabControl.AddHandler(DragDrop.DragOverEvent, OnDragOver);
             MainTabControl.AddHandler(DragDrop.DragLeaveEvent, OnDragLeave);
+            AddHandler(KeyDownEvent, MainWindow_KeyDown, RoutingStrategies.Tunnel);
         }
 
         protected async override void OnInitialized()
@@ -73,6 +75,56 @@ namespace Litenbib.Views
                 }
             }
             await _viewModel.SaveLocalConfig(this);
+            return true;
+        }
+
+        private void MainWindow_KeyDown(object? sender, KeyEventArgs e)
+        {
+            if (e.Handled)
+            {
+                return;
+            }
+
+            if (e.Key == Key.F && e.KeyModifiers == KeyModifiers.Control)
+            {
+                FocusFilterTextBox();
+                e.Handled = true;
+                return;
+            }
+
+            if (e.Key == Key.Escape && e.KeyModifiers == KeyModifiers.None && ClearFilterText())
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void FocusFilterTextBox()
+        {
+            if ((DataContext as MainWindowViewModel)?.SelectedFile == null)
+            {
+                return;
+            }
+
+            FilterTextBox.Focus();
+            FilterTextBox.SelectAll();
+        }
+
+        private bool ClearFilterText()
+        {
+            var selectedFile = (DataContext as MainWindowViewModel)?.SelectedFile;
+            bool hasFilterText = !string.IsNullOrEmpty(FilterTextBox.Text)
+                || !string.IsNullOrEmpty(selectedFile?.FilterText);
+            if (!hasFilterText)
+            {
+                return false;
+            }
+
+            FilterTextBox.Text = string.Empty;
+            if (selectedFile != null)
+            {
+                selectedFile.FilterText = string.Empty;
+            }
+
             return true;
         }
 

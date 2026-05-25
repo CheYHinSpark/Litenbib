@@ -116,12 +116,14 @@
     <x:String x:Key="Bibtex.Tooltip.SearchCrossref">Search from Crossref</x:String>
     <x:String x:Key="Bibtex.Tooltip.SearchTitle">Search by title</x:String>
     <x:String x:Key="Bibtex.Tooltip.SuperSearch">Super search</x:String>
+    <x:String x:Key="Bibtex.Tooltip.ChoosePdfFile">Choose PDF file</x:String>
     <x:String x:Key="Bibtex.Tooltip.AddEntry">Add Entry</x:String>
     <x:String x:Key="Bibtex.Tooltip.MergeEntries">Merge selected entries</x:String>
     <x:String x:Key="Bibtex.Context.OpenFile">Open File</x:String>
     <x:String x:Key="Bibtex.Context.OpenFolder">Open Containing Folder</x:String>
     <x:String x:Key="Bibtex.Context.OpenLink">Open DOI/URL</x:String>
     <x:String x:Key="Bibtex.Context.CopyCitationKey">Copy Citation Key</x:String>
+    <x:String x:Key="Bibtex.Context.CopyTitle">Copy Title</x:String>
     <x:String x:Key="Bibtex.Context.CopyBibtex">Copy BibTeX Text</x:String>
     <x:String x:Key="Bibtex.Context.CopyEntries">Copy Selected Entries</x:String>
     <x:String x:Key="Bibtex.Context.CutEntries">Cut Selected Entries</x:String>
@@ -218,7 +220,9 @@
     <x:String x:Key="Picker.OpenBibtexFile">Open BibTeX File</x:String>
     <x:String x:Key="Picker.SaveBibtexFileAs">Save BibTeX File As</x:String>
     <x:String x:Key="Picker.ChooseExportPath">Choose Export Path</x:String>
+    <x:String x:Key="Picker.ChoosePdfFile">Choose PDF File</x:String>
     <x:String x:Key="FileType.BibtexFiles">BibTeX Files</x:String>
+    <x:String x:Key="FileType.PdfFiles">PDF Files</x:String>
 
     <x:String x:Key="Message.SettingsSaved">Settings saved</x:String>
     <x:String x:Key="Message.CouldNotReadLocalConfig">Could not read local config: {0}</x:String>
@@ -290,6 +294,7 @@
     <x:String x:Key="Message.CopiedBibtexToClipboard">Copied BibTeX to clipboard</x:String>
     <x:String x:Key="Message.CopiedSelectedBibtexToClipboard">Copied {0} BibTeX entries to clipboard</x:String>
     <x:String x:Key="Message.CopiedCitationKeyToClipboard">Copied citation key to clipboard</x:String>
+    <x:String x:Key="Message.CopiedTitleToClipboard">Copied title to clipboard</x:String>
     <x:String x:Key="Message.ClipboardUnavailable">Clipboard is not available</x:String>
     <x:String x:Key="Message.CouldNotCopyToClipboard">Could not copy to clipboard: {0}</x:String>
     <x:String x:Key="Message.CopiedSelectedEntries">Copied {0} entries</x:String>

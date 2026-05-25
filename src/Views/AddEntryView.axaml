@@ -12,12 +12,12 @@
         Icon="/Assets/logo.ico"
         Title="{DynamicResource AddEntry.Title}">
     <Window.Styles>
-		<Style Selector="TextBox">
-			<Setter Property="AcceptsReturn" Value="True"/>
-			<Setter Property="AcceptsTab" Value="True"/>
-			<Setter Property="TextWrapping" Value="Wrap"/>
-			<Setter Property="FontFamily" Value="Consolas"/>
-		</Style>
+        <Style Selector="TextBox">
+            <Setter Property="AcceptsReturn" Value="True"/>
+            <Setter Property="AcceptsTab" Value="True"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="FontFamily" Value="Consolas"/>
+        </Style>
         <Style Selector="CheckBox">
             <Setter Property="Margin" Value="4 2"/>
             <Setter Property="VerticalAlignment" Value="Top"/>
@@ -36,25 +36,25 @@
     </Design.DataContext>
 
     <Grid RowDefinitions="Auto,Auto,*,*,Auto">
-		<StackPanel Margin="8 12 0 4" Spacing="4">
+        <StackPanel Margin="8 12 0 4" Spacing="4">
             <TextBlock Text="{DynamicResource AddEntry.Heading}" FontSize="18" FontWeight="SemiBold"/>
             <TextBlock Text="{DynamicResource AddEntry.Description}"
                        Opacity="0.8" TextWrapping="Wrap"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-			<Button Name="MinButton" Click="TitleButton_Click" Classes="window">
-				<Path Data="{StaticResource -Path}" StrokeThickness="1"
-					  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
-			</Button>
-			<Button Name="CloseButton" Click="TitleButton_Click" Classes="warning window">
-				<Path Data="{StaticResource xPath}" StrokeThickness="1"
-					  Stroke="{CompiledBinding $parent[Button].Foreground}"/>
-			</Button>
+            <Button Name="MinButton" Click="TitleButton_Click" Classes="window">
+                <Path Data="{StaticResource -Path}" StrokeThickness="1"
+                      Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+            </Button>
+            <Button Name="CloseButton" Click="TitleButton_Click" Classes="warning window">
+                <Path Data="{StaticResource xPath}" StrokeThickness="1"
+                      Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+            </Button>
         </StackPanel>
-		
+        
         <Grid Grid.Row="1" Margin="4" ColumnDefinitions="*,Auto">
             <TextBox Text="{Binding DoiText}" Margin="4 0"
-					 PlaceholderText="{DynamicResource AddEntry.InputPlaceholder}"/>
+                     PlaceholderText="{DynamicResource AddEntry.InputPlaceholder}"/>
             <StackPanel Orientation="Vertical" Grid.Column="1"
                         VerticalAlignment="Bottom">
                 <Button VerticalAlignment="Bottom" Classes="icon" Margin="4 0"
@@ -121,18 +121,18 @@
 
         <v:BibtexEditor Grid.Row="3" Margin="8 4"
                         PlaceholderText="{DynamicResource AddEntry.SelectedBibtexPlaceholder}"
-						Text="{Binding BibtexText, Mode=TwoWay}"/>
-		<TextBlock Grid.Row="4" Margin="8 0"
-				   HorizontalAlignment="Left"
-				   VerticalAlignment="Center"
-				   Text="{Binding HintText}"/>
+                        Text="{Binding BibtexText, Mode=TwoWay}"/>
+        <TextBlock Grid.Row="4" Margin="8 0"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Center"
+                   Text="{Binding HintText}"/>
         <StackPanel Grid.Row="4" Orientation="Horizontal"
-					Margin="0 4 8 8"
+                    Margin="0 4 8 8"
                     HorizontalAlignment="Right">
-			<Button Classes="icon" ToolTip.Tip="{DynamicResource Common.Cancel}" Click="CancelButton_Click">
+            <Button Classes="icon" ToolTip.Tip="{DynamicResource Common.Cancel}" Click="CancelButton_Click">
                 <Path Data="{StaticResource xPath}" Stroke="{CompiledBinding $parent[Button].Foreground}" StrokeThickness="1"/>
             </Button>
-			<Button Classes="icon" ToolTip.Tip="{DynamicResource AddEntry.Tooltip.AddSelected}" Click="AddButton_Click">
+            <Button Classes="icon" ToolTip.Tip="{DynamicResource AddEntry.Tooltip.AddSelected}" Click="AddButton_Click">
                 <Path Data="{StaticResource AddPath}" Fill="{CompiledBinding $parent[Button].Foreground}"/>
             </Button>
         </StackPanel>

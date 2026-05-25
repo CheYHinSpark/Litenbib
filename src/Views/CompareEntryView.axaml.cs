@@ -10,6 +10,8 @@ namespace Litenbib.Views;
 
 public partial class CompareEntryView : StyledWindow
 {
+    protected override bool CancelOnEscape => true;
+
     private readonly List<List<RadioButton>> radioButtons = [];
 
     public CompareEntryView()

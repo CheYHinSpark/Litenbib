@@ -30,13 +30,18 @@
     <Window.KeyBindings>
         <KeyBinding Command="{CompiledBinding NewFileCommand}" Gesture="Ctrl+N"
                     CommandParameter="{CompiledBinding #LitbibMainWindow}"/>
+        <KeyBinding Command="{CompiledBinding OpenFileCommand}" Gesture="Ctrl+O"
+                    CommandParameter="{CompiledBinding #LitbibMainWindow}"/>
+        <KeyBinding Command="{CompiledBinding SaveFileAsCommand}" Gesture="Ctrl+Shift+S"
+                    CommandParameter="{CompiledBinding #LitbibMainWindow}"/>
+        <KeyBinding Command="{CompiledBinding SaveAllCommand}" Gesture="Ctrl+Alt+S"/>
         <KeyBinding Command="{CompiledBinding SelectedFile.AddBibtexEntryCommand}" Gesture="Ctrl+Shift+A"
                     CommandParameter="{CompiledBinding #LitbibMainWindow}"/>
         <KeyBinding Command="{CompiledBinding SelectedFile.CopyBibtexCommand}" Gesture="Ctrl+C"
                     CommandParameter="{CompiledBinding #LitbibMainWindow.DataContext}"/>
-		<KeyBinding Command="{CompiledBinding SelectedFile.PasteBibtexCommand}" Gesture="Ctrl+V"
+        <KeyBinding Command="{CompiledBinding SelectedFile.PasteBibtexCommand}" Gesture="Ctrl+V"
                     CommandParameter="{CompiledBinding #LitbibMainWindow.DataContext}"/>
-		<KeyBinding Command="{CompiledBinding SelectedFile.CutBibtexCommand}" Gesture="Ctrl+X"
+        <KeyBinding Command="{CompiledBinding SelectedFile.CutBibtexCommand}" Gesture="Ctrl+X"
                     CommandParameter="{CompiledBinding #LitbibMainWindow.DataContext}"/>
         <KeyBinding Command="{CompiledBinding SelectedFile.UndoBibtexCommand}" Gesture="Ctrl+Z"/>
         <KeyBinding Command="{CompiledBinding SelectedFile.RedoBibtexCommand}" Gesture="Ctrl+Y"/>
@@ -104,9 +109,11 @@
                 <Menu>
                     <MenuItem Header="{DynamicResource Main.Menu.File}" Classes="Top">
                         <MenuItem Header="{DynamicResource Main.Menu.New}"
+                                  InputGesture="Ctrl+N"
                                   Command="{CompiledBinding NewFileCommand}"
                                   CommandParameter="{CompiledBinding $parent[Window]}"/>
                         <MenuItem Header="{DynamicResource Main.Menu.Open}"
+                                  InputGesture="Ctrl+O"
                                   Command="{CompiledBinding OpenFileCommand}"
                                   CommandParameter="{CompiledBinding $parent[Window]}"/>
                         <MenuItem Header="{DynamicResource Main.Menu.OpenRecent}" ItemsSource="{CompiledBinding RecentFiles}">
@@ -122,12 +129,14 @@
                             </MenuItem.ItemContainerTheme>
                         </MenuItem>
                         <MenuItem Header="{DynamicResource Main.Menu.SaveAs}"
+                                  InputGesture="Ctrl+Shift+S"
                                   Command="{CompiledBinding SaveFileAsCommand}"
                                   CommandParameter="{CompiledBinding $parent[Window]}"/>
                         <MenuItem Header="{DynamicResource Main.Menu.Export}"
                                   Command="{CompiledBinding ExportFileCommand}"
                                   CommandParameter="{CompiledBinding $parent[Window]}"/>
                         <MenuItem Header="{DynamicResource Main.Menu.SaveAll}"
+                                  InputGesture="Ctrl+Alt+S"
                                   Command="{CompiledBinding SaveAllCommand}"/>
                     </MenuItem>
                     <MenuItem Header="{DynamicResource Main.Menu.Edit}" Classes="Top">
@@ -137,10 +146,10 @@
                         <MenuItem Header="{DynamicResource Main.Menu.Copy}"
                                   Command="{CompiledBinding SelectedFile.CopyBibtexCommand}"
                                   CommandParameter="{CompiledBinding $parent[Window].DataContext}"/>
-						<MenuItem Header="{DynamicResource Main.Menu.Paste}"
+                        <MenuItem Header="{DynamicResource Main.Menu.Paste}"
                                   Command="{CompiledBinding SelectedFile.PasteBibtexCommand}"
                                   CommandParameter="{CompiledBinding $parent[Window].DataContext}"/>
-						<MenuItem Header="{DynamicResource Main.Menu.Cut}"
+                        <MenuItem Header="{DynamicResource Main.Menu.Cut}"
                                   Command="{CompiledBinding SelectedFile.CutBibtexCommand}"
                                   CommandParameter="{CompiledBinding $parent[Window].DataContext}"/>
                         <MenuItem Header="{DynamicResource Main.Menu.BatchDeleteFields}"
@@ -167,17 +176,17 @@
             </StackPanel>
             
             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Grid.Column="2">
-				<Button Classes="window" Command="{CompiledBinding ChangeThemeCommand}" ToolTip.Tip="{DynamicResource Main.Tooltip.ToggleTheme}">
-					<Grid>
-						<Path Data="{StaticResource SunPath}" StrokeThickness="1"
+                <Button Classes="window" Command="{CompiledBinding ChangeThemeCommand}" ToolTip.Tip="{DynamicResource Main.Tooltip.ToggleTheme}">
+                    <Grid>
+                        <Path Data="{StaticResource SunPath}" StrokeThickness="1"
                               Stroke="{CompiledBinding $parent[Button].Foreground}"
                               Fill="{CompiledBinding $parent[Button].Foreground}"
-							  IsVisible="{CompiledBinding ThemeIndex}"/>
-						<Path Data="{StaticResource MoonPath}"
+                              IsVisible="{CompiledBinding ThemeIndex}"/>
+                        <Path Data="{StaticResource MoonPath}"
                               Fill="{CompiledBinding $parent[Button].Foreground}"
-							  IsVisible="{CompiledBinding ThemeIndex, Converter={x:Static BoolConverters.Not}}"/>
-					</Grid>
-				</Button>
+                              IsVisible="{CompiledBinding ThemeIndex, Converter={x:Static BoolConverters.Not}}"/>
+                    </Grid>
+                </Button>
                 <Button Name="MinButton" Click="TitleButton_Click" Classes="window" ToolTip.Tip="{DynamicResource Main.Tooltip.Minimize}">
                     <Path Data="{StaticResource -Path}" StrokeThickness="1"
                           Stroke="{CompiledBinding $parent[Button].Foreground}"/>
@@ -204,54 +213,54 @@
                     <Style Selector="Button">
                         <Setter Property="Background" Value="{DynamicResource InputBackground}"/>
                         <Setter Property="Width" Value="28"/>
-						<Setter Property="Height" Value="28"/>
-						<Setter Property="Margin" Value="0 2"/>
+                        <Setter Property="Height" Value="28"/>
+                        <Setter Property="Margin" Value="0 2"/>
                     </Style>
                 </Grid.Styles>
                 <Border Margin="8 0" Background="{DynamicResource InputBackground}"
                         HorizontalAlignment="Right" VerticalAlignment="Center"
-						BorderBrush="{DynamicResource MainBorder}"
-						BorderThickness="1"
+                        BorderBrush="{DynamicResource MainBorder}"
+                        BorderThickness="1"
                         CornerRadius="8">
                     <StackPanel Orientation="Horizontal" Margin="6 0" VerticalAlignment="Center">
                         <Button Command="{CompiledBinding OpenWebsiteCommand}"
                                 CommandParameter="https://dblp.org/"
-								ToolTip.Tip="Go to https://dblp.org/">
+                                ToolTip.Tip="Go to https://dblp.org/">
                             <Viewbox Margin="2">
                                 <Svg Path="/Assets/dblp.svg"/>
                             </Viewbox>
                         </Button>
                         <Button Command="{CompiledBinding OpenWebsiteCommand}"
                                 CommandParameter="https://arxiv.org/"
-								ToolTip.Tip="Go to https://arxiv.org/">
+                                ToolTip.Tip="Go to https://arxiv.org/">
                             <Viewbox Margin="2">
                                 <Svg Path="/Assets/arxiv.svg"/>
                             </Viewbox>
                         </Button>
                         <Button Command="{CompiledBinding OpenWebsiteCommand}"
                                 CommandParameter="https://www.semanticscholar.org/"
-								ToolTip.Tip="Go to https://www.semanticscholar.org/">
+                                ToolTip.Tip="Go to https://www.semanticscholar.org/">
                             <Viewbox Margin="1">
                                 <Svg Path="/Assets/semantic_scholar.svg"/>
                             </Viewbox>
                         </Button>
                         <Button Command="{CompiledBinding OpenWebsiteCommand}"
                                 CommandParameter="https://www.researchgate.net/"
-								ToolTip.Tip="Go to https://www.researchgate.net/">
+                                ToolTip.Tip="Go to https://www.researchgate.net/">
                             <Viewbox Margin="2">
                                 <Svg Path="/Assets/researchgate.svg"/>
                             </Viewbox>
                         </Button>
                         <Button Command="{CompiledBinding OpenWebsiteCommand}"
                                 CommandParameter="https://scholar.google.com/"
-								ToolTip.Tip="Go to https://scholar.google.com/">
+                                ToolTip.Tip="Go to https://scholar.google.com/">
                             <Viewbox Margin="3">
                                 <Svg Path="/Assets/google_scholar.svg"/>
                             </Viewbox>
                         </Button>
                         <Button Command="{CompiledBinding OpenWebsiteCommand}"
                                 CommandParameter="https://openreview.net/"
-								ToolTip.Tip="Go to https://openreview.net/">
+                                ToolTip.Tip="Go to https://openreview.net/">
                             <Viewbox Margin="0">
                                 <Svg Path="/Assets/openreview.svg"/>
                             </Viewbox>
@@ -264,21 +273,21 @@
         
         <!--content-->
         <Grid x:Name="MainTabControl" Grid.Row="1" RowDefinitions="Auto,*"
-			  Background="{DynamicResource MainBackground}"
+              Background="{DynamicResource MainBackground}"
               PointerMoved="TabControl_PointerMoved"
-			  DragDrop.AllowDrop="True">
-			<!--welcome-->
-			<Border Grid.RowSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center"
+              DragDrop.AllowDrop="True">
+            <!--welcome-->
+            <Border Grid.RowSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center"
                     Padding="36 28" CornerRadius="8"
                     Background="{DynamicResource InputBackground}"
                     BorderBrush="{DynamicResource MainBorder}"
                     BorderThickness="1"
                     IsVisible="{CompiledBinding SelectedFile, Converter={x:Static ObjectConverters.IsNull}}">
                 <StackPanel Width="360" Spacing="10">
-				    <Svg Path="/Assets/logo.svg" Width="88" HorizontalAlignment="Center"/>
-				    <TextBlock Text="LitenBib"
-						       HorizontalAlignment="Center"
-						       FontSize="26"
+                    <Svg Path="/Assets/logo.svg" Width="88" HorizontalAlignment="Center"/>
+                    <TextBlock Text="LitenBib"
+                               HorizontalAlignment="Center"
+                               FontSize="26"
                                FontWeight="SemiBold"/>
                     <TextBlock Text="{DynamicResource Main.Welcome.Tagline}"
                                HorizontalAlignment="Center"
@@ -293,25 +302,25 @@
             </Border>
 
             <!--tabcontrol-->
-			<TabStrip x:Name="MainTabStrip" ItemsSource="{CompiledBinding BibtexTabs}"
+            <TabStrip x:Name="MainTabStrip" ItemsSource="{CompiledBinding BibtexTabs}"
                       SelectedItem="{CompiledBinding SelectedFile}">
                 <TabStrip.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Grid.Column="1" Orientation="Horizontal"
                                     PointerPressed="TabItem_PointerPressed"
                                     PointerReleased="TabItem_PointerReleased">
-							<StackPanel.ContextMenu>
-								<ContextMenu>
-									<MenuItem Header="{DynamicResource Main.Context.Duplicate}"
+                            <StackPanel.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="{DynamicResource Main.Context.Duplicate}"
                                               Command="{CompiledBinding #LitbibMainWindow.DataContext.DuplicateTabCommand}"
                                               CommandParameter="{CompiledBinding}"/>
-									<MenuItem Header="{DynamicResource Main.Context.OpenInFileManager}"
-											  Command="{CompiledBinding OpenInFileManagerCommand}"/>
+                                    <MenuItem Header="{DynamicResource Main.Context.OpenInFileManager}"
+                                              Command="{CompiledBinding OpenInFileManagerCommand}"/>
                                     <MenuItem Header="{DynamicResource Main.Context.CloseOthers}"
                                               Command="{CompiledBinding #LitbibMainWindow.DataContext.CloseOtherTabsCommand}"
                                               CommandParameter="{CompiledBinding}"/>
-								</ContextMenu>
-							</StackPanel.ContextMenu>
+                                </ContextMenu>
+                            </StackPanel.ContextMenu>
                             <TextBlock Text="*" FontSize="{CompiledBinding $parent[Window].FontSize}"
                                        IsVisible="{CompiledBinding Edited}" Margin="4 0 0 0"/>
                             <TextBlock Text="{CompiledBinding Header}" Margin="4 0"
@@ -350,16 +359,16 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
 
-			<!--dragdrop-->
-			<Border Name="DragBorder" Grid.RowSpan="2"
-					IsHitTestVisible="False"
-					BorderBrush="{DynamicResource ThemeBorder}"
-					Background="{DynamicResource InputBackground}"
-					BorderThickness="4" CornerRadius="8" Margin="2"
-					Opacity="0"/>
+            <!--dragdrop-->
+            <Border Name="DragBorder" Grid.RowSpan="2"
+                    IsHitTestVisible="False"
+                    BorderBrush="{DynamicResource ThemeBorder}"
+                    Background="{DynamicResource InputBackground}"
+                    BorderThickness="4" CornerRadius="8" Margin="2"
+                    Opacity="0"/>
         </Grid>
 
-		<!--Notifications-->
+        <!--Notifications-->
         <ItemsControl Grid.RowSpan="2"
                       ItemsSource="{CompiledBinding Notifications}"
                       HorizontalAlignment="Center"
@@ -377,32 +386,32 @@
                             Padding="16 8"
                             CornerRadius="8"
                             BorderThickness="1"
-							Tag="{CompiledBinding Type}"
-							Opacity="{CompiledBinding Opacity}"
+                            Tag="{CompiledBinding Type}"
+                            Opacity="{CompiledBinding Opacity}"
                             BorderBrush="{DynamicResource MainBorder}"
                             Command="{CompiledBinding #LitbibMainWindow.DataContext.DismissNotificationCommand}"
                             CommandParameter="{CompiledBinding .}">
                         <TextBlock Text="{CompiledBinding Message}"
                                    TextWrapping="Wrap"/>
-						<Button.Transitions>
-							<Transitions>
-								<DoubleTransition Property="Opacity"
-												  Duration="0:0:0.4"
-												  Easing="QuadraticEaseOut"/>
-							</Transitions>
-						</Button.Transitions>
-						<Button.Styles>
-							<Style Selector="Button[Tag=info]">
-								<Setter Property="Background" Value="{DynamicResource MainBackground}"/>
-							</Style>
-							<Style Selector="Button[Tag=error]">
-								<Setter Property="Background" Value="{DynamicResource WarningBackground}"/>
-							</Style>
-						</Button.Styles>
+                        <Button.Transitions>
+                            <Transitions>
+                                <DoubleTransition Property="Opacity"
+                                                  Duration="0:0:0.4"
+                                                  Easing="QuadraticEaseOut"/>
+                            </Transitions>
+                        </Button.Transitions>
+                        <Button.Styles>
+                            <Style Selector="Button[Tag=info]">
+                                <Setter Property="Background" Value="{DynamicResource MainBackground}"/>
+                            </Style>
+                            <Style Selector="Button[Tag=error]">
+                                <Setter Property="Background" Value="{DynamicResource WarningBackground}"/>
+                            </Style>
+                        </Button.Styles>
                     </Button>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
     
-	</Grid>
+    </Grid>
 </Window>

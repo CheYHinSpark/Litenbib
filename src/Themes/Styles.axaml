@@ -9,8 +9,8 @@
                 <ResourceInclude Source="/Themes/Expander.axaml"/>
                 <ResourceInclude Source="/Themes/MenuItem.axaml"/>
                 <ResourceInclude Source="/Themes/ListBox.axaml"/>
-				<ResourceInclude Source="/Themes/ScrollViewer.axaml"/>
-				<ResourceInclude Source="/Themes/Tab.axaml"/>
+                <ResourceInclude Source="/Themes/ScrollViewer.axaml"/>
+                <ResourceInclude Source="/Themes/Tab.axaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Styles.Resources>
@@ -39,7 +39,7 @@
         <Style Selector="^:pointerover">
             <Setter Property="Background" Value="{DynamicResource MainHighlight}"/>
         </Style>
-		</Style>
+        </Style>
 
     <Style Selector="Button">
         <Setter Property="Transitions">
@@ -53,8 +53,8 @@
     <Style Selector="Button.tab_button">
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
-		<Setter Property="Padding" Value="0"/>
-		<Setter Property="Height" Value="20"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Height" Value="20"/>
         <Setter Property="Width" Value="20"/>
         <Setter Property="Background" Value="Transparent"/>
         <Style Selector="^:pointerover">
@@ -125,12 +125,12 @@
         </Style>
     </Style>
 
-	<Style Selector="Path">
-		<Setter Property="HorizontalAlignment" Value="Center"/>
-		<Setter Property="VerticalAlignment" Value="Center"/>
-		<Setter Property="StrokeLineCap" Value="Round"/>
-		<Setter Property="StrokeJoin" Value="Round"/>
-	</Style>
+    <Style Selector="Path">
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="StrokeLineCap" Value="Round"/>
+        <Setter Property="StrokeJoin" Value="Round"/>
+    </Style>
 
     <Style Selector="TextBox">
         <Setter Property="Transitions">
@@ -142,14 +142,14 @@
     </Style>
     
     <Style Selector="RadioButton">
-		<Setter Property="Transitions">
-			<Transitions>
-				<BrushTransition Property="Background" Duration="0:0:0.1"/>
-			</Transitions>
-		</Setter>
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="Background" Duration="0:0:0.1"/>
+            </Transitions>
+        </Setter>
     </Style>
 
-	<Style Selector="Window">
+    <Style Selector="Window">
         <Setter Property="Background" Value="{DynamicResource MainBackground}"/>
         <Setter Property="Foreground" Value="{DynamicResource MainForeground}"/>
         <Setter Property="ExtendClientAreaToDecorationsHint" Value="True"/>

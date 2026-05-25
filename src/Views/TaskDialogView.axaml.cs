@@ -5,6 +5,8 @@ namespace Litenbib.Views;
 
 public partial class TaskDialogView : StyledWindow
 {
+    protected override bool CancelOnEscape => true;
+
     public TaskDialogView()
     {
         InitializeComponent();

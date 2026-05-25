@@ -11,8 +11,8 @@
         Title="{DynamicResource Compare.Title}">
     <Window.Styles>
         <Style Selector="RadioButton">
-			<Setter Property="Background" Value="{DynamicResource InputBackground}"/>
-			<Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Background" Value="{DynamicResource InputBackground}"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
             <Setter Property="VerticalContentAlignment" Value="Top"/>
             <Setter Property="Margin" Value="8 2"/>
             <Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter">
@@ -20,20 +20,20 @@
             </Style>
         </Style>
         <Style Selector="Button[Tag=center]">
-			<Setter Property="BorderBrush" Value="{DynamicResource ThemeBorder}"/>
-			<Setter Property="BorderThickness" Value="2"/>
-			<Setter Property="Background" Value="{DynamicResource InputBackground}"/>
-			<Setter Property="CornerRadius" Value="8"/>
-			<Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorder}"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="Background" Value="{DynamicResource InputBackground}"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
             <Setter Property="Margin" Value="8 2"/>
-			<Style Selector="^:pointerover">
-				<Setter Property="Background" Value="{DynamicResource MainHighlight}"/>
-			</Style>
+            <Style Selector="^:pointerover">
+                <Setter Property="Background" Value="{DynamicResource MainHighlight}"/>
+            </Style>
         </Style>
-		<Style Selector="TextBlock">
-			<Setter Property="VerticalAlignment" Value="Center"/>
-			<Setter Property="HorizontalAlignment" Value="Right"/>
-		</Style>
+        <Style Selector="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+        </Style>
     </Window.Styles>
     <Grid RowDefinitions="Auto,Auto,*,Auto" Grid.IsSharedSizeScope="True" Margin="0 0 0 8">
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
@@ -60,11 +60,11 @@
 
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right"
                     Margin=" 8 8">
-			<Button Content="{DynamicResource Common.Cancel}" Width="64"
-					Click="CancelButton_Click"/>
-			<Button Content="{DynamicResource Compare.Merge}" Width="64"
-					Command="{CompiledBinding MergeCommand}"
-					CommandParameter="{CompiledBinding $parent[Window]}"/>
+            <Button Content="{DynamicResource Common.Cancel}" Width="64"
+                    Click="CancelButton_Click"/>
+            <Button Content="{DynamicResource Compare.Merge}" Width="64"
+                    Command="{CompiledBinding MergeCommand}"
+                    CommandParameter="{CompiledBinding $parent[Window]}"/>
         </StackPanel>
     </Grid>
 </Window>

@@ -80,7 +80,7 @@
                                                   Focusable="False" />
                                 </Track.IncreaseButton>
                                 <Thumb Theme="{StaticResource FluentScrollBarThumb}"
-									   CornerRadius="{DynamicResource ScrollBarCornerRadius}"
+                                       CornerRadius="{DynamicResource ScrollBarCornerRadius}"
                                        Width="{DynamicResource ScrollBarSize}"
                                        MinHeight="{DynamicResource ScrollBarSize}"
                                        RenderTransform="{DynamicResource VerticalSmallScrollThumbScaleTransform}"
@@ -157,7 +157,7 @@
                                                   Focusable="False" />
                                 </Track.IncreaseButton>
                                 <Thumb Theme="{StaticResource FluentScrollBarThumb}"
-									   CornerRadius="{DynamicResource ScrollBarCornerRadius}"
+                                       CornerRadius="{DynamicResource ScrollBarCornerRadius}"
                                        Height="{DynamicResource ScrollBarSize}"
                                        MinWidth="{DynamicResource ScrollBarSize}"
                                        RenderTransform="{DynamicResource HorizontalSmallScrollThumbScaleTransform}"

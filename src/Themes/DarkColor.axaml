@@ -13,16 +13,16 @@
     <Color x:Key="WarningHighlightColor">#B93A26</Color>
     
     <Color x:Key="DisabledForegroundColor">#9AA7B1</Color>
-	<Color x:Key="MainForegroundColor">#EBEEE8</Color>
-	
+    <Color x:Key="MainForegroundColor">#EBEEE8</Color>
+    
     <Color x:Key="MainBorderColor">#547689</Color>
     <Color x:Key="BarBorderColor">#446A37</Color>
-	<Color x:Key="ThemeBorderColor">#615EA8</Color>
+    <Color x:Key="ThemeBorderColor">#615EA8</Color>
 
     <Color x:Key="BibtexEntryTypeColor">#A3BBDB</Color>
     <Color x:Key="BibtexCitationKeyColor">#FFEE6F</Color>
     <Color x:Key="BibtexFieldColor">#BBA1CB</Color>
     <Color x:Key="BibtexValueColor">#B1D5C8</Color>
     <Color x:Key="BibtexPunctuationColor">#BDCBD2</Color>
-	<Color x:Key="BibtexCommentColor">#D4DDE1</Color>
+    <Color x:Key="BibtexCommentColor">#D4DDE1</Color>
 </ResourceDictionary>
