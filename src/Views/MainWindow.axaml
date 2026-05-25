@@ -62,7 +62,8 @@
         
         <Grid Name="TitleBarGrid" ColumnDefinitions="*,*,*">
             <Border Name="FilterBorder" Grid.Column="1" CornerRadius="0"
-                    Background="{DynamicResource TabBackground}" Classes="hide_show">
+                    Background="{DynamicResource BarBackground}" Classes="hide_show"
+                    BorderThickness="0 0 0 1" BorderBrush="{DynamicResource BarBorder}">
                 <Border.IsEnabled>
                     <MultiBinding Converter="{x:Static BoolConverters.And}">
                         <Binding Path="#FilterTextBox.Text" Converter="{x:Static StringConverters.IsNotNullOrEmpty}" />
@@ -70,30 +71,24 @@
                     </MultiBinding>
                 </Border.IsEnabled>
             </Border>
-            <Border HorizontalAlignment="Right" Width="120" CornerRadius="0 0 0 8"
-                    Background="{DynamicResource TabBackground}" Classes="hide_show"
-                    IsEnabled="{CompiledBinding #FilterBorder.IsEnabled}">
+            <Border HorizontalAlignment="Right" Width="128" CornerRadius="0 0 0 8"
+                    Background="{DynamicResource BarBackground}" Classes="hide_show"
+                    IsEnabled="{CompiledBinding #FilterBorder.IsEnabled}"
+                    BorderThickness="1 0 0 1" BorderBrush="{DynamicResource BarBorder}">
                 <v:ExComboBox Margin="4"
-                              HorizontalAlignment="Stretch"
-                              VerticalAlignment="Center"
-                              Background="{DynamicResource MainBackground}"
-                              BorderBrush="{DynamicResource MainBorder}"
-                              CornerRadius="8"
-                              Padding="8 0"
+                              HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                              CornerRadius="8" Padding="8 0"
                               SelectedIndex="{CompiledBinding SelectedFile.FilterMode, Mode=TwoWay, FallbackValue=0}"
                               ItemsSource="{CompiledBinding FilterModeList}"
                               IsEnabled="{CompiledBinding SelectedFile, Converter={x:Static ObjectConverters.IsNotNull}}"/>
             </Border>
-            <Border Grid.Column="2" HorizontalAlignment="Left" Width="120" CornerRadius="0 0 8 0"
-                    Background="{DynamicResource TabBackground}" Classes="hide_show"
-                    IsEnabled="{CompiledBinding #FilterBorder.IsEnabled}">
+            <Border Grid.Column="2" HorizontalAlignment="Left" Width="128" CornerRadius="0 0 8 0"
+                    Background="{DynamicResource BarBackground}" Classes="hide_show"
+                    IsEnabled="{CompiledBinding #FilterBorder.IsEnabled}"
+                    BorderThickness="0 0 1 1" BorderBrush="{DynamicResource BarBorder}">
                 <v:ExComboBox Margin="4"
-                              HorizontalAlignment="Stretch"
-                              VerticalAlignment="Center"
-                              Background="{DynamicResource MainBackground}"
-                              BorderBrush="{DynamicResource MainBorder}"
-                              CornerRadius="8"
-                              Padding="8 0"
+                              HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                              CornerRadius="8" Padding="8 0"
                               SelectedItem="{CompiledBinding SelectedFile.FilterFieldOption, Mode=TwoWay}"
                               SelectedIndex="0"
                               ItemsSource="{CompiledBinding FilterFieldList}"
