@@ -13,17 +13,17 @@
 
     <Grid RowDefinitions="Auto,Auto,*">
         <Grid ColumnDefinitions="*,*">
-            <RadioButton Margin="2" GroupName="BatchFieldMode"
+            <RadioButton Margin="0 0 4 0" GroupName="BatchFieldMode"
                          IsChecked="{CompiledBinding DeleteSelectedFields, Mode=TwoWay}">
                 <TextBlock Text="{DynamicResource BatchDelete.DeleteSelected}"/>
             </RadioButton>
-            <RadioButton Grid.Column="1" Margin="2" GroupName="BatchFieldMode"
+            <RadioButton Grid.Column="1" Margin="4 0 0 0" GroupName="BatchFieldMode"
                          IsChecked="{CompiledBinding KeepSelectedFieldsOnly, Mode=TwoWay}">
                 <TextBlock Text="{DynamicResource BatchDelete.KeepSelected}"/>
             </RadioButton>
         </Grid>
 
-        <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="4 8 8 0">
+        <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="0 4 0 4">
             <TextBlock Text="{DynamicResource BatchDelete.Fields}" VerticalAlignment="Center"/>
             <Button Grid.Column="1" Width="28" Height="28"
                     ToolTip.Tip="{DynamicResource BatchDelete.Tooltip.AddField}"
@@ -33,7 +33,7 @@
             </Button>
         </Grid>
 
-        <Border Grid.Row="2" CornerRadius="8" Padding="4" Margin="4"
+        <Border Grid.Row="2" CornerRadius="8" Padding="4"
                 BorderThickness="1" BorderBrush="{DynamicResource ThemeBorder}">
             <ScrollViewer>
                 <ItemsControl ItemsSource="{CompiledBinding FieldRows}">
@@ -42,7 +42,7 @@
                             <Grid ColumnDefinitions="*,Auto" Margin="0 2">
                                 <local:ExComboBox ItemsSource="{CompiledBinding SupportedFields}"
                                                   SelectedItem="{CompiledBinding FieldName}"/>
-                                <Button Grid.Column="1" Margin="4 0"
+                                <Button Grid.Column="1" Margin="4 0 0 0"
                                         Height="28" Width="28"
                                         ToolTip.Tip="{DynamicResource BatchDelete.Tooltip.RemoveFieldRow}"
                                         Command="{CompiledBinding RemoveCommand}">

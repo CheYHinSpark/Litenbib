@@ -10,6 +10,10 @@ namespace Litenbib.Views;
 
 public partial class CompareEntryView : StyledWindow
 {
+    private const string FieldColumnSharedSizeGroup = "field";
+
+    private const string ClearColumnSharedSizeGroup = "clear";
+
     protected override bool CancelOnEscape => true;
 
     private readonly List<List<RadioButton>> radioButtons = [];
@@ -42,8 +46,8 @@ public partial class CompareEntryView : StyledWindow
         AddTextBlock(I18n.Get("Compare.EntryType"), 0);
         MainGrid.RowDefinitions.Add(new RowDefinition(GridLength.Auto));
         AddTextBlock(I18n.Get("Compare.CitationKey"), 1);
-        HeaderGrid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Auto) { SharedSizeGroup = "field" });
-        MainGrid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Auto) { SharedSizeGroup = "field" });
+        HeaderGrid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Auto) { SharedSizeGroup = FieldColumnSharedSizeGroup });
+        MainGrid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Auto) { SharedSizeGroup = FieldColumnSharedSizeGroup });
 
         Dictionary<string, int> fieldDict = [];
         int row = 2;
@@ -90,8 +94,8 @@ public partial class CompareEntryView : StyledWindow
             column++;
         }
 
-        HeaderGrid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Auto));
-        MainGrid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Auto));
+        HeaderGrid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Auto) { SharedSizeGroup = ClearColumnSharedSizeGroup });
+        MainGrid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Auto) { SharedSizeGroup = ClearColumnSharedSizeGroup });
         Button clearButton = new()
         {
             Content = I18n.Get("Common.Clear"),
@@ -128,7 +132,7 @@ public partial class CompareEntryView : StyledWindow
 
     private void AddRadioButton(string? s, string g, int r, int c, bool isChecked = false)
     {
-        string display = string.IsNullOrWhiteSpace(s) ? I18n.Get("Common.Empty") : s;
+        string display = string.IsNullOrWhiteSpace(s) ? "" : s;
         RadioButton rb = new()
         {
             Content = display,

@@ -4,7 +4,6 @@
     <x:String x:Key="Common.Cancel">Cancel</x:String>
     <x:String x:Key="Common.Clear">Clear</x:String>
     <x:String x:Key="Common.Reset">Reset</x:String>
-    <x:String x:Key="Common.Empty">(empty)</x:String>
     <x:String x:Key="Common.Untitled">(Untitled)</x:String>
     <x:String x:Key="Common.NoCitationKey">(no citation key)</x:String>
 

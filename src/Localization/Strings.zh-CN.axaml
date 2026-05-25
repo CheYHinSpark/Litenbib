@@ -4,7 +4,6 @@
     <x:String x:Key="Common.Cancel">取消</x:String>
     <x:String x:Key="Common.Clear">清空</x:String>
     <x:String x:Key="Common.Reset">重置</x:String>
-    <x:String x:Key="Common.Empty">（空）</x:String>
     <x:String x:Key="Common.Untitled">（无标题）</x:String>
     <x:String x:Key="Common.NoCitationKey">（无引用键）</x:String>
 

@@ -172,6 +172,13 @@
             </Style>
         </Style>
 
+        <Style Selector="^.theme">
+            <Setter Property="Background" Value="{DynamicResource ThemeBackground}"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Style Selector="^:pointerover">
+                <Setter Property="Background" Value="{DynamicResource ThemeHighlight}"/>
+            </Style>
+        </Style>
     </ControlTheme>
 
     <ControlTheme x:Key="{x:Type CheckBox}" TargetType="CheckBox">
@@ -624,7 +631,7 @@
 
         <Style Selector="^:checked">
             <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorder}" />
-            <Setter Property="Background" Value="{DynamicResource ThemeBorder}" />
+            <Setter Property="Background" Value="{DynamicResource ThemeBackground}" />
             
             <Style Selector="^:pointerover">
                 <Setter Property="Foreground" Value="{DynamicResource MainForeground}" />

@@ -391,7 +391,7 @@
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
             <Button Margin="4 8 4 0" Padding="16 8"
                     Click="CancelButton_Click" Content="{DynamicResource Common.Cancel}"/>
-            <Button Margin="4 8 4 0" Padding="16 8"
+            <Button Margin="4 8 4 0" Padding="16 8" Classes="theme"
                     Click="ApplyButton_Click" Content="{DynamicResource Common.Apply}"/>
         </StackPanel>
     </Grid>

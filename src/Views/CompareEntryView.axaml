@@ -14,7 +14,7 @@
             <Setter Property="Background" Value="{DynamicResource InputBackground}"/>
             <Setter Property="HorizontalContentAlignment" Value="Left"/>
             <Setter Property="VerticalContentAlignment" Value="Top"/>
-            <Setter Property="Margin" Value="8 2"/>
+            <Setter Property="Margin" Value="4 2"/>
             <Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter">
                 <Setter Property="TextWrapping" Value="Wrap"/>
             </Style>
@@ -25,7 +25,7 @@
             <Setter Property="Background" Value="{DynamicResource InputBackground}"/>
             <Setter Property="CornerRadius" Value="8"/>
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            <Setter Property="Margin" Value="8 2"/>
+            <Setter Property="Margin" Value="4 2"/>
             <Style Selector="^:pointerover">
                 <Setter Property="Background" Value="{DynamicResource MainHighlight}"/>
             </Style>
@@ -35,7 +35,8 @@
             <Setter Property="HorizontalAlignment" Value="Right"/>
         </Style>
     </Window.Styles>
-    <Grid RowDefinitions="Auto,Auto,*,Auto" Grid.IsSharedSizeScope="True" Margin="0 0 0 8">
+
+    <Grid RowDefinitions="Auto,*,Auto" Grid.IsSharedSizeScope="True" Margin="12 0 0 12">
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Name="MinButton" Click="TitleButton_Click" Classes="window">
                 <Path Data="{StaticResource -Path}" StrokeThickness="1"
@@ -47,22 +48,26 @@
             </Button>
         </StackPanel>
 
-        <StackPanel Margin="24 8 24 0" Grid.Row="1" Spacing="4">
-            <TextBlock Text="{DynamicResource Compare.Heading}" FontSize="22" FontWeight="SemiBold"/>
+        <StackPanel Margin="0 12 0 8" Grid.Row="0" Spacing="4">
+            <TextBlock Text="{DynamicResource Compare.Heading}"
+                       HorizontalAlignment="Left"
+                       FontSize="18" FontWeight="SemiBold"/>
             <TextBlock Text="{DynamicResource Compare.Description}"
+                       HorizontalAlignment="Left"
                        Opacity="0.7" TextWrapping="Wrap"/>
-            <Grid x:Name="HeaderGrid" Margin="0 8 0 0"/>
+            <Grid x:Name="HeaderGrid" Margin="12 8 12 0"/>
         </StackPanel>
         
-        <ScrollViewer Grid.Row="2" Margin="4">
-            <Grid x:Name="MainGrid" Margin="4"/>
+        <ScrollViewer Grid.Row="1" Margin="12 0 8 0" Padding="0">
+            <Grid x:Name="MainGrid" Margin="0 0 4 0"/>
         </ScrollViewer>
 
-        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right"
-                    Margin=" 8 8">
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right"
+                    Margin="0 4 12 0" Height="32" Spacing="8">
             <Button Content="{DynamicResource Common.Cancel}" Width="64"
                     Click="CancelButton_Click"/>
             <Button Content="{DynamicResource Compare.Merge}" Width="64"
+                    Classes="theme"
                     Command="{CompiledBinding MergeCommand}"
                     CommandParameter="{CompiledBinding $parent[Window]}"/>
         </StackPanel>

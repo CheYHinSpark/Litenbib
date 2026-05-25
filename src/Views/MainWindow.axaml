@@ -25,6 +25,15 @@
         <Style Selector="Window[WindowState=Maximized] Path.restore-icon">
             <Setter Property="IsVisible" Value="True"/>
         </Style>
+        <Style Selector="TabStripItem Button.tab_button">
+            <Setter Property="Opacity" Value="0"/>
+        </Style>
+        <Style Selector="TabStripItem:selected Button.tab_button">
+            <Setter Property="Opacity" Value="1"/>
+        </Style>
+        <Style Selector="TabStripItem:pointerover Button.tab_button">
+            <Setter Property="Opacity" Value="1"/>
+        </Style>
     </Window.Styles>
 
     <Window.KeyBindings>

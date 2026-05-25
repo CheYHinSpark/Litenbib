@@ -127,7 +127,7 @@
                    VerticalAlignment="Center"
                    Text="{Binding HintText}"/>
         <StackPanel Grid.Row="4" Orientation="Horizontal"
-                    Margin="0 4 8 8"
+                    Margin="0 4 8 8" Spacing="8"
                     HorizontalAlignment="Right">
             <Button Classes="icon" ToolTip.Tip="{DynamicResource Common.Cancel}" Click="CancelButton_Click">
                 <Path Data="{StaticResource xPath}" Stroke="{CompiledBinding $parent[Button].Foreground}" StrokeThickness="1"/>

@@ -56,9 +56,7 @@ namespace Litenbib.ViewModels
 
         private static string FormatValue(string? value)
         {
-            return string.IsNullOrWhiteSpace(value)
-                ? I18n.Get("Common.Empty")
-                : value;
+            return string.IsNullOrWhiteSpace(value) ? "" : value;
         }
     }
 
