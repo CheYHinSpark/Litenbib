@@ -91,16 +91,17 @@
     <SolidColorBrush x:Key="BibtexPunctuationBrush" Color="{DynamicResource BibtexPunctuationColor}"/>
     <SolidColorBrush x:Key="BibtexCommentBrush" Color="{DynamicResource BibtexCommentColor}"/>
 
-    <SolidColorBrush x:Key="ComboBoxItemBackgroundPointerOver" Color="{DynamicResource ThemeBackgroundColor}"/>
+    <SolidColorBrush x:Key="ComboBoxItemBackgroundPointerOver" Color="{DynamicResource MainHighlightColor}"/>
     <SolidColorBrush x:Key="ComboBoxItemForegroundPointerOver" Color="{DynamicResource MainForegroundColor}"/>
-    <SolidColorBrush x:Key="ComboBoxItemBackgroundPressed" Color="{DynamicResource ThemeBackgroundColor}"/>
+    <SolidColorBrush x:Key="ComboBoxItemBackgroundPressed" Color="{DynamicResource ThemeHighlightColor}"/>
     <SolidColorBrush x:Key="ComboBoxItemForegroundPressed" Color="{DynamicResource MainForegroundColor}"/>
-    <SolidColorBrush x:Key="ComboBoxItemBackgroundSelectedPointerOver" Color="{DynamicResource ThemeBackgroundColor}"/>
+    <SolidColorBrush x:Key="ComboBoxItemBackgroundSelectedPointerOver" Color="{DynamicResource ThemeHighlightColor}"/>
+    <SolidColorBrush x:Key="ComboBoxItemBorderBrushSelectedPointerOver" Color="{DynamicResource ThemeBorderColor}"/>
     <SolidColorBrush x:Key="ComboBoxItemForegroundSelectedPointerOver" Color="{DynamicResource MainForegroundColor}"/>
-    <SolidColorBrush x:Key="ComboBoxItemBackgroundSelected" Color="{DynamicResource MainBackgroundColor}"/>
-    <SolidColorBrush x:Key="ComboBoxItemBorderBrushSelected" Color="{DynamicResource ThemeBorderColor}"/>
+    <SolidColorBrush x:Key="ComboBoxItemBackgroundSelected" Color="{DynamicResource ThemeHighlightColor}"/>
+    <SolidColorBrush x:Key="ComboBoxItemBorderBrushSelected" Color="{DynamicResource ThemeHighlightColor}"/>
     <SolidColorBrush x:Key="ComboBoxItemForegroundSelected" Color="{DynamicResource MainForegroundColor}"/>
-    <SolidColorBrush x:Key="ComboBoxItemBackgroundSelectedPressed" Color="{DynamicResource ThemeBackgroundColor}"/>
+    <SolidColorBrush x:Key="ComboBoxItemBackgroundSelectedPressed" Color="{DynamicResource ThemeHighlightColor}"/>
     <SolidColorBrush x:Key="ComboBoxItemForegroundSelectedPressed" Color="{DynamicResource MainForegroundColor}"/>
 
     <SolidColorBrush x:Key="MenuFlyoutItemBackground" Color="{DynamicResource InputBackgroundColor}"/>
