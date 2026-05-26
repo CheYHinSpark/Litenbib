@@ -25,6 +25,8 @@ namespace Litenbib.Models
         public static readonly string LocalConfigPath = Path.Combine(ConfigDirectory, "localconfig.json");
 
         public static readonly string AbbreviationMappingsPath = Path.Combine(ConfigDirectory, "abbr_mappings.txt");
+
+        public static readonly string TitleProtectionTermsPath = Path.Combine(ConfigDirectory, "title_protection_terms.txt");
     }
 
     public class ObservableRangeCollection<T> : ObservableCollection<T>

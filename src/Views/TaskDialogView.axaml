@@ -30,6 +30,9 @@
                 <DataTemplate DataType="{x:Type vm:VenueNameNormalizationViewModel}">
                     <v:VenueNameNormalizationView/>
                 </DataTemplate>
+                <DataTemplate DataType="{x:Type vm:TitleProtectionViewModel}">
+                    <v:TitleProtectionView/>
+                </DataTemplate>
             </ContentControl.DataTemplates>
         </ContentControl>
 

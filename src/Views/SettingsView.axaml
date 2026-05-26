@@ -357,7 +357,7 @@
                     <StackPanel Spacing="4">
                         <Border>
                             <Grid ColumnDefinitions="Auto,*" Margin="4"
-                                  RowDefinitions="Auto,Auto,Auto,Auto">
+                                  RowDefinitions="Auto,Auto,Auto,Auto,Auto">
                                 <TextBlock Text="{DynamicResource Settings.Advanced}"
                                            FontWeight="SemiBold" Margin="0 0 0 8"/>
 
@@ -375,9 +375,16 @@
                                         Command="{CompiledBinding OpenAbbreviationMappingsCommand}"
                                         Content="{DynamicResource Settings.EditMappings}"/>
 
-                                <TextBlock Text="{DynamicResource Settings.ResetSettings}" Classes="right"
+                                <TextBlock Text="{DynamicResource Settings.TitleProtectionTerms}" Classes="right"
                                            Grid.Row="3"/>
                                 <Button Grid.Row="3" Grid.Column="1"
+                                        Classes="settings-action"
+                                        Command="{CompiledBinding OpenTitleProtectionTermsCommand}"
+                                        Content="{DynamicResource Settings.EditTerms}"/>
+
+                                <TextBlock Text="{DynamicResource Settings.ResetSettings}" Classes="right"
+                                           Grid.Row="4"/>
+                                <Button Grid.Row="4" Grid.Column="1"
                                         Classes="settings-action warning"
                                         Command="{CompiledBinding ResetSettingsCommand}"
                                         Content="{DynamicResource Settings.ResetSettings}"/>

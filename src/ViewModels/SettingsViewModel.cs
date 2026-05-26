@@ -216,6 +216,20 @@ namespace Litenbib.ViewModels
         }
 
         [RelayCommand]
+        private void OpenTitleProtectionTerms()
+        {
+            try
+            {
+                TitleProtectionTerms.EnsureFileExists();
+                UriProcessor.StartProcess(AppPaths.TitleProtectionTermsPath);
+            }
+            catch (System.Exception ex)
+            {
+                NotificationCenter.Error(I18n.Format("Message.CouldNotOpenTitleProtectionTerms", ex.Message));
+            }
+        }
+
+        [RelayCommand]
         private void ResetSettings()
         {
             LoadFromSettings(new AppSettings());

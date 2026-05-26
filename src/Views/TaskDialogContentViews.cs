@@ -25,3 +25,11 @@ public partial class VenueNameNormalizationView : UserControl
         InitializeComponent();
     }
 }
+
+public partial class TitleProtectionView : UserControl
+{
+    public TitleProtectionView()
+    {
+        InitializeComponent();
+    }
+}

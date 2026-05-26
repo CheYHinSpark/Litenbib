@@ -85,6 +85,7 @@ namespace Litenbib.ViewModels
                     _holdShowingEntry = value!;
                     DeleteBibtexCommand.NotifyCanExecuteChanged();
                     DeleteBibtexByKeyCommand.NotifyCanExecuteChanged();
+                    ProtectSelectedTitlesCommand.NotifyCanExecuteChanged();
                 }
             }
         }
@@ -123,6 +124,7 @@ namespace Litenbib.ViewModels
             NormalizeSelectedVenueNamesCommand.NotifyCanExecuteChanged();
             CleanupSelectedEntriesCommand.NotifyCanExecuteChanged();
             GenerateSelectedCitationKeysCommand.NotifyCanExecuteChanged();
+            ProtectSelectedTitlesCommand.NotifyCanExecuteChanged();
             MergeEntriesCommand.NotifyCanExecuteChanged();
         }
 
@@ -846,6 +848,22 @@ namespace Litenbib.ViewModels
         private bool CanDeleteByKey() => ShowingEntry != null
             && UndoRedoManager.NewEditedBox == null && !IsFiltering;
 
+        private List<BibtexEntry> GetSelectedEntriesOrShowingEntry()
+        {
+            List<BibtexEntry> selectedEntries = GetSelectedEntriesInOrder();
+            if (selectedEntries.Count == 0 && ShowingEntry != null)
+            {
+                selectedEntries.Add(ShowingEntry);
+            }
+
+            return selectedEntries;
+        }
+
+        private bool CanProtectSelectedTitles()
+        {
+            return ShowingEntry != null || HasSelectedEntries();
+        }
+
         [RelayCommand]
         private void CheckWarningError(object sender)
         {
@@ -1220,6 +1238,34 @@ namespace Litenbib.ViewModels
 
             ApplyEntryFieldsChangeAction(action);
             ShowStatus(I18n.Format("Message.CleanedSelectedEntries", selectedEntries.Count));
+        }
+
+        [RelayCommand(CanExecute = nameof(CanProtectSelectedTitles))]
+        private async Task ProtectSelectedTitles(object? sender)
+        {
+            if (!TryGetWindow(sender, out Window window)) { return; }
+
+            List<BibtexEntry> selectedEntries = GetSelectedEntriesOrShowingEntry();
+            if (selectedEntries.Count == 0) { return; }
+
+            TitleProtectionViewModel titleProtectionViewModel = new(selectedEntries);
+            TaskDialogView dialog = new(titleProtectionViewModel);
+            var result = await dialog.ShowDialog<bool>(window);
+            if (result != true)
+            {
+                return;
+            }
+
+            List<EntryFieldChange> changes = titleProtectionViewModel.CreateChanges();
+            EntryFieldsChangeAction action = new(changes);
+            if (!action.HasChanges)
+            {
+                ShowStatus(I18n.Get("Message.NoTitlesChanged"));
+                return;
+            }
+
+            ApplyEntryFieldsChangeAction(action);
+            ShowStatus(I18n.Format("Message.ProtectedTitles", changes.Count));
         }
 
         [RelayCommand(CanExecute = nameof(HasSelectedEntries))]

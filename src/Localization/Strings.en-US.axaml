@@ -39,6 +39,8 @@
     <x:String x:Key="Settings.Editing">Editing</x:String>
     <x:String x:Key="Settings.AbbreviationMappings">Journal/Booktitle Abbreviations</x:String>
     <x:String x:Key="Settings.EditMappings">Edit mappings</x:String>
+    <x:String x:Key="Settings.TitleProtectionTerms">Title protection terms</x:String>
+    <x:String x:Key="Settings.EditTerms">Edit terms</x:String>
     <x:String x:Key="Settings.ConfirmBatchOperations">Confirm entry batch operations</x:String>
     <x:String x:Key="Settings.ConfigFolder">Config folder</x:String>
     <x:String x:Key="Settings.OpenConfigFolder">Open config folder</x:String>
@@ -108,6 +110,7 @@
     <x:String x:Key="Bibtex.Tooltip.NormalizeVenues">Normalize journal/booktitle names with AI</x:String>
     <x:String x:Key="Bibtex.Tooltip.GenerateCitationKeys">Generate citation keys for selected entries</x:String>
     <x:String x:Key="Bibtex.Tooltip.CleanSelected">Choose cleanup rules for selected entries</x:String>
+    <x:String x:Key="Bibtex.Tooltip.ProtectTitleCase">Protect title capitalization</x:String>
     <x:String x:Key="Bibtex.Tooltip.SwitchDetailLayout">Switch detail layout</x:String>
     <x:String x:Key="Bibtex.Tooltip.HideDetailPanel">Hide detail panel</x:String>
     <x:String x:Key="Bibtex.Tooltip.SearchDoi">Search from DOI</x:String>
@@ -207,6 +210,15 @@
     <x:String x:Key="VenueNormalize.Expand">Expand</x:String>
     <x:String x:Key="VenueNormalize.Abbreviate">Abbreviate</x:String>
 
+    <x:String x:Key="TitleProtection.Title">Protect Title Case</x:String>
+    <x:String x:Key="TitleProtection.Heading">Protect title capitalization</x:String>
+    <x:String x:Key="TitleProtection.ProtectTerms">Protect terms</x:String>
+    <x:String x:Key="TitleProtection.ProtectTitleCase">Protect title case</x:String>
+    <x:String x:Key="TitleProtection.EditTerms">Edit terms</x:String>
+    <x:String x:Key="TitleProtection.Tooltip.EditTerms">Open title protection term list</x:String>
+    <x:String x:Key="TitleProtection.Status">{0} selected entries, {1} title changes</x:String>
+    <x:String x:Key="TitleProtection.NoTitle">This entry has no title</x:String>
+
     <x:String x:Key="Dialog.Warning.Title">Warning</x:String>
     <x:String x:Key="Dialog.UnsavedChanges.Title">Unsaved Changes</x:String>
     <x:String x:Key="Dialog.CreateFileFailed.Title">Create File Failed</x:String>
@@ -243,6 +255,8 @@
     <x:String x:Key="Message.CouldNotDuplicateSourceMissing">Could not duplicate {0}: source file not found</x:String>
     <x:String x:Key="Message.CouldNotDuplicate">Could not duplicate {0}: {1}</x:String>
     <x:String x:Key="Message.CouldNotOpenAbbreviationMappings">Could not open abbreviation mappings: {0}</x:String>
+    <x:String x:Key="Message.CouldNotOpenTitleProtectionTerms">Could not open title protection terms: {0}</x:String>
+    <x:String x:Key="Message.CouldNotReadTitleProtectionTerms">Could not read title protection terms: {0}</x:String>
     <x:String x:Key="Message.CouldNotOpenConfigFolder">Could not open config folder: {0}</x:String>
     <x:String x:Key="AddEntry.Hint.InputRequired">Please input DOI / arXiv / OpenReview / title / URL, one per line.</x:String>
     <x:String x:Key="AddEntry.Hint.InputAiRequired">Please paste reference text before using AI.</x:String>
@@ -326,6 +340,8 @@
     <x:String x:Key="Message.NoVenueNamesChanged">No venue names changed</x:String>
     <x:String x:Key="Message.UpdatedVenueNames">Updated {0} venue name(s)</x:String>
     <x:String x:Key="Message.NoSelectedEntriesNeededCleanup">No selected entries needed cleanup</x:String>
+    <x:String x:Key="Message.NoTitlesChanged">No titles changed</x:String>
+    <x:String x:Key="Message.ProtectedTitles">Protected {0} title(s)</x:String>
     <x:String x:Key="Dialog.CleanSelectedEntries.Title">Clean Selected Entries</x:String>
     <x:String x:Key="Dialog.CleanSelectedEntries.Message">Clean {0} selected entries?&#10;&#10;This will trim whitespace, collapse spaces and line breaks, normalize DOI values, and remove empty fields.</x:String>
     <x:String x:Key="Message.CleanCanceled">Clean canceled</x:String>

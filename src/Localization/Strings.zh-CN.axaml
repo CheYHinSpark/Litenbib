@@ -39,6 +39,8 @@
     <x:String x:Key="Settings.Editing">编辑</x:String>
     <x:String x:Key="Settings.AbbreviationMappings">期刊/会议缩写映射</x:String>
     <x:String x:Key="Settings.EditMappings">编辑映射</x:String>
+    <x:String x:Key="Settings.TitleProtectionTerms">标题保护术语表</x:String>
+    <x:String x:Key="Settings.EditTerms">编辑术语</x:String>
     <x:String x:Key="Settings.ConfirmBatchOperations">批量操作前确认</x:String>
     <x:String x:Key="Settings.ConfigFolder">配置文件夹</x:String>
     <x:String x:Key="Settings.OpenConfigFolder">打开配置文件夹</x:String>
@@ -108,6 +110,7 @@
     <x:String x:Key="Bibtex.Tooltip.NormalizeVenues">用 AI 规范化 journal/booktitle 名称</x:String>
     <x:String x:Key="Bibtex.Tooltip.GenerateCitationKeys">为所选条目生成引用键</x:String>
     <x:String x:Key="Bibtex.Tooltip.CleanSelected">为所选条目选择清理规则</x:String>
+    <x:String x:Key="Bibtex.Tooltip.ProtectTitleCase">保护标题大小写</x:String>
     <x:String x:Key="Bibtex.Tooltip.SwitchDetailLayout">切换详情布局</x:String>
     <x:String x:Key="Bibtex.Tooltip.HideDetailPanel">隐藏详情面板</x:String>
     <x:String x:Key="Bibtex.Tooltip.SearchDoi">从 DOI 搜索</x:String>
@@ -207,6 +210,15 @@
     <x:String x:Key="VenueNormalize.Expand">展开全称</x:String>
     <x:String x:Key="VenueNormalize.Abbreviate">缩写</x:String>
 
+    <x:String x:Key="TitleProtection.Title">保护标题大小写</x:String>
+    <x:String x:Key="TitleProtection.Heading">保护标题大小写</x:String>
+    <x:String x:Key="TitleProtection.ProtectTerms">保护术语</x:String>
+    <x:String x:Key="TitleProtection.ProtectTitleCase">保护标题式大写</x:String>
+    <x:String x:Key="TitleProtection.EditTerms">编辑术语表</x:String>
+    <x:String x:Key="TitleProtection.Tooltip.EditTerms">打开标题保护术语表</x:String>
+    <x:String x:Key="TitleProtection.Status">已选择 {0} 个条目，{1} 个标题将改变</x:String>
+    <x:String x:Key="TitleProtection.NoTitle">此条目没有标题</x:String>
+
     <x:String x:Key="Dialog.Warning.Title">警告</x:String>
     <x:String x:Key="Dialog.UnsavedChanges.Title">未保存的更改</x:String>
     <x:String x:Key="Dialog.CreateFileFailed.Title">创建文件失败</x:String>
@@ -243,6 +255,8 @@
     <x:String x:Key="Message.CouldNotDuplicateSourceMissing">无法复制 {0}：源文件不存在</x:String>
     <x:String x:Key="Message.CouldNotDuplicate">无法复制 {0}：{1}</x:String>
     <x:String x:Key="Message.CouldNotOpenAbbreviationMappings">无法打开缩写映射：{0}</x:String>
+    <x:String x:Key="Message.CouldNotOpenTitleProtectionTerms">无法打开标题保护术语表：{0}</x:String>
+    <x:String x:Key="Message.CouldNotReadTitleProtectionTerms">无法读取标题保护术语表：{0}</x:String>
     <x:String x:Key="Message.CouldNotOpenConfigFolder">无法打开配置文件夹：{0}</x:String>
     <x:String x:Key="AddEntry.Hint.InputRequired">请输入 DOI / arXiv / OpenReview / 标题 / URL，每行一个。</x:String>
     <x:String x:Key="AddEntry.Hint.InputAiRequired">使用 AI 前，请先粘贴参考文献文本。</x:String>
@@ -326,6 +340,8 @@
     <x:String x:Key="Message.NoVenueNamesChanged">没有变更来源名称</x:String>
     <x:String x:Key="Message.UpdatedVenueNames">已更新 {0} 个来源名称</x:String>
     <x:String x:Key="Message.NoSelectedEntriesNeededCleanup">所选条目无需清理</x:String>
+    <x:String x:Key="Message.NoTitlesChanged">没有标题需要改变</x:String>
+    <x:String x:Key="Message.ProtectedTitles">已保护 {0} 个标题</x:String>
     <x:String x:Key="Dialog.CleanSelectedEntries.Title">清理所选条目</x:String>
     <x:String x:Key="Dialog.CleanSelectedEntries.Message">要清理 {0} 个所选条目吗？&#10;&#10;这会裁剪空白、合并空格和换行、规范化 DOI，并移除空字段。</x:String>
     <x:String x:Key="Message.CleanCanceled">清理已取消</x:String>

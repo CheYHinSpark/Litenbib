@@ -502,7 +502,7 @@
                                 </Style>
                             </Expander.Styles>
                             <StackPanel>
-                                <Grid ColumnDefinitions="Auto,*">
+                                <Grid ColumnDefinitions="Auto,*,Auto">
                                     <Button Width="96" HorizontalContentAlignment="Stretch"
                                             Padding="-2 0" Margin="2 0"
                                             Command="{CompiledBinding CopyTitleCommand}"
@@ -516,6 +516,14 @@
                                     </Button>
                                     <TextBox Theme="{StaticResource {x:Type TextBox}}" Grid.Column="1"
                                              Text="{CompiledBinding ShowingEntry.Title}"/>
+                                    <Button Grid.Column="2" Classes="in_section"
+                                            Command="{CompiledBinding ProtectSelectedTitlesCommand}"
+                                            CommandParameter="{CompiledBinding $parent[Window]}"
+                                            ToolTip.Tip="{DynamicResource Bibtex.Tooltip.ProtectTitleCase}">
+                                        <Viewbox Margin="3">
+                                            <TextBlock Text="Aa"/>
+                                        </Viewbox>
+                                    </Button>
                                 </Grid>
                                 <!-- <TextBox PlaceholderText="Title" Text="{CompiledBinding ShowingEntry.Title}"/> -->
                                 <TextBox PlaceholderText="Author" Text="{CompiledBinding ShowingEntry.Author}"/>
