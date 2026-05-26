@@ -1380,7 +1380,10 @@ namespace Litenbib.ViewModels
         private async Task CopyTitle(object? o)
         {
             if (ShowingEntry == null) { return; }
-            await CopyToClipboardAsync(o, ShowingEntry.Title, I18n.Get("Message.CopiedTitleToClipboard"));
+            await CopyToClipboardAsync(
+                o,
+                MultiStringConverter.RemoveBibtexProtectionBraces(ShowingEntry.Title),
+                I18n.Get("Message.CopiedTitleToClipboard"));
         }
 
         private async Task CopyToClipboardAsync(object? o, string? text, string successMessage)

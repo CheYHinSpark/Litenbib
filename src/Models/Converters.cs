@@ -101,11 +101,18 @@ namespace Litenbib.Models
 
     public class MultiStringConverter : IMultiValueConverter
     {
+        public static string RemoveBibtexProtectionBraces(string? value)
+        {
+            return string.IsNullOrWhiteSpace(value)
+                ? string.Empty
+                : value.Replace("{", "").Replace("}", "");
+        }
+
         public object? Convert(IList<object?> values, Type targetType, object? parameter, CultureInfo culture)
         {
             // 检查所有值是否都是 bool 类型且为 true
             foreach (var v in values)
-            { if (v is string s && !string.IsNullOrWhiteSpace(s)) { return s.Replace("{", "").Replace("}", ""); } }
+            { if (v is string s && !string.IsNullOrWhiteSpace(s)) { return RemoveBibtexProtectionBraces(s); } }
             return AvaloniaProperty.UnsetValue;
         }
     }

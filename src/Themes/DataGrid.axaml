@@ -89,7 +89,7 @@
                                     Background="{TemplateBinding Background}"
                                     RowDefinitions="*,Auto">
                     <Border Name="BackgroundBorder" MinHeight="32" CornerRadius="8"
-                            Margin="0 2" Grid.RowSpan="2" Grid.ColumnSpan="2"
+                            Margin="4 2" Grid.RowSpan="2" Grid.ColumnSpan="2"
                             Background="{DynamicResource ThemeHighlight}"
                             BorderBrush="{DynamicResource ThemeHighlight}"
                             BorderThickness="1" Opacity="0">
