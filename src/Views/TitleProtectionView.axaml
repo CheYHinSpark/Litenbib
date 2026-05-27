@@ -10,33 +10,41 @@
         <vm:TitleProtectionViewModel/>
     </Design.DataContext>
 
-    <Grid RowDefinitions="Auto,Auto,*">
+    <Grid RowDefinitions="Auto,Auto,Auto,*">
         <TextBlock VerticalAlignment="Center"
                    Text="{CompiledBinding StatusMessage}"/>
-
-        <Grid Grid.Row="1" ColumnDefinitions="Auto,Auto,Auto,*" Margin="0 8">
-            <CheckBox VerticalAlignment="Center"
-                      Content="{DynamicResource TitleProtection.ProtectTerms}"
-                      IsChecked="{CompiledBinding ProtectTerms, Mode=TwoWay}"/>
-            <Button Grid.Column="1" Height="28" Margin="8 0 16 0" Padding="8 2"
-                    Command="{CompiledBinding OpenTermsFileCommand}"
-                    ToolTip.Tip="{DynamicResource TitleProtection.Tooltip.EditTerms}">
-                <Grid ColumnDefinitions="20,*">
-                    <Path Data="{StaticResource FilePath}"
-                          StrokeThickness="1"
-                          Stroke="{CompiledBinding $parent[Button].Foreground}"/>
-                    <TextBlock Grid.Column="1"
-                               Margin="6 0 0 0"
-                               Text="{DynamicResource TitleProtection.EditTerms}"/>
-                </Grid>
-            </Button>
+        
+        <StackPanel Grid.Row="1" Margin="0 4" Spacing="8"
+                    HorizontalAlignment="Left" Orientation="Horizontal">
             <CheckBox Grid.Column="2"
                       VerticalAlignment="Center"
-                      Content="{DynamicResource TitleProtection.ProtectTitleCase}"
-                      IsChecked="{CompiledBinding ProtectTitleCase, Mode=TwoWay}"/>
-        </Grid>
+                      IsChecked="{CompiledBinding ProtectTerms, Mode=TwoWay}"/>
+            <TextBlock Text="{DynamicResource TitleProtection.ProtectTerms}"/>
+        </StackPanel>
 
-        <Border Grid.Row="2" BorderThickness="1" BorderBrush="{DynamicResource ThemeBorder}"
+         <Button Grid.Row="1" Height="28" Margin="0" Padding="4 2"
+                 HorizontalAlignment="Right" VerticalAlignment="Center"
+                 Command="{CompiledBinding OpenTermsFileCommand}"
+                 ToolTip.Tip="{DynamicResource TitleProtection.Tooltip.EditTerms}">
+             <Grid ColumnDefinitions="20,*">
+                 <Path Data="{StaticResource FilePath}"
+                       StrokeThickness="1"
+                       Stroke="{CompiledBinding $parent[Button].Foreground}"/>
+                 <TextBlock Grid.Column="1"
+                            Margin="6 0 0 0"
+                            Text="{DynamicResource TitleProtection.EditTerms}"/>
+            </Grid>
+        </Button>
+
+        <StackPanel Grid.Row="2" Margin="0 4" Spacing="8"
+                    HorizontalAlignment="Left" Orientation="Horizontal">
+            <CheckBox Grid.Column="2"
+                      VerticalAlignment="Center"
+                      IsChecked="{CompiledBinding ProtectTitleCase, Mode=TwoWay}"/>
+            <TextBlock Text="{DynamicResource TitleProtection.ProtectTitleCase}"/>
+        </StackPanel>
+
+        <Border Grid.Row="3" BorderThickness="1" BorderBrush="{DynamicResource ThemeBorder}"
                 CornerRadius="8" Padding="4">
             <ScrollViewer Padding="4 4 4 -8">
                 <ItemsControl ItemsSource="{CompiledBinding Items}">

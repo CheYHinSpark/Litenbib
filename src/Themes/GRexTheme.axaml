@@ -16,7 +16,9 @@
                   HorizontalAlignment="Center" VerticalAlignment="Center"
                   Data="M 6,0 A 6,6 0 1 1 1.2,9.6 A 6,6 0 0 0 6,0"/>-->
             <Path Stroke="White" StrokeThickness="1"
-                  Data="M 0,9 A 2,2 0 0 0 2,11 L 10,11 A 2,2 0 0 0 12,9 L 12,4 A 2,2 0 0 0 10,2 L 7,2 5,0 2,0 0,2 Z M 7,2 5,4 0,4"/>
+                  Data="M 2.5,11 6.5,0 10.5,11 M 4.5,6.5 8.5,6.5
+                  M 2,0 A 1,1 0 0 0 1,1 L 1,5 A 1,1 0 0 1 0,6 A 1,1 0 0 1 1,7 L 1,11 A 1,1 0 0 0 2,12
+                  M 11,0 A 1,1 0 0 1 12,1 L 12,5 A 1,1 0 0 0 13,6 A 1,1 0 0 0 12,7 L 12,11 A 1,1 0 0 1 11,12"/>
         </Grid>
     </Design.PreviewWith>
     
@@ -42,7 +44,7 @@
     <PathGeometry x:Key="KeyPath" Figures="M 3.9,0 A 3.9,3.9 0 1 0 5.4,7.5 L 7,8 12.5,13.5 14.5,11.5 13.5,10.5 12.5,11.5 12,11 13,10 12,9 11,10 10.5,9.5 11.5,8.5 10.5,7.5 9.5,8.5 8,7 7.5,5.4
                   A 3.9,3.9 0 0 0 3.9,0 M 3.9,2.6 A 1.3,1.3 0 0 0 3.9,5.2 A 1.3,1.3 0 0 0 3.9,2.6"/>
     <PathGeometry x:Key="AddPath" Figures="M 5,5 1,5 A 1,1 0 0 0 1,7 L 5,7 5,11 A 1,1 0 0 0 7,11 L 7,7 11,7 A 1,1 0 0 0 11,5 L 7,5 7,1 A 1,1 0 0 0 5,1 Z"/>
-    <PathGeometry x:Key="AiPath" Figures="M 0,12 L 4,1 M 4,1 L 8,12 M 2,7.5 L 6,7.5 M 10,7 L 10,12 M 10,0 L 10.5,1.5 12,2 10.5,2.5 10,4 9.5,2.5 8,2 9.5,1.5 Z"/>
+    <PathGeometry x:Key="AiPath" Figures="M 0,12 4,1 8,12 M 2,7.5 6,7.5 M 10,7 10,12 M 10,0 10.5,1.5 12,2 10.5,2.5 10,4 9.5,2.5 8,2 9.5,1.5 Z"/>
     <PathGeometry x:Key="MergePath" Figures="M 5.5,2.5 3,0 0,0 0,11 5.5,11 5.5,9 7.5,9 7.5,11 13,11 13,2.5 10.5,0 7.5,0 7.5,2.5
                   M 4,4 A 5,5 0 0 0 9,4 M 9,7.5 A 5,5 0 0 0 4,7.5"/>
     <PathGeometry x:Key="SunPath" Figures="M 6,3 A 3,3 0 0 0 6,9 A 3,3 0 0 0 6,3 M 6,0 6,1 M 6,12 6,11 M 0,6 1,6 M 12,6 11,6
@@ -64,6 +66,9 @@
                   M 0,5 13,5 M 4,0 0,0 0,2 M 9,10 13,10 13,8"/>
     <PathGeometry x:Key="BatchCleanPath" Figures="M 0,10.5 1.5,10.5 2,12 3.5,11.5 4.5,13 6,12 7.5,13 8.5,11.5 10,12 10.5,10.5 12,10.5 10.5,8.5 A 7.5,7.5 0 0 1 1.5,8.5 Z
                   M 3,7 A 5,5 0 0 0 9,7 L 8,6 7,6 7,0 5,0 5,6 4,6 Z"/>
+    <PathGeometry x:Key="TitleProtectionPath" Figures="M 3,11 7,0 11,11 M 5,6.5 9,6.5
+                  M 2,0 A 1,1 0 0 0 1,1 L 1,5 A 1,1 0 0 1 0,6 A 1,1 0 0 1 1,7 L 1,11 A 1,1 0 0 0 2,12
+                  M 12,0 A 1,1 0 0 1 13,1 L 13,5 A 1,1 0 0 0 14,6 A 1,1 0 0 0 13,7 L 13,11 A 1,1 0 0 1 12,12"/>
 
     <SolidColorBrush x:Key="MainBackground" Color="{DynamicResource MainBackgroundColor}"/>
     <SolidColorBrush x:Key="TabBackground" Color="{DynamicResource TabBackgroundColor}"/>
