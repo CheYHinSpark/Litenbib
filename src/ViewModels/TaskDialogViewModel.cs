@@ -11,6 +11,13 @@ namespace Litenbib.ViewModels
         bool CanApply { get; }
     }
 
+    public interface ITaskDialogContentSizing
+    {
+        double DialogWidth { get; }
+
+        double DialogHeight { get; }
+    }
+
     public class TaskDialogViewModel : ViewModelBase
     {
         public ITaskDialogContentViewModel Content { get; }
@@ -20,6 +27,10 @@ namespace Litenbib.ViewModels
         public string Heading => Content.Heading;
 
         public bool CanApply => Content.CanApply;
+
+        public double DialogWidth => Content is ITaskDialogContentSizing sizing ? sizing.DialogWidth : 840;
+
+        public double DialogHeight => Content is ITaskDialogContentSizing sizing ? sizing.DialogHeight : 560;
 
         public TaskDialogViewModel() : this(new BatchFieldDeleteViewModel()) { }
 

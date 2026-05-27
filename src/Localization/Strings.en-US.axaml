@@ -57,6 +57,7 @@
     <x:String x:Key="Main.Menu.Open">_Open...</x:String>
     <x:String x:Key="Main.Menu.OpenRecent">Open _Recent</x:String>
     <x:String x:Key="Main.Menu.SaveAs">Save _As...</x:String>
+    <x:String x:Key="Main.Menu.RenameFile">Re_name File...</x:String>
     <x:String x:Key="Main.Menu.Export">_Export</x:String>
     <x:String x:Key="Main.Menu.SaveAll">_Save All</x:String>
     <x:String x:Key="Main.Menu.Edit">_Edit</x:String>
@@ -69,6 +70,7 @@
     <x:String x:Key="Main.Menu.CleanSelected">_Clean Selected...</x:String>
     <x:String x:Key="Main.Menu.ReloadFromDisk">_Reload From Disk</x:String>
     <x:String x:Key="Main.Context.Duplicate">Duplicate</x:String>
+    <x:String x:Key="Main.Context.Rename">Rename...</x:String>
     <x:String x:Key="Main.Context.OpenInFileManager">Open in File Manager</x:String>
     <x:String x:Key="Main.Context.CloseOthers">Close others</x:String>
     <x:String x:Key="Main.Welcome.Tagline">Clean bibliography editing for focused research work.</x:String>
@@ -254,6 +256,11 @@
     <x:String x:Key="Message.CouldNotDuplicateInvalidPath">Could not duplicate {0}: invalid file path</x:String>
     <x:String x:Key="Message.CouldNotDuplicateSourceMissing">Could not duplicate {0}: source file not found</x:String>
     <x:String x:Key="Message.CouldNotDuplicate">Could not duplicate {0}: {1}</x:String>
+    <x:String x:Key="Message.RenamedFile">Renamed {0} to {1}</x:String>
+    <x:String x:Key="Message.CouldNotRenameInvalidPath">Could not rename {0}: invalid file path</x:String>
+    <x:String x:Key="Message.CouldNotRenameSourceMissing">Could not rename {0}: source file not found</x:String>
+    <x:String x:Key="Message.CouldNotRenameTargetOpen">Could not rename: {0} is already open</x:String>
+    <x:String x:Key="Message.CouldNotRename">Could not rename {0}: {1}</x:String>
     <x:String x:Key="Message.CouldNotOpenAbbreviationMappings">Could not open abbreviation mappings: {0}</x:String>
     <x:String x:Key="Message.CouldNotOpenTitleProtectionTerms">Could not open title protection terms: {0}</x:String>
     <x:String x:Key="Message.CouldNotReadTitleProtectionTerms">Could not read title protection terms: {0}</x:String>
@@ -286,6 +293,15 @@
     <x:String x:Key="Export.Validation.InvalidDirectory">The export directory is invalid.</x:String>
     <x:String x:Key="Export.Validation.MustUseBib">The export file must use the .bib extension.</x:String>
     <x:String x:Key="Export.Validation.MaxAuthors">Max authors must be greater than 0.</x:String>
+    <x:String x:Key="Rename.Title">Rename File</x:String>
+    <x:String x:Key="Rename.Heading">Rename BibTeX file</x:String>
+    <x:String x:Key="Rename.Directory">Directory</x:String>
+    <x:String x:Key="Rename.FileName">File name</x:String>
+    <x:String x:Key="Rename.ExtensionHint">Leave the extension out to use .bib automatically.</x:String>
+    <x:String x:Key="Rename.Validation.EmptyFileName">Please enter a file name.</x:String>
+    <x:String x:Key="Rename.Validation.InvalidFileName">The file name contains invalid characters.</x:String>
+    <x:String x:Key="Rename.Validation.MustUseBib">The renamed file must use the .bib extension.</x:String>
+    <x:String x:Key="Rename.Validation.TargetExists">A file or folder with that name already exists.</x:String>
     <x:String x:Key="Message.ExportedEntries">Exported {0} entries</x:String>
     <x:String x:Key="Message.ExportedEntriesTo">Exported {0} entries to:&#10;{1}</x:String>
     <x:String x:Key="Message.CouldNotExportNamedFile">Could not export {0}: {1}</x:String>

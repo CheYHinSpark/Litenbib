@@ -5,7 +5,7 @@
         xmlns:vm="using:Litenbib.ViewModels"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Width="840" Height="560"
+        Width="{CompiledBinding DialogWidth}" Height="{CompiledBinding DialogHeight}"
         WindowStartupLocation="CenterOwner"
         x:Class="Litenbib.Views.TaskDialogView"
         x:DataType="vm:TaskDialogViewModel"
@@ -32,6 +32,9 @@
                 </DataTemplate>
                 <DataTemplate DataType="{x:Type vm:TitleProtectionViewModel}">
                     <v:TitleProtectionView/>
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type vm:RenameFileViewModel}">
+                    <v:RenameFileView/>
                 </DataTemplate>
             </ContentControl.DataTemplates>
         </ContentControl>

@@ -171,11 +171,10 @@
                                 <Grid Margin="0 6">
                                     <Border HorizontalAlignment="Stretch" CornerRadius="8"
                                             Background="{CompiledBinding #TypeText.Text, Converter={StaticResource TextToBackgroundConverter}}"/>
-                                    <Border HorizontalAlignment="Stretch" CornerRadius="8" Opacity="0.8"
-                                            Background="{DynamicResource InputBackground}">
-                                        <TextBlock Name="TypeText" HorizontalAlignment="Center" FontFamily="Consolas" VerticalAlignment="Center"
-                                                   Text="{CompiledBinding EntryType, Converter={StaticResource EntryTypeConverter}}"/>
-                                    </Border>
+                                    <Border HorizontalAlignment="Stretch" CornerRadius="8" Opacity="0.5"
+                                            Background="{DynamicResource InputBackground}"/>
+                                    <TextBlock Name="TypeText" HorizontalAlignment="Center" FontFamily="Consolas" VerticalAlignment="Center"
+                                               Text="{CompiledBinding EntryType, Converter={StaticResource EntryTypeConverter}}"/>
                                 </Grid>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>

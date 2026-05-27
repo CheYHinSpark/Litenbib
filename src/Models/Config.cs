@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 
 namespace Litenbib.Models
@@ -33,6 +34,9 @@ namespace Litenbib.Models
         public string FilePath { get; set; } = string.Empty;
 
         public string FileName { get; set; } = string.Empty;
+
+        [JsonIgnore]
+        public string MenuHeader => FileName.Replace("_", "__", StringComparison.Ordinal);
 
         public int FilterMode { get; set; }
 

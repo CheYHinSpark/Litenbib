@@ -779,6 +779,14 @@ namespace Litenbib.ViewModels
             SaveBibtexCommand.NotifyCanExecuteChanged();
         }
 
+        public void UpdatePathAfterRename(string validatedPath)
+        {
+            FullPath = validatedPath;
+            Header = Path.GetFileName(validatedPath);
+            LastDiskWriteTimeUtc = File.Exists(validatedPath) ? File.GetLastWriteTimeUtc(validatedPath) : null;
+            HasExternalChanges = false;
+        }
+
         public async Task<bool> SaveBibtexAs(Window window)
         {
             string suggestedFileName = string.IsNullOrWhiteSpace(FullPath)

@@ -57,6 +57,7 @@
     <x:String x:Key="Main.Menu.Open">打开(_O)...</x:String>
     <x:String x:Key="Main.Menu.OpenRecent">打开最近文件(_R)</x:String>
     <x:String x:Key="Main.Menu.SaveAs">另存为(_A)...</x:String>
+    <x:String x:Key="Main.Menu.RenameFile">重命名文件(_M)...</x:String>
     <x:String x:Key="Main.Menu.Export">导出(_E)</x:String>
     <x:String x:Key="Main.Menu.SaveAll">全部保存(_S)</x:String>
     <x:String x:Key="Main.Menu.Edit">编辑(_E)</x:String>
@@ -69,6 +70,7 @@
     <x:String x:Key="Main.Menu.CleanSelected">清理所选条目(_C)...</x:String>
     <x:String x:Key="Main.Menu.ReloadFromDisk">从磁盘重新加载(_R)</x:String>
     <x:String x:Key="Main.Context.Duplicate">复制文件</x:String>
+    <x:String x:Key="Main.Context.Rename">重命名...</x:String>
     <x:String x:Key="Main.Context.OpenInFileManager">在文件管理器中打开</x:String>
     <x:String x:Key="Main.Context.CloseOthers">关闭其他标签页</x:String>
     <x:String x:Key="Main.Welcome.Tagline">让文献编辑更干净、更专注。</x:String>
@@ -254,6 +256,11 @@
     <x:String x:Key="Message.CouldNotDuplicateInvalidPath">无法复制 {0}：文件路径无效</x:String>
     <x:String x:Key="Message.CouldNotDuplicateSourceMissing">无法复制 {0}：源文件不存在</x:String>
     <x:String x:Key="Message.CouldNotDuplicate">无法复制 {0}：{1}</x:String>
+    <x:String x:Key="Message.RenamedFile">已将 {0} 重命名为 {1}</x:String>
+    <x:String x:Key="Message.CouldNotRenameInvalidPath">无法重命名 {0}：文件路径无效</x:String>
+    <x:String x:Key="Message.CouldNotRenameSourceMissing">无法重命名 {0}：源文件不存在</x:String>
+    <x:String x:Key="Message.CouldNotRenameTargetOpen">无法重命名：{0} 已经打开</x:String>
+    <x:String x:Key="Message.CouldNotRename">无法重命名 {0}：{1}</x:String>
     <x:String x:Key="Message.CouldNotOpenAbbreviationMappings">无法打开缩写映射：{0}</x:String>
     <x:String x:Key="Message.CouldNotOpenTitleProtectionTerms">无法打开标题保护术语表：{0}</x:String>
     <x:String x:Key="Message.CouldNotReadTitleProtectionTerms">无法读取标题保护术语表：{0}</x:String>
@@ -286,6 +293,15 @@
     <x:String x:Key="Export.Validation.InvalidDirectory">导出目录无效。</x:String>
     <x:String x:Key="Export.Validation.MustUseBib">导出文件必须使用 .bib 扩展名。</x:String>
     <x:String x:Key="Export.Validation.MaxAuthors">最大作者数必须大于 0。</x:String>
+    <x:String x:Key="Rename.Title">重命名文件</x:String>
+    <x:String x:Key="Rename.Heading">重命名 BibTeX 文件</x:String>
+    <x:String x:Key="Rename.Directory">目录</x:String>
+    <x:String x:Key="Rename.FileName">文件名</x:String>
+    <x:String x:Key="Rename.ExtensionHint">不输入扩展名时会自动使用 .bib。</x:String>
+    <x:String x:Key="Rename.Validation.EmptyFileName">请输入文件名。</x:String>
+    <x:String x:Key="Rename.Validation.InvalidFileName">文件名包含无效字符。</x:String>
+    <x:String x:Key="Rename.Validation.MustUseBib">重命名后的文件必须使用 .bib 扩展名。</x:String>
+    <x:String x:Key="Rename.Validation.TargetExists">已存在同名文件或文件夹。</x:String>
     <x:String x:Key="Message.ExportedEntries">已导出 {0} 个条目</x:String>
     <x:String x:Key="Message.ExportedEntriesTo">已导出 {0} 个条目到：&#10;{1}</x:String>
     <x:String x:Key="Message.CouldNotExportNamedFile">无法导出 {0}：{1}</x:String>

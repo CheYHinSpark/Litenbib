@@ -124,7 +124,7 @@
                             <MenuItem.ItemContainerTheme>
                                 <ControlTheme TargetType="MenuItem"
                                               BasedOn="{StaticResource {x:Type MenuItem}}">
-                                    <Setter Property="Header" Value="{ReflectionBinding FileName}"/>
+                                    <Setter Property="Header" Value="{ReflectionBinding MenuHeader}"/>
                                     <Setter Property="ToolTip.Tip" Value="{ReflectionBinding FilePath}"/>
                                     <Setter Property="Command"
                                             Value="{Binding #LitbibMainWindow.DataContext.OpenRecentFileCommand}"/>
@@ -136,6 +136,9 @@
                                   InputGesture="Ctrl+Shift+S"
                                   Command="{CompiledBinding SaveFileAsCommand}"
                                   CommandParameter="{CompiledBinding $parent[Window]}"/>
+                        <MenuItem Header="{DynamicResource Main.Menu.RenameFile}"
+                                  Command="{CompiledBinding RenameTabCommand}"
+                                  CommandParameter="{CompiledBinding SelectedFile}"/>
                         <MenuItem Header="{DynamicResource Main.Menu.Export}"
                                   Command="{CompiledBinding ExportFileCommand}"
                                   CommandParameter="{CompiledBinding $parent[Window]}"/>
@@ -317,6 +320,9 @@
                                 <ContextMenu>
                                     <MenuItem Header="{DynamicResource Main.Context.Duplicate}"
                                               Command="{CompiledBinding #LitbibMainWindow.DataContext.DuplicateTabCommand}"
+                                              CommandParameter="{CompiledBinding}"/>
+                                    <MenuItem Header="{DynamicResource Main.Context.Rename}"
+                                              Command="{CompiledBinding #LitbibMainWindow.DataContext.RenameTabCommand}"
                                               CommandParameter="{CompiledBinding}"/>
                                     <MenuItem Header="{DynamicResource Main.Context.OpenInFileManager}"
                                               Command="{CompiledBinding OpenInFileManagerCommand}"/>

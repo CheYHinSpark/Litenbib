@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
 using Avalonia.Styling;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -50,6 +51,7 @@ namespace Litenbib.ViewModels
             // inform Commands to update
             OnPropertyChanged(nameof(ShowToolBar));
             SaveAllCommand.NotifyCanExecuteChanged();
+            RenameTabCommand.NotifyCanExecuteChanged();
             if (value != null)
             {
                 TouchRecentFile(value);
@@ -102,6 +104,7 @@ namespace Litenbib.ViewModels
         private void NotifyTabCollectionChanged()
         {
             CloseOtherTabsCommand.NotifyCanExecuteChanged();
+            RenameTabCommand.NotifyCanExecuteChanged();
         }
 
         private void LoadRecentFiles(IEnumerable<RecentFileState>? files)
@@ -162,6 +165,15 @@ namespace Litenbib.ViewModels
                 FileName = string.IsNullOrWhiteSpace(fileName) ? Path.GetFileName(filePath) : fileName,
             });
             TrimRecentFiles();
+        }
+
+        private void RemoveRecentFile(string filePath)
+        {
+            var existing = RecentFiles.FirstOrDefault(item => IsSamePath(item.FilePath, filePath));
+            if (existing != null)
+            {
+                RecentFiles.Remove(existing);
+            }
         }
 
         private void TrimRecentFiles()
@@ -322,10 +334,12 @@ namespace Litenbib.ViewModels
         public async Task DropProcess(List<IStorageItem> files)
         {
             var storageFiles = files.OfType<IStorageFile>().ToList();
+            bool openedBibFile = false;
 
             foreach (var file in storageFiles.Where(IsBibFile))
             {
                 await OpenFile(file);
+                openedBibFile = true;
             }
 
             var pdfFiles = storageFiles
@@ -334,18 +348,33 @@ namespace Litenbib.ViewModels
 
             if (pdfFiles.Count == 0)
             {
+                if (openedBibFile)
+                {
+                    await SaveLocalConfig(GetMainWindow());
+                }
+
                 return;
             }
 
             if (SelectedFile == null)
             {
                 NotificationCenter.Info(I18n.Get("Message.OpenOrCreateBeforeImportingPdfs"));
+                if (openedBibFile)
+                {
+                    await SaveLocalConfig(GetMainWindow());
+                }
+
                 return;
             }
 
             foreach (var file in pdfFiles)
             {
                 await SelectedFile.ExtractPdf(GetStoragePath(file));
+            }
+
+            if (openedBibFile)
+            {
+                await SaveLocalConfig(GetMainWindow());
             }
         }
 
@@ -452,6 +481,66 @@ namespace Litenbib.ViewModels
             return int.TryParse(numberText, out int copyNumber) && copyNumber >= 2
                 ? fileName[..suffixStart]
                 : fileName;
+        }
+
+        private static Window? GetMainWindow()
+        {
+            return Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop
+                ? desktop.MainWindow
+                : null;
+        }
+
+        private static void RenameFileOnDisk(string sourcePath, string targetPath)
+        {
+            if (string.Equals(sourcePath, targetPath, StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            if (!IsSamePath(sourcePath, targetPath)
+                && (File.Exists(targetPath) || Directory.Exists(targetPath)))
+            {
+                throw new IOException(I18n.Get("Rename.Validation.TargetExists"));
+            }
+
+            if (!IsSamePath(sourcePath, targetPath))
+            {
+                File.Move(sourcePath, targetPath);
+                return;
+            }
+
+            string temporaryPath = GetTemporaryRenamePath(sourcePath);
+            File.Move(sourcePath, temporaryPath);
+            try
+            {
+                File.Move(temporaryPath, targetPath);
+            }
+            catch
+            {
+                if (File.Exists(temporaryPath) && !File.Exists(sourcePath))
+                {
+                    File.Move(temporaryPath, sourcePath);
+                }
+
+                throw;
+            }
+        }
+
+        private static string GetTemporaryRenamePath(string sourcePath)
+        {
+            string directory = Path.GetDirectoryName(sourcePath)
+                ?? throw new InvalidOperationException("The source directory is invalid.");
+
+            for (int index = 0; index < 100; index++)
+            {
+                string candidate = Path.Combine(directory, $".litenbib-rename-{Guid.NewGuid():N}.tmp");
+                if (!File.Exists(candidate) && !Directory.Exists(candidate))
+                {
+                    return candidate;
+                }
+            }
+
+            throw new IOException("Could not reserve a temporary file name.");
         }
 
         private static async Task<bool> PromptSaveIfEdited(BibtexViewModel tab, string actionDescription)
@@ -664,6 +753,81 @@ namespace Litenbib.ViewModels
             {
                 NotificationCenter.Error(I18n.Format("Message.CouldNotDuplicate", tab.Header, ex.Message));
             }
+        }
+
+        [RelayCommand(CanExecute = nameof(CanRenameTab))]
+        private async Task RenameTab(object? parameter)
+        {
+            BibtexViewModel? tab = parameter as BibtexViewModel ?? SelectedFile;
+            if (tab == null || !BibtexTabs.Contains(tab) || string.IsNullOrWhiteSpace(tab.FullPath))
+            {
+                return;
+            }
+
+            string sourcePath;
+            try { sourcePath = Path.GetFullPath(tab.FullPath); }
+            catch (Exception)
+            {
+                NotificationCenter.Error(I18n.Format("Message.CouldNotRenameInvalidPath", tab.Header));
+                return;
+            }
+
+            if (!File.Exists(sourcePath))
+            {
+                NotificationCenter.Error(I18n.Format("Message.CouldNotRenameSourceMissing", tab.Header));
+                return;
+            }
+
+            Window? window = GetMainWindow();
+            if (window == null)
+            {
+                return;
+            }
+
+            RenameFileViewModel renameFileViewModel = new(sourcePath);
+            TaskDialogView dialog = new(renameFileViewModel);
+            var result = await dialog.ShowDialog<bool>(window);
+            if (result != true)
+            {
+                return;
+            }
+
+            if (!renameFileViewModel.TryGetTargetPath(out string targetPath, out string? validationMessage))
+            {
+                NotificationCenter.Error(validationMessage ?? I18n.Get("Rename.Validation.InvalidFileName"));
+                return;
+            }
+
+            targetPath = Path.GetFullPath(targetPath);
+            if (BibtexTabs.Any(item => item != tab && IsSamePath(item.FullPath, targetPath)))
+            {
+                NotificationCenter.Error(I18n.Format("Message.CouldNotRenameTargetOpen", Path.GetFileName(targetPath)));
+                return;
+            }
+
+            string oldPath = tab.FullPath;
+            string oldName = tab.Header;
+            try
+            {
+                RenameFileOnDisk(sourcePath, targetPath);
+                tab.UpdatePathAfterRename(targetPath);
+                RemoveRecentFile(oldPath);
+                TouchRecentFile(tab);
+                await SaveLocalConfig(window);
+                NotificationCenter.Info(I18n.Format("Message.RenamedFile", oldName, tab.Header));
+            }
+            catch (Exception ex)
+            {
+                NotificationCenter.Error(I18n.Format("Message.CouldNotRename", oldName, ex.Message));
+            }
+        }
+
+        private bool CanRenameTab(object? parameter)
+        {
+            BibtexViewModel? tab = parameter as BibtexViewModel ?? SelectedFile;
+            return tab != null
+                && BibtexTabs.Contains(tab)
+                && !string.IsNullOrWhiteSpace(tab.FullPath);
         }
 
         [RelayCommand(CanExecute = nameof(CanCloseOtherTabs))]

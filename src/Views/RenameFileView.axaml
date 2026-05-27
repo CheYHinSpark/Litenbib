@@ -1,0 +1,43 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:vm="using:Litenbib.ViewModels"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="Litenbib.Views.RenameFileView"
+             x:DataType="vm:RenameFileViewModel">
+    <Design.DataContext>
+        <vm:RenameFileViewModel/>
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="96,*">
+        <TextBlock Text="{DynamicResource Rename.Directory}"
+                   Classes="right"
+                   VerticalAlignment="Center"/>
+        <TextBox Grid.Column="1"
+                 Text="{CompiledBinding DirectoryPath}"
+                 IsReadOnly="True"/>
+
+        <TextBlock Grid.Row="1"
+                   Text="{DynamicResource Rename.FileName}"
+                   Classes="right"
+                   VerticalAlignment="Center"/>
+        <TextBox x:Name="FileNameTextBox"
+                 Grid.Row="1"
+                 Grid.Column="1"
+                 Text="{CompiledBinding FileName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                 KeyDown="FileNameTextBox_KeyDown"/>
+
+        <TextBlock Grid.Row="2"
+                   Grid.Column="1"
+                   Text="{DynamicResource Rename.ExtensionHint}"
+                   Opacity="0.65"
+                   TextWrapping="Wrap"/>
+
+        <TextBlock Grid.Row="3"
+                   Grid.Column="1"
+                   Text="{CompiledBinding ValidationMessage}"
+                   Foreground="{DynamicResource WarningHighlight}"
+                   TextWrapping="Wrap"/>
+    </Grid>
+</UserControl>
