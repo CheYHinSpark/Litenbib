@@ -254,6 +254,7 @@ public partial class BibtexEditor : UserControl, IUndoRedoTextHost
         int caretOffset = int.Clamp(Editor.CaretOffset, 0, text.Length);
         Editor.Text = text;
         SetCaretOffset(caretOffset);
+        Editor.Document.UndoStack.ClearAll();
         _updatingFromProperty = false;
     }
 

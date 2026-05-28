@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data;
+using Avalonia.Threading;
 
 namespace Litenbib.Models
 {
@@ -44,6 +45,38 @@ namespace Litenbib.Models
                 tb.SetCurrentValue(IsFocusedProperty, isFocused);
                 tb.SetCurrentValue(BindToProperty, isFocused ? tb : null);
             });
+        }
+    }
+
+    public static class TextBoxUndo
+    {
+        public static readonly AttachedProperty<object?> ClearOnScopeChangeProperty =
+            AvaloniaProperty.RegisterAttached<Control, object?>(
+                "ClearOnScopeChange", typeof(TextBoxUndo), defaultBindingMode: BindingMode.OneWay);
+
+        public static object? GetClearOnScopeChange(Control element) =>
+            element.GetValue(ClearOnScopeChangeProperty);
+
+        public static void SetClearOnScopeChange(Control element, object? value) =>
+            element.SetValue(ClearOnScopeChangeProperty, value);
+
+        static TextBoxUndo()
+        {
+            ClearOnScopeChangeProperty.Changed.AddClassHandler<TextBox>((textBox, _) =>
+            {
+                Dispatcher.UIThread.Post(() => ClearUndoStack(textBox), DispatcherPriority.Background);
+            });
+        }
+
+        private static void ClearUndoStack(TextBox textBox)
+        {
+            if (!textBox.IsUndoEnabled)
+            {
+                return;
+            }
+
+            textBox.SetCurrentValue(TextBox.IsUndoEnabledProperty, false);
+            textBox.SetCurrentValue(TextBox.IsUndoEnabledProperty, true);
         }
     }
 }

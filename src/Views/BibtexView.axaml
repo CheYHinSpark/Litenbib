@@ -43,6 +43,7 @@
             <Setter Property="SelectionStart" Value="{CompiledBinding SelectionStart, Mode=OneWayToSource}"/>
             <Setter Property="SelectionEnd" Value="{CompiledBinding SelectionEnd, Mode=OneWayToSource}"/>
             <Setter Property="m:FocusEx.BindTo" Value="{CompiledBinding UndoRedoManager.NewEditedBox, Mode=OneWayToSource}"/>
+            <Setter Property="m:TextBoxUndo.ClearOnScopeChange" Value="{CompiledBinding ShowingEntry}"/>
         </Style>
         <Style Selector="Grid.detail-main.detail-right">
             <Setter Property="Margin" Value="8 8 0 8"/>
