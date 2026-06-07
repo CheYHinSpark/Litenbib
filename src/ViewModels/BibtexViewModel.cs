@@ -60,6 +60,8 @@ namespace Litenbib.ViewModels
 
         public event EventHandler<BibtexEntry>? FocusEntryRequested;
 
+        public event Action<IReadOnlyList<BibtexEntry>>? FocusEntriesRequested;
+
         public ObservableRangeCollection<BibtexEntry> BibtexEntries { get; set; }
 
         public DataGridCollectionView BibtexView { get; }
@@ -876,48 +878,81 @@ namespace Litenbib.ViewModels
         private void CheckWarningError(object sender)
         {
             if (sender is not WarningError we) { return; }
-            if (we.Class == WarningErrorClass.SameCitationKey)
+            List<BibtexEntry> entries = GetExistingWarningEntries(we);
+            if (entries.Count == 0)
             {
-                List<BibtexEntry> removed = [we.SourceEntries[0]];
-                BibtexEntry toRemoved = we.SourceEntries[0];
-                int minIndex = BibtexEntries.IndexOf(toRemoved);
-                for (int i = 1; i < we.SourceEntries.Count; ++i)
-                {
-                    int n = BibtexEntries.IndexOf(we.SourceEntries[i]);
-                    if (n < minIndex)
-                    {
-                        removed.Add(toRemoved);
-                        BibtexEntries.Remove(toRemoved);
-                        toRemoved = we.SourceEntries[i];
-                        minIndex = n;
-                    }
-                    else
-                    {
-                        removed.Add(we.SourceEntries[i]);
-                        BibtexEntries.Remove(we.SourceEntries[i]);
-                    }
-                }
-                for (int i = 1; i < we.SourceEntries.Count; ++i)
-                {
-                    BibtexEntries.Insert(minIndex + i, removed[i]);
-                }
-                string tempText = FilterText;
-                int tempMode = FilterMode;
-                string tempField = FilterField;
-                filterText = we.FieldName;
-                filterMode = -1;
-                filterField = "Citation Key";
-                RefreshFilter();
-                CheckingEvent?.Invoke(null, EventArgs.Empty);
-                FilterText = tempText;
-                FilterMode = tempMode;
-                FilterField = tempField;
-                RefreshFilter();
-                ShowingEntry = toRemoved;
+                IsChecking = false;
+                return;
+            }
+
+            if (entries.Any(entry => !FilterBibtex(entry)))
+            {
+                FilterText = string.Empty;
+            }
+
+            if (entries.Count > 1)
+            {
+                GroupWarningEntries(entries);
+                entries = entries
+                    .OrderBy(entry => BibtexEntries.IndexOf(entry))
+                    .ToList();
+            }
+
+            ShowingEntry = entries[0];
+            if (entries.Count == 1)
+            {
+                FocusEntryRequested?.Invoke(this, entries[0]);
             }
             else
-            { ShowingEntry = we.SourceEntries[0]; }
+            {
+                FocusEntriesRequested?.Invoke(entries);
+                ShowStatus(I18n.Format("Message.FocusedWarningEntries", entries.Count));
+            }
             IsChecking = false;
+        }
+
+        private List<BibtexEntry> GetExistingWarningEntries(WarningError warning)
+        {
+            return warning.SourceEntries
+                .Where(entry => entry != null)
+                .Distinct()
+                .Select(entry => (Index: BibtexEntries.IndexOf(entry), Entry: entry))
+                .Where(item => item.Index >= 0)
+                .OrderBy(item => item.Index)
+                .Select(item => item.Entry)
+                .ToList();
+        }
+
+        private void GroupWarningEntries(IReadOnlyList<BibtexEntry> entries)
+        {
+            List<(int, BibtexEntry)> oldIndexEntries = entries
+                .Select(entry => (Index: BibtexEntries.IndexOf(entry), Entry: entry))
+                .Where(item => item.Index >= 0)
+                .OrderBy(item => item.Index)
+                .ToList();
+
+            if (oldIndexEntries.Count <= 1)
+            {
+                return;
+            }
+
+            int startIndex = oldIndexEntries[0].Item1;
+            bool alreadyGrouped = oldIndexEntries
+                .Select((item, offset) => item.Item1 == startIndex + offset)
+                .All(value => value);
+            if (alreadyGrouped)
+            {
+                return;
+            }
+
+            List<BibtexEntry> orderedEntries = oldIndexEntries.Select(item => item.Item2).ToList();
+            List<(int, BibtexEntry)> newIndexEntries = orderedEntries
+                .Select((entry, offset) => (startIndex + offset, entry))
+                .ToList();
+            BibtexEntries.RemoveRange(orderedEntries);
+            BibtexEntries.InsertRange(newIndexEntries);
+            UndoRedoManager.AddAction(new MoveEntriesAction(BibtexEntries, oldIndexEntries, newIndexEntries));
+            NotifyCanUndoRedo();
         }
 
         [RelayCommand(CanExecute = nameof(CanCopySelectedBibtexEntries))]

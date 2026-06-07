@@ -84,24 +84,24 @@ namespace Litenbib.Models
                     await AddIfResolved(result.Candidates, await ResolveDoiCandidatesAsync(doi), maxCandidates);
                 }
 
-                if (result.Candidates.Count < maxCandidates && TryExtractArxivId(query, out string arxivId))
+                if (result.Candidates.Count == 0 && TryExtractArxivId(query, out string arxivId))
                 {
                     await AddIfResolved(result.Candidates, await ResolveArxivCandidatesAsync(arxivId), maxCandidates);
                 }
 
-                if (result.Candidates.Count < maxCandidates && TryExtractOpenReviewId(query, out string openReviewId))
+                if (result.Candidates.Count == 0 && TryExtractOpenReviewId(query, out string openReviewId))
                 {
                     await AddIfResolved(result.Candidates, await ResolveOpenReviewCandidatesAsync(openReviewId), maxCandidates);
                 }
 
-                if (result.Candidates.Count < maxCandidates)
+                if (result.Candidates.Count == 0)
                 {
                     await AddIfResolved(result.Candidates, await SearchDblpCandidatesAsync(query), maxCandidates);
-                }
 
-                if (result.Candidates.Count < maxCandidates)
-                {
-                    await AddIfResolved(result.Candidates, await SearchCrossrefCandidatesAsync(query), maxCandidates);
+                    if (result.Candidates.Count < maxCandidates)
+                    {
+                        await AddIfResolved(result.Candidates, await SearchCrossrefCandidatesAsync(query), maxCandidates);
+                    }
                 }
             }
             catch (Exception ex)
@@ -239,6 +239,18 @@ namespace Litenbib.Models
                 AddCandidateIfPossible(result, "Crossref DOI", doi, bibtex);
             }
 
+            if (result.Count == 0 && TryCreateArxivDoiFallback(doi, out string arxivDoi, out string arxivId))
+            {
+                bibtex = await GetFromDoiAsync(arxivDoi);
+                AddCandidateIfPossible(result, "arXiv DOI", arxivId, bibtex);
+
+                if (result.Count == 0)
+                {
+                    bibtex = await GetCrossrefBibtexByDoiAsync(arxivDoi);
+                    AddCandidateIfPossible(result, "Crossref arXiv DOI", arxivId, bibtex);
+                }
+            }
+
             if (result.Count == 0)
             {
                 var dblp = await SearchDblpCandidatesAsync(doi);
@@ -252,26 +264,26 @@ namespace Litenbib.Models
         {
             List<BibliographyCandidate> result = [];
 
-            string bibtex = await GetFromDoiAsync($"10.48550/ARXIV.{arxivId}");
-            AddCandidateIfPossible(result, "arXiv DOI", arxivId, bibtex);
+            try
+            {
+                using var request = new HttpRequestMessage(HttpMethod.Get, $"https://arxiv.org/bibtex/{Uri.EscapeDataString(arxivId)}");
+                var response = await SendRequestAsync(request);
+                if (response.IsSuccessStatusCode)
+                {
+                    string bibtex = await response.Content.ReadAsStringAsync();
+                    AddCandidateIfPossible(result, "arXiv", arxivId, bibtex);
+                }
+            }
+            catch (Exception ex)
+            {
+                NotifyLookupException("arXiv", ex);
+                Debug.WriteLine(ex);
+            }
 
             if (result.Count == 0)
             {
-                try
-                {
-                    using var request = new HttpRequestMessage(HttpMethod.Get, $"https://arxiv.org/bibtex/{arxivId}");
-                    var response = await SendRequestAsync(request);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        bibtex = await response.Content.ReadAsStringAsync();
-                        AddCandidateIfPossible(result, "arXiv", arxivId, bibtex);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    NotifyLookupException("arXiv", ex);
-                    Debug.WriteLine(ex);
-                }
+                string bibtex = await GetFromDoiAsync($"10.48550/ARXIV.{arxivId}");
+                AddCandidateIfPossible(result, "arXiv DOI", arxivId, bibtex);
             }
 
             return result;
@@ -521,6 +533,25 @@ namespace Litenbib.Models
             Match match = Regex.Match(input, @"(?<=/|\b)(\d{4}\.\d{4,5}|[a-z\-]+(?:\.[A-Z]{2})?/\d{7})(v\d+)?(?=\b|$)", RegexOptions.IgnoreCase);
             arxivId = match.Success ? match.Groups[1].Value : string.Empty;
             return match.Success;
+        }
+
+        private static bool TryCreateArxivDoiFallback(string input, out string arxivDoi, out string arxivId)
+        {
+            arxivDoi = string.Empty;
+            arxivId = string.Empty;
+            string query = input?.Trim() ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(query) || TryExtractDoi(query, out _))
+            {
+                return false;
+            }
+
+            if (!TryExtractArxivId(query, out arxivId))
+            {
+                return false;
+            }
+
+            arxivDoi = $"10.48550/ARXIV.{arxivId}";
+            return true;
         }
 
         private static bool TryExtractOpenReviewId(string input, out string openReviewId)

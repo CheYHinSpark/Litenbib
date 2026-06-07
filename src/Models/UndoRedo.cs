@@ -257,6 +257,26 @@ namespace Litenbib.Models
         { _holder.RemoveRange(_index_entries.Select(t => t.Item2)); }
     }
 
+    public class MoveEntriesAction(ObservableRangeCollection<BibtexEntry> holder,
+        List<(int, BibtexEntry)> old_index_entries, List<(int, BibtexEntry)> new_index_entries) : IUndoableAction
+    {
+        private readonly ObservableRangeCollection<BibtexEntry> _holder = holder;
+        private readonly List<(int, BibtexEntry)> _old_index_entries = old_index_entries;
+        private readonly List<(int, BibtexEntry)> _new_index_entries = new_index_entries;
+
+        public override void Undo()
+        { Apply(_old_index_entries); }
+
+        public override void Redo()
+        { Apply(_new_index_entries); }
+
+        private void Apply(List<(int, BibtexEntry)> index_entries)
+        {
+            _holder.RemoveRange(index_entries.Select(t => t.Item2));
+            _holder.InsertRange(index_entries.OrderBy(t => t.Item1));
+        }
+    }
+
     public class ReplaceEntriesAction(ObservableRangeCollection<BibtexEntry> holder,
         List<(int, BibtexEntry)> old_index_entries, List<(int, BibtexEntry)> new_index_entries) : IUndoableAction
     {

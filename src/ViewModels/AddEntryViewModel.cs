@@ -68,7 +68,9 @@ namespace Litenbib.ViewModels
             Candidates.Clear();
             List<string> hints = [];
             HashSet<string> seen = new();
-            NotificationCenter.Info(I18n.Format("Message.SearchingBibliographyQueries", inputs.Count));
+            string searchingMessage = I18n.Format("Message.SearchingBibliographyQueries", inputs.Count);
+            HintText = searchingMessage;
+            NotificationCenter.Info(searchingMessage);
 
             foreach (string input in inputs)
             {

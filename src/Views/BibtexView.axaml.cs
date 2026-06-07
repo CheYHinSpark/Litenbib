@@ -112,6 +112,7 @@ public partial class BibtexView : UserControl
             viewModel = vm;
             viewModel.CheckingEvent += (_, e) => { SetSelectionAndScroll(); };
             viewModel.FocusEntryRequested += (_, entry) => { FocusEntry(entry); };
+            viewModel.FocusEntriesRequested += entries => { FocusEntries(entries); };
         }
     }
 
@@ -136,6 +137,31 @@ public partial class BibtexView : UserControl
             UpdateSelectAllState();
             ShowDetail();
             DataGridView.ScrollIntoView(entry, null);
+        });
+    }
+
+    private void FocusEntries(IReadOnlyList<BibtexEntry> entries)
+    {
+        if (entries.Count == 0)
+        {
+            return;
+        }
+
+        Dispatcher.UIThread.Post(() =>
+        {
+            changingInside = true;
+            DataGridView.SelectedItems.Clear();
+            foreach (var entry in entries)
+            {
+                DataGridView.SelectedItems.Add(entry);
+            }
+            DataGridView.SelectedItem = entries[0];
+            changingInside = false;
+
+            viewModel.SetSelectedItems(entries);
+            UpdateSelectAllState();
+            ShowDetail();
+            DataGridView.ScrollIntoView(entries[0], null);
         });
     }
 

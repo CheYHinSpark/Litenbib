@@ -69,7 +69,10 @@ namespace Litenbib.Models
 
             // 解析字段
             if (ParseFieldsStrict(entryContent, entry))
-            { return entry; }
+            {
+                entry.UpdateBibtex(isSilent: true);
+                return entry;
+            }
             else
             { return null; }
         }

@@ -328,6 +328,7 @@
     <x:String x:Key="Message.CouldNotCopyToClipboard">无法复制到剪贴板：{0}</x:String>
     <x:String x:Key="Message.CopiedSelectedEntries">已复制 {0} 个条目</x:String>
     <x:String x:Key="Message.CutSelectedEntries">已剪切 {0} 个条目</x:String>
+    <x:String x:Key="Message.FocusedWarningEntries">已聚拢并选中 {0} 个相关条目</x:String>
     <x:String x:Key="Message.PastedEntries">已粘贴 {0} 个条目</x:String>
     <x:String x:Key="Message.NoCopiedEntries">没有可粘贴的条目</x:String>
     <x:String x:Key="Save.Validation.EmptyPath">文件路径为空。</x:String>

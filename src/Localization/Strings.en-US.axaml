@@ -328,6 +328,7 @@
     <x:String x:Key="Message.CouldNotCopyToClipboard">Could not copy to clipboard: {0}</x:String>
     <x:String x:Key="Message.CopiedSelectedEntries">Copied {0} entries</x:String>
     <x:String x:Key="Message.CutSelectedEntries">Cut {0} entries</x:String>
+    <x:String x:Key="Message.FocusedWarningEntries">Grouped and selected {0} related entries</x:String>
     <x:String x:Key="Message.PastedEntries">Pasted {0} entries</x:String>
     <x:String x:Key="Message.NoCopiedEntries">No entries to paste</x:String>
     <x:String x:Key="Save.Validation.EmptyPath">The file path is empty.</x:String>
